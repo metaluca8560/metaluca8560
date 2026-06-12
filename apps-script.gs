@@ -2,23 +2,39 @@
  * AI 트렌드 다락방 — 무료 진단 폼 수신 (구글시트 기록 + 이메일 알림)
  *
  * 사용 방법
- * 1) 구글 드라이브에서 새 스프레드시트 생성 (예: "AI트렌드다락방 문의")
- * 2) 상단 메뉴 [확장 프로그램] > [Apps Script] 클릭
- * 3) 기본 코드를 지우고 이 파일 내용을 전부 붙여넣기
- * 4) 아래 NOTIFY_EMAIL 값을 받을 이메일로 바꾸기 (기본값 사용해도 됨)
- * 5) 우측 상단 [배포] > [새 배포] > 유형: "웹 앱"
- *      - 실행 계정: 나
- *      - 액세스 권한: "모든 사용자"
- *    배포 후 표시되는 "웹 앱 URL"(…/exec)을 복사
- * 6) script.js 의 FORM_ENDPOINT 에 그 URL을 붙여넣기
+ * 1) script.google.com 또는 스프레드시트의 [확장 프로그램 > Apps Script]에서 새 프로젝트 생성
+ * 2) 기본 코드를 지우고 이 파일 내용을 전부 붙여넣기
+ * 3) NOTIFY_EMAIL 값을 받을 이메일로 확인/수정
+ * 4) 함수 드롭다운에서 testSubmit 선택 후 ▶ 실행 → 권한 허용 → 메일/시트 생성 확인
+ * 5) [배포] > [새 배포] > 유형 "웹 앱" (실행: 나 / 액세스: 모든 사용자) → 웹 앱 URL 복사
+ * 6) script.js 의 FORM_ENDPOINT 에 그 URL(…/exec)을 붙여넣기
  *
- * 처음 배포 시 권한 승인 창이 뜨면 허용해 주세요.
+ * 코드를 수정한 뒤에는 [배포] > [배포 관리] > ✏️ > 버전 "새 버전" 으로 재배포해야 반영됩니다.
+ *
+ * 스프레드시트에 연결(바인딩)돼 있으면 그 시트를 쓰고,
+ * 독립 스크립트면 "AI트렌드 다락방 문의" 스프레드시트를 자동 생성해 사용합니다.
  */
 
 // 알림을 받을 이메일 주소
 var NOTIFY_EMAIL = "atlia0318@gmail.com";
 // 기록할 시트 탭 이름
 var SHEET_NAME = "문의";
+// 자동 생성 시 스프레드시트 이름
+var SS_TITLE = "AI트렌드 다락방 문의";
+
+function getSpreadsheet() {
+  var ss = null;
+  try { ss = SpreadsheetApp.getActiveSpreadsheet(); } catch (e) {}
+  if (ss) return ss;
+  var props = PropertiesService.getScriptProperties();
+  var id = props.getProperty("SHEET_ID");
+  if (id) {
+    try { return SpreadsheetApp.openById(id); } catch (e) {}
+  }
+  ss = SpreadsheetApp.create(SS_TITLE);
+  props.setProperty("SHEET_ID", ss.getId());
+  return ss;
+}
 
 function doPost(e) {
   try {
@@ -29,7 +45,7 @@ function doPost(e) {
     var page = p.page || "";
     var ts = new Date();
 
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ss = getSpreadsheet();
     var sheet = ss.getSheetByName(SHEET_NAME);
     if (!sheet) {
       sheet = ss.insertSheet(SHEET_NAME);
@@ -39,23 +55,25 @@ function doPost(e) {
     sheet.appendRow([ts, name, contact, message, page]);
 
     if (NOTIFY_EMAIL) {
-      var body =
-        "새 무료 진단 신청이 접수되었습니다.\n\n" +
-        "■ 이름/업체명: " + name + "\n" +
-        "■ 연락처: " + contact + "\n" +
-        "■ 자동화 희망 업무: " + (message || "(미입력)") + "\n" +
-        "■ 접수시각: " + Utilities.formatDate(ts, "Asia/Seoul", "yyyy-MM-dd HH:mm:ss") + "\n" +
-        "■ 유입 페이지: " + page + "\n";
       MailApp.sendEmail({
         to: NOTIFY_EMAIL,
         subject: "[AI 트렌드 다락방] 새 무료 진단 신청 - " + name,
-        body: body,
-        replyTo: looksLikeEmail(contact) ? contact : NOTIFY_EMAIL,
+        body:
+          "새 무료 진단 신청이 접수되었습니다.\n\n" +
+          "■ 이름/업체명: " + name + "\n" +
+          "■ 연락처: " + contact + "\n" +
+          "■ 자동화 희망 업무: " + (message || "(미입력)") + "\n" +
+          "■ 접수시각: " + Utilities.formatDate(ts, "Asia/Seoul", "yyyy-MM-dd HH:mm:ss") + "\n" +
+          "■ 유입 페이지: " + page + "\n" +
+          "■ 기록 시트: " + ss.getUrl() + "\n",
       });
     }
-
     return json({ result: "success" });
   } catch (err) {
+    // 처리 실패 시에도 알림 메일로 원인을 받아볼 수 있게 함
+    if (NOTIFY_EMAIL) {
+      try { MailApp.sendEmail(NOTIFY_EMAIL, "[다락방] 폼 처리 오류", String(err)); } catch (e2) {}
+    }
     return json({ result: "error", message: String(err) });
   }
 }
@@ -65,8 +83,10 @@ function doGet() {
   return json({ result: "ok", message: "AI 트렌드 다락방 폼 엔드포인트가 동작 중입니다." });
 }
 
-function looksLikeEmail(s) {
-  return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(s || "").trim());
+// 편집기에서 직접 실행해 시트 기록 + 메일 발송을 테스트
+function testSubmit() {
+  var r = doPost({ parameter: { name: "테스트", contact: "010-0000-0000", message: "동작 확인", page: "manual-test" } });
+  Logger.log(r.getContent());
 }
 
 function json(obj) {
