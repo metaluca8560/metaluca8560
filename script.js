@@ -3,7 +3,7 @@
 // 채널 URL이 http://pf.kakao.com/_XXXXXX 형태로 생깁니다.
 // 아래 "_XXXXXX"의 ID 부분만 그대로 붙여넣으세요. (예: "_abcdEF")
 // 비워두면 버튼은 자동으로 하단 문의 폼으로 이동합니다.
-const KAKAO_CHANNEL_ID = ""; // 예) "_abcdEF"
+const KAKAO_CHANNEL_ID = "_MRAGX"; // nova에이전트 채널 (http://pf.kakao.com/_MRAGX)
 
 document.querySelectorAll('[data-cta="kakao"]').forEach((btn) => {
   btn.addEventListener("click", (e) => {
