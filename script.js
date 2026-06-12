@@ -78,7 +78,7 @@ items.forEach((d) => {
 //   3) 아래 FORM_ENDPOINT 에 붙여넣기 → 제출되면 이메일로 알림이 옵니다.
 // [PC 연동: Google Apps Script] apps-script.gs 배포 후 웹앱 URL(…/exec)을 넣어도 됩니다.
 // 비워두면 전송 없이 데모 메시지만 표시됩니다.
-const FORM_ENDPOINT = ""; // 예) "https://formspree.io/f/abcdwxyz"
+const FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbyG27Nd3mp7lWapCMJc83s0UAAfiBM_1bYtRPfVo0JUzBanWH1Pb9mNoiCOOtVDOjj2kg/exec";
 
 const form = document.getElementById("leadForm");
 const note = document.getElementById("formNote");
