@@ -47,19 +47,23 @@ python3 -m http.server 8000
 > ID를 비워두면 버튼은 자동으로 하단 문의 폼으로 스크롤됩니다(미설정 시 graceful fallback).
 > 채널 가입 화면의 "사업자 정보 미확인" 경고를 없애려면 카카오 채널에서 사업자 인증을 받으면 됩니다.
 
-## 문의 폼 → 구글시트 + 이메일 연동
+## 문의 폼 연동 (이메일 / 구글시트)
 
-하단 무료 진단 폼을 제출하면 **구글시트에 자동 기록 + 이메일 알림**이 가도록 연결합니다.
-서버가 필요 없는 Google Apps Script 방식입니다.
+`script.js` 상단의 `FORM_ENDPOINT` 한 곳에 주소만 넣으면 됩니다. 두 방식 모두 지원:
 
-1. 구글 드라이브에서 새 **스프레드시트** 생성 (예: "AI트렌드다락방 문의")
-2. 메뉴 **확장 프로그램 → Apps Script** 열기
-3. `apps-script.gs` 파일 내용을 전부 붙여넣기 (필요하면 `NOTIFY_EMAIL` 수정)
-4. **배포 → 새 배포 → 웹 앱**, 액세스 권한 **"모든 사용자"** 로 배포 → **웹 앱 URL**(…/exec) 복사
-5. `script.js` 상단의 `FORM_ENDPOINT` 에 그 URL을 붙여넣기
+**방법 A — Formspree (폰만으로 가능, 이메일 알림)**
+1. [formspree.io](https://formspree.io) 무료 가입 → New Form 생성
+2. `https://formspree.io/f/XXXXXXXX` 주소 복사
+3. `FORM_ENDPOINT` 에 붙여넣기 → 제출 시 이메일로 알림
+
+**방법 B — Google Apps Script (PC 필요, 구글시트 기록 + 이메일 알림)**
+1. 구글 스프레드시트 생성 → **확장 프로그램 → Apps Script**
+2. `apps-script.gs` 내용 붙여넣기 (필요하면 `NOTIFY_EMAIL` 수정)
+3. **배포 → 새 배포 → 웹 앱**(액세스: 모든 사용자) → 웹앱 URL(…/exec) 복사
+4. `FORM_ENDPOINT` 에 붙여넣기
 
 > 설정 전에는 폼이 데모로 동작(전송 없이 안내 메시지)합니다.
-> 전송은 CORS 제약 때문에 `no-cors`로 보내며, 기록·이메일은 Apps Script가 처리합니다.
+> 코드가 주소를 보고 자동으로 전송 방식을 선택합니다(Formspree=JSON, Apps Script=no-cors).
 
 ## 배포
 

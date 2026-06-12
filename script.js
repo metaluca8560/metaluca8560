@@ -71,11 +71,14 @@ items.forEach((d) => {
   });
 });
 
-// ===== 무료 진단 폼 → 구글시트 + 이메일 연동 =====
-// apps-script.gs 를 Google Apps Script에 배포한 뒤 받은 "웹앱 URL"을 아래에 붙여넣으세요.
-// (자세한 방법은 README의 "문의 폼 → 구글시트 + 이메일 연동" 참고)
+// ===== 무료 진단 폼 전송 설정 =====
+// [폰만으로 연동: Formspree]
+//   1) 폰 브라우저에서 formspree.io 가입 (무료)
+//   2) New Form 생성 → https://formspree.io/f/XXXXXXXX 주소 복사
+//   3) 아래 FORM_ENDPOINT 에 붙여넣기 → 제출되면 이메일로 알림이 옵니다.
+// [PC 연동: Google Apps Script] apps-script.gs 배포 후 웹앱 URL(…/exec)을 넣어도 됩니다.
 // 비워두면 전송 없이 데모 메시지만 표시됩니다.
-const FORM_ENDPOINT = ""; // 예) "https://script.google.com/macros/s/XXXX/exec"
+const FORM_ENDPOINT = ""; // 예) "https://formspree.io/f/abcdwxyz"
 
 const form = document.getElementById("leadForm");
 const note = document.getElementById("formNote");
@@ -100,21 +103,31 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
+  const isAppsScript = FORM_ENDPOINT.includes("script.google.com");
+  const data = {
+    name,
+    contact,
+    message: form.message.value.trim(),
+    page: location.href,
+    ts: new Date().toISOString(),
+  };
+
   submitBtn.disabled = true;
   note.textContent = "전송 중…";
   note.className = "form-note";
   try {
-    await fetch(FORM_ENDPOINT, {
-      method: "POST",
-      mode: "no-cors", // Apps Script 웹앱은 CORS 응답을 주지 않으므로 no-cors로 전송
-      body: new URLSearchParams({
-        name,
-        contact,
-        message: form.message.value.trim(),
-        page: location.href,
-        ts: new Date().toISOString(),
-      }),
-    });
+    if (isAppsScript) {
+      // Apps Script 웹앱은 CORS 응답을 주지 않으므로 no-cors로 전송
+      await fetch(FORM_ENDPOINT, { method: "POST", mode: "no-cors", body: new URLSearchParams(data) });
+    } else {
+      // Formspree: JSON + 정상 CORS 응답 → 성공/실패 확인 가능
+      const res = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("submit failed: " + res.status);
+    }
     note.textContent = "신청이 접수되었습니다. 빠르게 연락드리겠습니다! 🙌";
     note.className = "form-note ok";
     form.reset();
