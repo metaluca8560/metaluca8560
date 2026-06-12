@@ -71,10 +71,16 @@ items.forEach((d) => {
   });
 });
 
-// 무료 진단 폼 (데모: 실제 전송은 백엔드/서비스 연동 필요)
+// ===== 무료 진단 폼 → 구글시트 + 이메일 연동 =====
+// apps-script.gs 를 Google Apps Script에 배포한 뒤 받은 "웹앱 URL"을 아래에 붙여넣으세요.
+// (자세한 방법은 README의 "문의 폼 → 구글시트 + 이메일 연동" 참고)
+// 비워두면 전송 없이 데모 메시지만 표시됩니다.
+const FORM_ENDPOINT = ""; // 예) "https://script.google.com/macros/s/XXXX/exec"
+
 const form = document.getElementById("leadForm");
 const note = document.getElementById("formNote");
-form.addEventListener("submit", (e) => {
+
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const name = form.name.value.trim();
   const contact = form.contact.value.trim();
@@ -83,8 +89,39 @@ form.addEventListener("submit", (e) => {
     note.className = "form-note err";
     return;
   }
-  // TODO: 실제 운영 시 이메일/카카오/스프레드시트 등으로 전송하도록 연동하세요.
-  note.textContent = "신청이 접수되었습니다. 빠르게 연락드리겠습니다! 🙌";
-  note.className = "form-note ok";
-  form.reset();
+
+  const submitBtn = form.querySelector('button[type="submit"]');
+
+  // 엔드포인트 미설정: 데모 동작
+  if (!FORM_ENDPOINT) {
+    note.textContent = "신청이 접수되었습니다. (데모: FORM_ENDPOINT 설정 시 실제 전송)";
+    note.className = "form-note ok";
+    form.reset();
+    return;
+  }
+
+  submitBtn.disabled = true;
+  note.textContent = "전송 중…";
+  note.className = "form-note";
+  try {
+    await fetch(FORM_ENDPOINT, {
+      method: "POST",
+      mode: "no-cors", // Apps Script 웹앱은 CORS 응답을 주지 않으므로 no-cors로 전송
+      body: new URLSearchParams({
+        name,
+        contact,
+        message: form.message.value.trim(),
+        page: location.href,
+        ts: new Date().toISOString(),
+      }),
+    });
+    note.textContent = "신청이 접수되었습니다. 빠르게 연락드리겠습니다! 🙌";
+    note.className = "form-note ok";
+    form.reset();
+  } catch (err) {
+    note.textContent = "전송 중 문제가 발생했어요. 카카오톡으로 문의해 주세요.";
+    note.className = "form-note err";
+  } finally {
+    submitBtn.disabled = false;
+  }
 });
