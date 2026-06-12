@@ -3,348 +3,253 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI 트렌드 다락방 — 업무 자동화 & AI 챗봇 컨설팅</title>
-  <meta name="description" content="어수선한 반복 업무를 차곡차곡 정리하는 AI 트렌드 다락방. 업무 자동화와 AI 챗봇으로 반복 업무 시간을 최대 90%까지 줄여드립니다." />
-  <meta property="og:title" content="AI 트렌드 다락방 — 업무 자동화 & AI 챗봇 컨설팅" />
-  <meta property="og:description" content="단순 반복 업무, 이제 다락방에 맡기세요. 무료 진단을 받아보세요." />
+  <title>AI 트렌드 다락방 — 반복 업무 자동화 & AI 챗봇</title>
+  <meta name="description" content="문의 응대, 데이터 정리, 알림 발송까지. AI와 자동화로 손이 가던 일을 알아서 처리하는 AI 트렌드 다락방." />
+  <meta property="og:title" content="AI 트렌드 다락방 — 반복 업무 자동화 & AI 챗봇" />
+  <meta property="og:description" content="반복은 접어두세요. 나머지는 다락방이 합니다." />
   <meta property="og:image" content="logo.svg" />
   <meta property="og:type" content="website" />
   <link rel="icon" type="image/svg+xml" href="logo.svg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-  <!-- ===== Header ===== -->
-  <header class="site-header" id="siteHeader">
-    <div class="container header-inner">
+<body id="top">
+  <!-- ===== Nav ===== -->
+  <header class="nav" id="nav">
+    <div class="container nav-inner">
       <a href="#top" class="brand" aria-label="AI 트렌드 다락방 홈">
         <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 64 64" width="36" height="36">
+          <svg viewBox="0 0 64 64" width="34" height="34">
             <defs>
-              <linearGradient id="atticGrad" x1="8" y1="58" x2="56" y2="8" gradientUnits="userSpaceOnUse">
+              <linearGradient id="logoGrad" x1="8" y1="58" x2="56" y2="8" gradientUnits="userSpaceOnUse">
                 <stop offset="0" stop-color="#1d4ed8" />
                 <stop offset="1" stop-color="#38bdf8" />
               </linearGradient>
             </defs>
-            <path d="M32 5 L57 26 V52 a4 4 0 0 1-4 4 H11 a4 4 0 0 1-4-4 V26 Z" fill="url(#atticGrad)" />
-            <circle cx="32" cy="21" r="3.6" fill="#fffdf8" />
-            <polyline points="15 47 25 39 33 44 47 30" fill="none" stroke="#fffdf8" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M40 30 H47 V37" fill="none" stroke="#fffdf8" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M32 5 L57 26 V52 a4 4 0 0 1-4 4 H11 a4 4 0 0 1-4-4 V26 Z" fill="url(#logoGrad)" />
+            <circle cx="32" cy="21" r="3.6" fill="#ffffff" />
+            <polyline points="15 47 25 39 33 44 47 30" fill="none" stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M40 30 H47 V37" fill="none" stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" />
             <path d="M51 8 l1.4 3.8 3.8 1.4 -3.8 1.4 -1.4 3.8 -1.4 -3.8 -3.8 -1.4 3.8 -1.4 z" fill="#bae6fd" />
           </svg>
         </span>
-        <span class="brand-text">
-          <strong>AI 트렌드 다락방</strong>
-          <small>WORKFLOW AUTOMATION CONSULTING</small>
-        </span>
+        <span class="brand-name">AI 트렌드 다락방</span>
       </a>
-      <a href="#contact" class="btn btn-ghost btn-sm">무료 진단 받기</a>
+      <nav class="nav-links" aria-label="주요 메뉴">
+        <a href="#features">자동화 기능</a>
+        <a href="#compare">도입 효과</a>
+        <a href="#faq">자주 묻는 질문</a>
+      </nav>
+      <a href="#contact" class="btn btn-primary btn-sm">무료 업무 진단</a>
     </div>
   </header>
 
-  <main id="top">
+  <main>
     <!-- ===== Hero ===== -->
     <section class="hero">
+      <div class="hero-glow" aria-hidden="true"></div>
       <div class="container hero-inner">
-        <div class="hero-clock" aria-hidden="true">
-          <span class="spark">✦</span>
-          <svg viewBox="0 0 100 100" width="120" height="120">
-            <circle cx="50" cy="50" r="45" fill="none" stroke="#2e2620" stroke-width="5" />
-            <line class="hand-hour" x1="50" y1="50" x2="50" y2="30" stroke="#2e2620" stroke-width="5" stroke-linecap="round" />
-            <line class="hand-min" x1="50" y1="50" x2="68" y2="50" stroke="#2e2620" stroke-width="5" stroke-linecap="round" />
-          </svg>
-        </div>
+        <span class="eyebrow">업무 자동화 · AI 챗봇 컨설팅</span>
         <h1 class="hero-title">
-          매일 똑같은 카톡 답장,<br />
-          엑셀 복붙… 언제까지<br />
-          <mark>인간 매크로</mark>로<br />
-          일하실 건가요?
+          반복 업무는 접어두세요.<br />
+          나머지는 <span class="grad">다락방</span>이 합니다.
         </h1>
         <p class="hero-sub">
-          돈 안 되는 단순 반복 업무에 대표님의 소중한 시간을 쓰지 마세요.
-          어수선한 일은 다락방에 차곡차곡 맡기고, 대표님은 진짜 중요한 일에 집중하세요.
+          문의 응대부터 데이터 정리, 알림 발송까지 —
+          손이 가던 일을 AI와 자동화가 알아서 처리합니다.
+          대표님은 매출과 본업에만 집중하세요.
         </p>
-        <a href="#contact" class="btn btn-dark btn-lg hero-cta">
-          자동화 할 수 있는 업무 진단 받기
-          <span class="arrow" aria-hidden="true">→</span>
-        </a>
+        <div class="hero-actions">
+          <a href="#contact" class="btn btn-primary btn-lg">무료 업무 진단 받기</a>
+          <a href="#features" class="btn btn-outline btn-lg">자동화 기능 보기</a>
+        </div>
+
+        <!-- 자동화 흐름 그래픽 -->
+        <div class="flow" aria-hidden="true">
+          <div class="flow-chip" data-step="0">📨 고객 문의</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-chip" data-step="1">🧠 AI 자동 분류</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-chip" data-step="2">💬 즉시 응답</div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-chip" data-step="3">🗂️ 기록·정리 완료</div>
+        </div>
       </div>
     </section>
 
-    <!-- ===== Problems ===== -->
-    <section class="problems">
+    <!-- ===== Metrics ===== -->
+    <section class="metrics">
+      <div class="container metrics-grid">
+        <div class="metric"><strong>−70%</strong><span>반복 업무 처리 시간</span></div>
+        <div class="metric"><strong>90%↓</strong><span>문의 응답 대기 시간</span></div>
+        <div class="metric"><strong>2주</strong><span>평균 도입 기간</span></div>
+        <div class="metric"><strong>24시간</strong><span>야간·주말 자동 응대</span></div>
+      </div>
+    </section>
+
+    <!-- ===== Pain ===== -->
+    <section class="pain">
       <div class="container">
-        <h2 class="section-title">고객이 실제로 겪는 문제들</h2>
-
-        <ul class="problem-list">
-          <li class="problem-item">
-            <h3>같은 질문에 하루 20번 이상 답하고 있습니다</h3>
-            <p>영업시간, 가격, 예약 가능 시간, 준비물 같은 질문이 카톡·문자·전화로 반복됩니다. 중요한 건 상담이 아니라, 똑같은 답변을 계속 복붙하는 데 시간이 쓰인다는 점입니다.</p>
-          </li>
-          <li class="problem-item">
-            <h3>예약 확인·변경·리마인드에 매주 3~5시간이 들어갑니다</h3>
-            <p>노쇼를 막으려 일일이 연락하고, 변경 요청을 시트에 옮겨 적습니다. 사람이 직접 챙길수록 누락과 실수가 생깁니다.</p>
-          </li>
-          <li class="problem-item">
-            <h3>문의는 쌓이는데, 응답은 항상 한 박자 늦습니다</h3>
-            <p>퇴근 후·주말에 온 문의는 다음 영업일에야 확인됩니다. 그 사이 고객은 이미 다른 곳으로 떠납니다.</p>
-          </li>
-        </ul>
-
-        <!-- Inbox mockup -->
-        <div class="inbox-card" aria-hidden="true">
-          <div class="inbox-icon">
-            <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#2e2620" stroke-width="2">
-              <path d="M4 5h16v12H8l-4 3z" stroke-linejoin="round" />
-            </svg>
+        <p class="kicker">이런 일, 익숙하시죠?</p>
+        <h2 class="section-title">손은 바쁜데,<br />정작 남는 게 없는 하루</h2>
+        <div class="pain-grid">
+          <div class="pain-item">
+            <span class="pain-no">01</span>
+            <p>똑같은 답변을 하루에도 수십 번 복사·붙여넣기 하고 있습니다.</p>
           </div>
-          <div class="inbox-window">
-            <div class="dots"><span></span><span></span><span></span></div>
-            <p class="inbox-label">고객 문의</p>
-            <div class="skeleton long"></div>
-            <div class="skeleton short"></div>
-            <p class="inbox-unread">읽지 않은 메시지 24건</p>
+          <div class="pain-item">
+            <span class="pain-no">02</span>
+            <p>예약과 정산을 손으로 옮겨 적다가 누락·오기입이 반복됩니다.</p>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== Solutions ===== -->
-    <section class="solutions">
-      <div class="container">
-        <h2 class="section-title solutions-title">단순 반복 업무,<br />이제 다락방에 맡기세요</h2>
-
-        <div class="cards">
-          <article class="card card-clay">
-            <div class="card-icon">⚙️</div>
-            <h3>반복 업무 자동화 구축</h3>
-            <p>문의 접수, 신청서 정리, 시트 업데이트, 알림 발송 같은 반복 업무를 자동화합니다.</p>
-            <dl class="card-meta">
-              <dt>✓ 기대 효과</dt>
-              <dd>반복 입력 시간 최대 70% 감소</dd>
-              <dt>✓ 적용 예시</dt>
-              <dd>폼 제출 → 시트 정리 → 담당자 알림 → 고객 자동 안내</dd>
-            </dl>
-          </article>
-
-          <article class="card card-honey">
-            <div class="card-icon">🤖</div>
-            <h3>AI 챗봇 구축</h3>
-            <p>카카오톡, 웹사이트, 상담 채널에서 자주 받는 질문을 자동으로 응대하는 챗봇을 구축합니다.</p>
-            <dl class="card-meta">
-              <dt>✓ 기대 효과</dt>
-              <dd>반복 문의 응답 시간 평균 90% 단축</dd>
-              <dt>✓ 적용 예시</dt>
-              <dd>가격 안내, 운영시간, 예약 방법, 배송·교환·환불, 준비물 안내</dd>
-            </dl>
-          </article>
-
-          <article class="card card-sage">
-            <div class="card-icon">⚡</div>
-            <h3>업무 맞춤형 AI 적용 컨설팅</h3>
-            <p>고객의 현재 업무 흐름을 보고, 어디부터 자동화해야 가장 빨리 효과가 나는지 설계해드립니다.</p>
-            <dl class="card-meta">
-              <dt>✓ 기대 효과</dt>
-              <dd>우선순위가 명확한 자동화 로드맵</dd>
-              <dt>✓ 적용 예시</dt>
-              <dd>업무 진단 → 자동화 우선순위 → 단계별 구축 플랜</dd>
-            </dl>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== Case Study ===== -->
-    <section class="case">
-      <div class="container">
-        <span class="badge">실제 구축 사례</span>
-        <h2 class="case-title">
-          연간 10만 명 규모의<br />
-          대형 프로젝트,<br />
-          운영 업무의 <span class="amber">90%</span>를<br />
-          지워버렸습니다.
-        </h2>
-        <p class="case-desc">
-          대형 금융사의 위탁 교육 운영 전체 체인(모집부터 강사 배치, 안내 발송, 정산까지)을
-          자동화하여, <strong>추가 인력 채용 없이 사업 규모를 확장</strong>하고 단순 잡무를 위한
-          단기 알바 자리를 완전히 대체한 실제 사례입니다.
-        </p>
-
-        <div class="case-cards">
-          <article class="case-card">
-            <span class="ic">
-              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8">
-                <ellipse cx="12" cy="6" rx="8" ry="3" /><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6" /><path d="M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6" />
-              </svg>
-            </span>
-            <h3>신청 데이터 자동 취합</h3>
-            <p>폼으로 들어온 신청 데이터를 현황 시트에 실시간 자동 매핑합니다.</p>
-            <div class="ba">
-              <div class="ba-row"><span class="ba-label">Before</span><span class="ba-before">수기 입력 및 복붙</span></div>
-              <div class="ba-row"><span class="ba-label">After</span><span class="ba-after">누락·오기입 0%</span></div>
-            </div>
-          </article>
-
-          <article class="case-card">
-            <span class="ic">
-              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" stroke-linejoin="round" /><path d="M14 3v6h6" stroke-linejoin="round" /><path d="M8 13h8M8 17h5" stroke-linecap="round" />
-              </svg>
-            </span>
-            <h3>맞춤형 폼 자동 생성</h3>
-            <p>시트 데이터를 읽어 조건(일정, 인원 등)에 맞는 모집 폼을 버튼 한 번으로 생성합니다.</p>
-            <div class="ba">
-              <div class="ba-row"><span class="ba-label">Before</span><span class="ba-before">매번 2시간 소요</span></div>
-              <div class="ba-row"><span class="ba-label">After</span><span class="ba-after">단 5초 만에 완성</span></div>
-            </div>
-          </article>
-
-          <article class="case-card">
-            <span class="ic">
-              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path d="M12 21s7-6.3 7-11a7 7 0 0 0-14 0c0 4.7 7 11 7 11z" stroke-linejoin="round" /><circle cx="12" cy="10" r="2.6" />
-              </svg>
-            </span>
-            <h3>API 기반 인력 자동 매칭</h3>
-            <p>지도 API를 연동해 거리 계산 및 배정 규칙 기반으로 최적의 인력을 자동 배치합니다.</p>
-            <div class="ba">
-              <div class="ba-row"><span class="ba-label">Before</span><span class="ba-before">수시간 지도 검색</span></div>
-              <div class="ba-row"><span class="ba-label">After</span><span class="ba-after">즉시 최적 후보 도출</span></div>
-            </div>
-          </article>
-
-          <article class="case-card">
-            <span class="ic">
-              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8">
-                <rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
-              </svg>
-            </span>
-            <h3>개별 문서 일괄 생성</h3>
-            <p>수십 개의 맞춤형 체크리스트와 안내 문서를 템플릿에 맞춰 자동으로 일괄 생성합니다.</p>
-            <div class="ba">
-              <div class="ba-row"><span class="ba-label">Before</span><span class="ba-before">5~6시간 수작업</span></div>
-              <div class="ba-row"><span class="ba-label">After</span><span class="ba-after">버튼 클릭 즉시 생성</span></div>
-            </div>
-          </article>
-
-          <article class="case-card">
-            <span class="ic">
-              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8">
-                <rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" stroke-linejoin="round" />
-              </svg>
-            </span>
-            <h3>맞춤형 메일 자동 발송</h3>
-            <p>개별 서류를 자동으로 첨부하여 대상자 전원에게 맞춤형 메일을 일괄 발송합니다.</p>
-            <div class="ba">
-              <div class="ba-row"><span class="ba-label">Before</span><span class="ba-before">1~2일 소요</span></div>
-              <div class="ba-row"><span class="ba-label">After</span><span class="ba-after">단 5분 만에 발송</span></div>
-            </div>
-          </article>
-
-          <article class="case-card">
-            <span class="ic">
-              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8">
-                <rect x="5" y="3" width="14" height="18" rx="2" /><path d="M8 7h8" stroke-linecap="round" /><path d="M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01" stroke-linecap="round" />
-              </svg>
-            </span>
-            <h3>교통비 자동 정산</h3>
-            <p>지도 API로 이동 거리를 즉시 조회하고 정산 수식에 맞춰 교통비를 자동 계산합니다.</p>
-            <div class="ba">
-              <div class="ba-row"><span class="ba-label">Before</span><span class="ba-before">일일이 수동 계산</span></div>
-              <div class="ba-row"><span class="ba-label">After</span><span class="ba-after">1초 만에 자동 산출</span></div>
-            </div>
-          </article>
-        </div>
-
-        <!-- Tech stack -->
-        <div class="stack">
-          <h3>사용된 자동화 기술 스택</h3>
-          <p>Google Apps Script, Gmail API, Naver Maps API, AI 에이전트 등</p>
-          <div class="award">
-            <span class="trophy" aria-hidden="true">🏆</span>
-            <p>경영진 포상 및<br />전사 우수 사례 공유</p>
+          <div class="pain-item">
+            <span class="pain-no">03</span>
+            <p>퇴근 후 쌓인 문의는 다음 날에야 확인되고, 고객은 이미 떠납니다.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ===== Testimonials ===== -->
-    <section class="proof">
+    <!-- ===== Features (Bento) ===== -->
+    <section class="features" id="features">
       <div class="container">
-        <h2 class="section-title proof-title">이미 많은 분들이<br />시간을 되찾았습니다</h2>
-        <div class="quotes">
-          <figure class="quote">
-            <blockquote>“카톡 응대에 하루 2시간씩 쓰던 걸 챗봇이 대신해줘요. 그 시간에 신메뉴를 개발합니다.”</blockquote>
-            <figcaption>— 외식업 / 대표 김OO</figcaption>
-          </figure>
-          <figure class="quote">
-            <blockquote>“예약 리마인드를 자동화하고 노쇼가 절반으로 줄었어요. 손이 정말 편해졌습니다.”</blockquote>
-            <figcaption>— 공방·클래스 / 운영자 이OO</figcaption>
-          </figure>
-          <figure class="quote">
-            <blockquote>“월말 정산이 이틀 걸렸는데 이제 버튼 한 번이면 끝나요. 사람 안 뽑고 규모를 키웠습니다.”</blockquote>
-            <figcaption>— 교육 운영 / 매니저 박OO</figcaption>
-          </figure>
+        <p class="kicker">다락방이 대신 하는 일</p>
+        <h2 class="section-title">필요한 자동화만<br />골라 담아 드립니다</h2>
+
+        <div class="bento">
+          <article class="tile tile-lg">
+            <span class="tile-tag">AI 챗봇</span>
+            <h3>24시간 응대하는 AI 상담봇</h3>
+            <p>카카오톡·웹·인스타 DM에서 자주 묻는 질문을 학습해, 가격·예약·환불·준비물 안내를 사람처럼 즉시 답합니다. 못 푸는 문의만 담당자에게 넘깁니다.</p>
+            <div class="tile-chat" aria-hidden="true">
+              <span class="bubble in">예약 변경 되나요?</span>
+              <span class="bubble out">네, 하루 전까지 가능해요. 원하시는 날짜를 알려주시면 바로 변경해 드릴게요 🙂</span>
+            </div>
+          </article>
+
+          <article class="tile">
+            <span class="tile-ic">🗂️</span>
+            <h3>데이터 자동 정리</h3>
+            <p>폼·메일·채팅으로 들어온 신청을 시트에 실시간 정리. 누락과 오타가 사라집니다.</p>
+          </article>
+
+          <article class="tile">
+            <span class="tile-ic">🔔</span>
+            <h3>알림·리마인드 발송</h3>
+            <p>예약 확인, 노쇼 방지 리마인드, 정산 안내를 정해진 시점에 자동 발송합니다.</p>
+          </article>
+
+          <article class="tile">
+            <span class="tile-ic">🔗</span>
+            <h3>API 연동</h3>
+            <p>지도·메일·결제·시트를 연결해 거리 계산, 일괄 메일, 정산까지 한 흐름으로 묶습니다.</p>
+          </article>
+
+          <article class="tile tile-accent">
+            <span class="tile-ic">🧭</span>
+            <h3>맞춤 워크플로 설계</h3>
+            <p>현재 업무 흐름을 진단해, 효과가 가장 큰 지점부터 단계별로 자동화 로드맵을 그려 드립니다.</p>
+          </article>
         </div>
+      </div>
+    </section>
+
+    <!-- ===== Before / After Compare ===== -->
+    <section class="compare" id="compare">
+      <div class="container">
+        <p class="kicker">도입 전 vs 도입 후</p>
+        <h2 class="section-title">같은 업무, 완전히 다른 하루</h2>
+
+        <div class="compare-panel">
+          <div class="col col-before">
+            <h3>도입 전</h3>
+            <ul>
+              <li>카톡 응대에 하루 2~3시간</li>
+              <li>예약·정산 수기 입력, 잦은 실수</li>
+              <li>야간·주말 문의는 방치</li>
+              <li>사람이 늘면 일도 같이 늘어남</li>
+            </ul>
+          </div>
+          <div class="col-vs" aria-hidden="true">→</div>
+          <div class="col col-after">
+            <h3>도입 후</h3>
+            <ul>
+              <li>반복 응대는 AI가 즉시 처리</li>
+              <li>입력·정산 자동화로 오류 0%</li>
+              <li>24시간 끊김 없는 자동 응대</li>
+              <li>인력 추가 없이 규모 확장</li>
+            </ul>
+          </div>
+        </div>
+
+        <figure class="proof-quote">
+          <blockquote>“월말 정산이 이틀 걸렸는데 이제 버튼 한 번이면 끝나요. 사람을 더 뽑지 않고도 매출 규모를 두 배로 키웠습니다.”</blockquote>
+          <figcaption>— 교육 운영사 매니저 박OO</figcaption>
+        </figure>
       </div>
     </section>
 
     <!-- ===== Process ===== -->
     <section class="process">
       <div class="container">
-        <h2 class="section-title">진행은 이렇게 됩니다</h2>
-        <ol class="steps">
-          <li class="step">
-            <span class="step-num">1</span>
-            <div>
-              <h3>무료 진단 신청</h3>
-              <p>아래 폼으로 현재 반복 업무를 알려주세요. 1분이면 충분합니다.</p>
-            </div>
-          </li>
-          <li class="step">
-            <span class="step-num">2</span>
-            <div>
-              <h3>업무 흐름 분석</h3>
-              <p>어떤 업무를 어떻게 자동화할 수 있는지, 효과가 큰 순서로 정리해드립니다.</p>
-            </div>
-          </li>
-          <li class="step">
-            <span class="step-num">3</span>
-            <div>
-              <h3>맞춤 구축 & 적용</h3>
-              <p>자동화 워크플로와 AI 챗봇을 구축하고, 실제 업무에 적용합니다.</p>
-            </div>
-          </li>
+        <p class="kicker">진행 방식</p>
+        <h2 class="section-title">진단부터 운영까지, 4단계</h2>
+        <ol class="stepper">
+          <li><span class="dot">1</span><h3>무료 진단</h3><p>반복 업무를 알려주시면 자동화 가능 지점을 찾아 드립니다.</p></li>
+          <li><span class="dot">2</span><h3>설계 제안</h3><p>효과가 큰 순서로 자동화 범위와 일정을 제안합니다.</p></li>
+          <li><span class="dot">3</span><h3>구축</h3><p>워크플로와 AI 챗봇을 만들고 실제 업무에 연결합니다.</p></li>
+          <li><span class="dot">4</span><h3>운영·개선</h3><p>도입 후에도 데이터를 보며 계속 다듬어 드립니다.</p></li>
         </ol>
       </div>
     </section>
 
-    <!-- ===== Contact / CTA ===== -->
-    <section class="contact" id="contact">
+    <!-- ===== FAQ ===== -->
+    <section class="faq" id="faq">
       <div class="container">
-        <h2 class="contact-title">자동화 할 수 있는 업무,<br />무료로 진단받아 보세요</h2>
-        <p class="contact-sub">진단은 무료이며, 부담 없이 상담만 받으셔도 됩니다.</p>
+        <p class="kicker">자주 묻는 질문</p>
+        <h2 class="section-title">궁금증, 먼저 풀어 드릴게요</h2>
+        <div class="accordion">
+          <details>
+            <summary>비용은 어떻게 되나요?</summary>
+            <p>업무 범위에 따라 달라집니다. 무료 진단 후 필요한 자동화만 골라 견적을 드리며, 작게 시작해 확장하는 방식을 권해 드립니다.</p>
+          </details>
+          <details>
+            <summary>도입까지 얼마나 걸리나요?</summary>
+            <p>간단한 챗봇·알림은 1~2주, 데이터 연동이 포함되면 2~4주가 일반적입니다. 진단 시 정확한 일정을 안내해 드립니다.</p>
+          </details>
+          <details>
+            <summary>지금 쓰는 카카오 채널·시트에 그대로 붙나요?</summary>
+            <p>네. 카카오톡 채널, Google Sheets, 메일, 결제 등 기존에 쓰시던 도구에 연결하는 방식이라 새 시스템으로 이사할 필요가 없습니다.</p>
+          </details>
+          <details>
+            <summary>도입 후 유지보수도 해주시나요?</summary>
+            <p>네. 운영 중 생기는 예외 상황과 개선 요청을 함께 반영합니다. 데이터를 보며 응답 품질을 계속 높여 드립니다.</p>
+          </details>
+        </div>
+      </div>
+    </section>
 
-        <form class="contact-form" id="leadForm" novalidate>
+    <!-- ===== CTA / Contact ===== -->
+    <section class="cta" id="contact">
+      <div class="container cta-inner">
+        <div class="cta-copy">
+          <h2>5분이면 충분합니다.<br />무엇을 자동화할 수 있는지 알려 드릴게요.</h2>
+          <p>진단은 무료이며, 부담 없이 상담만 받으셔도 됩니다.</p>
+        </div>
+        <form class="cta-form" id="leadForm" novalidate>
           <div class="field">
             <label for="name">이름 / 업체명</label>
-            <input type="text" id="name" name="name" placeholder="예) 홍길동 / OO다락방" required />
+            <input type="text" id="name" name="name" placeholder="예) 홍길동 / OO스튜디오" required />
           </div>
           <div class="field">
             <label for="contact">연락처 (휴대폰 또는 이메일)</label>
             <input type="text" id="contact" name="contact" placeholder="예) 010-1234-5678" required />
           </div>
           <div class="field">
-            <label for="message">자동화하고 싶은 반복 업무</label>
-            <textarea id="message" name="message" rows="3" placeholder="예) 매일 카톡으로 오는 예약 문의 응대, 예약 리마인드 발송"></textarea>
+            <label for="message">자동화하고 싶은 업무</label>
+            <textarea id="message" name="message" rows="3" placeholder="예) 카톡 예약 문의 응대, 예약 리마인드 발송"></textarea>
           </div>
-          <button type="submit" class="btn btn-dark btn-lg btn-block">
-            무료 진단 신청하기 <span class="arrow" aria-hidden="true">→</span>
-          </button>
+          <button type="submit" class="btn btn-primary btn-lg btn-block">무료 진단 신청하기</button>
           <p class="form-note" id="formNote" role="status"></p>
         </form>
       </div>
@@ -352,17 +257,16 @@
   </main>
 
   <!-- ===== Footer ===== -->
-  <footer class="site-footer">
+  <footer class="footer">
     <div class="container footer-inner">
-      <div class="brand brand-footer">
-        <strong>AI 트렌드 다락방</strong>
-        <small>WORKFLOW AUTOMATION CONSULTING</small>
+      <div>
+        <p class="footer-brand">AI 트렌드 다락방</p>
+        <p class="footer-desc">반복 업무 자동화 &amp; AI 챗봇 컨설팅</p>
       </div>
       <p class="copyright">© <span id="year"></span> AI 트렌드 다락방. All rights reserved.</p>
     </div>
   </footer>
 
-  <!-- Floating CTA (mobile) -->
   <a href="#contact" class="floating-cta">무료 진단 받기</a>
 
   <script src="script.js"></script>
