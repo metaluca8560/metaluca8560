@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="AI 트렌드 다락방 로고">
+  <defs>
+    <linearGradient id="atticGrad" x1="8" y1="58" x2="56" y2="8" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#c4622d" />
+      <stop offset="1" stop-color="#e7a93f" />
+    </linearGradient>
+  </defs>
+  <!-- 다락방(집) 실루엣: 사각 몸체 + 삼각 지붕 -->
+  <path d="M32 5 L57 26 V52 a4 4 0 0 1-4 4 H11 a4 4 0 0 1-4-4 V26 Z" fill="url(#atticGrad)" />
+  <!-- 다락방 창문 -->
+  <circle cx="32" cy="21" r="3.6" fill="#fffdf8" />
+  <!-- 상승 트렌드 라인 -->
+  <polyline points="15 47 25 39 33 44 47 30" fill="none" stroke="#fffdf8" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- 화살촉(우상향) -->
+  <path d="M40 30 H47 V37" fill="none" stroke="#fffdf8" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- AI 반짝임 -->
+  <path d="M51 8 l1.4 3.8 3.8 1.4 -3.8 1.4 -1.4 3.8 -1.4 -3.8 -3.8 -1.4 3.8 -1.4 z" fill="#ffd36b" />
+</svg>
