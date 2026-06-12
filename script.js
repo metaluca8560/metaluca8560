@@ -1,3 +1,19 @@
+// ===== 카카오톡 채널 연결 설정 =====
+// 카카오톡 채널 관리자센터(https://center-pf.kakao.com)에서 채널을 만들면
+// 채널 URL이 http://pf.kakao.com/_XXXXXX 형태로 생깁니다.
+// 아래 "_XXXXXX"의 ID 부분만 그대로 붙여넣으세요. (예: "_abcdEF")
+// 비워두면 버튼은 자동으로 하단 문의 폼으로 이동합니다.
+const KAKAO_CHANNEL_ID = ""; // 예) "_abcdEF"
+
+document.querySelectorAll('[data-cta="kakao"]').forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    if (!KAKAO_CHANNEL_ID) return; // 미설정: 기본 동작(#contact 폼으로 스크롤)
+    e.preventDefault();
+    // 채널 채팅(상담) 바로 열기. 챗봇을 연결해두면 자동 응답이 동작합니다.
+    window.open("http://pf.kakao.com/" + KAKAO_CHANNEL_ID + "/chat", "_blank", "noopener");
+  });
+});
+
 // 현재 연도
 document.getElementById("year").textContent = new Date().getFullYear();
 

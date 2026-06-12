@@ -34,6 +34,19 @@ python3 -m http.server 8000
 - **무료 진단 폼 전송**: 현재는 데모입니다. `script.js`의 `// TODO` 부분에서
   이메일·카카오 채널·Google Sheets·Formspree 등으로 연동하세요.
 
+## "무료 진단" 버튼 → 카카오톡 챗봇 연결
+
+`data-cta="kakao"`가 붙은 버튼(상단 내비, 히어로, 플로팅, CTA 섹션)은 카카오톡 채널 채팅을
+바로 열 수 있습니다. 연결 방법:
+
+1. [카카오톡 채널 관리자센터](https://center-pf.kakao.com)에서 채널을 만듭니다.
+2. (자동 응답을 원하면) [카카오 i 오픈빌더](https://i.kakao.com)에서 챗봇을 만들어 채널에 연결합니다.
+3. 채널 URL `http://pf.kakao.com/_XXXXXX` 에서 `_XXXXXX` 부분을 복사합니다.
+4. `script.js` 상단의 `KAKAO_CHANNEL_ID` 값에 붙여넣습니다. 예: `const KAKAO_CHANNEL_ID = "_abcdEF";`
+
+> ID를 비워두면 버튼은 자동으로 하단 문의 폼으로 스크롤됩니다(미설정 시 graceful fallback).
+> 채널 가입 화면의 "사업자 정보 미확인" 경고를 없애려면 카카오 채널에서 사업자 인증을 받으면 됩니다.
+
 ## 배포
 
 정적 파일이라 GitHub Pages, Netlify, Vercel, Cloudflare Pages 등 어디든 그대로 올리면 됩니다.
