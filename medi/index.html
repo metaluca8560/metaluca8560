@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>오늘 어디 아파? — 증상 안내 & 병원 찾기</title>
+  <meta name="description" content="어디가 아플 때 대화하며 어느 과에 가야 할지, 얼마나 급한지 알려주고 가까운 병원·약국·응급실을 찾아주는 길잡이. 진단이 아닌 참고용 안내." />
+  <meta property="og:title" content="오늘 어디 아파?" />
+  <meta property="og:description" content="증상을 말하면 진료과·응급도 안내 + 주변 병원/응급실 찾기. 참고용 길잡이." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="senior">
+
+  <!-- ===== 상단 ===== -->
+  <header class="topbar">
+    <div class="wrap topbar-in">
+      <a href="#top" class="logo" id="top">🩺 오늘 <em>어디 아파?</em></a>
+      <div class="mode" role="group" aria-label="사용자 모드">
+        <button class="mode-btn is-on" data-mode="senior">어르신</button>
+        <button class="mode-btn" data-mode="adult">일반</button>
+        <button class="mode-btn" data-mode="child">아이</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 면책 배너 (항상 보임) -->
+  <div class="disclaimer-bar">
+    <div class="wrap">⚠️ 이 앱은 <strong>진단이 아니라 참고용 안내</strong>예요. 정확한 진단은 의사와 상담하세요. <strong>위급하면 즉시 119.</strong></div>
+  </div>
+
+  <main class="wrap main">
+
+    <!-- ===== 문진 영역 (JS가 단계별로 채움) ===== -->
+    <section class="card flow" id="flow" aria-live="polite">
+      <!-- 진행 표시 -->
+      <div class="progress" id="progress" hidden>
+        <span class="bar"><i id="bar"></i></span>
+        <button class="link-btn" id="backBtn" type="button">← 이전</button>
+      </div>
+      <div id="step"><!-- 단계 콘텐츠 --></div>
+    </section>
+
+    <!-- ===== 결과 (JS가 채움, 처음엔 숨김) ===== -->
+    <section class="card result" id="result" hidden></section>
+
+    <!-- ===== 주변 찾기 ===== -->
+    <section class="card finder" id="finder">
+      <h2>📍 주변 병원·약국·응급실 찾기</h2>
+      <p class="muted">버튼을 누르면 <strong>내 위치 기준 지도 검색</strong>이 열려요. (위치 권한을 허용해 주세요)</p>
+      <div class="finder-grid">
+        <button class="find-btn" data-q="병원">🏥 가까운 병원</button>
+        <button class="find-btn" data-q="약국">💊 가까운 약국</button>
+        <button class="find-btn" data-q="응급실">🚑 가까운 응급실</button>
+        <button class="find-btn child-only" data-q="소아청소년과">🧸 소아과</button>
+      </div>
+      <p class="finder-note" id="finderNote" hidden></p>
+
+      <div class="official">
+        <h3>공식 서비스 바로가기</h3>
+        <ul>
+          <li><a href="https://www.e-gen.or.kr" target="_blank" rel="noopener">응급의료포털 E-Gen ↗</a> — 야간·공휴일 문 연 병원/약국, 응급실 실시간</li>
+          <li><a href="https://www.hira.or.kr/ra/hosp/getHealthMap.do" target="_blank" rel="noopener">건강보험심사평가원 병원·약국 찾기 ↗</a></li>
+          <li class="child-only"><a href="https://www.e-gen.or.kr/egen/hospitalfinder.do" target="_blank" rel="noopener">달빛어린이병원(야간 소아) 찾기 ↗</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===== 응급 전화 ===== -->
+    <section class="card emergency">
+      <h2>📞 위급할 땐 바로 전화</h2>
+      <div class="tel-grid">
+        <a class="tel red" href="tel:119"><strong>119</strong><span>응급·구급</span></a>
+        <a class="tel" href="tel:129"><strong>129</strong><span>보건복지 상담</span></a>
+        <a class="tel" href="tel:1339"><strong>1339</strong><span>감염병 상담</span></a>
+        <a class="tel" href="tel:1393"><strong>1393</strong><span>자살예방 상담</span></a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p><strong>오늘 어디 아파?</strong> — 증상 안내 길잡이</p>
+      <p class="fine">본 서비스의 모든 안내는 일반적인 정보이며 <strong>의학적 진단·처방이 아닙니다.</strong> 증상이 심하거나 악화되면 지체 없이 의료기관을 방문하세요. 응급상황은 119. 입력한 건강 정보는 서버에 저장하지 않고 사용자 기기에서만 처리됩니다.</p>
+      <p class="fine">© <span id="year"></span> 오늘 어디 아파? (MVP)</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
