@@ -31,6 +31,12 @@
     <div class="wrap">⚠️ 이 앱은 <strong>진단이 아니라 참고용 안내</strong>예요. 정확한 진단은 의사와 상담하세요. <strong>위급하면 즉시 119.</strong></div>
   </div>
 
+  <!-- 빠른 이동 -->
+  <div class="wrap quicklinks">
+    <a class="ql" href="#firstaid">🚑 응급처치</a>
+    <a class="ql" href="#finder">📍 병원 찾기</a>
+  </div>
+
   <main class="wrap main">
 
     <!-- ===== 문진 영역 (JS가 단계별로 채움) ===== -->
@@ -45,6 +51,15 @@
 
     <!-- ===== 결과 (JS가 채움, 처음엔 숨김) ===== -->
     <section class="card result" id="result" hidden></section>
+
+    <!-- ===== 빠른 응급처치 ===== -->
+    <section class="card firstaid" id="firstaid">
+      <h2>🚑 빠른 응급처치</h2>
+      <p class="muted">급할 때 항목을 누르면 단계가 펼쳐져요. <strong>심하면 망설이지 말고 119.</strong></p>
+      <input id="faSearch" class="fa-search" type="search" placeholder="🔍 증상 검색 (예: 화상, 코피, 벌, 목 막힘)" aria-label="응급처치 검색" />
+      <div id="faList" class="fa-list"><!-- JS가 채움 --></div>
+      <p class="fa-empty" id="faEmpty" hidden>검색 결과가 없어요. 다른 단어로 찾아보세요.</p>
+    </section>
 
     <!-- ===== 주변 찾기 ===== -->
     <section class="card finder" id="finder">

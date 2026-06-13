@@ -295,5 +295,136 @@ function openMap(q, coords) {
   window.open(url, "_blank", "noopener");
 }
 
+// ================================================================
+//  빠른 응급처치 (일상 상황별 단계 안내)
+//  ※ 일반적 응급처치 상식이며, 심한 경우 119/응급실이 우선입니다.
+// ================================================================
+const FIRST_AID = [
+  {
+    ico: "🍽️", title: "목에 음식이 걸렸을 때 (질식)", keys: "질식 기도 사레 목막힘 하임리히 음식",
+    steps: [
+      "기침을 할 수 있으면 멈추지 말고 세게 기침하게 하세요.",
+      "말도 기침도 숨도 못 쉬면 → <strong>즉시 119</strong>에 전화하고 바로 아래를 시행하세요.",
+      "[성인·1세 이상] 뒤에서 양팔로 안고, 명치와 배꼽 사이를 주먹으로 감싸 빠르게 안쪽·위쪽으로 밀어 올리세요(하임리히법). 이물질이 나오거나 숨 쉴 때까지 반복.",
+      "[1세 미만 영아] 머리를 낮춰 엎드리게 하고 등 가운데를 5번 두드린 뒤, 뒤집어 가슴 가운데를 두 손가락으로 5번 압박. 번갈아 반복.",
+      "의식을 잃으면 즉시 심폐소생술(가슴 압박)을 시작하세요.",
+    ],
+    dont: ["손가락을 입에 깊이 넣어 무리하게 빼내려 하지 마세요(더 깊이 들어갈 수 있어요)."],
+    call119: "숨을 못 쉬거나 의식이 흐려지면 즉시 119.",
+  },
+  {
+    ico: "🐝", title: "벌에 쏘였을 때", keys: "벌 벌침 쏘임 알레르기 아나필락시스",
+    steps: [
+      "쏘인 곳에서 안전하게 벗어나세요.",
+      "벌침이 보이면 신용카드 같은 것으로 옆으로 긁어 빼내세요.",
+      "비누와 물로 씻고, 얼음을 천에 싸서 냉찜질하세요.",
+    ],
+    dont: ["손가락·핀셋으로 침을 집어 짜지 마세요(독이 더 들어갑니다)."],
+    call119: "입술·혀가 붓거나 두드러기·호흡곤란·어지럼이 생기면(전신 알레르기) 즉시 119. 에피네프린 주사기가 있으면 사용.",
+  },
+  {
+    ico: "🦟", title: "모기·벌레에 물렸을 때", keys: "모기 벌레 물림 가려움 부음",
+    steps: [
+      "긁지 말고 찬물이나 냉찜질로 가라앉히세요.",
+      "가려움엔 항히스타민·스테로이드 연고를 바르세요.",
+    ],
+    dont: ["손톱으로 자국 내거나 침을 바르지 마세요(2차 감염)."],
+    seeDoctor: "점점 붓고 열이 나거나 진물이 생기면 병원 진료.",
+  },
+  {
+    ico: "🕷️", title: "진드기에 물렸을 때", keys: "진드기 쯔쯔가무시 라임병 들",
+    steps: [
+      "핀셋으로 진드기 머리 가까이(피부에 닿은 부분)를 잡고, 비틀지 말고 수직으로 천천히 당겨 빼세요.",
+      "물린 부위를 소독하세요. 뺀 진드기는 통에 담아두면 진료에 도움이 됩니다.",
+    ],
+    seeDoctor: "며칠 내 발열·발진·근육통이 생기면 병원 진료(쯔쯔가무시·라임병 등).",
+  },
+  {
+    ico: "🔥", title: "화상·뜨거운 물에 데었을 때", keys: "화상 데임 뜨거운물 불 물집",
+    steps: [
+      "흐르는 미지근한 물에 10~20분 식히세요.",
+      "반지·시계 등은 붓기 전에 빼세요.",
+      "깨끗한 거즈로 가볍게 덮으세요.",
+    ],
+    dont: ["물집을 터뜨리지 마세요.", "얼음을 직접 대거나 된장·치약·기름을 바르지 마세요."],
+    call119: "넓거나 깊은 화상, 얼굴·손·관절·생식기 화상이면 즉시 병원(심하면 119).",
+  },
+  {
+    ico: "🩸", title: "베이거나 피가 날 때", keys: "출혈 베임 상처 지혈 칼",
+    steps: [
+      "깨끗한 천·거즈로 상처를 직접 5~10분 눌러 지혈하세요.",
+      "다친 곳을 심장보다 높이 올리세요.",
+      "지혈되면 소독한 뒤 깨끗이 덮으세요.",
+    ],
+    call119: "피가 멈추지 않거나, 상처가 깊고 벌어지거나, 분출하듯 출혈하면 119/응급실(봉합 필요).",
+  },
+  {
+    ico: "🤧", title: "코피가 날 때", keys: "코피 비출혈",
+    steps: [
+      "고개를 살짝 앞으로 숙이세요(뒤로 젖히지 마세요).",
+      "콧볼(코 아랫부분)을 10~15분 단단히 눌러 쥐세요.",
+      "입으로 숨 쉬고, 넘어온 피는 삼키지 말고 뱉으세요.",
+    ],
+    seeDoctor: "15분 넘게 멈추지 않거나 자주 반복되면 병원 진료.",
+  },
+  {
+    ico: "🦶", title: "삐었을 때 (염좌·접질림)", keys: "염좌 삠 접질림 발목 타박상 RICE",
+    steps: [
+      "안정(Rest)을 취하고, 얼음을 천에 싸 15~20분 냉찜질(Ice).",
+      "압박붕대로 감고(Compression), 다친 곳을 심장보다 높이 올리세요(Elevation). = RICE",
+    ],
+    dont: ["초기 48시간엔 온찜질·음주·마사지·무리한 사용을 피하세요."],
+    seeDoctor: "발을 디딜 수 없거나, 변형·심한 붓기·멍이 있으면 정형외과.",
+  },
+  {
+    ico: "👁️", title: "눈에 이물질·약품이 들어갔을 때", keys: "눈 이물질 약품 화학 세척",
+    steps: [
+      "비비지 말고, 깨끗한 물이나 식염수로 눈을 충분히 씻으세요.",
+      "콘택트렌즈는 빼세요.",
+    ],
+    call119: "화학약품이 들어갔으면 15분 이상 흐르는 물로 씻은 뒤 즉시 안과·응급실. 통증·시야 이상이 계속되면 진료.",
+  },
+  {
+    ico: "😵", title: "갑자기 쓰러졌을 때 (실신)", keys: "실신 기절 쓰러짐 졸도",
+    steps: [
+      "안전한 곳에 눕히고 다리를 약간 올려주세요.",
+      "옷·벨트를 느슨하게 하고 신선한 공기를 쐬게 하세요.",
+      "깨어나면 천천히 일으키세요.",
+    ],
+    call119: "곧 깨어나지 않거나 숨을 안 쉬면 즉시 119 + 가슴 압박(심폐소생술).",
+  },
+];
+
+function renderFirstAid() {
+  const box = document.getElementById("faList");
+  box.innerHTML = "";
+  FIRST_AID.forEach((item) => {
+    const d = document.createElement("details");
+    d.className = "fa-item";
+    d.dataset.title = (item.title + " " + (item.keys || "")).toLowerCase();
+    let body = `<ol class="fa-steps">${item.steps.map((s) => `<li>${s}</li>`).join("")}</ol>`;
+    if (item.dont) body += `<div class="fa-dont"><strong>⛔ 하지 마세요</strong><ul>${item.dont.map((x) => `<li>${x}</li>`).join("")}</ul></div>`;
+    if (item.seeDoctor) body += `<p class="fa-see">🏥 ${item.seeDoctor}</p>`;
+    if (item.call119) body += `<p class="fa-call">🚑 ${item.call119}</p>`;
+    d.innerHTML = `<summary><span class="fa-ico">${item.ico}</span><span>${item.title}</span></summary><div class="fa-body">${body}</div>`;
+    box.appendChild(d);
+  });
+}
+
+// 응급처치 검색
+const faSearch = document.getElementById("faSearch");
+const faEmpty = document.getElementById("faEmpty");
+faSearch.addEventListener("input", () => {
+  const q = faSearch.value.trim().toLowerCase();
+  let shown = 0;
+  document.querySelectorAll("#faList .fa-item").forEach((d) => {
+    const match = !q || d.dataset.title.includes(q);
+    d.style.display = match ? "" : "none";
+    if (match) shown++;
+  });
+  faEmpty.hidden = shown > 0;
+});
+
 // 시작
+renderFirstAid();
 render();
