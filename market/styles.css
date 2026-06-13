@@ -96,6 +96,13 @@ body { font-family: var(--font); color: var(--ink); background: var(--bg); line-
 .d-btn.ghost { background: var(--surface); color: var(--brand-d); border: 1.5px solid var(--line); }
 .d-btn:active { transform: scale(.99); }
 
+/* AI 요리 추천 */
+.recipe-btn { width: 100%; margin-top: 14px; font-family: inherit; font-weight: 800; font-size: 15px; cursor: pointer; color: #fff; background: linear-gradient(120deg, var(--brand), #f0973f); border: none; border-radius: 14px; padding: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--shadow-sm); }
+.recipe-btn:active { transform: scale(.99); }
+.recipe-btn:disabled { opacity: .6; cursor: default; }
+.recipe-btn .ai-tag { font-size: 11px; font-weight: 800; background: rgba(255,255,255,.25); padding: 2px 8px; border-radius: 999px; }
+.recipe-result { margin-top: 12px; background: #fffaf3; border: 1px solid var(--line); border-radius: 14px; padding: 15px; font-size: 14.5px; line-height: 1.65; color: var(--ink); white-space: pre-wrap; }
+
 /* 푸터 */
 .footer { background: #f3e7d4; color: var(--muted); padding: 26px 0 40px; }
 .footer p { margin: 6px 0; font-size: 13px; }

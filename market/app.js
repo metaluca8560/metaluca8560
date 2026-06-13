@@ -278,6 +278,8 @@ function showDetail(id) {
       <h2>🔥 이 시장의 주무기</h2>
       <div class="spec-chips">${specs}</div>
       <div style="margin-top:14px">${foods}</div>
+      <button class="recipe-btn" id="recipeBtn">🍳 이 특산물로 뭐 해먹지? <span class="ai-tag">AI</span></button>
+      <div class="recipe-result" id="recipeResult" hidden></div>
     </div>
 
     ${shops ? `<div class="d-block"><h2>🏪 대표 가게·코너</h2>${shops}</div>` : ""}
@@ -296,6 +298,8 @@ function showDetail(id) {
   listView.hidden = true;
   detailView.hidden = false;
   document.getElementById("backBtn").addEventListener("click", showList);
+  const rb = document.getElementById("recipeBtn");
+  if (rb) rb.addEventListener("click", () => askRecipe(m.specialties || [], m.name, "recipeResult", rb));
   window.scrollTo({ top: 0 });
 }
 
@@ -328,9 +332,42 @@ function renderSeasonal() {
       <h2>🥬 ${month}월 제철 식재료</h2>
       <p class="muted">시장 가서 이것부터 찾아보세요! 제일 맛있고 저렴할 때예요.</p>
       <div class="season-chips">${items.map((s) => `<span>${esc(s)}</span>`).join("")}</div>
+      <button class="recipe-btn" id="seasonRecipeBtn">🍳 이번 달 제철로 뭐 해먹지? <span class="ai-tag">AI</span></button>
+      <div class="recipe-result" id="seasonRecipeResult" hidden></div>
     </div>`;
+  const sb = document.getElementById("seasonRecipeBtn");
+  if (sb) sb.addEventListener("click", () => askRecipe(items, `${month}월 제철 식재료`, "seasonRecipeResult", sb));
 }
 renderSeasonal();
+
+// ---------- AI 요리 추천 ("이 특산물로 뭐 해먹지?") ----------
+const MARKET_API = (window.MARKET_API_BASE || "").replace(/\/$/, "");
+async function askRecipe(ingredients, title, resultId, btn) {
+  const box = document.getElementById(resultId);
+  if (!box) return;
+  if (!MARKET_API) {
+    box.hidden = false;
+    box.textContent = "AI 요리 추천은 백엔드 연결 후 켜져요. (config.js에 Worker 주소 입력)";
+    return;
+  }
+  box.hidden = false;
+  box.textContent = "🍳 맛있는 메뉴 떠올리는 중…";
+  btn.disabled = true;
+  try {
+    const res = await fetch(MARKET_API + "/recipe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ingredients, market: title }),
+    });
+    if (!res.ok) throw new Error("server " + res.status);
+    const data = await res.json();
+    box.textContent = (data.reply || "").trim() || "추천을 받지 못했어요. 잠시 후 다시 시도해 주세요.";
+  } catch (e) {
+    box.textContent = "지금은 추천을 불러오지 못했어요. 잠시 후 다시 시도해 주세요. (AI 추천은 백엔드 업데이트가 필요할 수 있어요)";
+  } finally {
+    btn.disabled = false;
+  }
+}
 
 function esc(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));

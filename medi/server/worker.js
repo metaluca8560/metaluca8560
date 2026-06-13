@@ -71,6 +71,9 @@ export default {
       if (url.pathname === "/triage" && request.method === "POST") {
         return await handleTriage(request, env, cors);
       }
+      if (url.pathname === "/recipe" && request.method === "POST") {
+        return await handleRecipe(request, env, cors);
+      }
       if (url.pathname === "/hospitals" && request.method === "GET") {
         return await handleHospitals(url, env, cors);
       }
@@ -165,6 +168,35 @@ async function callClaude(env, system, messages, cors) {
     .join("\n")
     .trim();
   return json({ reply }, 200, cors);
+}
+
+// ----- 요리 추천 ("이 특산물로 뭐 해먹지?") -----
+const RECIPE_PROMPT = `당신은 한국어로 답하는 다정한 "집밥 요리 도우미"입니다. 전통시장에서 산 특산물·제철 식재료로 집에서 쉽게 해먹을 수 있는 요리·반찬을 추천합니다.
+
+규칙:
+- 2~4가지를 추천합니다. 각 항목은 "요리 이름 — 한두 줄 설명 + 아주 간단한 방법(핵심 순서만)"으로 짧게.
+- 어려운 재료·도구는 피하고, 요리 초보도 따라 할 수 있게 쉽게 씁니다. 따뜻하고 친근한 말투.
+- 가능하면 장보기·손질·보관 팁을 한 줄 곁들입니다(신선한 것 고르는 법 등).
+- 분량·시간은 "대략"으로만, 단정하지 않습니다.
+- 너무 길게 쓰지 말고, 항목마다 줄바꿈해서 보기 좋게.
+- 의학·건강 효능 단정은 하지 않습니다(맛·요리 중심).`;
+
+async function handleRecipe(request, env, cors) {
+  if (!env.GEMINI_API_KEY && !env.ANTHROPIC_API_KEY) {
+    return json({ error: "AI 키 미설정 (GEMINI_API_KEY 또는 ANTHROPIC_API_KEY)" }, 500, cors);
+  }
+  const body = await request.json().catch(() => ({}));
+  const ings = Array.isArray(body.ingredients)
+    ? body.ingredients.filter((x) => typeof x === "string" && x.trim()).slice(0, 12)
+    : [];
+  if (!ings.length) return json({ error: "ingredients 필요" }, 400, cors);
+  const market = typeof body.market === "string" ? body.market.slice(0, 40) : "";
+
+  const userMsg = `${market ? `[${market}]에서 산 ` : ""}이 식재료로 집에서 해먹을 만한 요리를 추천해줘: ${ings.join(", ")}`;
+  const messages = [{ role: "user", content: userMsg }];
+
+  if (env.GEMINI_API_KEY) return await callGemini(env, RECIPE_PROMPT, messages, cors);
+  return await callClaude(env, RECIPE_PROMPT, messages, cors);
 }
 
 // ----- 위치기반 병원/응급 목록 (공공데이터 E-Gen) -----
