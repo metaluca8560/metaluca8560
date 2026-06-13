@@ -1,44 +1,65 @@
-// ===== ATELIER 포트폴리오 — 인터랙션 =====
+// ===== ATELIER — 에디토리얼 포트폴리오 인터랙션 =====
 
 // 올해 연도
 document.getElementById("year").textContent = new Date().getFullYear();
 
-// 스크롤 시 내비 테두리
-const nav = document.getElementById("nav");
-const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 8);
-onScroll();
-window.addEventListener("scroll", onScroll, { passive: true });
+// ----- 커스텀 커서 (마우스 환경에서만) -----
+const cursor = document.getElementById("cursor");
+const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-// 작품 분류 필터
-const filters = document.querySelectorAll(".filter");
-const works = document.querySelectorAll(".work");
-filters.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    filters.forEach((b) => b.classList.remove("is-active"));
-    btn.classList.add("is-active");
-    const cat = btn.dataset.filter;
-    works.forEach((w) => {
-      const show = cat === "all" || w.dataset.cat === cat;
-      w.classList.toggle("is-hidden", !show);
-    });
+if (finePointer && cursor) {
+  let cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+  let tx = cx, ty = cy;
+
+  window.addEventListener("mousemove", (e) => { tx = e.clientX; ty = e.clientY; });
+
+  // 부드러운 추적(lag)
+  const render = () => {
+    cx += (tx - cx) * 0.18;
+    cy += (ty - cy) * 0.18;
+    cursor.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
+    requestAnimationFrame(render);
+  };
+  render();
+
+  // data-cursor 요소 위에서 확대 + 라벨
+  document.querySelectorAll("[data-cursor]").forEach((el) => {
+    el.addEventListener("mouseenter", () => cursor.classList.add("is-hover"));
+    el.addEventListener("mouseleave", () => cursor.classList.remove("is-hover"));
   });
-});
+}
 
-// 문의 폼 (데모) — 실제 전송은 아래 TODO 참고
+// ----- 스크롤 등장 (IntersectionObserver) -----
+const io = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add("is-in");
+        io.unobserve(e.target);
+      }
+    });
+  },
+  { threshold: 0.15 }
+);
+document.querySelectorAll(".work, .about-cols, .index-block").forEach((el) => io.observe(el));
+
+// ----- 문의 폼 (데모) -----
 const form = document.getElementById("contactForm");
 const note = document.getElementById("formNote");
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  if (!form.name.value.trim() || !form.contact.value.trim()) {
+if (form) {
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!form.name.value.trim() || !form.contact.value.trim()) {
+      note.hidden = false;
+      note.textContent = "이름과 연락처를 입력해 주세요.";
+      return;
+    }
+    // TODO: 실제 전송 연동
+    //  - 가장 쉬움: Formspree(formspree.io)에서 폼 생성 후
+    //    <form>에 action="https://formspree.io/f/XXXX" method="post" 추가
+    //  - 또는 mailto / 카카오 채널 / Google Apps Script 연동
     note.hidden = false;
-    note.textContent = "이름과 연락처를 입력해 주세요.";
-    return;
-  }
-  // TODO: 실제 전송 연동
-  //  - 가장 쉬움: Formspree(formspree.io)에서 폼 생성 후
-  //    form 태그에 action="https://formspree.io/f/XXXX" method="post" 추가
-  //  - 또는 mailto / 카카오 채널 / Google Apps Script 연동
-  note.hidden = false;
-  note.textContent = "문의가 접수되었습니다. 곧 회신드리겠습니다. (데모 모드)";
-  form.reset();
-});
+    note.textContent = "문의가 접수되었습니다. 곧 회신드리겠습니다. (데모 모드)";
+    form.reset();
+  });
+}
