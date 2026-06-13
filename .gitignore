@@ -2,3 +2,7 @@ logo_preview.png
 logo_sheet.png
 logo_sheet.svg
 *.preview.png
+
+# 로컬 미리보기 산출물 (커밋 안 함)
+shots/
+shot.js
