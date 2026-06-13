@@ -33,6 +33,7 @@
 
   <!-- 빠른 이동 -->
   <div class="wrap quicklinks">
+    <a class="ql" href="#aichat">🤖 AI 문진</a>
     <a class="ql" href="#firstaid">🚑 응급처치</a>
     <a class="ql" href="#finder">📍 병원 찾기</a>
   </div>
@@ -51,6 +52,18 @@
 
     <!-- ===== 결과 (JS가 채움, 처음엔 숨김) ===== -->
     <section class="card result" id="result" hidden></section>
+
+    <!-- ===== AI 문진 (베타, 백엔드 연결 시) ===== -->
+    <section class="card aichat" id="aichat">
+      <h2>🤖 AI에게 증상 물어보기 <span class="beta">베타</span></h2>
+      <p class="muted">증상을 자유롭게 적으면 AI가 되묻고, 의심 진료과·응급도를 안내해요. <strong>진단 아님 · 위급 시 119.</strong></p>
+      <div id="chatBox" class="chat-box" aria-live="polite"></div>
+      <form id="chatForm" class="chat-form">
+        <input id="chatInput" type="text" autocomplete="off" placeholder="예: 어제부터 오른쪽 아랫배가 콕콕 쑤시고 미열이 나요" aria-label="증상 입력" />
+        <button type="submit" class="chat-send" aria-label="보내기">↑</button>
+      </form>
+      <p class="chat-note" id="chatNote" hidden></p>
+    </section>
 
     <!-- ===== 빠른 응급처치 ===== -->
     <section class="card firstaid" id="firstaid">
@@ -72,6 +85,10 @@
         <button class="find-btn child-only" data-q="소아청소년과">🧸 소아과</button>
       </div>
       <p class="finder-note" id="finderNote" hidden></p>
+
+      <!-- 실시간 목록 (백엔드 연결 시) -->
+      <button class="live-btn" id="liveBtn" type="button">🔄 내 위치로 실시간 병원 목록 보기 <span class="beta">베타</span></button>
+      <div id="liveList" class="live-list"></div>
 
       <div class="official">
         <h3>공식 서비스 바로가기</h3>
@@ -104,6 +121,8 @@
     </div>
   </footer>
 
+  <script src="config.js"></script>
   <script src="app.js"></script>
+  <script src="chat.js"></script>
 </body>
 </html>

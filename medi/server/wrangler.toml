@@ -1,0 +1,13 @@
+# Cloudflare Worker 설정 — "오늘 어디 아파?" 백엔드
+# 배포: 이 폴더에서  npx wrangler deploy
+name = "medi-api"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+# 비밀키는 여기 적지 말고 아래 명령으로 등록하세요(코드/깃에 노출 금지):
+#   npx wrangler secret put ANTHROPIC_API_KEY
+#   npx wrangler secret put DATA_GO_KR_KEY      # /hospitals 쓸 때만
+#
+# 프론트 주소 제한(선택): 와일드카드("*") 대신 본인 사이트 주소로 좁히면 안전합니다.
+[vars]
+ALLOW_ORIGIN = "*"
