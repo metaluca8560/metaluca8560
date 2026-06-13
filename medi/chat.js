@@ -25,6 +25,13 @@ function bubble(role, text) {
   return el;
 }
 
+// 모드별 첫인사
+const OPENERS = {
+  senior: "안녕하세요. 어디가 불편하신지 편하게 말씀해 주세요. 천천히 하나씩 여쭤보며 도와드릴게요.",
+  adult: "안녕하세요. 어디가 어떻게 불편하세요? 편하게 적어주시면 하나씩 여쭤보며 안내해 드릴게요.",
+  child: "안녕하세요. 아이가 어디가 불편한가요? 증상을 적어주시면 하나씩 여쭤보며 도와드릴게요.",
+};
+
 if (!hasBackend) {
   // 백엔드 미설정: 입력 잠그고 안내
   bubble("bot", "AI 문진은 백엔드(무료 Cloudflare Worker)를 연결하면 켜져요. 설정 전에도 위의 ‘증상 문진’과 ‘응급처치’, ‘병원 찾기’는 모두 사용할 수 있어요.");
@@ -33,7 +40,16 @@ if (!hasBackend) {
   chatInput.disabled = true;
   chatForm.querySelector(".chat-send").disabled = true;
 } else {
-  bubble("bot", "어디가 어떻게 불편하세요? 부위·언제부터·정도·동반 증상을 적어주시면 도와드릴게요. (진단이 아닌 참고용 안내예요. 위급하면 119)");
+  bubble("bot", OPENERS[document.body.className] || OPENERS.adult);
+  bubble("bot", "참고용 안내예요. 위급하면 바로 119에 연락하세요.");
+  // 시작 예시 칩
+  const chips = document.getElementById("chatChips");
+  if (chips) {
+    chips.hidden = false;
+    chips.querySelectorAll(".chip").forEach((c) => {
+      c.addEventListener("click", () => { chatInput.value = c.textContent; chatInput.focus(); });
+    });
+  }
 }
 
 chatForm?.addEventListener("submit", async (e) => {
@@ -51,7 +67,7 @@ chatForm?.addEventListener("submit", async (e) => {
     const res = await fetch(API_BASE + "/triage", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: history }),
+      body: JSON.stringify({ messages: history, mode: document.body.className }),
     });
     if (!res.ok) throw new Error("server " + res.status);
     const data = await res.json();
