@@ -122,7 +122,7 @@ async function callGemini(env, system, messages, cors) {
     body: JSON.stringify({
       system_instruction: { parts: [{ text: system }] },
       contents,
-      generationConfig: { maxOutputTokens: 1024, temperature: 0.4 },
+      generationConfig: { maxOutputTokens: 2048, temperature: 0.4 },
     }),
   });
   if (!res.ok) {
