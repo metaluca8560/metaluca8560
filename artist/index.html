@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- ✏️ 작가 이름/소개는 아래 텍스트만 바꾸면 됩니다 -->
+  <title>ATELIER — 작가 포트폴리오</title>
+  <meta name="description" content="회화·드로잉·일러스트레이션 작업을 모은 작가 포트폴리오. 전시, 커미션, 협업 문의를 받습니다." />
+  <meta property="og:title" content="ATELIER — 작가 포트폴리오" />
+  <meta property="og:description" content="선과 색으로 남기는 기록. 작품, 전시, 커미션 안내." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body id="top">
+
+  <!-- ===== Nav ===== -->
+  <header class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="#top" class="brand" aria-label="홈">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="30" height="30">
+            <circle cx="24" cy="24" r="22" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M14 30 C18 14 30 14 34 30" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="24" cy="22" r="2.4" fill="currentColor"/>
+          </svg>
+        </span>
+        <span class="brand-name">ATELIER</span>
+      </a>
+      <nav class="nav-links" aria-label="주요 메뉴">
+        <a href="#works">작품</a>
+        <a href="#about">소개</a>
+        <a href="#exhibitions">전시</a>
+        <a href="#commission">커미션</a>
+        <a href="#contact">문의</a>
+      </nav>
+      <a href="#contact" class="btn btn-sm btn-ink nav-cta">문의하기</a>
+    </div>
+  </header>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container hero-inner">
+      <p class="eyebrow">PAINTER · ILLUSTRATOR</p>
+      <h1 class="hero-title">선과 색으로<br>남기는 기록</h1>
+      <p class="hero-sub">
+        일상의 풍경과 감정을 회화와 드로잉으로 옮깁니다.<br>
+        전시·커미션·브랜드 협업 작업을 모았습니다.
+      </p>
+      <div class="hero-actions">
+        <a href="#works" class="btn btn-lg btn-ink">작품 보기</a>
+        <a href="#commission" class="btn btn-lg btn-ghost">커미션 안내</a>
+      </div>
+    </div>
+    <a href="#works" class="scroll-cue" aria-label="아래로 스크롤">↓</a>
+  </section>
+
+  <!-- ===== Works ===== -->
+  <section class="section" id="works">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow dark">SELECTED WORKS</p>
+        <h2>작품</h2>
+        <p class="section-sub">이미지를 끼워 넣으려면 각 카드의 배경만 사진으로 교체하세요.</p>
+      </div>
+
+      <div class="filters" role="tablist" aria-label="작품 분류">
+        <button class="filter is-active" data-filter="all">전체</button>
+        <button class="filter" data-filter="painting">회화</button>
+        <button class="filter" data-filter="drawing">드로잉</button>
+        <button class="filter" data-filter="commission">커미션</button>
+      </div>
+
+      <div class="gallery">
+        <!-- ✏️ .art 의 style 배경을 본인 작품 이미지로 교체하세요: style="background-image:url('img/work1.jpg')" -->
+        <figure class="work" data-cat="painting">
+          <div class="art art-1"></div>
+          <figcaption><span class="work-title">고요한 오후</span><span class="work-meta">Oil on canvas · 2025</span></figcaption>
+        </figure>
+        <figure class="work" data-cat="drawing">
+          <div class="art art-2"></div>
+          <figcaption><span class="work-title">밤의 산책</span><span class="work-meta">Ink on paper · 2025</span></figcaption>
+        </figure>
+        <figure class="work" data-cat="commission">
+          <div class="art art-3"></div>
+          <figcaption><span class="work-title">초상 #07</span><span class="work-meta">Commission · 2024</span></figcaption>
+        </figure>
+        <figure class="work" data-cat="painting">
+          <div class="art art-4"></div>
+          <figcaption><span class="work-title">여름의 끝</span><span class="work-meta">Acrylic · 2024</span></figcaption>
+        </figure>
+        <figure class="work" data-cat="drawing">
+          <div class="art art-5"></div>
+          <figcaption><span class="work-title">정물 연구</span><span class="work-meta">Pencil · 2024</span></figcaption>
+        </figure>
+        <figure class="work" data-cat="commission">
+          <div class="art art-6"></div>
+          <figcaption><span class="work-title">브랜드 일러스트</span><span class="work-meta">Commission · 2023</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== About ===== -->
+  <section class="section section-alt" id="about">
+    <div class="container about-grid">
+      <div class="about-portrait" aria-hidden="true">
+        <div class="portrait"></div>
+      </div>
+      <div class="about-text">
+        <p class="eyebrow dark">ABOUT</p>
+        <h2>작가 소개</h2>
+        <p>
+          안녕하세요. 풍경과 사람을 주로 그리는 작가입니다. 색이 머무는 순간을
+          오래 들여다보고, 그 잔상을 캔버스와 종이 위에 천천히 옮깁니다.
+        </p>
+        <p>
+          개인전과 단체전을 통해 작업을 선보여 왔으며, 출판·브랜드와의
+          협업 일러스트레이션 작업도 함께 하고 있습니다.
+        </p>
+        <ul class="about-list">
+          <li><strong>매체</strong> 유화 · 아크릴 · 드로잉 · 디지털</li>
+          <li><strong>작업</strong> 회화 / 초상 커미션 / 브랜드 협업</li>
+          <li><strong>기반</strong> 서울, 대한민국</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Exhibitions ===== -->
+  <section class="section" id="exhibitions">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow dark">EXHIBITIONS</p>
+        <h2>전시 이력</h2>
+      </div>
+      <ul class="timeline">
+        <li><span class="year">2025</span><div><strong>개인전 «잔상»</strong><span>○○ 갤러리, 서울</span></div></li>
+        <li><span class="year">2024</span><div><strong>단체전 «사이의 색»</strong><span>○○ 아트스페이스, 부산</span></div></li>
+        <li><span class="year">2024</span><div><strong>아트페어 참여</strong><span>○○ 아트페어, 서울</span></div></li>
+        <li><span class="year">2023</span><div><strong>2인전 «걸음»</strong><span>○○ 스튜디오, 서울</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== Commission ===== -->
+  <section class="section section-dark" id="commission">
+    <div class="container">
+      <div class="section-head light">
+        <p class="eyebrow">COMMISSION</p>
+        <h2>커미션 안내</h2>
+        <p class="section-sub light">원하시는 분위기·크기를 알려주시면 견적과 일정을 안내해 드립니다.</p>
+      </div>
+      <div class="cards-3">
+        <div class="ccard">
+          <h3>초상 / 인물</h3>
+          <p>사진을 바탕으로 한 인물·반려동물 초상 작업.</p>
+          <span class="price">₩ 별도 문의</span>
+        </div>
+        <div class="ccard">
+          <h3>풍경 / 정물</h3>
+          <p>공간에 맞춘 분위기의 회화 작업.</p>
+          <span class="price">₩ 별도 문의</span>
+        </div>
+        <div class="ccard">
+          <h3>브랜드 일러스트</h3>
+          <p>제품·출판·패키지용 일러스트레이션.</p>
+          <span class="price">₩ 별도 문의</span>
+        </div>
+      </div>
+      <ol class="steps">
+        <li><span>1</span>문의 폼 작성</li>
+        <li><span>2</span>상담 · 견적</li>
+        <li><span>3</span>작업 진행</li>
+        <li><span>4</span>완성 · 배송</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===== Contact ===== -->
+  <section class="section" id="contact">
+    <div class="container contact-grid">
+      <div class="contact-intro">
+        <p class="eyebrow dark">CONTACT</p>
+        <h2>작업 문의</h2>
+        <p>전시·커미션·협업 무엇이든 편하게 남겨주세요. 보통 1~2일 내 답신드립니다.</p>
+        <div class="socials">
+          <!-- ✏️ 링크를 본인 계정으로 교체하세요 -->
+          <a href="#" aria-label="Instagram">Instagram</a>
+          <a href="mailto:hello@example.com">Email</a>
+          <a href="#" aria-label="Behance">Behance</a>
+        </div>
+      </div>
+      <form class="contact-form" id="contactForm" novalidate>
+        <label>이름<input type="text" name="name" required placeholder="성함" /></label>
+        <label>연락처 / 이메일<input type="text" name="contact" required placeholder="회신 받을 곳" /></label>
+        <label>문의 유형
+          <select name="type">
+            <option>커미션</option>
+            <option>전시 · 협업</option>
+            <option>작품 구매</option>
+            <option>기타</option>
+          </select>
+        </label>
+        <label>내용<textarea name="message" rows="4" placeholder="원하시는 분위기, 크기, 일정 등"></textarea></label>
+        <button type="submit" class="btn btn-lg btn-ink btn-block">문의 보내기</button>
+        <p class="form-note" id="formNote" hidden></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span class="brand-name">ATELIER</span>
+      <p>© <span id="year"></span> ATELIER. All works © the artist.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
