@@ -12,7 +12,7 @@
    ※ 둘 다 있으면 Gemini를 먼저 씁니다. Anthropic만 쓰려면 GEMINI_API_KEY를 지우세요.
    ================================================================ */
 
-const GEMINI_MODEL = "gemini-2.0-flash";   // 무료 등급. 모델명이 바뀌면 여기만 수정
+const GEMINI_MODEL = "gemini-3.5-flash";   // 작동 확인된 모델. 한도/버전 이슈 시 여기만 교체
 const ANTHROPIC_MODEL = "claude-opus-4-8"; // Anthropic 사용 시. sonnet/haiku로 교체 가능
 
 // 안전 가드레일 — 진단이 아닌 안내, 레드플래그 우선
