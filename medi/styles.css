@@ -157,6 +157,22 @@ body.child .finder-grid .child-only { display: block; }
 .chat-note { margin-top: 12px; font-size: .85em; color: var(--muted); }
 .chat-note code { background: var(--bg); padding: 1px 6px; border-radius: 6px; }
 
+/* ===== 챗 결과 카드 ===== */
+.chat-card { align-self: stretch; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 14px; }
+.cc-urgency { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; font-weight: 800; }
+.cc-urgency .cc-badge { font-size: 1.4em; }
+.cc-urgency.u-green { background: #e7f7ee; color: #115e35; }
+.cc-urgency.u-yellow { background: #fdf2dc; color: #8a5a06; }
+.cc-urgency.u-red { background: #fde7ec; color: #9f1239; border: 2px solid #f5b5c2; }
+.cc-block { display: flex; flex-direction: column; gap: 8px; }
+.cc-h { font-weight: 800; font-size: .92em; color: var(--ink); }
+.cc-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.cc-chips span { background: #e7f6f7; color: var(--brand-d); font-weight: 800; font-size: .92em; padding: 7px 13px; border-radius: 999px; }
+.cc-block ul { padding-left: 20px; margin: 0; }
+.cc-block li { margin: 5px 0; font-size: .95em; }
+.cc-find { display: block; text-align: center; text-decoration: none; font-weight: 800; background: var(--brand); color: #fff; padding: 13px; border-radius: 12px; }
+.cc-find:active { transform: scale(.99); }
+
 /* ===== 실시간 병원 목록 ===== */
 .live-btn { width: 100%; font-family: inherit; font-size: .98em; font-weight: 800; cursor: pointer; margin-top: 14px; background: var(--surface); color: var(--brand-d); border: 2px dashed var(--line); border-radius: 14px; padding: 14px; }
 .live-btn:hover { border-color: var(--brand); }

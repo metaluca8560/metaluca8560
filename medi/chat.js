@@ -72,7 +72,7 @@ chatForm?.addEventListener("submit", async (e) => {
     if (!res.ok) throw new Error("server " + res.status);
     const data = await res.json();
     const reply = (data.reply || "").trim() || "다시 한 번 말씀해 주시겠어요?";
-    thinking.textContent = reply;
+    renderBotReply(thinking, reply);
     history.push({ role: "assistant", content: reply });
   } catch (err) {
     thinking.textContent = "연결에 문제가 생겼어요. 잠시 후 다시 시도하거나, 위급하면 119에 연락하세요.";
@@ -81,6 +81,56 @@ chatForm?.addEventListener("submit", async (e) => {
     chatInput.focus();
   }
 });
+
+// ---------- 봇 답변 렌더 (카드 포함) ----------
+const URGENCY = {
+  green: { cls: "u-green", badge: "🟢", label: "급하지 않아 보여요 · 평소 진료" },
+  yellow: { cls: "u-yellow", badge: "⏱️", label: "오늘 중 진료를 권해요" },
+  red: { cls: "u-red", badge: "🚑", label: "지금 바로 진료가 필요해요" },
+};
+
+function renderBotReply(thinkingEl, reply) {
+  const m = reply.match(/<card>([\s\S]*?)<\/card>/);
+  let card = null;
+  if (m) {
+    try { card = JSON.parse(m[1].trim()); } catch (e) { card = null; }
+  }
+  const text = reply.replace(/<card>[\s\S]*?<\/card>/, "").trim();
+
+  if (card) {
+    const cardEl = buildChatCard(card);
+    chatBox.insertBefore(cardEl, thinkingEl); // 카드 먼저
+  }
+  if (text) {
+    thinkingEl.textContent = text;
+  } else {
+    thinkingEl.remove(); // 카드만 있고 부가 텍스트 없으면 빈 말풍선 제거
+  }
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function buildChatCard(data) {
+  const u = URGENCY[data.urgency] || URGENCY.yellow;
+  const depts = Array.isArray(data.departments) ? data.departments : [];
+  const home = Array.isArray(data.home) ? data.home : [];
+  const el = document.createElement("div");
+  el.className = "chat-card";
+  el.innerHTML = `
+    <div class="cc-urgency ${u.cls}">
+      <span class="cc-badge">${u.badge}</span>
+      <span class="cc-label">${u.label}</span>
+    </div>
+    ${depts.length ? `<div class="cc-block">
+      <span class="cc-h">🏥 권하는 진료과</span>
+      <div class="cc-chips">${depts.map((d) => `<span>${escapeHtml(d)}</span>`).join("")}</div>
+    </div>` : ""}
+    ${home.length ? `<div class="cc-block">
+      <span class="cc-h">🏠 집에서 이렇게</span>
+      <ul>${home.map((h) => `<li>${escapeHtml(h)}</li>`).join("")}</ul>
+    </div>` : ""}
+    <a class="cc-find" href="#finder">📍 주변 병원·약국 찾기</a>`;
+  return el;
+}
 
 // ---------- 실시간 병원 목록 ----------
 const liveBtn = document.getElementById("liveBtn");
