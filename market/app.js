@@ -464,9 +464,22 @@ const listView = document.getElementById("listView");
 const detailView = document.getElementById("detailView");
 const marketList = document.getElementById("marketList");
 let curFilter = "all";
+let curRegion = "all";
+
+// 지역(시·도)은 region 문자열 첫 단어로 그룹화해요. 예) "울산 중구 ..." → "울산"
+function regionOf(m) {
+  return (m.region || "").trim().split(/\s+/)[0] || "기타";
+}
 
 function renderList() {
-  const items = MARKETS.filter((m) => curFilter === "all" || m.type === curFilter);
+  const items = MARKETS.filter((m) =>
+    (curFilter === "all" || m.type === curFilter) &&
+    (curRegion === "all" || regionOf(m) === curRegion)
+  );
+  if (!items.length) {
+    marketList.innerHTML = `<div class="list-empty">해당 조건의 시장이 없어요. 다른 지역·유형을 골라보세요.</div>`;
+    return;
+  }
   marketList.innerHTML = items.map((m) => {
     const badge = m.type === "5일장"
       ? `<span class="mc-badge badge-5">5일장</span>`
@@ -574,14 +587,35 @@ function showList() {
 }
 
 // ---------- 필터 / 공통 ----------
+// 유형 필터(전체/5일장/상설)
 document.getElementById("filters").querySelectorAll(".filter").forEach((b) => {
   b.addEventListener("click", () => {
-    document.querySelectorAll(".filter").forEach((x) => x.classList.remove("is-on"));
+    document.getElementById("filters").querySelectorAll(".filter").forEach((x) => x.classList.remove("is-on"));
     b.classList.add("is-on");
     curFilter = b.dataset.f;
     renderList();
   });
 });
+
+// 지역 필터(전국 + 시·도) — MARKETS에서 자동 생성, 시장 추가하면 알아서 늘어나요
+(function buildRegionFilters() {
+  const box = document.getElementById("regionFilters");
+  if (!box) return;
+  const order = ["서울", "인천", "경기", "강원", "충북", "충남", "대전", "세종",
+    "전북", "전남", "광주", "경북", "대구", "경남", "부산", "울산", "제주"];
+  const present = [...new Set(MARKETS.map(regionOf))]
+    .sort((a, b) => (order.indexOf(a) < 0 ? 99 : order.indexOf(a)) - (order.indexOf(b) < 0 ? 99 : order.indexOf(b)));
+  box.innerHTML = `<button class="rfilter is-on" data-r="all">전국</button>`
+    + present.map((r) => `<button class="rfilter" data-r="${esc(r)}">${esc(r)}</button>`).join("");
+  box.querySelectorAll(".rfilter").forEach((b) => {
+    b.addEventListener("click", () => {
+      box.querySelectorAll(".rfilter").forEach((x) => x.classList.remove("is-on"));
+      b.classList.add("is-on");
+      curRegion = b.dataset.r;
+      renderList();
+    });
+  });
+})();
 document.getElementById("homeBtn").addEventListener("click", (e) => { e.preventDefault(); showList(); });
 document.getElementById("year").textContent = new Date().getFullYear();
 
