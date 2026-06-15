@@ -45,9 +45,15 @@ body { font-family: var(--font); color: var(--ink); background: var(--bg); line-
 .season-chips span { font-size: 14px; font-weight: 800; background: #fff; color: var(--brand-d); padding: 8px 14px; border-radius: 999px; border: 1px solid #ffdcb0; }
 
 /* 필터 */
-.filters { display: flex; gap: 8px; margin-bottom: 16px; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
 .filter { font-family: inherit; font-weight: 700; font-size: 14px; cursor: pointer; border: 1.5px solid var(--line); background: var(--surface); color: var(--muted); padding: 9px 16px; border-radius: 999px; min-height: 42px; }
 .filter.is-on { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+/* 지역(시·도) 필터 — 유형 필터보다 한 단계 작고 보조적인 룩 */
+.region-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.rfilter { font-family: inherit; font-weight: 600; font-size: 13px; cursor: pointer; border: 1.5px solid var(--line); background: var(--surface); color: var(--muted); padding: 6px 13px; border-radius: 999px; min-height: 36px; }
+.rfilter.is-on { background: var(--brand); color: #fff; border-color: var(--brand); }
+.list-empty { color: var(--muted); text-align: center; padding: 36px 12px; font-weight: 600; }
 
 /* 시장 카드 */
 .market-list { display: flex; flex-direction: column; gap: 14px; }
