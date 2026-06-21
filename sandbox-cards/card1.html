@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --bg1:#eef3fb; --bg2:#e3ebf8;
+    --ink:#10203f;          /* deep navy heading */
+    --ink2:#1c2c4d;
+    --blue:#1f56e0;         /* primary blue accent */
+    --blue-d:#1741b8;
+    --blue-l:#5b86f0;
+    --muted:#46556f;
+    --line:#cdd8ee;
+    --panel:#ffffff;
+  }
+  html,body{ width:1080px; height:1080px; }
+  body{
+    font-family:"Noto Sans CJK KR",sans-serif;
+    background:
+      radial-gradient(1200px 900px at 78% 18%, #ffffff 0%, rgba(255,255,255,0) 55%),
+      linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 100%);
+    color:var(--ink);
+    position:relative; overflow:hidden;
+  }
+  .serif{ font-family:"Noto Serif CJK KR",serif; }
+  /* subtle blueprint grid bottom right */
+  .grid{ position:absolute; right:-40px; bottom:-40px; width:760px; height:520px;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:46px 46px; opacity:.35;
+    -webkit-mask-image:radial-gradient(closest-side at 60% 60%, #000 40%, transparent 85%); }
+
+  .pad{ position:absolute; inset:0; padding:92px 0 0 92px; }
+
+  .eyebrow{ display:flex; align-items:center; gap:18px; letter-spacing:.34em; font-size:21px; font-weight:600; color:var(--ink2); }
+  .eyebrow::before{ content:""; width:6px; height:34px; background:var(--blue); border-radius:3px; display:inline-block; }
+
+  h1{ margin-top:36px; font-weight:800; font-size:80px; line-height:1.13; letter-spacing:-1px; color:var(--ink); }
+  h1 .q{ color:var(--ink); }
+
+  .body{ margin-top:40px; font-size:29px; line-height:1.6; color:var(--muted); font-weight:500; max-width:560px; }
+  .body b{ color:var(--blue-d); font-weight:800; }
+
+  .tags{ display:flex; align-items:center; gap:8px; margin-top:36px; }
+  .pill{ border:1.5px solid var(--line); background:rgba(255,255,255,.7); color:var(--ink2);
+    padding:14px 30px; border-radius:40px; font-size:25px; font-weight:600; }
+  .dot{ color:var(--blue-l); font-size:22px; }
+
+  .foot{ position:absolute; left:92px; bottom:88px; }
+  .foot .hr{ width:64px; height:5px; background:var(--blue); border-radius:3px; margin-bottom:30px; }
+  .foot p{ font-size:34px; font-weight:800; line-height:1.5; color:var(--ink); }
+  .foot p .hl{ color:var(--blue); }
+
+  /* ===== Illustration ===== */
+  .scene{ position:absolute; right:34px; top:392px; width:400px; height:470px; }
+
+  /* glass box */
+  .box{ position:absolute; left:40px; top:208px; width:268px; height:210px; perspective:900px; }
+  .box .body3d{ position:absolute; inset:0;
+    background:linear-gradient(160deg, rgba(95,134,240,.16), rgba(31,86,224,.10));
+    border:1.6px solid rgba(31,86,224,.30);
+    border-radius:14px;
+    box-shadow:0 30px 60px -22px rgba(23,65,184,.45), inset 0 1px 0 rgba(255,255,255,.6);
+    backdrop-filter:blur(2px); }
+  .box .lid{ position:absolute; left:-12px; top:-20px; width:292px; height:42px;
+    background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(214,226,250,.55));
+    border:1.6px solid rgba(31,86,224,.28); border-radius:12px;
+    transform:skewX(-0deg); }
+  .box .base{ position:absolute; left:0; bottom:0; width:268px; height:84px;
+    background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(223,233,252,.85));
+    border-top:1.6px solid rgba(31,86,224,.22);
+    border-bottom-left-radius:14px; border-bottom-right-radius:14px;
+    display:flex; align-items:center; gap:14px; padding-left:30px; }
+  .box .base .lock{ width:30px; height:30px; }
+  .box .base .sand{ font-size:27px; font-weight:800; letter-spacing:.14em; color:var(--ink2); }
+
+  /* terminal chip emerging from box */
+  .term{ position:absolute; left:72px; top:170px; width:124px; height:100px;
+    background:linear-gradient(160deg,#16233f,#0e1830); border-radius:14px;
+    box-shadow:0 22px 40px -14px rgba(14,24,48,.6);
+    display:flex; align-items:flex-start; justify-content:flex-start; padding:22px; }
+  .term .cur{ color:#9cc0ff; font-size:40px; font-weight:700; font-family:monospace; line-height:1; }
+
+  /* floating label cards */
+  .chip{ position:absolute; background:rgba(255,255,255,.82);
+    border:1.4px solid rgba(31,86,224,.20); border-radius:13px;
+    box-shadow:0 18px 36px -20px rgba(23,65,184,.5);
+    padding:13px 15px; width:158px; backdrop-filter:blur(3px); }
+  .chip .lab{ font-size:13px; letter-spacing:.16em; font-weight:700; color:var(--blue-d); margin-bottom:9px; }
+  .chip .ln{ height:7px; border-radius:5px; background:rgba(31,86,224,.16); margin-top:7px; }
+  .chip .ln.s{ width:60%; }
+
+  .c-cmd{ left:-20px; top:92px; }
+  .c-fs{ right:-12px; top:14px; }
+  .c-net{ right:-24px; top:232px; }
+  .c-perm{ right:-24px; top:368px; }
+  .shield{ position:absolute; left:150px; top:14px; width:48px; height:58px; }
+
+  /* connector dotted lines */
+  .dots{ position:absolute; inset:0; pointer-events:none; }
+</style>
+</head>
+<body>
+  <div class="grid"></div>
+
+  <!-- Illustration -->
+  <div class="scene">
+    <svg class="dots" viewBox="0 0 400 470" fill="none">
+      <g stroke="#9db6ee" stroke-width="2" stroke-dasharray="3 7" stroke-linecap="round">
+        <path d="M96 210 L60 150"/>
+        <path d="M210 208 L200 88"/>
+        <path d="M300 230 L360 96"/>
+        <path d="M330 300 L378 290"/>
+        <path d="M330 360 L378 430"/>
+      </g>
+    </svg>
+
+    <!-- shield -->
+    <svg class="shield" viewBox="0 0 54 64">
+      <path d="M27 3 L50 12 V30 C50 46 40 56 27 61 C14 56 4 46 4 30 V12 Z"
+        fill="rgba(255,255,255,.85)" stroke="#1f56e0" stroke-width="2.2"/>
+      <path d="M17 32 l7 7 13 -15" stroke="#1f56e0" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+
+    <div class="box">
+      <div class="lid"></div>
+      <div class="body3d"></div>
+      <div class="base">
+        <svg class="lock" viewBox="0 0 24 24" fill="none">
+          <rect x="4" y="10" width="16" height="11" rx="2.5" fill="#1f56e0"/>
+          <path d="M7 10 V7 a5 5 0 0 1 10 0 V10" stroke="#1f56e0" stroke-width="2.2" fill="none"/>
+        </svg>
+        <span class="sand">SANDBOX</span>
+      </div>
+    </div>
+
+    <div class="term"><span class="cur">&gt;_</span></div>
+
+    <div class="chip c-cmd">
+      <div class="lab">COMMAND</div>
+      <div style="font-family:monospace;color:#1741b8;font-size:20px;font-weight:700;">&gt;_</div>
+      <div class="ln s"></div>
+    </div>
+    <div class="chip c-fs">
+      <div class="lab">FILESYSTEM</div>
+      <svg width="34" height="26" viewBox="0 0 34 26"><path d="M2 6 a3 3 0 0 1 3-3 h7 l4 4 h13 a3 3 0 0 1 3 3 v11 a3 3 0 0 1-3 3 H5 a3 3 0 0 1-3-3 Z" fill="none" stroke="#1741b8" stroke-width="2"/></svg>
+      <div class="ln"></div><div class="ln s"></div>
+    </div>
+    <div class="chip c-net">
+      <div class="lab">NETWORK</div>
+      <svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="none" stroke="#1741b8" stroke-width="2"/><path d="M2 15 h26 M15 2 a20 20 0 0 1 0 26 a20 20 0 0 1 0 -26" fill="none" stroke="#1741b8" stroke-width="2"/></svg>
+      <div class="ln"></div><div class="ln s"></div>
+    </div>
+    <div class="chip c-perm">
+      <div class="lab">PERMISSIONS</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <svg width="22" height="22" viewBox="0 0 22 22"><circle cx="11" cy="7" r="4" fill="#1741b8"/><path d="M3 20 a8 8 0 0 1 16 0" fill="#1741b8"/></svg>
+        <div style="flex:1"><div class="ln"></div><div class="ln s"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Text -->
+  <div class="pad">
+    <div class="eyebrow">SYSTEM ARCHITECT VIEW</div>
+    <h1 class="serif">기업들이<br><span class="q">‘에이전트 샌드박스’에</span><br>목숨을 거는 이유</h1>
+    <p class="body">
+      에이전트가 터미널 명령을 실행하고<br>
+      시스템에 직접 접근하는 시대.<br>
+      핵심은 더 똑똑한 모델만이 아니라,<br>
+      예측 불가능한 실행을 안전하게<br>
+      <b>격리·통제할 런타임</b>입니다.
+    </p>
+    <div class="tags">
+      <span class="pill">n8n</span><span class="dot">·</span>
+      <span class="pill">Claude Code</span><span class="dot">·</span>
+      <span class="pill">Dify</span>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="hr"></div>
+    <p>AI 경쟁의 핵심이 ‘모델’에서<br><span class="hl">‘실행 인프라’</span>로 확장되고 있습니다.</p>
+  </div>
+</body>
+</html>

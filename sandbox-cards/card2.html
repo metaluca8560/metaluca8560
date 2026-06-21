@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --bg1:#eef3fb; --bg2:#e3ebf8;
+    --ink:#10203f; --ink2:#1c2c4d;
+    --blue:#1f56e0; --blue-d:#1741b8; --blue-l:#5b86f0;
+    --muted:#46556f; --line:#cdd8ee; --panel:#ffffff;
+  }
+  html,body{ width:1080px; height:1080px; }
+  body{
+    font-family:"Noto Sans CJK KR",sans-serif;
+    background:
+      radial-gradient(1100px 800px at 20% 12%, #ffffff 0%, rgba(255,255,255,0) 55%),
+      linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 100%);
+    color:var(--ink); position:relative; overflow:hidden; padding:84px 80px 0;
+  }
+  .serif{ font-family:"Noto Serif CJK KR",serif; }
+
+  .eyebrow{ display:flex; align-items:center; justify-content:space-between; }
+  .eyebrow .l{ display:flex; align-items:center; gap:18px; letter-spacing:.32em; font-size:20px; font-weight:600; color:var(--ink2); }
+  .eyebrow .l::before{ content:""; width:6px; height:30px; background:var(--blue); border-radius:3px; }
+  .eyebrow .r{ font-size:21px; font-weight:700; letter-spacing:.1em; color:var(--blue); }
+  .eyebrow .r b{ color:var(--ink2); }
+
+  h1{ margin-top:28px; font-weight:800; font-size:60px; line-height:1.15; letter-spacing:-1px; }
+  h1 .num{ color:var(--blue); }
+
+  .rows{ margin-top:30px; display:flex; flex-direction:column; gap:16px; }
+  .row{ position:relative; background:rgba(255,255,255,.78);
+    border:1.4px solid rgba(31,86,224,.14); border-radius:24px;
+    box-shadow:0 26px 50px -30px rgba(23,65,184,.45);
+    padding:22px 40px; display:flex; align-items:center; gap:30px; min-height:118px; }
+
+  .no{ flex:0 0 100px; }
+  .no .n{ font-family:"Noto Serif CJK KR",serif; font-size:54px; font-weight:800; color:var(--blue); line-height:1; }
+  .no .bar{ width:48px; height:5px; background:var(--blue); border-radius:3px; margin-top:12px; }
+
+  .txt{ flex:1; }
+  .txt .t{ font-size:32px; font-weight:800; color:var(--ink); letter-spacing:-.5px; }
+  .txt .d{ margin-top:9px; font-size:23px; line-height:1.42; color:var(--muted); font-weight:500; }
+  .txt .d .hl{ color:var(--blue-d); font-weight:800; }
+
+  .ic{ flex:0 0 132px; display:flex; align-items:center; justify-content:center; }
+
+  .foot{ position:absolute; left:80px; right:80px; bottom:74px; }
+  .foot .hr{ width:60px; height:5px; background:var(--blue); border-radius:3px; margin-bottom:18px; }
+  .foot p{ font-size:28px; font-weight:600; line-height:1.5; color:var(--ink2); }
+  .foot p .hl{ color:var(--blue); font-weight:800; }
+</style>
+</head>
+<body>
+  <div class="eyebrow">
+    <div class="l">WHY SANDBOX MATTERS</div>
+    <div class="r"><b>02</b> / 03</div>
+  </div>
+
+  <h1 class="serif">기업이 샌드박스를<br>필수로 보는 <span class="num">3가지</span> 이유</h1>
+
+  <div class="rows">
+    <!-- 01 -->
+    <div class="row">
+      <div class="no"><div class="n">01</div><div class="bar"></div></div>
+      <div class="txt">
+        <div class="t">통제된 실패</div>
+        <div class="d">환각으로 인한 파괴적 실행 피해를 호스트 OS가 아닌<br><span class="hl">일회성 격리 환경 안으로 한정</span></div>
+      </div>
+      <div class="ic">
+        <svg width="138" height="120" viewBox="0 0 138 120">
+          <g fill="none" stroke="#1f56e0" stroke-width="2.2" stroke-linejoin="round">
+            <path d="M69 14 L116 36 L116 84 L69 106 L22 84 L22 36 Z" fill="rgba(95,134,240,.10)"/>
+            <path d="M69 14 L69 60 M69 60 L116 36 M69 60 L22 36" />
+            <path d="M69 60 L69 106" />
+          </g>
+          <path d="M69 40 L86 47 V63 c0 11 -8 18 -17 22 c-9 -4 -17 -11 -17 -22 V47 Z" fill="#1f56e0"/>
+          <path d="M61 62 l6 6 11 -13" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <ellipse cx="69" cy="112" rx="40" ry="6" fill="none" stroke="#9db6ee" stroke-width="2" stroke-dasharray="3 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 02 -->
+    <div class="row">
+      <div class="no"><div class="n">02</div><div class="bar"></div></div>
+      <div class="txt">
+        <div class="t">자격 증명 보호</div>
+        <div class="d">Secret 키를 코드에 남기지 않고, 통제된 공간에 동적으로 주입한 뒤<br><span class="hl">즉시 폐기</span></div>
+      </div>
+      <div class="ic">
+        <svg width="150" height="118" viewBox="0 0 150 118">
+          <g fill="none" stroke="#1f56e0" stroke-width="2.2" stroke-linejoin="round">
+            <path d="M46 22 L86 22 L86 96 L46 96 Z" fill="rgba(95,134,240,.10)"/>
+            <path d="M46 22 L60 12 L100 12 L86 22 M86 96 L100 86 L100 12" />
+          </g>
+          <circle cx="64" cy="50" r="11" fill="none" stroke="#1f56e0" stroke-width="3"/>
+          <path d="M64 61 L64 78 M64 70 L72 70" stroke="#1f56e0" stroke-width="3" stroke-linecap="round"/>
+          <path d="M104 56 L128 56" stroke="#1f56e0" stroke-width="2.4" stroke-dasharray="4 5" stroke-linecap="round"/>
+          <path d="M122 50 L130 56 L122 62" stroke="#1f56e0" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <g stroke="#1f56e0" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M132 70 L148 70 M134 70 L136 92 a3 3 0 0 0 3 3 h6 a3 3 0 0 0 3 -3 L146 70 M137 66 h6"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 03 -->
+    <div class="row">
+      <div class="no"><div class="n">03</div><div class="bar"></div></div>
+      <div class="txt">
+        <div class="t">유연한 스케일 아웃</div>
+        <div class="d">동일한 의존성이 세팅된 격리 환경을 병렬로 복제해,<br><span class="hl">수십 개의 에이전트를 동시에 실행</span></div>
+      </div>
+      <div class="ic">
+        <svg width="150" height="120" viewBox="0 0 150 120">
+          <circle cx="75" cy="20" r="16" fill="none" stroke="#1f56e0" stroke-width="2.4"/>
+          <path d="M75 28 L75 12 M69 18 L75 11 L81 18" stroke="#1f56e0" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M30 70 L30 40 L75 40 L120 40 L120 70" fill="none" stroke="#1f56e0" stroke-width="2.2" stroke-dasharray="3 6"/>
+          <path d="M75 40 L75 36" stroke="#1f56e0" stroke-width="2.2"/>
+          <g fill="rgba(95,134,240,.10)" stroke="#1f56e0" stroke-width="2.2" stroke-linejoin="round">
+            <path d="M30 78 L48 70 L66 78 L66 100 L48 108 L30 100 Z"/>
+            <path d="M57 78 L75 70 L93 78 L93 100 L75 108 L57 100 Z"/>
+            <path d="M84 78 L102 70 L120 78 L120 100 L102 108 L84 100 Z"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="hr"></div>
+    <p>핵심은 ‘에이전트의 자율성’이 아니라,<br>그 자율성을 안전하게 둘러싸는 <span class="hl">실행 환경</span>입니다.</p>
+  </div>
+</body>
+</html>

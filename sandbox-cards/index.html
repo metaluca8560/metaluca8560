@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>에이전트 샌드박스 카드뉴스 (Blue)</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Noto Sans CJK KR",system-ui,sans-serif;background:#0e1830;color:#e7eefb;
+    display:flex;flex-direction:column;align-items:center;gap:34px;padding:48px 16px}
+  h1{font-size:26px;font-weight:800;letter-spacing:-.5px}
+  p.sub{opacity:.65;font-size:15px;margin-top:-22px}
+  .frame{width:min(720px,94vw);aspect-ratio:1/1;border-radius:20px;overflow:hidden;
+    box-shadow:0 30px 70px -30px rgba(0,0,0,.6)}
+  iframe{width:1080px;height:1080px;border:0;transform-origin:top left;display:block}
+</style>
+</head>
+<body>
+  <h1>기업들이 ‘에이전트 샌드박스’에 목숨을 거는 이유</h1>
+  <p class="sub">SYSTEM ARCHITECT VIEW · Blue Edition (3-card carousel)</p>
+  <div class="frame"><iframe src="card1.html" scrolling="no"></iframe></div>
+  <div class="frame"><iframe src="card2.html" scrolling="no"></iframe></div>
+  <div class="frame"><iframe src="card3.html" scrolling="no"></iframe></div>
+  <script>
+    function fit(){
+      document.querySelectorAll('.frame').forEach(f=>{
+        const s=f.clientWidth/1080; f.querySelector('iframe').style.transform='scale('+s+')';
+      });
+    }
+    addEventListener('resize',fit); addEventListener('load',fit); fit();
+  </script>
+</body>
+</html>
