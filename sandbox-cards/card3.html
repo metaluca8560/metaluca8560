@@ -14,9 +14,9 @@
   body{
     font-family:"Noto Sans CJK KR",sans-serif;
     background:
-      radial-gradient(1000px 760px at 82% 14%, #ffffff 0%, rgba(255,255,255,0) 52%),
+      radial-gradient(1000px 760px at 82% 13%, #ffffff 0%, rgba(255,255,255,0) 52%),
       linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 100%);
-    color:var(--ink); position:relative; overflow:hidden; padding:78px 80px 0;
+    color:var(--ink); position:relative; overflow:hidden; padding:74px 80px 0;
     word-break:keep-all;
   }
   .serif{ font-family:"Noto Serif CJK KR",serif; }
@@ -26,75 +26,91 @@
   .eyebrow .l::before{ content:""; width:6px; height:30px; background:var(--blue); border-radius:3px; }
   .eyebrow .r{ font-size:22px; font-weight:700; letter-spacing:.1em; color:var(--blue); }
 
-  h1{ margin-top:28px; font-weight:800; font-size:66px; line-height:1.15; letter-spacing:-1px; max-width:640px; }
+  h1{ margin-top:20px; font-weight:800; font-size:60px; line-height:1.13; letter-spacing:-1px; max-width:660px; }
   h1 .ona{ color:var(--blue); }
 
+  /* fact timeline caption */
+  .caption{ margin-top:16px; display:flex; align-items:center; gap:14px; font-size:21px; font-weight:600; color:var(--muted); flex-wrap:wrap; }
+  .caption b{ color:var(--blue-d); font-weight:800; }
+  .caption .arw{ color:var(--blue-l); font-weight:700; }
+
   /* runtime illustration top-right */
-  .scene{ position:absolute; right:70px; top:120px; width:300px; height:250px; }
-  .scene .cube{ position:absolute; left:96px; top:120px; width:110px; height:110px; }
+  .scene{ position:absolute; right:64px; top:120px; width:280px; height:230px; }
   .mini{ position:absolute; background:rgba(255,255,255,.8); border:1.4px solid rgba(31,86,224,.20);
     border-radius:12px; box-shadow:0 16px 30px -18px rgba(23,65,184,.5); display:flex; align-items:center; justify-content:center; }
-  .m1{ left:20px; top:18px; width:78px; height:58px; }
-  .m2{ left:150px; top:0px; width:64px; height:60px; }
-  .m3{ left:222px; top:60px; width:74px; height:60px; }
+  .m1{ left:18px; top:14px; width:72px; height:54px; }
+  .m2{ left:140px; top:0px; width:60px; height:56px; }
+  .m3{ left:208px; top:54px; width:70px; height:56px; }
+  .cube{ position:absolute; left:90px; top:112px; width:104px; height:104px; }
 
-  .panels{ margin-top:32px; display:flex; gap:26px; }
+  .panels{ margin-top:22px; display:flex; gap:26px; }
   .panel{ flex:1; position:relative; background:rgba(255,255,255,.8);
     border:1.4px solid rgba(31,86,224,.14); border-radius:24px;
-    box-shadow:0 26px 50px -30px rgba(23,65,184,.45); padding:30px 34px 32px; }
-  .badge{ width:50px; height:50px; border-radius:50%;
+    box-shadow:0 24px 48px -30px rgba(23,65,184,.45); padding:26px 32px 26px; }
+  .badge{ width:48px; height:48px; border-radius:50%;
     background:linear-gradient(150deg,var(--blue),var(--blue-d));
-    color:#fff; font-weight:800; font-size:23px; display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:800; font-size:22px; display:flex; align-items:center; justify-content:center;
     box-shadow:0 12px 22px -10px rgba(23,65,184,.6); }
-  .panel .pt{ margin-top:20px; font-size:30px; font-weight:800; color:var(--ink); letter-spacing:-.5px; line-height:1.25; }
+  .panel .pt{ margin-top:18px; font-size:29px; font-weight:800; color:var(--ink); letter-spacing:-.5px; line-height:1.22; }
   .panel .pbar{ width:44px; height:4px; background:var(--blue); border-radius:3px; margin-top:14px; }
-  .panel .pd{ margin-top:16px; font-size:23px; line-height:1.55; color:var(--muted); font-weight:500; }
+  .panel .pd{ margin-top:14px; font-size:21px; line-height:1.46; color:var(--muted); font-weight:500; }
+  .panel .pd em{ font-style:normal; color:var(--blue-d); font-weight:800; }
 
-  .quote{ margin-top:24px; position:relative; background:rgba(255,255,255,.62);
-    border:1.4px solid rgba(31,86,224,.12); border-radius:24px; padding:30px 60px; text-align:center; }
-  .quote .qm{ position:absolute; font-family:"Noto Serif CJK KR",serif; font-size:96px; line-height:1;
+  /* fact strip */
+  .facts{ margin-top:18px; display:flex; align-items:stretch;
+    background:linear-gradient(120deg, rgba(31,86,224,.10), rgba(95,134,240,.06));
+    border:1.4px solid rgba(31,86,224,.18); border-radius:18px; overflow:hidden; }
+  .facts .cell{ flex:1; padding:18px 28px; }
+  .facts .cell + .cell{ border-left:1.4px solid rgba(31,86,224,.16); }
+  .facts .lab{ font-size:16px; letter-spacing:.06em; font-weight:800; color:var(--blue); margin-bottom:6px; }
+  .facts .val{ font-size:21px; font-weight:600; color:var(--ink2); line-height:1.35; }
+  .facts .val b{ color:var(--blue-d); font-weight:800; }
+
+  .quote{ margin-top:16px; position:relative; background:rgba(255,255,255,.62);
+    border:1.4px solid rgba(31,86,224,.12); border-radius:22px; padding:24px 58px; text-align:center; }
+  .quote .qm{ position:absolute; font-family:"Noto Serif CJK KR",serif; font-size:80px; line-height:1;
     color:rgba(31,86,224,.18); font-weight:800; }
-  .quote .qm.open{ left:28px; top:0px; }
-  .quote .qm.close{ right:28px; bottom:-26px; }
-  .quote p{ font-size:27px; line-height:1.5; font-weight:600; color:var(--ink2); }
+  .quote .qm.open{ left:24px; top:2px; }
+  .quote .qm.close{ right:24px; bottom:-18px; }
+  .quote p{ font-size:24px; line-height:1.44; font-weight:600; color:var(--ink2); }
   .quote p .hl{ color:var(--blue); font-weight:800; }
 
-  .foot{ margin-top:30px; text-align:center; }
+  .foot{ margin-top:16px; text-align:center; }
   .foot .row{ display:inline-flex; align-items:center; gap:20px; }
   .foot .dash{ width:46px; height:4px; background:var(--blue); border-radius:3px; }
-  .foot p{ font-size:28px; font-weight:700; color:var(--ink2); }
+  .foot p{ font-size:27px; font-weight:700; color:var(--ink2); }
   .foot p .en{ font-family:"Noto Serif CJK KR",serif; color:var(--blue); font-weight:800; }
 </style>
 </head>
 <body>
   <!-- runtime illustration -->
   <div class="scene">
-    <svg width="300" height="250" viewBox="0 0 300 250" style="position:absolute;inset:0">
+    <svg width="280" height="230" viewBox="0 0 280 230" style="position:absolute;inset:0">
       <g stroke="#9db6ee" stroke-width="2" stroke-dasharray="3 7" stroke-linecap="round" fill="none">
-        <path d="M150 175 L59 47"/><path d="M150 175 L182 30"/><path d="M150 175 L259 90"/>
+        <path d="M142 164 L54 41"/><path d="M142 164 L170 28"/><path d="M142 164 L243 82"/>
       </g>
     </svg>
     <div class="mini m1">
-      <svg width="40" height="26" viewBox="0 0 40 26" fill="none" stroke="#1741b8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M14 6 L6 13 L14 20 M26 6 L34 13 L26 20"/>
+      <svg width="38" height="24" viewBox="0 0 38 24" fill="none" stroke="#1741b8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 5 L6 12 L13 19 M25 5 L32 12 L25 19"/>
       </svg>
     </div>
     <div class="mini m2">
-      <svg width="26" height="32" viewBox="0 0 26 32" fill="none">
-        <path d="M13 2 L24 6 V16 c0 8 -5 12 -11 14 c-6 -2 -11 -6 -11 -14 V6 Z" stroke="#1741b8" stroke-width="2.2" fill="rgba(95,134,240,.12)"/>
-        <path d="M8 16 l4 4 7 -8" stroke="#1741b8" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg width="24" height="30" viewBox="0 0 24 30" fill="none">
+        <path d="M12 2 L22 6 V15 c0 7 -4 11 -10 13 c-6 -2 -10 -6 -10 -13 V6 Z" stroke="#1741b8" stroke-width="2.2" fill="rgba(95,134,240,.12)"/>
+        <path d="M7 15 l4 4 6 -7" stroke="#1741b8" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
     <div class="mini m3">
-      <svg width="34" height="30" viewBox="0 0 34 30" fill="none" stroke="#1741b8" stroke-width="2.2">
-        <circle cx="11" cy="11" r="5"/><path d="M3 26 a8 8 0 0 1 16 0" fill="none"/>
-        <path d="M24 10 h7 M24 16 h7 M24 22 h5" stroke-linecap="round"/>
+      <svg width="32" height="28" viewBox="0 0 32 28" fill="none" stroke="#1741b8" stroke-width="2.2">
+        <circle cx="10" cy="10" r="5"/><path d="M2 24 a8 8 0 0 1 16 0" fill="none"/>
+        <path d="M22 9 h7 M22 15 h7 M22 21 h5" stroke-linecap="round"/>
       </svg>
     </div>
-    <svg class="cube" viewBox="0 0 110 110">
-      <path d="M55 8 L100 30 L100 74 L55 96 L10 74 L10 30 Z" fill="rgba(95,134,240,.14)" stroke="#1f56e0" stroke-width="2.4" stroke-linejoin="round"/>
-      <path d="M55 8 L55 52 M55 52 L100 30 M55 52 L10 30 M55 52 L55 96" fill="none" stroke="#1f56e0" stroke-width="2.2"/>
-      <text x="55" y="70" text-anchor="middle" font-family="Noto Sans CJK KR" font-size="12" font-weight="800" fill="#1741b8" letter-spacing="1">RUNTIME</text>
+    <svg class="cube" viewBox="0 0 104 104">
+      <path d="M52 8 L95 28 L95 70 L52 90 L9 70 L9 28 Z" fill="rgba(95,134,240,.14)" stroke="#1f56e0" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M52 8 L52 49 M52 49 L95 28 M52 49 L9 28 M52 49 L52 90" fill="none" stroke="#1f56e0" stroke-width="2.2"/>
+      <text x="52" y="66" text-anchor="middle" font-family="Noto Sans CJK KR" font-size="11" font-weight="800" fill="#1741b8" letter-spacing="1">RUNTIME</text>
     </svg>
   </div>
 
@@ -103,31 +119,44 @@
     <div class="r">03</div>
   </div>
 
-  <h1 class="serif">왜 OpenAI는<br>‘<span class="ona">Ona</span>’를 택했을까?</h1>
+  <h1 class="serif">왜 OpenAI는<br>‘<span class="ona">Ona</span>’를 인수했을까?</h1>
+
+  <div class="caption">
+    옛 <b>Gitpod</b> <span class="arw">→</span> <b>2025.09</b> ‘Ona’ 리브랜딩 <span class="arw">→</span> <b>2026.06</b> OpenAI 인수
+  </div>
 
   <div class="panels">
     <div class="panel">
       <div class="badge">01</div>
       <div class="pt">깊은 오케스트레이션 경험</div>
       <div class="pbar"></div>
-      <div class="pd">Gitpod 시절부터<br>복잡한 클라우드 환경을<br>띄우고 폐기해 온 운영 자산</div>
+      <div class="pd">Gitpod 시절부터 <em>microVM</em>으로<br>복잡한 클라우드 환경을<br>띄우고 폐기해 온 운영 자산</div>
     </div>
     <div class="panel">
       <div class="badge">02</div>
-      <div class="pt">강력한 엔터프라이즈 거버넌스</div>
+      <div class="pt">지속형 장시간 실행</div>
       <div class="pbar"></div>
-      <div class="pd">OS 레벨 명령어 제어,<br>세밀한 감사 로그,<br>보안 부서를 설득할 수 있는 통제력</div>
+      <div class="pd">노트북을 꺼도 에이전트가<br><em>몇 시간~며칠</em> 자율 실행,<br>자동 체크포인트로 작업 지속</div>
+    </div>
+  </div>
+
+  <div class="facts">
+    <div class="cell">
+      <div class="lab">ENTERPRISE GOVERNANCE</div>
+      <div class="val">VPC 보안 · 세밀한 <b>감사 로그</b> · <b>OS 레벨</b> 명령어 제어</div>
+    </div>
+    <div class="cell">
+      <div class="lab">CODEX SCALE</div>
+      <div class="val"><b>주간 활성 사용자 500만+</b><br>(2026.06 기준, OpenAI 발표)</div>
     </div>
   </div>
 
   <div class="quote">
     <span class="qm open serif">“</span>
     <span class="qm close serif">”</span>
-    <p>AI 경쟁은 이제<br>
-    ‘누가 더 똑똑한 모델을 만드느냐’를 넘어,<br>
-    ‘누가 에이전트가 안전하게 활동할<br>
-    <span class="hl">실행 인프라(Runtime)</span>를 제공하느냐’의<br>
-    경쟁으로 확장되고 있습니다.</p>
+    <p>AI 경쟁은 이제 ‘누가 더 똑똑한 모델을 만드느냐’를 넘어,<br>
+    ‘누가 에이전트가 안전하게 활동할 <span class="hl">실행 인프라(Runtime)</span>를<br>
+    확보하느냐’의 경쟁으로 확장되고 있습니다.</p>
   </div>
 
   <div class="foot">
