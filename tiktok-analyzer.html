@@ -582,11 +582,10 @@
     document.getElementById('result').classList.remove('show')
 
     try {
-      const PROXY_URL = 'https://script.google.com/macros/s/AKfycbxaPTU5OP9pq8afXMKDegL1boaWgW1aNu6GOYtRWWkvj3A4mSLDU741NubvzK6YqzHE/exec'
-      const res = await fetch(PROXY_URL, {
-        method: 'POST',
+      const PROXY_URL = 'https://script.google.com/macros/s/AKfycbxvdrD6FI2mGEj7GtIOuGRAbD4yFRoPLqcOrWMorzPVAot-K2rs0vLuScw28B26hJHA/exec'
+      const res = await fetch(PROXY_URL + '?prompt=' + encodeURIComponent(buildPrompt(data)), {
+        method: 'GET',
         redirect: 'follow',
-        body: JSON.stringify({ prompt: buildPrompt(data) }),
       })
 
       if (!res.ok) {
