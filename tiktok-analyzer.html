@@ -341,6 +341,26 @@
     <p>영상 정보와 지표를 입력하면 AI가 콘텐츠 전략과 개선점을 분석해드려요</p>
   </div>
 
+  <!-- API Key -->
+  <div class="card">
+    <div class="card-title">Claude AI 연결</div>
+    <div class="api-notice">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#fe2c55" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <span>분석에 Claude API 키가 필요해요. 키는 브라우저에만 저장되며 서버로 전송되지 않아요.<br>
+        <a href="https://console.anthropic.com" target="_blank" style="color:var(--primary)">console.anthropic.com</a>에서 발급받을 수 있어요.</span>
+    </div>
+    <div class="field" style="margin:0">
+      <label>API Key <span class="hint">브라우저 로컬에만 저장</span></label>
+      <div style="display:flex;gap:10px">
+        <input type="password" id="apiKey" placeholder="sk-ant-api03-..." />
+        <button class="btn btn-secondary" onclick="saveKey()">저장</button>
+      </div>
+    </div>
+    <div id="keyStatus" style="font-size:13px;margin-top:10px;color:var(--muted)"></div>
+  </div>
+
 
   <!-- Input Form -->
   <div class="card">
@@ -478,7 +498,36 @@
 </main>
 
 <script>
-  function getKey() { return 'proxy' }
+  const keyInput = document.getElementById('apiKey')
+  const keyStatus = document.getElementById('keyStatus')
+
+  function saveKey() {
+    const key = keyInput.value.trim()
+    if (!key.startsWith('sk-ant')) {
+      keyStatus.textContent = '⚠ Claude API 키 형식이 아닌 것 같아요'
+      keyStatus.style.color = '#fe2c55'
+      return
+    }
+    localStorage.setItem('claude_api_key', key)
+    keyInput.value = '••••••••••••••••••••'
+    keyStatus.textContent = '✓ API 키가 저장됐어요'
+    keyStatus.style.color = '#4ade80'
+  }
+
+  window.addEventListener('load', () => {
+    const saved = localStorage.getItem('claude_api_key')
+    if (saved) {
+      keyInput.value = '••••••••••••••••••••'
+      keyStatus.textContent = '✓ 저장된 API 키가 있어요'
+      keyStatus.style.color = '#4ade80'
+    }
+  })
+
+  function getKey() {
+    const raw = keyInput.value.trim()
+    if (raw && !raw.startsWith('••')) return raw
+    return localStorage.getItem('claude_api_key') || ''
+  }
 
   // ── Metrics ──
   function fmt(n) {
@@ -582,10 +631,19 @@
     document.getElementById('result').classList.remove('show')
 
     try {
-      const PROXY_URL = 'https://script.google.com/macros/s/AKfycbxvdrD6FI2mGEj7GtIOuGRAbD4yFRoPLqcOrWMorzPVAot-K2rs0vLuScw28B26hJHA/exec'
-      const res = await fetch(PROXY_URL + '?prompt=' + encodeURIComponent(buildPrompt(data)), {
-        method: 'GET',
-        redirect: 'follow',
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-calls': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 1500,
+          messages: [{ role: 'user', content: buildPrompt(data) }],
+        }),
       })
 
       if (!res.ok) {
