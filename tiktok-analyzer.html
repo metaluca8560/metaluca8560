@@ -585,7 +585,7 @@
       const PROXY_URL = 'https://script.google.com/macros/s/AKfycbxaPTU5OP9pq8afXMKDegL1boaWgW1aNu6GOYtRWWkvj3A4mSLDU741NubvzK6YqzHE/exec'
       const res = await fetch(PROXY_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
+        redirect: 'follow',
         body: JSON.stringify({ prompt: buildPrompt(data) }),
       })
 
