@@ -143,6 +143,7 @@
 </main>
 <script>
   const PROXY_URL = '/api/proxy'
+  const N8N_WEBHOOK_URL = 'YOUR_N8N_WEBHOOK_URL' // n8n 활성화 후 여기 교체
 
   function fmt(n) { if (!n) return '0'; if (n >= 1000000) return (n/1000000).toFixed(1)+'M'; if (n >= 1000) return (n/1000).toFixed(1)+'K'; return n.toString() }
 
@@ -237,7 +238,9 @@
       const res = await fetch(PROXY_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prompt:buildPrompt(data)}) })
       const json = await res.json()
       if (json.error) throw new Error(json.error.message||json.error||'API 오류')
-      renderResult(data, json.content[0].text)
+      const analysisText = json.content[0].text
+      renderResult(data, analysisText)
+      sendToN8n(data, analysisText)
     } catch(e) {
       alert('분석 중 오류가 발생했어요: '+e.message)
     } finally {
@@ -273,6 +276,28 @@
       .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
       .replace(/^- (.+)/gm,'<li>$1</li>').replace(/(<li>.*<\/li>\n?)+/g,m=>`<ul>${m}</ul>`)
       .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')
+  }
+
+  async function sendToN8n(data, analysis) {
+    if (!N8N_WEBHOOK_URL || N8N_WEBHOOK_URL === 'YOUR_N8N_WEBHOOK_URL') return
+    try {
+      await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: data.title || '제목 없음',
+          metrics: {
+            views: data.views,
+            engagement: data.engRate ? data.engRate + '%' : '–',
+            likeRate: data.views ? ((data.likes/data.views)*100).toFixed(1)+'%' : '–',
+            subConversion: data.subRate ? data.subRate+'%' : '–',
+            watchTime: data.watchTime ? data.watchTime+'%' : '–',
+            newSubs: data.newSubs || 0
+          },
+          analysis
+        })
+      })
+    } catch(e) { console.log('n8n 알림 실패:', e.message) }
   }
 
   function copyResult() { const el=document.getElementById('analysisText'); if(!el) return; navigator.clipboard.writeText(el.innerText).then(()=>alert('분석 결과가 클립보드에 복사됐어요!')) }
