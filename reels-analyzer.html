@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>인스타 릴스 분석기 — AI 트렌드 다락방</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0f; --surface: #13131a; --surface2: #1c1c28; --border: #2a2a3a;
+      --primary: #e1306c; --primary-glow: rgba(225,48,108,0.15);
+      --secondary: #f77737; --secondary-glow: rgba(247,119,55,0.15);
+      --purple: #833ab4;
+      --text: #f0f0f5; --muted: #888; --radius: 14px;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Pretendard', -apple-system, sans-serif; min-height: 100vh; line-height: 1.6; }
+    .header { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
+    .header a { text-decoration: none; color: var(--muted); font-size: 14px; }
+    .header a:hover { color: var(--text); }
+    .header-logo { width: 32px; height: 32px; }
+    .header-title { font-size: 18px; font-weight: 700; background: linear-gradient(135deg, var(--purple), var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .header-sep { color: var(--border); margin: 0 4px; }
+    .main { max-width: 900px; margin: 0 auto; padding: 40px 20px 80px; }
+    .hero { text-align: center; margin-bottom: 48px; }
+    .hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 800; letter-spacing: -1px; line-height: 1.2; }
+    .hero h1 span { background: linear-gradient(135deg, var(--purple), var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { color: var(--muted); margin-top: 12px; font-size: 16px; }
+    .ig-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(225,48,108,0.1); border: 1px solid rgba(225,48,108,0.3); border-radius: 20px; padding: 4px 14px; font-size: 13px; font-weight: 600; color: #f06292; margin-top: 12px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 20px; }
+    .card-title { font-size: 15px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 20px; }
+    .field { margin-bottom: 18px; }
+    label { display: block; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    label .hint { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 6px; }
+    input, textarea, select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-family: inherit; font-size: 15px; outline: none; transition: border-color 0.2s; }
+    input:focus, textarea:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    textarea { resize: vertical; min-height: 90px; }
+    select option { background: var(--surface2); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .metric-wrap { position: relative; }
+    .metric-wrap input { padding-right: 40px; }
+    .metric-unit { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 13px; pointer-events: none; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border: none; border-radius: 10px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, var(--purple), var(--primary), var(--secondary)); color: #fff; width: 100%; justify-content: center; font-size: 16px; }
+    .btn-primary:hover:not(:disabled) { box-shadow: 0 8px 24px var(--primary-glow); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); font-size: 13px; padding: 8px 14px; }
+    .btn-secondary:hover { color: var(--text); border-color: var(--muted); }
+    .loading { display: none; text-align: center; padding: 40px; }
+    .loading.show { display: block; }
+    .spinner { width: 48px; height: 48px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading p { color: var(--muted); font-size: 14px; }
+    .result { display: none; }
+    .result.show { display: block; }
+    .score-bar { display: flex; align-items: center; gap: 20px; padding: 24px; background: var(--surface2); border-radius: 12px; margin-bottom: 24px; }
+    .score-circle { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 22px; font-weight: 900; border: 3px solid; }
+    .score-circle.great { border-color: #4ade80; color: #4ade80; background: rgba(74,222,128,0.1); }
+    .score-circle.good  { border-color: var(--secondary); color: var(--secondary); background: var(--secondary-glow); }
+    .score-circle.ok    { border-color: #facc15; color: #facc15; background: rgba(250,204,21,0.1); }
+    .score-circle.low   { border-color: var(--primary); color: var(--primary); background: var(--primary-glow); }
+    .score-info h3 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+    .score-info p  { color: var(--muted); font-size: 14px; }
+    .section-label { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin: 28px 0 14px; display: flex; align-items: center; gap: 8px; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .insight-item { background: var(--surface2); border-radius: 10px; padding: 16px; }
+    .insight-item .label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .insight-item .value { font-size: 22px; font-weight: 800; }
+    .insight-item .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .analysis-content { background: var(--surface2); border-radius: 12px; padding: 20px; font-size: 15px; line-height: 1.8; white-space: pre-wrap; }
+    .analysis-content h3 { font-size: 15px; font-weight: 700; color: var(--secondary); margin: 18px 0 8px; }
+    .analysis-content h3:first-child { margin-top: 0; }
+    .analysis-content ul { padding-left: 20px; }
+    .analysis-content li { margin-bottom: 6px; }
+    .analysis-content strong { color: var(--text); }
+    .action-row { display: flex; gap: 10px; margin-top: 20px; }
+    @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .insight-grid { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+<header class="header">
+  <img src="logo.svg" class="header-logo" alt="logo" />
+  <a href="index.html">AI 트렌드 다락방</a>
+  <span class="header-sep">›</span>
+  <span class="header-title">인스타 릴스 분석기</span>
+</header>
+<main class="main">
+  <div class="hero">
+    <h1>인스타그램 릴스<br><span>AI 성과 분석기</span></h1>
+    <p>릴스 지표를 입력하면 AI가 콘텐츠 전략과 팔로워 성장 인사이트를 제공해드려요</p>
+    <div class="ig-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+      Instagram Reels 전용 분석
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">릴스 정보 입력</div>
+    <div class="field"><label>릴스 URL <span class="hint">선택사항</span></label><input type="url" id="videoUrl" placeholder="https://www.instagram.com/reel/..." /></div>
+    <div class="grid-2">
+      <div class="field"><label>계정명 (@)</label><input type="text" id="creator" placeholder="@username" /></div>
+      <div class="field"><label>업로드 날짜 <span class="hint">선택사항</span></label><input type="date" id="uploadDate" /></div>
+    </div>
+    <div class="field"><label>릴스 캡션 / 해시태그</label><textarea id="caption" placeholder="캡션과 해시태그를 그대로 붙여넣으세요&#10;예) 오늘의 OOTD 공유해요 ✨ #일상루틴 #온니더데일리 #릴스추천"></textarea></div>
+    <div class="grid-2">
+      <div class="field"><label>카테고리</label><select id="category"><option value="">선택하세요</option><option>뷰티/패션</option><option>음식/요리</option><option>여행/라이프스타일</option><option>교육/정보</option><option>엔터테인먼트/유머</option><option>피트니스/헬스</option><option>비즈니스/마케팅</option><option>인테리어/디자인</option><option>반려동물</option><option>대스/음악</option><option>기타</option></select></div>
+      <div class="field"><label>릴스 길이</label><select id="duration"><option value="">선택하세요</option><option>15초 이하</option><option>15~30초</option><option>30~60초</option><option>60~90초</option></select></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">성과 지표</div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:20px">인스타그램 인사이트에서 확인한 수치를 입력하세요</p>
+    <div class="grid-3">
+      <div class="field"><label>조회수</label><div class="metric-wrap"><input type="number" id="views" placeholder="0" min="0" /><span class="metric-unit">회</span></div></div>
+      <div class="field"><label>좋아요</label><div class="metric-wrap"><input type="number" id="likes" placeholder="0" min="0" /><span class="metric-unit">개</span></div></div>
+      <div class="field"><label>댓글</label><div class="metric-wrap"><input type="number" id="comments" placeholder="0" min="0" /><span class="metric-unit">개</span></div></div>
+      <div class="field"><label>저장</label><div class="metric-wrap"><input type="number" id="saves" placeholder="0" min="0" /><span class="metric-unit">개</span></div></div>
+      <div class="field"><label>공유</label><div class="metric-wrap"><input type="number" id="shares" placeholder="0" min="0" /><span class="metric-unit">개</span></div></div>
+      <div class="field"><label>팔로워 수</label><div class="metric-wrap"><input type="number" id="followers" placeholder="0" min="0" /><span class="metric-unit">명</span></div></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>도달 수 <span class="hint">선택사항</span></label><div class="metric-wrap"><input type="number" id="reach" placeholder="0" min="0" /><span class="metric-unit">명</span></div></div>
+      <div class="field"><label>신규 팔로워 <span class="hint">이 릴스로</span></label><div class="metric-wrap"><input type="number" id="newFollowers" placeholder="0" min="0" /><span class="metric-unit">명</span></div></div>
+    </div>
+    <div class="field"><label>추가 메모 <span class="hint">선택사항 — 업로드 시간, BGM, 트렌드 여부 등</span></label><textarea id="notes" placeholder="예) 저녁 7시 업로드, 트렌드 BGM 사용, 스토리에 연계 화제" style="min-height:70px"></textarea></div>
+  </div>
+
+  <button class="btn btn-primary" id="analyzeBtn" onclick="analyze()">
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+    AI 분석 시작
+  </button>
+
+  <div class="loading" id="loading"><div class="spinner"></div><p>AI가 릴스를 분석 중이에요...</p></div>
+
+  <div class="result card" id="result" style="margin-top:24px">
+    <div id="resultContent"></div>
+    <div class="action-row">
+      <button class="btn btn-secondary" onclick="copyResult()">결과 복사</button>
+      <button class="btn btn-secondary" onclick="resetForm()">새 분석</button>
+    </div>
+  </div>
+</main>
+<script>
+  const PROXY_URL = '/api/proxy'
+
+  function fmt(n) { if (!n) return '0'; if (n >= 1000000) return (n/1000000).toFixed(1)+'M'; if (n >= 1000) return (n/1000).toFixed(1)+'K'; return n.toString() }
+
+  function calcEngagement(views, likes, comments, saves, shares) {
+    if (!views || views === 0) return null
+    return Math.min(((likes + comments*2 + saves*3 + shares*2) / views) * 100, 100).toFixed(2)
+  }
+
+  function calcSaveRate(views, saves) {
+    if (!views || !saves) return null
+    return ((saves / views) * 100).toFixed(2)
+  }
+
+  function engLabel(rate) {
+    if (rate >= 6) return {text:'매우 높음', cls:'great'}
+    if (rate >= 3) return {text:'좋음', cls:'good'}
+    if (rate >= 1.5) return {text:'보통', cls:'ok'}
+    return {text:'개선 필요', cls:'low'}
+  }
+
+  function buildPrompt(data) {
+    return `당신은 인스타그램 릴스(Reels) 콘텐츠 전략 전문가입니다. 아래 데이터를 분석하고 실행 가능한 인사이트를 제공해주세요.
+
+## 릴스 정보
+- 계정: ${data.creator||'미입력'}
+- URL: ${data.url||'미입력'}
+- 카테고리: ${data.category||'미입력'}
+- 길이: ${data.duration||'미입력'}
+- 업로드 날짜: ${data.uploadDate||'미입력'}
+- 캡션/해시태그: ${data.caption||'미입력'}
+- 추가 메모: ${data.notes||'없음'}
+
+## 성과 지표
+- 조회수: ${fmt(data.views)}
+- 좋아요: ${fmt(data.likes)}
+- 댓글: ${fmt(data.comments)}
+- 저장: ${fmt(data.saves)}
+- 공유: ${fmt(data.shares)}
+- 팔로워 수: ${fmt(data.followers)}
+- 도달 수: ${fmt(data.reach)}
+- 신규 팔로워: ${fmt(data.newFollowers)}
+- 참여율: ${data.engRate!==null?data.engRate+'%':'계산 불가'}
+- 저장율: ${data.saveRate!==null?data.saveRate+'%':'계산 불가'}
+
+## 분석 요청
+다음 항목을 한국어로 분석해주세요. 각 섹션 제목은 ### 마크다운 헤딩으로 작성해주세요.
+
+### 📊 종합 성과 평가
+이 릴스의 전반적인 성과를 2~3문장으로 평가해주세요. 인스타 릴스 평균 대비 어느 수준인지 언급해주세요. 특히 저장율(판매 지표)과 도달에 주목해주세요.
+
+### 💡 콘텐츠 강점
+이 릴스가 잘한 점을 3가지 불릿으로 구체적으로 설명해주세요.
+
+### ⚡ 개선 포인트
+저장율, 도달율, 팔로워 전환율 관점에서 개선할 수 있는 구체적인 액션 아이템 3가지를 제시해주세요.
+
+### 🎯 해시태그 & 캐션 전략
+현재 해시태그와 캐션을 평가하고, 더 효과적인 조합을 5~8개 추천해주세요. 인스타 알고리즘에 맞는 CTA 문구도 제안해주세요.
+
+### 📱 스토리 연계 전략
+이 릴스를 스토리와 연계하는 방법과, 팔로워를 는리기 위한 프로필 최적화 팔을 2가지 제안해주세요.
+
+### 🔥 다음 릴스 추천 전략
+이 계정이 다음에 만들면 좋을 릴스 콘텐츠 아이디어를 2~3가지 구체적으로 제안해주세요. 첫 3초 후크 멘트, 트렌드 BGM 활용법도 포함해주세요.
+
+마지막에 **핵심 한 줄 요약**을 볼드로 작성해주세요.`
+  }
+
+  async function analyze() {
+    const data = {
+      url: document.getElementById('videoUrl').value,
+      creator: document.getElementById('creator').value,
+      uploadDate: document.getElementById('uploadDate').value,
+      caption: document.getElementById('caption').value,
+      category: document.getElementById('category').value,
+      duration: document.getElementById('duration').value,
+      views: parseInt(document.getElementById('views').value)||0,
+      likes: parseInt(document.getElementById('likes').value)||0,
+      comments: parseInt(document.getElementById('comments').value)||0,
+      saves: parseInt(document.getElementById('saves').value)||0,
+      shares: parseInt(document.getElementById('shares').value)||0,
+      followers: parseInt(document.getElementById('followers').value)||0,
+      reach: parseInt(document.getElementById('reach').value)||0,
+      newFollowers: parseInt(document.getElementById('newFollowers').value)||0,
+      notes: document.getElementById('notes').value,
+    }
+    if (!data.caption && !data.views) { alert('캡션 또는 성과 지표를 최소 하나 입력해주세요!'); return }
+    data.engRate = calcEngagement(data.views, data.likes, data.comments, data.saves, data.shares)
+    data.saveRate = calcSaveRate(data.views, data.saves)
+    document.getElementById('analyzeBtn').disabled = true
+    document.getElementById('loading').classList.add('show')
+    document.getElementById('result').classList.remove('show')
+    try {
+      const res = await fetch(PROXY_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prompt:buildPrompt(data)}) })
+      const json = await res.json()
+      if (json.error) throw new Error(json.error.message||json.error||'API 오류')
+      renderResult(data, json.content[0].text)
+    } catch(e) {
+      alert('분석 중 오류가 발생했어요: '+e.message)
+    } finally {
+      document.getElementById('analyzeBtn').disabled = false
+      document.getElementById('loading').classList.remove('show')
+    }
+  }
+
+  function renderResult(data, text) {
+    const engRate = data.engRate
+    const engInfo = engRate !== null ? engLabel(parseFloat(engRate)) : null
+    let html = ''
+    if (engRate !== null) {
+      html += `<div class="score-bar"><div class="score-circle ${engInfo.cls}">${engRate}%</div><div class="score-info"><h3>참여율 ${engInfo.text}</h3><p>조회수 대비 좋아요·댓글·저장·공유 가중 비율</p></div></div>`
+    }
+    if (data.views > 0) {
+      html += `<div class="insight-grid">
+        <div class="insight-item"><div class="label">조회수</div><div class="value">${fmt(data.views)}</div><div class="sub">총 노출</div></div>
+        <div class="insight-item"><div class="label">저장율</div><div class="value">${data.saveRate!==null?data.saveRate+'%':'–'}</div><div class="sub">판매 핀넥스 지표</div></div>
+        <div class="insight-item"><div class="label">도달 수</div><div class="value">${fmt(data.reach)}</div><div class="sub">노놀리지 범위</div></div>
+        <div class="insight-item"><div class="label">신규 팔로워</div><div class="value">${fmt(data.newFollowers)}</div><div class="sub">이 릴스로 유입</div></div>
+      </div>`
+    }
+    html += `<div class="section-label">AI 분석 리포트</div><div class="analysis-content" id="analysisText">${renderMarkdown(text)}</div>`
+    document.getElementById('resultContent').innerHTML = html
+    document.getElementById('result').classList.add('show')
+    document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'})
+  }
+
+  function renderMarkdown(text) {
+    return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/### (.+)/g,'<h3>$1</h3>').replace(/## (.+)/g,'<h3>$1</h3>')
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/^- (.+)/gm,'<li>$1</li>').replace(/(<li>.*<\/li>\n?)+/g,m=>`<ul>${m}</ul>`)
+      .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')
+  }
+
+  function copyResult() { const el=document.getElementById('analysisText'); if(!el) return; navigator.clipboard.writeText(el.innerText).then(()=>alert('분석 결과가 클립보드에 복사됐어요!')) }
+
+  function resetForm() {
+    document.getElementById('result').classList.remove('show')
+    ;['videoUrl','creator','caption','views','likes','comments','saves','shares','followers','reach','newFollowers','notes'].forEach(id=>document.getElementById(id).value='')
+    window.scrollTo({top:0,behavior:'smooth'})
+  }
+</script>
+</body>
+</html>
