@@ -32,7 +32,6 @@
       line-height: 1.6;
     }
 
-    /* ── Header ── */
     .header {
       padding: 20px 24px;
       display: flex;
@@ -52,7 +51,6 @@
     }
     .header-sep { color: var(--border); margin: 0 4px; }
 
-    /* ── Layout ── */
     .main {
       max-width: 900px;
       margin: 0 auto;
@@ -76,7 +74,6 @@
     }
     .hero p { color: var(--muted); margin-top: 12px; font-size: 16px; }
 
-    /* ── Card ── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -93,7 +90,6 @@
       margin-bottom: 20px;
     }
 
-    /* ── Form ── */
     .field { margin-bottom: 18px; }
     label {
       display: block;
@@ -125,7 +121,6 @@
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 
-    /* metric inputs */
     .metric-wrap { position: relative; }
     .metric-wrap input { padding-right: 40px; }
     .metric-unit {
@@ -138,22 +133,6 @@
       pointer-events: none;
     }
 
-    /* ── API Key section ── */
-    .api-notice {
-      background: rgba(254,44,85,0.07);
-      border: 1px solid rgba(254,44,85,0.25);
-      border-radius: 10px;
-      padding: 14px 16px;
-      font-size: 13px;
-      color: #ccc;
-      margin-bottom: 20px;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-    }
-    .api-notice svg { flex-shrink: 0; margin-top: 2px; }
-
-    /* ── Button ── */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -188,7 +167,6 @@
     }
     .btn-secondary:hover { color: var(--text); border-color: var(--muted); }
 
-    /* ── Loading ── */
     .loading {
       display: none;
       text-align: center;
@@ -207,7 +185,6 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading p { color: var(--muted); font-size: 14px; }
 
-    /* ── Result ── */
     .result { display: none; }
     .result.show { display: block; }
 
@@ -297,29 +274,12 @@
     .analysis-content li { margin-bottom: 6px; }
     .analysis-content strong { color: var(--text); }
 
-    .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
-    .tag {
-      background: var(--primary-glow);
-      border: 1px solid rgba(254,44,85,0.3);
-      color: #ffb0c0;
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: 13px;
-      font-weight: 600;
-    }
-    .tag.teal {
-      background: var(--secondary-glow);
-      border-color: rgba(37,244,238,0.3);
-      color: #a0f8f5;
-    }
-
     .action-row {
       display: flex;
       gap: 10px;
       margin-top: 20px;
     }
 
-    /* ── Responsive ── */
     @media (max-width: 600px) {
       .grid-2, .grid-3 { grid-template-columns: 1fr; }
       .insight-grid { grid-template-columns: 1fr 1fr; }
@@ -341,8 +301,6 @@
     <p>영상 정보와 지표를 입력하면 AI가 콘텐츠 전략과 개선점을 분석해드려요</p>
   </div>
 
-
-  <!-- Input Form -->
   <div class="card">
     <div class="card-title">영상 정보 입력</div>
 
@@ -398,7 +356,6 @@
     </div>
   </div>
 
-  <!-- Metrics -->
   <div class="card">
     <div class="card-title">성과 지표</div>
     <p style="color:var(--muted);font-size:13px;margin-bottom:20px">영상의 실제 수치를 입력하면 더 정확한 분석을 받을 수 있어요</p>
@@ -461,13 +418,11 @@
     AI 분석 시작
   </button>
 
-  <!-- Loading -->
   <div class="loading" id="loading">
     <div class="spinner"></div>
     <p>AI가 콘텐츠를 분석 중이에요...</p>
   </div>
 
-  <!-- Result -->
   <div class="result card" id="result" style="margin-top:24px">
     <div id="resultContent"></div>
     <div class="action-row">
@@ -478,10 +433,8 @@
 </main>
 
 <script>
-  // Apps Script 프록시 URL (Claude API 키는 프록시 서버에 보관)
-  const PROXY_URL = 'https://script.google.com/macros/s/AKfycbyIVicY2fssWFDPmi5vRzalNELSuOvbvpjeCMj2eeW8mjnzxGLunGCMXP5eIT_B2OaW/exec'
+  const PROXY_URL = '/api/proxy'
 
-  // ── Metrics ──
   function fmt(n) {
     if (!n) return '0'
     if (n >= 1000000) return (n/1000000).toFixed(1) + 'M'
@@ -502,7 +455,6 @@
     return { text: '개선 필요', cls: 'low' }
   }
 
-  // ── Prompt ──
   function buildPrompt(data) {
     return `당신은 틱톡 숏폼 콘텐츠 전략 전문가입니다. 아래 영상 데이터를 분석하고 실행 가능한 인사이트를 제공해주세요.
 
@@ -546,7 +498,6 @@
 마지막에 **핵심 한 줄 요약**을 볼드로 작성해주세요.`
   }
 
-  // ── Analyze ──
   async function analyze() {
     const data = {
       url: document.getElementById('videoUrl').value,
@@ -571,26 +522,23 @@
 
     data.engRate = calcEngagement(data.views, data.likes, data.comments, data.shares, data.saves)
 
-    // UI
     document.getElementById('analyzeBtn').disabled = true
     document.getElementById('loading').classList.add('show')
     document.getElementById('result').classList.remove('show')
 
     try {
-      // text/plain 으로 보내 CORS 사전요청(preflight)을 피함 → Apps Script 프록시 통과
       const res = await fetch(PROXY_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: buildPrompt(data) }),
       })
 
       const json = await res.json()
       if (json.error) {
-        throw new Error(json.error.message || 'API 오류')
+        throw new Error(json.error.message || json.error || 'API 오류')
       }
 
       const text = json.content[0].text
-
       renderResult(data, text)
     } catch (e) {
       alert('분석 중 오류가 발생했어요: ' + e.message)
@@ -600,14 +548,12 @@
     }
   }
 
-  // ── Render ──
   function renderResult(data, text) {
     const engRate = data.engRate
     const engInfo = engRate !== null ? engLabel(parseFloat(engRate)) : null
 
     let html = ''
 
-    // Score
     if (engRate !== null) {
       html += `<div class="score-bar">
         <div class="score-circle ${engInfo.cls}">${engRate}%</div>
@@ -618,7 +564,6 @@
       </div>`
     }
 
-    // Quick stats
     if (data.views > 0) {
       html += `<div class="insight-grid">
         <div class="insight-item">
@@ -644,7 +589,6 @@
       </div>`
     }
 
-    // AI analysis
     html += `<div class="section-label">AI 분석 리포트</div>`
     html += `<div class="analysis-content" id="analysisText">${renderMarkdown(text)}</div>`
 
