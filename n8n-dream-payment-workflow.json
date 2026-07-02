@@ -1,0 +1,61 @@
+{
+  "name": "꿈분석기 프리미엄 송금 알림",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dream-payment-notify",
+        "responseMode": "lastNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "p1a2y3b4-0001-4001-8001-000000000001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "dream-payment-notify"
+    },
+    {
+      "parameters": {
+        "sendTo": "운영자이메일@gmail.com",
+        "subject": "=💰 꿈분석기 프리미엄 송금 알림 — {{ $json.body.payerName }}님 {{ $json.body.amount }}원",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;max-width:560px;margin:0 auto;padding:24px;\"><h2 style=\"margin:0 0 16px;\">💰 프리미엄 리포트 송금 완료 클릭</h2><table style=\"width:100%;border-collapse:collapse;font-size:14px;\"><tr><td style=\"padding:8px;border:1px solid #ddd;background:#f7f7f7;width:110px;\"><b>입금자명</b></td><td style=\"padding:8px;border:1px solid #ddd;\">{{ $json.body.payerName }}</td></tr><tr><td style=\"padding:8px;border:1px solid #ddd;background:#f7f7f7;\"><b>금액</b></td><td style=\"padding:8px;border:1px solid #ddd;\">{{ $json.body.amount }}원</td></tr><tr><td style=\"padding:8px;border:1px solid #ddd;background:#f7f7f7;\"><b>클릭 시각</b></td><td style=\"padding:8px;border:1px solid #ddd;\">{{ $json.body.claimedAt }}</td></tr><tr><td style=\"padding:8px;border:1px solid #ddd;background:#f7f7f7;\"><b>꿈 내용(앞부분)</b></td><td style=\"padding:8px;border:1px solid #ddd;\">{{ $json.body.dream }}</td></tr></table><p style=\"font-size:13px;color:#888;margin-top:16px;\">⚠️ 이 알림은 사용자가 \"송금 완료\" 버튼을 눌렀다는 뜻이에요. 카카오페이/토스 입금 내역에서 같은 이름·금액이 실제로 들어왔는지 확인하세요.</p></div>",
+        "options": {}
+      },
+      "id": "p1a2y3b4-0002-4002-8002-000000000002",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "OK"
+      },
+      "id": "p1a2y3b4-0003-4003-8003-000000000003",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [720, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [{ "node": "Gmail", "type": "main", "index": 0 }]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [{ "node": "Respond", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

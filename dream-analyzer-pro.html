@@ -117,6 +117,12 @@
     .price-tag { font-size: 15px; font-weight: 800; color: var(--secondary); }
     .pay-card { display: none; }
     .pay-card.show { display: block; }
+    .pay-links { display: grid; gap: 10px; }
+    .pay-kakao { background: #FEE500; color: #191919; width: 100%; justify-content: center; font-weight: 800; }
+    .pay-kakao:hover { background: #ffd900; }
+    .pay-toss { background: #0064FF; color: #fff; width: 100%; justify-content: center; font-weight: 800; }
+    .pay-toss:hover { background: #0052d4; }
+    @media (min-width: 601px) { .pay-links { grid-template-columns: 1fr 1fr; } }
     .pay-note { font-size: 12.5px; color: var(--muted); margin-top: 12px; line-height: 1.6; }
     .perk-list { list-style: none; display: grid; gap: 8px; margin: 14px 0 4px; }
     .perk-list li { font-size: 14px; color: var(--text); display: flex; gap: 8px; align-items: flex-start; }
@@ -137,7 +143,7 @@
   <div class="hero">
     <h1>당신의 꿈,<br><span>프리미엄 심층 해몽</span></h1>
     <p>다섯 관점 교차 해석에 12개월 운세 흐름과 행운 아이템까지 — 가장 깊은 리포트</p>
-    <div class="pro-badge">✦ PREMIUM — 1회 8,900원 · 무료판보다 3배 깊은 심층 분석</div>
+    <div class="pro-badge">✦ PREMIUM — 1회 5,900원 · 무료판보다 3배 깊은 심층 분석</div>
     <div class="lens-row">
       <span class="lens-chip">🛋️ 프로이트 — 소원충족 · 꿈작업</span>
       <span class="lens-chip">🌓 융 — 원형 · 집단무의식 · 보상</span>
@@ -182,15 +188,22 @@
   </div>
 
   <button class="btn btn-gold" id="analyzeBtn" onclick="startPayment()">
-    ✦ <span class="price-tag" style="color:inherit">8,900원</span> 결제하고 프리미엄 해몽 받기
+    ✦ <span class="price-tag" style="color:inherit">5,900원</span> 결제하고 프리미엄 해몽 받기
   </button>
 
   <div class="card pay-card" id="payCard" style="margin-top:20px">
-    <div class="card-title">결제 수단 선택</div>
-    <div id="payment-method"></div>
-    <div id="agreement"></div>
-    <button class="btn btn-gold" id="payBtn" onclick="requestPay()" style="margin-top:16px">8,900원 결제하기</button>
-    <p class="pay-note">결제 완료 즉시 이 화면에서 프리미엄 리포트가 생성됩니다. 디지털 콘텐츠 특성상 리포트 생성 후에는 환불이 어려울 수 있어요.</p>
+    <div class="card-title">송금하고 리포트 받기 — 5,900원</div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:16px">아래 버튼으로 <b style="color:var(--secondary)">5,900원</b>을 보내주세요. 송금 후 보내신 분 성함을 입력하고 "송금 완료"를 누르면 리포트가 생성됩니다.</p>
+    <div class="pay-links">
+      <button class="btn pay-kakao" onclick="openPayLink('kakao')">🟡 카카오페이로 5,900원 보내기</button>
+      <button class="btn pay-toss" onclick="openPayLink('toss')">🔵 토스로 5,900원 보내기</button>
+    </div>
+    <div class="field" style="margin-top:16px">
+      <label>보내신 분 성함 <span class="hint">입금 확인에 사용돼요</span></label>
+      <input type="text" id="payerName" placeholder="예) 홍길동" />
+    </div>
+    <button class="btn btn-gold" id="payBtn" onclick="confirmTransfer()">✅ 송금 완료 — 프리미엄 리포트 받기</button>
+    <p class="pay-note">· 송금 내역은 운영자가 직접 확인합니다. 입금자명이 다르면 확인이 어려울 수 있어요.<br>· 디지털 콘텐츠 특성상 리포트 생성 후에는 환불이 어려울 수 있습니다.<br>· 송금 없이 리포트만 받아가시면 슬퍼요 🥲 정직한 이용 부탁드려요.</p>
   </div>
 
   <div class="loading" id="loading"><div class="spinner"></div><p>결제 확인 후 프리미엄 리포트를 생성하는 중이에요... (최대 1분)</p></div>
@@ -292,14 +305,15 @@
 </main>
 <script>
   const PROXY_URL = '/api/proxy'
-  // ── 결제 설정 (토스페이먼츠 결제위젯) ─────────────────────────────
-  // 아래는 토스페이먼츠 공식 문서의 "테스트 키"라 실제 돈이 빠져나가지 않아요.
-  // 실결제 전환: developers.tosspayments.com에서 상점 개설 후
-  //   1) 여기 TOSS_CLIENT_KEY를 라이브 클라이언트 키(live_gck_...)로 교체
-  //   2) Netlify 환경변수 TOSS_SECRET_KEY에 라이브 시크릿 키(live_gsk_...) 설정
-  const TOSS_CLIENT_KEY = 'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm'
-  const PRICE = 8900
-  const CONFIRM_URL = '/api/confirm-payment'
+  // ── 결제 설정 (송금 링크 방식 — 사업자 없이 바로 사용 가능) ──────────
+  // KAKAOPAY_LINK: 카카오톡 → 페이 → 송금 → 링크 만들기에서 생성한 송금 링크
+  // TOSS_ME_LINK: 토스 앱 → 토스아이디 만들기 → https://toss.me/아이디 형식 (뒤에 /5900 붙이면 금액 자동 입력)
+  // 링크가 비어 있으면 해당 버튼 클릭 시 준비 중 안내가 표시됩니다.
+  const KAKAOPAY_LINK = ''
+  const TOSS_ME_LINK = ''
+  const PRICE = 5900
+  // 송금 완료 클릭 시 운영자에게 알림(입금자명·시간)을 보낼 n8n 웹훅 (미설정 시 알림 생략)
+  const N8N_PAYMENT_WEBHOOK_URL = 'https://lucame296.app.n8n.cloud/webhook/dream-payment-notify'
   // 카카오 개발자 콘솔(developers.kakao.com) 앱의 JavaScript 키를 넣으면 카카오톡 공유 카드가 활성화돼요.
   // 키가 없어도 모바일 공유 시트(카카오톡 선택 가능) → 클립보드 복사 순으로 자동 대체됩니다.
   const KAKAO_JS_KEY = ''
@@ -601,99 +615,57 @@ ${symNote}
     return data
   }
 
-  // ── 토스페이먼츠 결제위젯 ──────────────────────────────────────────
-  let tossWidgets = null
-
-  function loadTossSdk() {
-    return new Promise((resolve, reject) => {
-      if (window.TossPayments) return resolve()
-      const s = document.createElement('script')
-      s.src = 'https://js.tosspayments.com/v2/standard'
-      s.onload = resolve
-      s.onerror = () => reject(new Error('결제 SDK 로드 실패 — 네트워크를 확인해주세요'))
-      document.head.appendChild(s)
-    })
-  }
-
-  async function startPayment() {
+  // ── 송금 링크 결제 (수동 확인 방식) ─────────────────────────────────
+  function startPayment() {
     const data = collectData()
     if (!data) return
     sessionStorage.setItem('dreamProData', JSON.stringify(data))
-    const btn = document.getElementById('analyzeBtn')
+    document.getElementById('payCard').classList.add('show')
+    document.getElementById('payCard').scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  function openPayLink(type) {
+    const link = type === 'kakao' ? KAKAOPAY_LINK : TOSS_ME_LINK
+    if (!link) { alert((type === 'kakao' ? '카카오페이' : '토스') + ' 송금 링크 준비 중이에요. 다른 방법으로 보내주세요!'); return }
+    window.open(link, '_blank')
+  }
+
+  async function confirmTransfer() {
+    const payerName = document.getElementById('payerName').value.trim()
+    if (!payerName) { alert('보내신 분 성함을 입력해주세요! (입금 확인용)'); return }
+    const data = JSON.parse(sessionStorage.getItem('dreamProData') || 'null') || collectData()
+    if (!data) return
+    const btn = document.getElementById('payBtn')
     btn.disabled = true
-    try {
-      await loadTossSdk()
-      if (!tossWidgets) {
-        const toss = TossPayments(TOSS_CLIENT_KEY)
-        tossWidgets = toss.widgets({ customerKey: TossPayments.ANONYMOUS })
-        await tossWidgets.setAmount({ currency: 'KRW', value: PRICE })
-        await Promise.all([
-          tossWidgets.renderPaymentMethods({ selector: '#payment-method', variantKey: 'DEFAULT' }),
-          tossWidgets.renderAgreement({ selector: '#agreement', variantKey: 'AGREEMENT' }),
-        ])
-      }
-      document.getElementById('payCard').classList.add('show')
-      document.getElementById('payCard').scrollIntoView({ behavior: 'smooth', block: 'start' })
-    } catch (e) {
-      alert('결제 모듈을 불러오지 못했어요: ' + e.message)
-    } finally {
-      btn.disabled = false
-    }
-  }
-
-  async function requestPay() {
-    if (!tossWidgets) { alert('결제 모듈이 준비되지 않았어요. 위의 결제 버튼을 다시 눌러주세요.'); return }
-    if (!sessionStorage.getItem('dreamProData')) { alert('꿈 정보가 없어요. 다시 입력해주세요!'); return }
-    try {
-      await tossWidgets.requestPayment({
-        orderId: 'dream-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
-        orderName: 'AI 꿈분석기 프리미엄 리포트',
-        successUrl: location.origin + location.pathname,
-        failUrl: location.origin + location.pathname,
-      })
-    } catch (e) {
-      if (e && e.code === 'USER_CANCEL') return
-      alert('결제 요청에 실패했어요: ' + (e.message || e.code || '알 수 없는 오류'))
-    }
-  }
-
-  // 결제 후 리다이렉트 처리: 성공(paymentKey) → 승인 검증 → 리포트 생성 / 실패(code) → 안내
-  window.addEventListener('DOMContentLoaded', async () => {
-    const q = new URLSearchParams(location.search)
-    if (q.get('code')) {
-      history.replaceState(null, '', location.pathname)
-      alert('결제가 완료되지 않았어요: ' + (q.get('message') || q.get('code')))
-      return
-    }
-    const paymentKey = q.get('paymentKey')
-    if (!paymentKey) return
-    history.replaceState(null, '', location.pathname)
-    const saved = sessionStorage.getItem('dreamProData')
-    if (!saved) { alert('꿈 정보가 만료되었어요. 결제가 승인된 경우 운영자에게 문의해주세요.'); return }
-    const data = JSON.parse(saved)
-    restoreForm(data)
     document.getElementById('loading').classList.add('show')
-    document.getElementById('analyzeBtn').disabled = true
     try {
-      const c = await fetch(CONFIRM_URL, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ paymentKey, orderId: q.get('orderId'), amount: Number(q.get('amount')) })
-      })
-      const cj = await c.json()
-      if (!c.ok || cj.error) throw new Error(cj.error || '결제 승인에 실패했어요')
+      notifyPayment(payerName, data) // 운영자 알림 (실패해도 진행)
       await runAnalysis(data)
       sessionStorage.removeItem('dreamProData')
+      document.getElementById('payCard').classList.remove('show')
     } catch (e) {
-      alert('오류가 발생했어요: ' + e.message + '\n결제가 승인되었는데 리포트를 받지 못했다면 운영자에게 문의해주세요.')
+      alert('리포트 생성 중 오류가 발생했어요: ' + e.message + '\n송금하셨는데 리포트를 받지 못했다면 운영자에게 문의해주세요.')
     } finally {
+      btn.disabled = false
       document.getElementById('loading').classList.remove('show')
-      document.getElementById('analyzeBtn').disabled = false
     }
-  })
+  }
 
-  function restoreForm(data) {
-    const map = { dreamText:'dreamText', emotion:'emotion', vividness:'vividness', recurring:'recurring', gender:'gender', ageGroup:'ageGroup', context:'context', preSleep:'preSleep', birthDate:'birthDate', dreamDate:'dreamDate' }
-    for (const [k, id] of Object.entries(map)) { const el = document.getElementById(id); if (el && data[k]) el.value = data[k] }
+  function notifyPayment(payerName, data) {
+    if (!N8N_PAYMENT_WEBHOOK_URL) return
+    try {
+      fetch(N8N_PAYMENT_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          payerName,
+          amount: PRICE,
+          claimedAt: new Date().toISOString(),
+          dream: data.dreamText.slice(0, 100),
+          pageUrl: location.href.split('#')[0],
+        })
+      }).catch(() => {})
+    } catch (e) { /* 알림 실패는 무시 */ }
   }
 
   async function runAnalysis(data) {

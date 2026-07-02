@@ -9,7 +9,7 @@ const CORS = {
   'Access-Control-Allow-Headers': 'Content-Type',
 }
 
-const EXPECTED_AMOUNT = 8900 // 프리미엄 리포트 가격(원). dream-analyzer-pro.html의 PRICE와 반드시 일치.
+const EXPECTED_AMOUNT = 5900 // 프리미엄 리포트 가격(원). dream-analyzer-pro.html의 PRICE와 반드시 일치.
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' }
