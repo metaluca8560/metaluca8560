@@ -1,0 +1,87 @@
+{
+  "name": "YouTube Shorts 분석 알림",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "youtube-analysis-notify",
+        "responseMode": "lastNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "f1e2d3c4-0001-4001-8001-000000000001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "youtube-analysis-notify"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#코딩이",
+          "mode": "name"
+        },
+        "text": "=🎬 *YouTube Shorts 분석 완료!*\n\n*📌 영상:* {{ $json.body.title }}\n\n*📊 핵심 지표*\n• 조회수: {{ $json.body.metrics.views }}\n• 참여율: {{ $json.body.metrics.engagement }}\n• 좋아요율: {{ $json.body.metrics.likeRate }}\n• 구독 전환율: {{ $json.body.metrics.subConversion }}\n• 시청 완료율: {{ $json.body.metrics.watchTime }}\n• 신규 구독자: {{ $json.body.metrics.newSubs }}\n\n*🤖 AI 분석*\n{{ $json.body.analysis.substring(0, 2500) }}",
+        "otherOptions": {}
+      },
+      "id": "f1e2d3c4-0002-4002-8002-000000000002",
+      "name": "Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [480, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://discordapp.com/api/webhooks/1520355603032313977/82s1QoPv-jkcabrYLRYZ9bhL4Cv3HxOgM4DEZHulzElL3iEHRHa0fkJxWtRkkDccVQn2",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={{ JSON.stringify({ content: '🎬 **YouTube Shorts 분석 완료!**\\n\\n**📌 영상:** ' + $('Webhook').item.json.body.title + '\\n\\n**📊 핵심 지표**\\n• 조회수: ' + $('Webhook').item.json.body.metrics.views + '\\n• 참여율: ' + $('Webhook').item.json.body.metrics.engagement + '\\n• 시청 완료율: ' + $('Webhook').item.json.body.metrics.watchTime + '\\n\\n**🤖 AI 분석 (요약)**\\n' + $('Webhook').item.json.body.analysis.substring(0, 1500) }) }}",
+        "options": {}
+      },
+      "id": "f1e2d3c4-0003-4003-8003-000000000003",
+      "name": "Discord",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 420]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "OK"
+      },
+      "id": "f1e2d3c4-0004-4004-8004-000000000004",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [720, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          { "node": "Slack", "type": "main", "index": 0 },
+          { "node": "Discord", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Slack": {
+      "main": [
+        [{ "node": "Respond", "type": "main", "index": 0 }]
+      ]
+    },
+    "Discord": {
+      "main": [
+        [{ "node": "Respond", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
