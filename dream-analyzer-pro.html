@@ -17,7 +17,17 @@
       --text: #f0f0f5; --muted: #8a8aa3; --radius: 14px;
     }
     body { background: var(--bg); color: var(--text); font-family: 'Pretendard', -apple-system, sans-serif; min-height: 100vh; line-height: 1.6; }
-    body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 60% 40% at 50% -5%, rgba(139,92,246,0.12), transparent), radial-gradient(ellipse 40% 30% at 85% 15%, rgba(251,191,36,0.05), transparent); pointer-events: none; }
+    body::before { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% -10%, rgba(139,92,246,0.18), transparent 70%),
+        radial-gradient(ellipse 45% 35% at 85% 12%, rgba(251,191,36,0.07), transparent 70%),
+        radial-gradient(ellipse 50% 40% at 10% 30%, rgba(56,120,255,0.09), transparent 70%),
+        radial-gradient(ellipse 60% 45% at 70% 88%, rgba(168,85,247,0.08), transparent 70%);
+      animation: nebulaDrift 26s ease-in-out infinite alternate; }
+    @keyframes nebulaDrift { from { transform: translate3d(0,0,0) scale(1); opacity: 1; } to { transform: translate3d(-2%,1.5%,0) scale(1.06); opacity: 0.82; } }
+    #stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .header, .main { position: relative; z-index: 1; }
+    @media (prefers-reduced-motion: reduce) { body::before { animation: none; } }
     .header { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); position: relative; }
     .header a { text-decoration: none; color: var(--muted); font-size: 14px; }
     .header a:hover { color: var(--text); }
@@ -133,6 +143,7 @@
   </style>
 </head>
 <body>
+<canvas id="stars" aria-hidden="true"></canvas>
 <header class="header">
   <img src="automation/logo.svg" class="header-logo" alt="logo" />
   <a href="index.html">AI 트렌드 다락방</a>
@@ -310,6 +321,67 @@
   </div>
 </main>
 <script>
+  // ── 별이 흐르는 밤하늘 배경 ─────────────────────────────────────────
+  ;(function () {
+    const canvas = document.getElementById('stars')
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches
+    const COLORS = ['255,255,255', '203,213,255', '216,180,254', '255,233,168']
+    let W, H, stars = [], meteor = null, nextMeteor = 0
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      W = innerWidth; H = innerHeight
+      canvas.width = W * dpr; canvas.height = H * dpr
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      const n = Math.min(170, Math.floor(W * H / 8000))
+      stars = Array.from({ length: n }, () => ({
+        x: Math.random() * W, y: Math.random() * H,
+        r: Math.random() * 1.2 + 0.4,
+        tw: Math.random() * Math.PI * 2,          // 반짝임 위상
+        ts: 0.008 + Math.random() * 0.025,        // 반짝임 속도
+        vx: -(0.02 + Math.random() * 0.06),       // 왼쪽 위로 아주 느리게 흐름
+        vy: -(0.005 + Math.random() * 0.03),
+        c: COLORS[Math.floor(Math.random() * COLORS.length)],
+      }))
+    }
+    function draw(t) {
+      ctx.clearRect(0, 0, W, H)
+      for (const s of stars) {
+        s.tw += s.ts
+        if (!reduced) { s.x += s.vx; s.y += s.vy; if (s.x < -2) s.x = W + 2; if (s.y < -2) s.y = H + 2 }
+        const a = 0.3 + 0.7 * Math.abs(Math.sin(s.tw))
+        ctx.beginPath()
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2)
+        ctx.fillStyle = 'rgba(' + s.c + ',' + a.toFixed(3) + ')'
+        ctx.fill()
+        if (s.r > 1.15) { // 큰 별에는 은은한 빛무리
+          ctx.beginPath(); ctx.arc(s.x, s.y, s.r * 3.2, 0, Math.PI * 2)
+          ctx.fillStyle = 'rgba(' + s.c + ',' + (a * 0.07).toFixed(3) + ')'; ctx.fill()
+        }
+      }
+      if (!reduced) {
+        if (!meteor && t > nextMeteor) { // 이따금 별똥별
+          meteor = { x: W * 0.2 + Math.random() * W * 0.7, y: Math.random() * H * 0.25, vx: -(4 + Math.random() * 3), vy: 2 + Math.random() * 1.5, life: 1 }
+        }
+        if (meteor) {
+          meteor.x += meteor.vx; meteor.y += meteor.vy; meteor.life -= 0.016
+          const tail = ctx.createLinearGradient(meteor.x, meteor.y, meteor.x - meteor.vx * 14, meteor.y - meteor.vy * 14)
+          tail.addColorStop(0, 'rgba(255,255,255,' + Math.max(meteor.life, 0).toFixed(3) + ')')
+          tail.addColorStop(1, 'rgba(255,255,255,0)')
+          ctx.strokeStyle = tail; ctx.lineWidth = 1.4; ctx.beginPath()
+          ctx.moveTo(meteor.x, meteor.y); ctx.lineTo(meteor.x - meteor.vx * 14, meteor.y - meteor.vy * 14); ctx.stroke()
+          if (meteor.life <= 0 || meteor.x < -60 || meteor.y > H + 60) { meteor = null; nextMeteor = t + 5000 + Math.random() * 9000 }
+        }
+        requestAnimationFrame(draw)
+      }
+    }
+    addEventListener('resize', resize)
+    resize()
+    nextMeteor = performance.now() + 3000
+    requestAnimationFrame(draw)
+  })()
+
   const PROXY_URL = '/api/proxy'
   // ── 결제 설정 (계좌 송금 방식 — 사업자 없이 바로 사용 가능) ──────────
   const BANK_NAME = '토스뱅크'
