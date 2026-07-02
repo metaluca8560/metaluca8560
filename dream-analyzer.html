@@ -90,7 +90,12 @@
     .analysis-content ul { padding-left: 20px; }
     .analysis-content li { margin-bottom: 6px; }
     .analysis-content strong { color: var(--text); }
-    .action-row { display: flex; gap: 10px; margin-top: 20px; }
+    .action-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .email-row { display: none; gap: 10px; margin-top: 12px; align-items: center; }
+    .email-row.show { display: flex; }
+    .email-row input { flex: 1; }
+    .email-row .btn { flex-shrink: 0; padding: 12px 20px; }
+    @media (max-width: 600px) { .email-row { flex-direction: column; align-items: stretch; } }
     .theory details { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; background: var(--surface2); }
     .theory summary { cursor: pointer; padding: 14px 16px; font-size: 15px; font-weight: 700; list-style: none; display: flex; align-items: center; gap: 8px; }
     .theory summary::-webkit-details-marker { display: none; }
@@ -163,8 +168,13 @@
     <div id="resultContent"></div>
     <div class="action-row">
       <button class="btn btn-kakao" onclick="shareKakao()">💬 카톡 공유</button>
+      <button class="btn btn-secondary" onclick="toggleEmailRow()">📧 이메일로 받기</button>
       <button class="btn btn-secondary" onclick="copyResult()">결과 복사</button>
       <button class="btn btn-secondary" onclick="resetForm()">새 분석</button>
+    </div>
+    <div class="email-row" id="emailRow">
+      <input type="email" id="emailAddr" placeholder="결과를 받을 이메일 주소 (예: dream@example.com)" />
+      <button class="btn btn-primary" id="emailSendBtn" onclick="sendEmail()" style="width:auto">보내기</button>
     </div>
   </div>
 
@@ -254,8 +264,13 @@
   // 카카오 개발자 콘솔(developers.kakao.com) 앱의 JavaScript 키를 넣으면 카카오톡 공유 카드가 활성화돼요.
   // 키가 없어도 모바일 공유 시트(카카오톡 선택 가능) → 클립보드 복사 순으로 자동 대체됩니다.
   const KAKAO_JS_KEY = ''
+  // n8n에 n8n-dream-email-workflow.json을 임포트·활성화하면 이 웹훅으로 결과 이메일이 발송돼요.
+  // 미설정이거나 전송 실패 시 기기의 메일 앱(mailto)으로 자동 대체됩니다.
+  const N8N_EMAIL_WEBHOOK_URL = 'https://lucame296.app.n8n.cloud/webhook/dream-analysis-email'
 
   let lastShare = null // 마지막 분석 결과의 공유용 요약
+  let lastAnalysisText = null // 마지막 AI 리포트 전문 (이메일 발송용)
+  let lastDreamExcerpt = null // 마지막 꿈 내용 요약
 
   // ── 전통 해몽 상징 사전 ─────────────────────────────────────────────
   // 출처: 한국민족문화대백과사전(꿈·태몽), 한국민속대백과사전, 프로이트 『꿈의 해석』, 융 분석심리학 문헌
@@ -527,6 +542,7 @@ ${symNote}
       dreamDate: document.getElementById('dreamDate').value,
     }
     if (data.dreamText.length < 10) { alert('꿈 내용을 조금 더 자세히 적어주세요! (10자 이상)'); return }
+    lastDreamExcerpt = data.dreamText.length > 200 ? data.dreamText.slice(0, 200) + '…' : data.dreamText
     const symbols = matchSymbols(data.dreamText)
     const fate = buildFate(data)
     document.getElementById('analyzeBtn').disabled = true
@@ -573,6 +589,7 @@ ${symNote}
     html += `<div class="section-label">AI 꿈 해석 리포트</div><div class="analysis-content" id="analysisText">${renderMarkdown(text)}</div>`
     const oneLiner = text.match(/\*\*\s*핵심 한 줄 요약\s*[:：]?\s*([^*]+)\*\*/)
     lastShare = (summary ? summary.title + '\n' : '') + (oneLiner ? '"' + oneLiner[1].trim() + '"' : text.replace(/[#*]/g, '').trim().slice(0, 80) + '…')
+    lastAnalysisText = text
     document.getElementById('resultContent').innerHTML = html
     document.getElementById('result').classList.add('show')
     document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'})
@@ -626,10 +643,56 @@ ${symNote}
       .catch(() => alert('복사에 실패했어요. 결과 복사 버튼을 이용해주세요.'))
   }
 
+  function toggleEmailRow() {
+    if (!lastAnalysisText) { alert('먼저 꿈 분석을 실행해주세요!'); return }
+    const row = document.getElementById('emailRow')
+    row.classList.toggle('show')
+    if (row.classList.contains('show')) document.getElementById('emailAddr').focus()
+  }
+
+  async function sendEmail() {
+    const email = document.getElementById('emailAddr').value.trim()
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('올바른 이메일 주소를 입력해주세요!'); return }
+    if (!lastAnalysisText) { alert('먼저 꿈 분석을 실행해주세요!'); return }
+    const btn = document.getElementById('emailSendBtn')
+    // 1순위: n8n 웹훅으로 발송
+    if (N8N_EMAIL_WEBHOOK_URL && N8N_EMAIL_WEBHOOK_URL !== 'YOUR_N8N_EMAIL_WEBHOOK_URL') {
+      btn.disabled = true; btn.textContent = '전송 중...'
+      try {
+        const res = await fetch(N8N_EMAIL_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            summary: lastShare || '',
+            dream: lastDreamExcerpt || '',
+            analysis: lastAnalysisText,
+            pageUrl: location.href.split('#')[0],
+          })
+        })
+        if (!res.ok) throw new Error('웹훅 응답 오류 (' + res.status + ')')
+        alert('📧 ' + email + ' 로 해석 결과를 보냈어요!\n메일함(스팸함 포함)을 확인해주세요.')
+        document.getElementById('emailRow').classList.remove('show')
+        document.getElementById('emailAddr').value = ''
+        return
+      } catch (e) {
+        console.log('이메일 웹훅 실패, 메일 앱으로 대체:', e.message)
+      } finally {
+        btn.disabled = false; btn.textContent = '보내기'
+      }
+    }
+    // 2순위: 기기의 메일 앱 열기 (mailto)
+    const subject = encodeURIComponent('🌙 AI 꿈분석기 결과')
+    const body = encodeURIComponent(('🌙 AI 꿈분석기 결과\n\n' + (lastShare || '') + '\n\n[꿈 내용]\n' + (lastDreamExcerpt || '') + '\n\n[해석 리포트]\n' + lastAnalysisText).slice(0, 1800))
+    location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body
+  }
+
   function copyResult() { const el=document.getElementById('analysisText'); if(!el) return; navigator.clipboard.writeText(el.innerText).then(()=>alert('해석 결과가 클립보드에 복사됐어요!')) }
 
   function resetForm() {
     document.getElementById('result').classList.remove('show')
+    document.getElementById('emailRow').classList.remove('show')
+    document.getElementById('emailAddr').value = ''
     ;['dreamText','context','preSleep','birthDate','dreamDate'].forEach(id=>document.getElementById(id).value='')
     ;['emotion','vividness','recurring','gender','ageGroup'].forEach(id=>document.getElementById(id).value='')
     window.scrollTo({top:0,behavior:'smooth'})
