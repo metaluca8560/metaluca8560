@@ -123,6 +123,8 @@ a { color: inherit; text-decoration: none; }
 .tile-name { font-weight: 800; font-size: 1rem; }
 .tile-sub { font-size: 0.74rem; color: var(--muted); letter-spacing: 0.04em; }
 .tile.is-empty { opacity: 0.4; }
+/* 타일이 홀수 개일 때 마지막 타일을 가로로 채움 */
+.tile:last-of-type:nth-of-type(odd) { grid-column: 1 / -1; }
 
 /* ---------- 만든 것들 ---------- */
 .row-list { display: flex; flex-direction: column; gap: 10px; }
