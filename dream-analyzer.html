@@ -49,6 +49,8 @@
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-secondary { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); font-size: 13px; padding: 8px 14px; }
     .btn-secondary:hover { color: var(--text); border-color: var(--muted); }
+    .btn-kakao { background: #FEE500; color: #191919; border: 1px solid #FEE500; font-size: 13px; padding: 8px 14px; font-weight: 700; }
+    .btn-kakao:hover { background: #ffd900; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(254,229,0,0.25); }
     .loading { display: none; text-align: center; padding: 40px; }
     .loading.show { display: block; }
     .spinner { width: 48px; height: 48px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
@@ -160,6 +162,7 @@
   <div class="result card" id="result" style="margin-top:24px">
     <div id="resultContent"></div>
     <div class="action-row">
+      <button class="btn btn-kakao" onclick="shareKakao()">💬 카톡 공유</button>
       <button class="btn btn-secondary" onclick="copyResult()">결과 복사</button>
       <button class="btn btn-secondary" onclick="resetForm()">새 분석</button>
     </div>
@@ -248,6 +251,11 @@
 </main>
 <script>
   const PROXY_URL = '/api/proxy'
+  // 카카오 개발자 콘솔(developers.kakao.com) 앱의 JavaScript 키를 넣으면 카카오톡 공유 카드가 활성화돼요.
+  // 키가 없어도 모바일 공유 시트(카카오톡 선택 가능) → 클립보드 복사 순으로 자동 대체됩니다.
+  const KAKAO_JS_KEY = ''
+
+  let lastShare = null // 마지막 분석 결과의 공유용 요약
 
   // ── 전통 해몽 상징 사전 ─────────────────────────────────────────────
   // 출처: 한국민족문화대백과사전(꿈·태몽), 한국민속대백과사전, 프로이트 『꿈의 해석』, 융 분석심리학 문헌
@@ -563,6 +571,8 @@ ${symNote}
       html += `</div>`
     }
     html += `<div class="section-label">AI 꿈 해석 리포트</div><div class="analysis-content" id="analysisText">${renderMarkdown(text)}</div>`
+    const oneLiner = text.match(/\*\*\s*핵심 한 줄 요약\s*[:：]?\s*([^*]+)\*\*/)
+    lastShare = (summary ? summary.title + '\n' : '') + (oneLiner ? '"' + oneLiner[1].trim() + '"' : text.replace(/[#*]/g, '').trim().slice(0, 80) + '…')
     document.getElementById('resultContent').innerHTML = html
     document.getElementById('result').classList.add('show')
     document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'})
@@ -574,6 +584,46 @@ ${symNote}
       .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
       .replace(/^- (.+)/gm,'<li>$1</li>').replace(/(<li>.*<\/li>\n?)+/g,m=>`<ul>${m}</ul>`)
       .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')
+  }
+
+  function loadKakaoSdk() {
+    return new Promise((resolve, reject) => {
+      if (window.Kakao) return resolve()
+      const s = document.createElement('script')
+      s.src = 'https://t1.kakaocdn.net/kakao_js_sdk/2.7.5/kakao.min.js'
+      s.onload = resolve
+      s.onerror = () => reject(new Error('카카오 SDK 로드 실패'))
+      document.head.appendChild(s)
+    })
+  }
+
+  async function shareKakao() {
+    if (!lastShare) { alert('먼저 꿈 분석을 실행해주세요!'); return }
+    const url = location.href.split('#')[0]
+    const shareText = `🌙 AI 꿈분석기 결과\n${lastShare}`
+    // 1순위: 카카오 공식 공유 (JS 키 설정 시)
+    if (KAKAO_JS_KEY) {
+      try {
+        await loadKakaoSdk()
+        if (!Kakao.isInitialized()) Kakao.init(KAKAO_JS_KEY)
+        Kakao.Share.sendDefault({
+          objectType: 'text',
+          text: shareText,
+          link: { webUrl: url, mobileWebUrl: url },
+          buttonTitle: '나도 꿈 분석하기',
+        })
+        return
+      } catch (e) { console.log('카카오 공유 실패, 대체 공유 사용:', e.message) }
+    }
+    // 2순위: 모바일 공유 시트 (카카오톡 선택 가능)
+    if (navigator.share) {
+      try { await navigator.share({ title: 'AI 꿈분석기 결과', text: shareText + '\n\n나도 꿈 분석해보기 👉 ' + url }); return }
+      catch (e) { if (e.name === 'AbortError') return }
+    }
+    // 3순위: 클립보드 복사
+    navigator.clipboard.writeText(shareText + '\n\n나도 꿈 분석해보기 👉 ' + url)
+      .then(() => alert('공유 문구가 클립보드에 복사됐어요!\n카카오톡 대화방에 붙여넣어 공유해주세요 💬'))
+      .catch(() => alert('복사에 실패했어요. 결과 복사 버튼을 이용해주세요.'))
   }
 
   function copyResult() { const el=document.getElementById('analysisText'); if(!el) return; navigator.clipboard.writeText(el.innerText).then(()=>alert('해석 결과가 클립보드에 복사됐어요!')) }
