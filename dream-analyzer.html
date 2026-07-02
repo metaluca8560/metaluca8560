@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 꿈분석기 — AI 트렌드 다락방</title>
+  <meta name="description" content="프로이트 정신분석, 융 분석심리학, 동양철학(주역·음양오행·전통 해몽)의 세 가지 관점으로 꿈을 해석하는 AI 꿈분석기" />
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a14; --surface: #12121f; --surface2: #1a1a2e; --border: #2a2a44;
+      --primary: #8b5cf6; --primary-glow: rgba(139,92,246,0.18);
+      --secondary: #fbbf24; --secondary-glow: rgba(251,191,36,0.15);
+      --text: #f0f0f5; --muted: #8a8aa3; --radius: 14px;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Pretendard', -apple-system, sans-serif; min-height: 100vh; line-height: 1.6; }
+    body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 60% 40% at 50% -5%, rgba(139,92,246,0.12), transparent), radial-gradient(ellipse 40% 30% at 85% 15%, rgba(251,191,36,0.05), transparent); pointer-events: none; }
+    .header { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); position: relative; }
+    .header a { text-decoration: none; color: var(--muted); font-size: 14px; }
+    .header a:hover { color: var(--text); }
+    .header-logo { width: 32px; height: 32px; }
+    .header-title { font-size: 18px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .header-sep { color: var(--border); margin: 0 4px; }
+    .main { max-width: 900px; margin: 0 auto; padding: 40px 20px 80px; position: relative; }
+    .hero { text-align: center; margin-bottom: 48px; }
+    .hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 800; letter-spacing: -1px; line-height: 1.2; }
+    .hero h1 span { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { color: var(--muted); margin-top: 12px; font-size: 16px; }
+    .dream-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.35); border-radius: 20px; padding: 4px 14px; font-size: 13px; font-weight: 600; color: #b79dff; margin-top: 14px; }
+    .lens-row { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .lens-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; font-size: 13px; font-weight: 600; color: var(--muted); }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 20px; }
+    .card-title { font-size: 15px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 20px; }
+    .field { margin-bottom: 18px; }
+    label { display: block; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    label .hint { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 6px; }
+    input, textarea, select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-family: inherit; font-size: 15px; outline: none; transition: border-color 0.2s; }
+    input:focus, textarea:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    textarea { resize: vertical; min-height: 120px; }
+    select option { background: var(--surface2); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border: none; border-radius: 10px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #6d28d9); color: #fff; width: 100%; justify-content: center; font-size: 16px; }
+    .btn-primary:hover:not(:disabled) { box-shadow: 0 8px 24px var(--primary-glow); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); font-size: 13px; padding: 8px 14px; }
+    .btn-secondary:hover { color: var(--text); border-color: var(--muted); }
+    .loading { display: none; text-align: center; padding: 40px; }
+    .loading.show { display: block; }
+    .spinner { width: 48px; height: 48px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading p { color: var(--muted); font-size: 14px; }
+    .result { display: none; }
+    .result.show { display: block; }
+    .score-bar { display: flex; align-items: center; gap: 20px; padding: 24px; background: var(--surface2); border-radius: 12px; margin-bottom: 24px; }
+    .score-circle { width: 84px; height: 84px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 34px; border: 3px solid; }
+    .score-circle.great { border-color: #4ade80; color: #4ade80; background: rgba(74,222,128,0.1); }
+    .score-circle.good  { border-color: var(--secondary); color: var(--secondary); background: var(--secondary-glow); }
+    .score-circle.ok    { border-color: #a78bfa; color: #a78bfa; background: var(--primary-glow); }
+    .score-circle.low   { border-color: #f87171; color: #f87171; background: rgba(248,113,113,0.1); }
+    .score-info h3 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+    .score-info p  { color: var(--muted); font-size: 14px; }
+    .section-label { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin: 28px 0 14px; display: flex; align-items: center; gap: 8px; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .symbol-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .symbol-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    .symbol-card .sym-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .symbol-card .sym-name { font-size: 16px; font-weight: 800; }
+    .symbol-card .sym-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+    .sym-tag.auspice-길 { background: rgba(74,222,128,0.12); color: #4ade80; }
+    .sym-tag.auspice-흉 { background: rgba(248,113,113,0.12); color: #f87171; }
+    .sym-tag.auspice-중립 { background: rgba(167,139,250,0.12); color: #a78bfa; }
+    .sym-tag.auspice-역몽 { background: rgba(251,191,36,0.12); color: var(--secondary); }
+    .symbol-card .sym-line { font-size: 12.5px; color: var(--muted); margin-bottom: 5px; line-height: 1.55; }
+    .symbol-card .sym-line b { color: var(--text); font-weight: 700; }
+    .analysis-content { background: var(--surface2); border-radius: 12px; padding: 20px; font-size: 15px; line-height: 1.8; }
+    .analysis-content h3 { font-size: 15px; font-weight: 700; color: var(--secondary); margin: 18px 0 8px; }
+    .analysis-content h3:first-child { margin-top: 0; }
+    .analysis-content ul { padding-left: 20px; }
+    .analysis-content li { margin-bottom: 6px; }
+    .analysis-content strong { color: var(--text); }
+    .action-row { display: flex; gap: 10px; margin-top: 20px; }
+    .theory details { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 10px; background: var(--surface2); }
+    .theory summary { cursor: pointer; padding: 14px 16px; font-size: 15px; font-weight: 700; list-style: none; display: flex; align-items: center; gap: 8px; }
+    .theory summary::-webkit-details-marker { display: none; }
+    .theory summary::after { content: '+'; margin-left: auto; color: var(--muted); font-weight: 400; font-size: 18px; }
+    .theory details[open] summary::after { content: '–'; }
+    .theory .theory-body { padding: 0 16px 16px; font-size: 14px; color: var(--muted); line-height: 1.75; }
+    .theory .theory-body b { color: var(--text); }
+    .theory .theory-body p { margin-bottom: 10px; }
+    .theory .theory-body a { color: #a78bfa; text-decoration: none; }
+    .theory .theory-body a:hover { text-decoration: underline; }
+    .src-list { padding-left: 18px; }
+    .src-list li { margin-bottom: 4px; font-size: 13px; }
+    .disclaimer { background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.25); border-radius: 10px; padding: 14px 16px; font-size: 13px; color: var(--muted); line-height: 1.7; margin-top: 20px; }
+    .disclaimer b { color: var(--secondary); }
+    @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .symbol-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<header class="header">
+  <img src="logo.svg" class="header-logo" alt="logo" />
+  <a href="index.html">AI 트렌드 다락방</a>
+  <span class="header-sep">›</span>
+  <span class="header-title">AI 꿈분석기</span>
+</header>
+<main class="main">
+  <div class="hero">
+    <h1>당신의 꿈,<br><span>세 가지 지혜로 풀어드립니다</span></h1>
+    <p>프로이트 정신분석 · 융 분석심리학 · 동양철학, 세 관점의 교차 해석</p>
+    <div class="dream-badge">🌙 꿈 내용을 적으면 AI가 다각도로 분석해드려요</div>
+    <div class="lens-row">
+      <span class="lens-chip">🛋️ 프로이트 — 소원충족 · 꿈작업</span>
+      <span class="lens-chip">🌓 융 — 원형 · 집단무의식 · 보상</span>
+      <span class="lens-chip">☯️ 동양철학 — 주역 · 음양오행 · 해몽</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">꿈 내용 입력</div>
+    <div class="field">
+      <label>어떤 꿈을 꾸셨나요? <span class="hint">필수 — 기억나는 대로 자세히 적을수록 정확해요</span></label>
+      <textarea id="dreamText" placeholder="예) 커다란 구렁이가 집 안으로 들어와서 처음엔 무서웠는데, 자세히 보니 몸이 황금빛이었어요. 구렁이가 제 품으로 파고들었고, 이상하게 편안한 기분이 들면서 잠에서 깼습니다."></textarea>
+    </div>
+    <div class="grid-3">
+      <div class="field"><label>꿈에서 느낀 감정</label><select id="emotion"><option value="">선택하세요</option><option>행복/기쁨</option><option>평온함</option><option>불안/초조</option><option>공포/두려움</option><option>슬픔</option><option>분노</option><option>혼란스러움</option><option>그리움</option><option>수치심</option><option>감정 기억 안 남</option></select></div>
+      <div class="field"><label>꿈의 생생함</label><select id="vividness"><option value="">선택하세요</option><option>아주 생생함 (지금도 선명)</option><option>꽤 생생함</option><option>보통</option><option>흐릿함 (조각만 기억)</option></select></div>
+      <div class="field"><label>반복되는 꿈인가요?</label><select id="recurring"><option value="">선택하세요</option><option>처음 꾼 꿈</option><option>가끔 반복됨</option><option>자주 반복됨</option><option>비슷한 주제가 반복됨</option></select></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>성별 <span class="hint">선택 — 융의 아니마/아니무스 해석에 참고</span></label><select id="gender"><option value="">선택 안 함</option><option>여성</option><option>남성</option><option>기타</option></select></div>
+      <div class="field"><label>연령대 <span class="hint">선택사항</span></label><select id="ageGroup"><option value="">선택 안 함</option><option>10대</option><option>20대</option><option>30대</option><option>40대</option><option>50대</option><option>60대 이상</option></select></div>
+    </div>
+    <div class="field"><label>요즘 상황 / 고민 <span class="hint">선택 — 낮의 잔재(프로이트)와 보상 해석(융)에 큰 도움이 돼요</span></label><textarea id="context" style="min-height:80px" placeholder="예) 최근 이직을 고민 중이에요 / 시험을 앞두고 있어요 / 특별한 일은 없었어요"></textarea></div>
+    <div class="field"><label>잠들기 전 상태 <span class="hint">선택사항</span></label><input type="text" id="preSleep" placeholder="예) 늦게까지 야근하고 지쳐서 잠듦, 영화를 보다가 잠듦" /></div>
+  </div>
+
+  <button class="btn btn-primary" id="analyzeBtn" onclick="analyze()">
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+    꿈 분석 시작
+  </button>
+
+  <div class="loading" id="loading"><div class="spinner"></div><p>세 가지 관점으로 꿈을 해석하는 중이에요...</p></div>
+
+  <div class="result card" id="result" style="margin-top:24px">
+    <div id="resultContent"></div>
+    <div class="action-row">
+      <button class="btn btn-secondary" onclick="copyResult()">결과 복사</button>
+      <button class="btn btn-secondary" onclick="resetForm()">새 분석</button>
+    </div>
+  </div>
+
+  <div class="card theory">
+    <div class="card-title">이론적 배경 — 이 분석기가 근거하는 세 가지 관점</div>
+
+    <details>
+      <summary>🛋️ 프로이트 — 『꿈의 해석』(1900)의 정신분석</summary>
+      <div class="theory-body">
+        <p>프로이트는 꿈을 <b>"억압된 소원의 위장된 충족"</b>이자 <b>"무의식으로 가는 왕도"</b>라고 보았습니다. 기억에 남는 꿈의 표면(<b>현재몽, manifest content</b>) 아래에는 숨겨진 진짜 의미(<b>잠재몽, latent content</b>)가 있으며, 검열을 피하기 위해 마음은 <b>꿈작업(dream-work)</b>을 수행합니다.</p>
+        <p>꿈작업의 네 기제 — <b>압축</b>(여러 생각을 하나의 이미지로), <b>전위</b>(감정의 무게를 다른 대상으로 옮김), <b>상징화</b>(욕망을 상징으로 표현), <b>2차 가공</b>(그럴듯한 이야기로 다듬기). 또한 꿈의 재료로 전날 경험의 흔적인 <b>낮의 잔재(day residue)</b>를 강조했습니다.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🌓 융 — 분석심리학: 보상, 원형, 집단무의식</summary>
+      <div class="theory-body">
+        <p>융은 꿈을 억압의 산물이 아니라 <b>정신의 자기조절 기능</b>으로 보았습니다. 꿈은 의식의 일방적인 태도를 바로잡는 <b>보상(compensation)</b> 작용이며, 개인무의식을 넘어 인류가 공유하는 <b>집단무의식</b>의 <b>원형(archetype)</b>이 등장합니다.</p>
+        <p>주요 원형 — <b>그림자</b>(인정하고 싶지 않은 나), <b>아니마/아니무스</b>(남성 속 여성성 / 여성 속 남성성), <b>페르소나</b>(사회적 가면), <b>자기(Self)</b>(전체성의 중심). 인생의 전환점에는 세계관을 바꾸는 <b>큰 꿈(big dream)</b>이 찾아온다고 했으며, 꿈 이미지를 신화·문화의 유사 상징으로 넓혀 읽는 <b>확충법(amplification)</b>과, 꿈을 통해 온전한 자신이 되어가는 <b>개성화(individuation)</b> 과정을 제시했습니다.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>☯️ 동양철학 — 장자 · 주역 · 음양오행 · 전통 해몽 · 불교</summary>
+      <div class="theory-body">
+        <p><b>장자의 호접몽(胡蝶夢)</b> — 나비 꿈에서 깨어난 장자가 "내가 나비 꿈을 꾼 것인가, 나비가 내 꿈을 꾸는 것인가"라고 물은 이야기. 꿈과 현실의 경계를 넘나드는 <b>물화(物化)</b>의 관점에서, 꿈을 존재의 변화와 전환의 신호로 읽습니다.</p>
+        <p><b>주역과 음양오행</b> — 만물은 음양의 순환과 목·화·토·금·수 오행의 상생상극 속에서 변화합니다. 꿈의 상징을 오행에 대응시켜(물=水·재물, 불=火·번창 등) 현재 기운의 흐름과 다가올 변화를 헤아립니다.</p>
+        <p><b>한국 전통 해몽</b> — 삼국시대 이래 꿈으로 길흉을 점치는 문화가 이어져 왔습니다. 돼지꿈·용꿈은 재물과 대운의 길몽, 태몽은 아이의 운명을 암시하는 꿈으로 여겨졌으며, 죽음·울음 같은 꿈은 오히려 반대로 풀이하는 <b>역몽(逆夢)</b>의 지혜도 있습니다.</p>
+        <p><b>불교</b> — 『화엄경』의 <b>일체유심조(一切唯心造)</b>, "모든 것은 마음이 지어낸다". 유식사상은 꿈속에서도 활동하는 <b>몽중의식(夢中意識)</b>을 말하며, 꿈을 마음의 작용을 비추는 거울로 봅니다.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>🔬 현대 과학은 꿈을 어떻게 볼까?</summary>
+      <div class="theory-body">
+        <p>현대 수면과학·심리학에서는 꿈이 깨어 있을 때의 관심사와 감정을 반영한다는 <b>연속성 가설(continuity hypothesis)</b>, 위협 상황을 미리 연습하게 한다는 <b>위협 시뮬레이션 이론</b>, 부정적 기억과 감정을 재처리한다는 <b>정서 처리 이론</b> 등이 연구되고 있습니다. 다만 <b>특정 상징이 특정 의미를 갖는다는 해석 자체는 과학적으로 검증된 것이 아니므로</b>, 이 분석기의 결과는 자기 성찰의 재료로 활용해 주세요.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>📚 참고 자료 (공신력 있는 출처)</summary>
+      <div class="theory-body">
+        <ul class="src-list">
+          <li><a href="https://www.freud.org.uk/schools/resources/the-interpretation-of-dreams/" target="_blank" rel="noopener">Freud Museum London — The Interpretation of Dreams 교육 자료</a></li>
+          <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6115518/" target="_blank" rel="noopener">Zhang &amp; Guo (2018), Frontiers in Psychology — 프로이트 꿈 이론 재조명 (PMC)</a></li>
+          <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4217604/" target="_blank" rel="noopener">Zhu (2013) — Jung on the Nature and Interpretation of Dreams (PMC)</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Zhuangzi_(book)" target="_blank" rel="noopener">Zhuangzi (莊子) — 호접몽 원전 개요 (Wikipedia)</a></li>
+          <li><a href="https://encykorea.aks.ac.kr/Article/E0011278" target="_blank" rel="noopener">한국민족문화대백과사전 — 「꿈」 (한국학중앙연구원)</a></li>
+          <li><a href="https://encykorea.aks.ac.kr/Article/E0058917" target="_blank" rel="noopener">한국민족문화대백과사전 — 「태몽」</a></li>
+          <li><a href="https://folkency.nfm.go.kr/topic/detail/9155" target="_blank" rel="noopener">한국민속대백과사전 — 「호랑이꿈」 (국립민속박물관)</a></li>
+          <li><a href="https://encykorea.aks.ac.kr/Article/E0041613" target="_blank" rel="noopener">한국민족문화대백과사전 — 「유식사상」</a></li>
+          <li><a href="https://ko.wikipedia.org/wiki/%EC%9D%BC%EC%B2%B4%EC%9C%A0%EC%8B%AC%EC%A1%B0" target="_blank" rel="noopener">일체유심조 — 화엄경 핵심 사상 (Wikipedia)</a></li>
+          <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S1053810003000199" target="_blank" rel="noopener">Revonsuo &amp; Valli — 위협 시뮬레이션 이론 (Consciousness and Cognition)</a></li>
+          <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10545663/" target="_blank" rel="noopener">꿈의 정서 적응 기능에 대한 비교문화 연구 (PMC)</a></li>
+        </ul>
+      </div>
+    </details>
+
+    <div class="disclaimer">
+      <b>⚠️ 안내</b> — 꿈 해석은 과학적으로 검증된 진단이 아니며, 이 분석기의 결과는 심리적·철학적 전통에 기반한 <b>자기 성찰과 재미를 위한 참고 자료</b>입니다. 반복되는 악몽, 수면 장애, 심한 불안이 지속된다면 전문 의료기관·심리상담 기관과 상의하세요.
+    </div>
+  </div>
+</main>
+<script>
+  const PROXY_URL = '/api/proxy'
+
+  // ── 전통 해몽 상징 사전 ─────────────────────────────────────────────
+  // 출처: 한국민족문화대백과사전(꿈·태몽), 한국민속대백과사전, 프로이트 『꿈의 해석』, 융 분석심리학 문헌
+  const SYMBOLS = [
+    { keys:['돼지'], name:'돼지', icon:'🐷', auspice:'길',
+      east:'재물·복·다산의 대표 길몽. 돈이 들어올 징조로 여겨 복권을 사기도 함. 태몽이면 복 많은 아이.',
+      freud:'풍요와 충족되지 못한 물질적 욕망의 상징.',
+      jung:'풍요의 원형 — 억눌린 본능적 생명력의 회복.' },
+    { keys:['용','이무기'], name:'용', icon:'🐉', auspice:'길',
+      east:'대운·권력·입신양명의 최고 길몽. 용이 승천하면 큰 성공, 태몽이면 큰 인물이 될 아이.',
+      freud:'거대한 힘에 대한 소망 — 권력욕과 인정 욕구의 투사.',
+      jung:'변환(transformation)의 원형. 무의식의 강력한 에너지가 의식으로 떠오르는 큰 꿈의 신호.' },
+    { keys:['뱀','구렁이'], name:'뱀 / 구렁이', icon:'🐍', auspice:'길',
+      east:'재물과 지혜의 상징. 구렁이가 품에 들어오면 재물운·태몽. 단, 뱀에게 물리면 구설수 주의.',
+      freud:'대표적인 리비도(성적 에너지)의 상징 — 억압된 욕망의 표현.',
+      jung:'치유와 재생의 원형(우로보로스). 허물을 벗듯 낡은 자아를 벗는 변환기의 상징.' },
+    { keys:['호랑이','범'], name:'호랑이', icon:'🐯', auspice:'길',
+      east:'용맹·권세·벽사(辟邪)의 상징. 태몽이면 기개 있는 아이, 호랑이를 타면 출세운.',
+      freud:'공격성과 권위(아버지상)에 대한 양가감정.',
+      jung:'길들지 않은 야성적 본능 — 그림자의 힘 있는 얼굴.' },
+    { keys:['물','바다','강','호수','홍수'], name:'물', icon:'🌊', auspice:'중립',
+      east:'오행의 수(水) — 재물과 지혜의 기운. 맑은 물은 재물, 흐린 물·홍수는 감정의 범람과 구설 주의.',
+      freud:'출생과 모태의 기억, 무의식적 감정의 흐름.',
+      jung:'무의식 그 자체. 물에 들어가는 꿈은 무의식과 대면하는 개성화의 초대.' },
+    { keys:['불','화재','불길','타오'], name:'불', icon:'🔥', auspice:'길',
+      east:'오행의 화(火) — 번창과 확장의 기운. 집이 활활 타면 사업·가운이 일어날 길몽.',
+      freud:'정열과 억압된 욕망의 분출.',
+      jung:'정화와 변환의 에너지 — 낡은 것을 태우고 새로 시작하려는 심리적 준비.' },
+    { keys:['이빨','이가 빠','치아'], name:'이빨 빠지는 꿈', icon:'🦷', auspice:'흉',
+      east:'전통 해몽에서 가족·가까운 사람의 변고를 암시한다고 여겨 조심하는 꿈. 마음을 살피라는 신호.',
+      freud:'상실 불안과 거세 불안 — 통제력을 잃는 것에 대한 두려움.',
+      jung:'삶의 한 단계가 끝나고 다음 단계로 넘어가는 통과의례적 변화의 상징.' },
+    { keys:['떨어지','추락','낙하','절벽'], name:'떨어지는 꿈', icon:'🕳️', auspice:'흉',
+      east:'지위·기반의 불안을 반영. 떨어져도 다치지 않으면 액땜으로 풀이.',
+      freud:'통제 상실의 불안 — 유혹에 넘어가는 것에 대한 무의식적 두려움.',
+      jung:'부풀려진 의식적 태도를 끌어내리는 보상 — 겸손과 현실 점검의 요청.' },
+    { keys:['날아','하늘을 나','비행','날개'], name:'하늘을 나는 꿈', icon:'🕊️', auspice:'길',
+      east:'신분 상승과 소원 성취의 길몽 — 뜻을 펼칠 때가 온다는 암시.',
+      freud:'전형적인 소원충족 — 제약에서 벗어나고 싶은 욕망.',
+      jung:'초월의 상징. 다만 너무 높이 날면 현실과의 접점을 잃는다는 경고이기도.' },
+    { keys:['죽','시체','장례','상여'], name:'죽음 / 시체', icon:'⚰️', auspice:'역몽',
+      east:'대표적 역몽(逆夢) — 죽음 꿈은 오히려 새 출발·재물·장수의 길몽으로 풀이. 시체는 재물의 상징.',
+      freud:'억압된 양가감정, 혹은 낡은 관계·상황을 끝내고 싶은 소망.',
+      jung:'죽음-재탄생 원형. 옛 자아의 죽음은 개성화의 필수 단계.' },
+    { keys:['쫓기','도망','추격'], name:'쫓기는 꿈', icon:'🏃', auspice:'흉',
+      east:'심리적 압박과 다가오는 근심의 반영 — 무리한 일을 벌이지 말라는 경계.',
+      freud:'직면하고 싶지 않은 억압된 충동으로부터의 도피.',
+      jung:'그림자의 추격 — 도망칠수록 커지며, 돌아서서 직면하라는 무의식의 요구.' },
+    { keys:['시험','지각','발표','면접'], name:'시험 / 지각', icon:'📝', auspice:'중립',
+      east:'평가와 심판 앞에 선 마음 — 준비를 점검하라는 신호.',
+      freud:'과거 시험 불안의 재현. 역설적으로 "그때도 통과했다"는 자기 안심의 꿈.',
+      jung:'스스로에게 부과한 기준과 페르소나의 압박을 보상하는 꿈.' },
+    { keys:['똥','대변','변기','배설'], name:'똥 / 배설물', icon:'💩', auspice:'길',
+      east:'전통 해몽 최고의 재물운 — 똥에 빠지거나 묻으면 큰 돈이 들어올 길몽.',
+      freud:'항문기적 소유욕 — 돈과 축적에 대한 무의식적 등가물.',
+      jung:'버려야 할 것을 배출하는 정화 — 심리적 해방.' },
+    { keys:['집','아파트','방','저택'], name:'집', icon:'🏠', auspice:'중립',
+      east:'터전과 가문의 상징 — 새 집은 발전, 무너지는 집은 기반 점검의 신호.',
+      freud:'자기 신체와 가족 관계의 표상.',
+      jung:'정신의 구조 그 자체 — 새 방을 발견하는 꿈은 몰랐던 자신의 가능성의 발견.' },
+    { keys:['아기','아이를 낳','임신','출산'], name:'아기 / 임신', icon:'👶', auspice:'길',
+      east:'태몽이 아니어도 새로운 시작·결실의 길몽 — 일·프로젝트의 탄생.',
+      freud:'창조 욕구와 돌봄 받고 싶은 소망의 이중 표현.',
+      jung:'신성한 아이(Divine Child) 원형 — 이제 막 태어난 새로운 가능성.' },
+    { keys:['결혼','신부','신랑','웨딩'], name:'결혼', icon:'💍', auspice:'역몽',
+      east:'전통 해몽에서는 역몽으로 조심스레 풀이하기도 — 상황 변화의 예고.',
+      freud:'결합에 대한 소망 혹은 관계 불안의 표현.',
+      jung:'대극의 합일(융합) — 내 안의 남성성과 여성성이 통합되는 개성화의 이정표.' },
+    { keys:['돈','지폐','동전','금','보석','반지'], name:'돈 / 금은보화', icon:'💰', auspice:'길',
+      east:'주우면 길몽. 단, 남에게 돈을 주는 꿈은 지출 주의로 풀이하기도.',
+      freud:'리비도와 자기 가치감의 상징.',
+      jung:'진정한 가치(Self)의 발견 — 겉의 재물이 아닌 내면의 보물.' },
+    { keys:['산','등산','정상','봉우리'], name:'산', icon:'⛰️', auspice:'길',
+      east:'큰 인물·큰 뜻의 상징. 산에 오르면 목표 성취, 태몽이면 비범한 아이.',
+      freud:'성취 욕구와 극복해야 할 장애물.',
+      jung:'자기실현의 여정 — 정상은 개성화의 목표 지점.' },
+    { keys:['꽃','벚꽃','장미','꽃다발','꽃밭'], name:'꽃', icon:'🌸', auspice:'길',
+      east:'개화는 결실과 경사의 길몽. 태몽이면 곱고 재주 많은 아이.',
+      freud:'아름다움과 사랑받고 싶은 소망.',
+      jung:'만다라적 상징 — 정신의 조화로운 개화.' },
+    { keys:['물고기','잉어','붕어','낚시'], name:'물고기 / 잉어', icon:'🐟', auspice:'길',
+      east:'재물과 태몽의 단골 상징 — 잉어를 잡으면 큰 성취.',
+      freud:'무의식 속을 헤엄치는 잡히지 않는 욕망.',
+      jung:'무의식의 깊은 곳에서 낚아 올리는 통찰과 영감.' },
+    { keys:['알몸','벌거벗','나체','옷을 안'], name:'벌거벗은 꿈', icon:'🫣', auspice:'중립',
+      east:'체면과 평판에 대한 근심 — 감추던 것이 드러날까 하는 마음.',
+      freud:'노출의 소망과 수치심의 갈등 — 어린 시절 자유로움에 대한 향수.',
+      jung:'페르소나(사회적 가면)가 벗겨진 상태 — 있는 그대로의 나와 마주함.' },
+    { keys:['길을 잃','미아','헤매','낯선 곳'], name:'길을 잃는 꿈', icon:'🧭', auspice:'중립',
+      east:'인생의 갈림길에서 방향을 묻는 마음의 신호.',
+      freud:'결정을 미루고 있는 현실 갈등의 재현.',
+      jung:'개성화 과정의 방황 — 새 길을 찾기 전 반드시 지나는 어둠.' },
+  ]
+
+  function matchSymbols(text) {
+    const found = []
+    for (const s of SYMBOLS) {
+      if (s.keys.some(k => text.includes(k))) found.push(s)
+    }
+    return found
+  }
+
+  function auspiceSummary(symbols) {
+    if (!symbols.length) return null
+    let score = 0
+    for (const s of symbols) {
+      if (s.auspice === '길' || s.auspice === '역몽') score += 1
+      else if (s.auspice === '흉') score -= 1
+    }
+    if (score >= 2) return { icon:'🌕', cls:'great', title:'전통 해몽: 길몽 기운', sub:'길한 상징이 여럿 등장했어요' }
+    if (score === 1) return { icon:'🌖', cls:'good', title:'전통 해몽: 길몽에 가까움', sub:'좋은 상징이 우세해요' }
+    if (score === 0) return { icon:'🌗', cls:'ok', title:'전통 해몽: 중립', sub:'길흉이 섞여 있거나 중립적인 꿈이에요' }
+    return { icon:'🌘', cls:'low', title:'전통 해몽: 근신의 꿈', sub:'마음을 살피라는 신호로 읽어보세요' }
+  }
+
+  function buildPrompt(data, symbols) {
+    const symNote = symbols.length
+      ? symbols.map(s => `- ${s.name}: [동양] ${s.east} [프로이트] ${s.freud} [융] ${s.jung}`).join('\n')
+      : '- 사전 매칭된 상징 없음 (꿈 본문에서 직접 상징을 찾아 해석할 것)'
+    return `당신은 꿈 해석 전문가입니다. 프로이트 정신분석, 융 분석심리학, 동양철학(장자·주역·음양오행·한국 전통 해몽·불교)에 모두 정통합니다. 아래 꿈을 세 가지 관점으로 교차 해석해주세요.
+
+## 해석 시 반드시 지킬 이론적 원칙
+- 프로이트: 꿈은 억압된 소원의 위장된 충족. 현재몽(표면) 아래 잠재몽(숨은 의미)을 찾고, 꿈작업(압축·전위·상징화·2차 가공)과 낮의 잔재를 활용해 해석할 것.
+- 융: 꿈은 의식의 일방적 태도를 보상(compensation)하는 정신의 자기조절. 그림자·아니마/아니무스·페르소나·자기(Self) 등 원형을 확인하고, 확충법으로 신화·문화적 유사 상징을 연결하며, 개성화 과정의 맥락에서 읽을 것.
+- 동양철학: 장자 호접몽의 물화(변화의 신호), 음양오행의 기운 흐름, 한국 전통 해몽의 길흉 풀이(역몽 포함), 불교 일체유심조(꿈은 마음이 지어낸 것)의 관점을 종합할 것.
+- 단정하지 말 것: "~일 수 있습니다", "~로 읽힙니다" 같은 열린 표현을 쓰고, 의학적·운명론적 단정은 피할 것.
+
+## 꿈 정보
+- 꿈 내용: ${data.dreamText}
+- 꿈에서 느낀 감정: ${data.emotion || '미입력'}
+- 생생함: ${data.vividness || '미입력'}
+- 반복 여부: ${data.recurring || '미입력'}
+- 꿈꾼 사람: ${data.gender || '성별 미입력'} / ${data.ageGroup || '연령대 미입력'}
+- 요즘 상황/고민: ${data.context || '미입력'}
+- 잠들기 전 상태: ${data.preSleep || '미입력'}
+
+## 이 꿈에서 감지된 전통 상징 (참고용 사전)
+${symNote}
+
+## 분석 요청
+다음 항목을 한국어로 작성해주세요. 각 섹션 제목은 ### 마크다운 헤딩으로 작성해주세요.
+
+### 🌙 꿈의 첫인상
+이 꿈의 전체적인 분위기와 핵심 이미지를 2~3문장으로 요약해주세요.
+
+### 🛋️ 프로이트의 시선 — 숨은 소망 찾기
+현재몽 아래 잠재몽이 무엇일 수 있는지, 어떤 꿈작업(압축/전위/상징화)이 일어났는지, 낮의 잔재와 어떻게 연결되는지 해석해주세요.
+
+### 🌓 융의 시선 — 원형과 보상
+이 꿈에 나타난 원형(그림자/아니마·아니무스/페르소나/자기 등)을 짚고, 지금 의식의 어떤 태도를 보상하려는 꿈인지, 개성화 과정에서 어떤 의미인지 해석해주세요.
+
+### ☯️ 동양철학의 시선 — 기운과 길흉
+음양오행의 기운 흐름, 한국 전통 해몽의 길흉 풀이(역몽 여부 포함), 장자·불교적 관점에서의 의미를 풀어주세요.
+
+### 🔮 세 관점의 교차 — 종합 해석
+세 관점이 공통으로 가리키는 메시지와 서로 다르게 보는 지점을 정리하고, 지금 이 사람에게 이 꿈이 건네는 핵심 메시지를 제시해주세요.
+
+### 🌱 오늘의 실천
+이 꿈을 계기로 해볼 수 있는 구체적인 자기 성찰 질문 2가지와 작은 실천 1가지를 제안해주세요.
+
+마지막에 **핵심 한 줄 요약**을 볼드로 작성해주세요.`
+  }
+
+  async function analyze() {
+    const data = {
+      dreamText: document.getElementById('dreamText').value.trim(),
+      emotion: document.getElementById('emotion').value,
+      vividness: document.getElementById('vividness').value,
+      recurring: document.getElementById('recurring').value,
+      gender: document.getElementById('gender').value,
+      ageGroup: document.getElementById('ageGroup').value,
+      context: document.getElementById('context').value.trim(),
+      preSleep: document.getElementById('preSleep').value.trim(),
+    }
+    if (data.dreamText.length < 10) { alert('꿈 내용을 조금 더 자세히 적어주세요! (10자 이상)'); return }
+    const symbols = matchSymbols(data.dreamText)
+    document.getElementById('analyzeBtn').disabled = true
+    document.getElementById('loading').classList.add('show')
+    document.getElementById('result').classList.remove('show')
+    try {
+      const res = await fetch(PROXY_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prompt:buildPrompt(data, symbols)}) })
+      const json = await res.json()
+      if (json.error) throw new Error(json.error.message||json.error||'API 오류')
+      renderResult(symbols, json.content[0].text)
+    } catch(e) {
+      alert('분석 중 오류가 발생했어요: '+e.message)
+    } finally {
+      document.getElementById('analyzeBtn').disabled = false
+      document.getElementById('loading').classList.remove('show')
+    }
+  }
+
+  function renderResult(symbols, text) {
+    let html = ''
+    const summary = auspiceSummary(symbols)
+    if (summary) {
+      html += `<div class="score-bar"><div class="score-circle ${summary.cls}">${summary.icon}</div><div class="score-info"><h3>${summary.title}</h3><p>${summary.sub} — 아래 세 관점 해석과 함께 읽어보세요</p></div></div>`
+    }
+    if (symbols.length) {
+      html += `<div class="section-label">발견된 꿈 상징 ${symbols.length}개</div><div class="symbol-grid">`
+      for (const s of symbols) {
+        html += `<div class="symbol-card">
+          <div class="sym-head"><span>${s.icon}</span><span class="sym-name">${s.name}</span><span class="sym-tag auspice-${s.auspice}">${s.auspice === '역몽' ? '역몽(반대 풀이)' : s.auspice + '몽 경향'}</span></div>
+          <div class="sym-line"><b>☯️ 동양</b> ${s.east}</div>
+          <div class="sym-line"><b>🛋️ 프로이트</b> ${s.freud}</div>
+          <div class="sym-line"><b>🌓 융</b> ${s.jung}</div>
+        </div>`
+      }
+      html += `</div>`
+    }
+    html += `<div class="section-label">AI 꿈 해석 리포트</div><div class="analysis-content" id="analysisText">${renderMarkdown(text)}</div>`
+    document.getElementById('resultContent').innerHTML = html
+    document.getElementById('result').classList.add('show')
+    document.getElementById('result').scrollIntoView({behavior:'smooth',block:'start'})
+  }
+
+  function renderMarkdown(text) {
+    return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/### (.+)/g,'<h3>$1</h3>').replace(/## (.+)/g,'<h3>$1</h3>')
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/^- (.+)/gm,'<li>$1</li>').replace(/(<li>.*<\/li>\n?)+/g,m=>`<ul>${m}</ul>`)
+      .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')
+  }
+
+  function copyResult() { const el=document.getElementById('analysisText'); if(!el) return; navigator.clipboard.writeText(el.innerText).then(()=>alert('해석 결과가 클립보드에 복사됐어요!')) }
+
+  function resetForm() {
+    document.getElementById('result').classList.remove('show')
+    ;['dreamText','context','preSleep'].forEach(id=>document.getElementById(id).value='')
+    ;['emotion','vividness','recurring','gender','ageGroup'].forEach(id=>document.getElementById(id).value='')
+    window.scrollTo({top:0,behavior:'smooth'})
+  }
+</script>
+</body>
+</html>
