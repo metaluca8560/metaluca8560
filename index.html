@@ -3,183 +3,126 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>METALUCA — AI · 자동화 · 웹을 만드는 사람</title>
-  <meta name="description" content="AI 챗봇, 업무 자동화, 웹 서비스를 만드는 metaluca의 프로젝트 허브. 만든 것들을 직접 눌러보세요." />
-  <meta property="og:title" content="METALUCA — AI · 자동화 · 웹을 만드는 사람" />
-  <meta property="og:description" content="AI로 아이디어를 실제로 굴러가는 것으로 만듭니다." />
+  <title>METALUCA — NFT · AI · 자동화</title>
+  <meta name="description" content="NFT 아티스트이자 AI·자동화 빌더 metaluca의 링크 허브. SNS 계정과 만든 프로젝트를 한눈에." />
+  <meta property="og:title" content="METALUCA" />
+  <meta property="og:description" content="NFT날라리를 꿈꾼다. — SNS와 프로젝트를 한눈에" />
   <meta property="og:type" content="website" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0e1a'/%3E%3Cpath d='M14 46 V20 l10 13 8-13 8 13 10-13 v26' fill='none' stroke='%2338e8ff' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body id="top">
+<body>
   <div class="bg-grid" aria-hidden="true"></div>
   <div class="bg-orb orb-a" aria-hidden="true"></div>
   <div class="bg-orb orb-b" aria-hidden="true"></div>
 
-  <!-- ===== Nav ===== -->
-  <header class="nav" id="nav">
-    <div class="container nav-inner">
-      <a href="#top" class="brand" aria-label="METALUCA 홈">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 64 64" width="30" height="30">
-            <rect width="64" height="64" rx="14" fill="rgba(56,232,255,.08)" stroke="rgba(56,232,255,.35)" />
-            <path d="M14 46 V20 l10 13 8-13 8 13 10-13 v26" fill="none" stroke="#38e8ff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </span>
-        <span class="brand-name">METALUCA</span>
-      </a>
-      <nav class="nav-links" aria-label="주요 메뉴">
-        <a href="#projects">프로젝트</a>
-        <a href="#stack">하는 일</a>
-        <a href="#contact">연락</a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <!-- ===== Hero ===== -->
-    <section class="hero">
-      <div class="container">
-        <p class="hero-eyebrow"><span class="pulse-dot" aria-hidden="true"></span>지금도 뭔가 만드는 중</p>
-        <h1 class="hero-title">
-          아이디어를<br />
-          <span class="grad">굴러가는 것</span>으로<br />
-          만듭니다.
-        </h1>
-        <p class="hero-sub">
-          AI 챗봇, 업무 자동화, 웹 서비스 — 생각에서 멈추지 않고
-          직접 만들어 배포합니다. 아래는 전부 실제로 동작하는 것들입니다.
-        </p>
-        <div class="hero-actions">
-          <a href="#projects" class="btn btn-primary">프로젝트 구경하기 ↓</a>
-          <a href="#contact" class="btn btn-ghost">같이 만들기</a>
-        </div>
-        <div class="hero-tags" aria-hidden="true">
-          <span>AI 챗봇</span><span>워크플로 자동화</span><span>데이터 분석</span><span>웹 서비스</span><span>노코드 연동</span>
-        </div>
+  <main class="phone">
+    <!-- ===== 프로필 ===== -->
+    <section class="profile">
+      <div class="avatar" aria-hidden="true">
+        <svg viewBox="0 0 96 96" width="96" height="96">
+          <defs>
+            <linearGradient id="avGrad" x1="0" y1="96" x2="96" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#38e8ff" />
+              <stop offset="1" stop-color="#8b7bff" />
+            </linearGradient>
+          </defs>
+          <circle cx="48" cy="48" r="46" fill="rgba(56,232,255,.07)" stroke="url(#avGrad)" stroke-width="2.5" />
+          <path d="M26 64 V34 l12 16 10-16 10 16 12-16 v30" fill="none" stroke="url(#avGrad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <h1 class="name">Metaluca</h1>
+      <p class="tagline">NFT날라리를 꿈꾼다.</p>
+      <div class="tags">
+        <span>#nftartist</span><span>#nft날라리</span><span>#digitalart</span><span>#ai자동화</span>
       </div>
     </section>
 
-    <!-- ===== Projects ===== -->
-    <section class="projects" id="projects">
-      <div class="container">
-        <p class="kicker">// PROJECTS</p>
-        <h2 class="section-title">만든 것들</h2>
-        <p class="section-sub">전부 클릭해서 바로 써볼 수 있습니다.</p>
-
-        <div class="proj-grid">
-          <a class="proj proj-wide" href="automation/">
-            <div class="proj-head">
-              <span class="proj-ic">🤖</span>
-              <span class="proj-tag">서비스</span>
-            </div>
-            <h3>AI 트렌드 다락방</h3>
-            <p>소상공인을 위한 반복 업무 자동화 & AI 챗봇 컨설팅. 문의 응대·데이터 정리·알림 발송을 자동화합니다.</p>
-            <span class="proj-go">바로가기 →</span>
-          </a>
-
-          <a class="proj" href="medi/">
-            <div class="proj-head">
-              <span class="proj-ic">🩺</span>
-              <span class="proj-tag">웹앱</span>
-            </div>
-            <h3>오늘 어디 아파?</h3>
-            <p>증상을 대화로 확인하고 진료과·응급도를 안내, 주변 병원·약국까지 찾아주는 길잡이 앱.</p>
-            <span class="proj-go">바로가기 →</span>
-          </a>
-
-          <a class="proj" href="youtube-analyzer.html">
-            <div class="proj-head">
-              <span class="proj-ic">📊</span>
-              <span class="proj-tag">도구</span>
-            </div>
-            <h3>유튜브 쇼츠 분석기</h3>
-            <p>채널·영상 데이터를 분석해 뭐가 터졌는지 찾아주는 트렌드 분석 도구.</p>
-            <span class="proj-go">바로가기 →</span>
-          </a>
-
-          <a class="proj" href="reels-analyzer.html">
-            <div class="proj-head">
-              <span class="proj-ic">🎬</span>
-              <span class="proj-tag">도구</span>
-            </div>
-            <h3>릴스 분석기</h3>
-            <p>인스타그램 릴스 트렌드 분석. 형제 도구로 <em>틱톡 분석기</em>도 있습니다.</p>
-            <span class="proj-go">바로가기 →</span>
-          </a>
-
-          <a class="proj" href="canva-ai/">
-            <div class="proj-head">
-              <span class="proj-ic">🎨</span>
-              <span class="proj-tag">강의</span>
-            </div>
-            <h3>캔바 × AI 디자인 클래스</h3>
-            <p>Canva와 AI 도구로 콘텐츠를 만드는 4주 실습 강의 랜딩 페이지.</p>
-            <span class="proj-go">바로가기 →</span>
-          </a>
-
-          <a class="proj" href="artist/">
-            <div class="proj-head">
-              <span class="proj-ic">🖋️</span>
-              <span class="proj-tag">디자인</span>
-            </div>
-            <h3>ATELIER</h3>
-            <p>작가를 위한 에디토리얼 무드의 1페이지 포트폴리오 템플릿.</p>
-            <span class="proj-go">바로가기 →</span>
-          </a>
-        </div>
+    <!-- ===== SNS / 계정 ===== -->
+    <section class="links" aria-label="SNS 계정">
+      <div class="tile-grid">
+        <a class="tile t-x" data-link="twitter" href="#">
+          <span class="tile-name">트위터 X</span>
+          <span class="tile-ic">𝕏</span>
+        </a>
+        <a class="tile t-opensea" data-link="opensea" href="#">
+          <span class="tile-name">오픈씨</span>
+          <span class="tile-ic">⛵</span>
+          <span class="tile-sub">OpenSea</span>
+        </a>
+        <a class="tile t-insta" data-link="instagram" href="#">
+          <span class="tile-name">인스타그램</span>
+          <span class="tile-ic">📸</span>
+        </a>
+        <a class="tile t-tiktok" data-link="tiktok" href="#">
+          <span class="tile-name">틱톡</span>
+          <span class="tile-ic">🎵</span>
+        </a>
+        <a class="tile t-blog" data-link="blog" href="#">
+          <span class="tile-name">블로그</span>
+          <span class="tile-ic">✍️</span>
+        </a>
+        <a class="tile t-spatial" data-link="spatial" href="#">
+          <span class="tile-name">힐링 스페이스</span>
+          <span class="tile-ic">🧊</span>
+          <span class="tile-sub">Spatial</span>
+        </a>
+        <a class="tile t-goods" data-link="marpple" href="#">
+          <span class="tile-name">굿즈샵</span>
+          <span class="tile-ic">🛍️</span>
+          <span class="tile-sub">Marpple</span>
+        </a>
+        <a class="tile t-ebook" data-link="kmong" href="#">
+          <span class="tile-name">E-book</span>
+          <span class="tile-ic">📚</span>
+          <span class="tile-sub">Kmong</span>
+        </a>
       </div>
     </section>
 
-    <!-- ===== Stack / What I do ===== -->
-    <section class="stack" id="stack">
-      <div class="container">
-        <p class="kicker">// WHAT I DO</p>
-        <h2 class="section-title">이런 걸 합니다</h2>
-        <div class="stack-grid">
-          <div class="stack-card">
-            <h3>💬 AI 챗봇 구축</h3>
-            <p>카카오톡·웹에서 사람처럼 응대하는 챗봇. 자주 묻는 질문을 학습시켜 24시간 자동 응답.</p>
-          </div>
-          <div class="stack-card">
-            <h3>⚡ 업무 자동화</h3>
-            <p>n8n·Apps Script·API 연동으로 문의 정리, 알림 발송, 정산까지 한 흐름으로.</p>
-          </div>
-          <div class="stack-card">
-            <h3>📈 콘텐츠 데이터 분석</h3>
-            <p>유튜브·릴스·틱톡 데이터를 긁어 트렌드를 읽는 분석 도구 제작.</p>
-          </div>
-          <div class="stack-card">
-            <h3>🌐 웹 서비스 제작</h3>
-            <p>랜딩 페이지부터 AI 연동 웹앱까지, 가볍고 빠르게 만들어 바로 배포.</p>
-          </div>
-        </div>
+    <!-- ===== 만든 것들 ===== -->
+    <section class="works" aria-label="프로젝트">
+      <p class="works-kicker">// 만든 것들</p>
+      <div class="row-list">
+        <a class="row" href="automation/">
+          <span class="row-ic">🤖</span>
+          <span class="row-body"><strong>AI 트렌드 다락방</strong><small>업무 자동화 & AI 챗봇 컨설팅</small></span>
+          <span class="row-go">→</span>
+        </a>
+        <a class="row" href="medi/">
+          <span class="row-ic">🩺</span>
+          <span class="row-body"><strong>오늘 어디 아파?</strong><small>증상 안내 & 병원 찾기</small></span>
+          <span class="row-go">→</span>
+        </a>
+        <a class="row" href="youtube-analyzer.html">
+          <span class="row-ic">📊</span>
+          <span class="row-body"><strong>유튜브 쇼츠 분석기</strong><small>트렌드 데이터 분석 도구</small></span>
+          <span class="row-go">→</span>
+        </a>
+        <a class="row" href="reels-analyzer.html">
+          <span class="row-ic">🎬</span>
+          <span class="row-body"><strong>릴스 분석기</strong><small>인스타 릴스 트렌드 분석</small></span>
+          <span class="row-go">→</span>
+        </a>
+        <a class="row" href="canva-ai/">
+          <span class="row-ic">🎨</span>
+          <span class="row-body"><strong>캔바 × AI 클래스</strong><small>AI 디자인 실습 강의</small></span>
+          <span class="row-go">→</span>
+        </a>
+        <a class="row" href="artist/">
+          <span class="row-ic">🖋️</span>
+          <span class="row-body"><strong>ATELIER</strong><small>작가 포트폴리오</small></span>
+          <span class="row-go">→</span>
+        </a>
       </div>
     </section>
 
-    <!-- ===== Contact ===== -->
-    <section class="contact" id="contact">
-      <div class="container contact-inner">
-        <p class="kicker">// CONTACT</p>
-        <h2 class="section-title">같이 만들어 볼까요?</h2>
-        <p class="contact-sub">자동화하고 싶은 업무, 만들고 싶은 서비스가 있다면 편하게 연락 주세요.</p>
-        <div class="contact-actions">
-          <a class="btn btn-primary" href="automation/#contact">💬 프로젝트 문의하기</a>
-          <a class="btn btn-ghost" href="https://github.com/metaluca8560" target="_blank" rel="noopener">GitHub ↗</a>
-        </div>
-      </div>
-    </section>
+    <footer class="foot">
+      <p>© <span id="year"></span> METALUCA</p>
+    </footer>
   </main>
-
-  <!-- ===== Footer ===== -->
-  <footer class="footer">
-    <div class="container footer-inner">
-      <p class="footer-brand">METALUCA</p>
-      <p class="copyright">© <span id="year"></span> metaluca. Built with curiosity.</p>
-    </div>
-  </footer>
 
   <script src="script.js"></script>
 </body>
