@@ -3,14 +3,14 @@
 // ✏️ 여기에 실제 계정 주소만 채우면 됩니다. (비워두면 타일이 흐려짐)
 // ============================================================
 const LINKS = {
-  twitter: "",   // 예: "https://x.com/계정"
-  opensea: "",   // 예: "https://opensea.io/계정"
-  instagram: "", // 예: "https://instagram.com/계정"
-  tiktok: "",    // 예: "https://www.tiktok.com/@계정"
-  blog: "",      // 예: "https://blog.naver.com/계정"
-  spatial: "",   // 예: "https://www.spatial.io/s/…"
-  marpple: "",   // 예: "https://marpple.shop/kr/계정"
-  kmong: "",     // 예: "https://kmong.com/gig/…"
+  twitter: "https://x.com/metaluca8560",
+  opensea: "https://opensea.io/metaluca_2750",
+  instagram: "https://www.instagram.com/metaluca2750",
+  tiktok: "https://www.tiktok.com/@metaluca2750",
+  blog: "https://naver.me/FLEwyESn",
+  spatial: "https://www.spatial.io/s/metarukas-Healing-space-627e1fa4bf651d0001da7543?share=5565475882378913124",
+  marpple: "https://marpple.shop/kr/metaluca_2750/",
+  kmong: "", // E-book 주소 생기면 여기에
 };
 
 document.getElementById("year").textContent = new Date().getFullYear();
