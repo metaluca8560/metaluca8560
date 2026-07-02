@@ -15,8 +15,8 @@ exports.handler = async (event) => {
     return { statusCode: 405, headers: CORS, body: JSON.stringify({ error: 'Method not allowed' }) }
   }
 
-  let prompt
-  try { prompt = JSON.parse(event.body).prompt } catch (e) { /* 아래에서 처리 */ }
+  let prompt, premium
+  try { ({ prompt, premium } = JSON.parse(event.body)) } catch (e) { /* 아래에서 처리 */ }
   if (!prompt) {
     return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'prompt required' }) }
   }
@@ -40,7 +40,7 @@ exports.handler = async (event) => {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2500,
+        max_tokens: premium ? 4500 : 2500, // 프리미엄 리포트는 12개월 운세 등 추가 섹션으로 더 김
         messages: [{ role: 'user', content: prompt }],
       }),
     })

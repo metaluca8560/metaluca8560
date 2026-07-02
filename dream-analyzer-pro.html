@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI 꿈분석기 — AI 트렌드 다락방</title>
-  <meta name="description" content="프로이트 정신분석, 융 분석심리학, 동양철학(주역·음양오행·전통 해몽), 점성학, 토정비결의 다섯 가지 관점으로 꿈과 길흉화복을 해석하는 AI 꿈분석기" />
+  <title>AI 꿈분석기 프리미엄 — AI 트렌드 다락방</title>
+  <meta name="description" content="프로이트·융·동양철학·점성학·토정비결 다섯 관점의 심층 해몽 + 12개월 운세 흐름 + 행운 아이템까지, 결제 후 받아보는 프리미엄 꿈 해석 리포트" />
   <link rel="icon" type="image/svg+xml" href="automation/logo.svg" />
   <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
@@ -110,6 +110,17 @@
     .src-list li { margin-bottom: 4px; font-size: 13px; }
     .disclaimer { background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.25); border-radius: 10px; padding: 14px 16px; font-size: 13px; color: var(--muted); line-height: 1.7; margin-top: 20px; }
     .disclaimer b { color: var(--secondary); }
+    .btn-gold { background: linear-gradient(135deg, #fbbf24, #d97706); color: #1a1205; width: 100%; justify-content: center; font-size: 16px; }
+    .btn-gold:hover:not(:disabled) { box-shadow: 0 8px 24px rgba(251,191,36,0.3); transform: translateY(-1px); }
+    .btn-gold:disabled { opacity: 0.5; cursor: not-allowed; }
+    .pro-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.4); border-radius: 20px; padding: 4px 14px; font-size: 13px; font-weight: 700; color: var(--secondary); margin-top: 14px; }
+    .price-tag { font-size: 15px; font-weight: 800; color: var(--secondary); }
+    .pay-card { display: none; }
+    .pay-card.show { display: block; }
+    .pay-note { font-size: 12.5px; color: var(--muted); margin-top: 12px; line-height: 1.6; }
+    .perk-list { list-style: none; display: grid; gap: 8px; margin: 14px 0 4px; }
+    .perk-list li { font-size: 14px; color: var(--text); display: flex; gap: 8px; align-items: flex-start; }
+    .perk-list li::before { content: '✦'; color: var(--secondary); flex-shrink: 0; }
     @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .symbol-grid { grid-template-columns: 1fr; } .insight-grid { grid-template-columns: 1fr 1fr; } }
   </style>
 </head>
@@ -118,13 +129,15 @@
   <img src="automation/logo.svg" class="header-logo" alt="logo" />
   <a href="index.html">AI 트렌드 다락방</a>
   <span class="header-sep">›</span>
-  <span class="header-title">AI 꿈분석기</span>
+  <a href="dream-analyzer.html">AI 꿈분석기</a>
+  <span class="header-sep">›</span>
+  <span class="header-title">프리미엄 ✦</span>
 </header>
 <main class="main">
   <div class="hero">
-    <h1>당신의 꿈,<br><span>다섯 가지 지혜로 풀어드립니다</span></h1>
-    <p>프로이트 · 융 · 동양철학 · 점성학 · 토정비결, 다섯 관점의 교차 해석</p>
-    <div class="dream-badge">🌙 생년월일까지 입력하면 적중률이 올라가요</div>
+    <h1>당신의 꿈,<br><span>프리미엄 심층 해몽</span></h1>
+    <p>다섯 관점 교차 해석에 12개월 운세 흐름과 행운 아이템까지 — 가장 깊은 리포트</p>
+    <div class="pro-badge">✦ PREMIUM — 1회 8,900원 · 무료판보다 3배 깊은 심층 분석</div>
     <div class="lens-row">
       <span class="lens-chip">🛋️ 프로이트 — 소원충족 · 꿈작업</span>
       <span class="lens-chip">🌓 융 — 원형 · 집단무의식 · 보상</span>
@@ -157,12 +170,30 @@
     <div class="field"><label>잠들기 전 상태 <span class="hint">선택사항</span></label><input type="text" id="preSleep" placeholder="예) 늦게까지 야근하고 지쳐서 잠듦, 영화를 보다가 잠듦" /></div>
   </div>
 
-  <button class="btn btn-primary" id="analyzeBtn" onclick="analyze()">
-    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-    꿈 분석 시작
+  <div class="card">
+    <div class="card-title">프리미엄 리포트에 포함되는 것</div>
+    <ul class="perk-list">
+      <li>다섯 관점(프로이트·융·동양철학·점성학·토정비결) 심층 교차 해석 — 무료판보다 3배 상세</li>
+      <li>📅 앞으로 12개월 월별 운세 흐름 (토정비결식 길흉화복 곡선)</li>
+      <li>🍀 행운 아이템 — 색·숫자·방위·요일과 피해야 할 것</li>
+      <li>💞 관계 · 💰 재물 · 🩺 건강 3대 영역 각론 풀이</li>
+      <li>📓 나만의 꿈 일기 코칭 — 다음에 주목할 꿈 신호</li>
+    </ul>
+  </div>
+
+  <button class="btn btn-gold" id="analyzeBtn" onclick="startPayment()">
+    ✦ <span class="price-tag" style="color:inherit">8,900원</span> 결제하고 프리미엄 해몽 받기
   </button>
 
-  <div class="loading" id="loading"><div class="spinner"></div><p>다섯 가지 관점으로 꿈과 신수를 해석하는 중이에요...</p></div>
+  <div class="card pay-card" id="payCard" style="margin-top:20px">
+    <div class="card-title">결제 수단 선택</div>
+    <div id="payment-method"></div>
+    <div id="agreement"></div>
+    <button class="btn btn-gold" id="payBtn" onclick="requestPay()" style="margin-top:16px">8,900원 결제하기</button>
+    <p class="pay-note">결제 완료 즉시 이 화면에서 프리미엄 리포트가 생성됩니다. 디지털 콘텐츠 특성상 리포트 생성 후에는 환불이 어려울 수 있어요.</p>
+  </div>
+
+  <div class="loading" id="loading"><div class="spinner"></div><p>결제 확인 후 프리미엄 리포트를 생성하는 중이에요... (최대 1분)</p></div>
 
   <div class="result card" id="result" style="margin-top:24px">
     <div id="resultContent"></div>
@@ -261,6 +292,14 @@
 </main>
 <script>
   const PROXY_URL = '/api/proxy'
+  // ── 결제 설정 (토스페이먼츠 결제위젯) ─────────────────────────────
+  // 아래는 토스페이먼츠 공식 문서의 "테스트 키"라 실제 돈이 빠져나가지 않아요.
+  // 실결제 전환: developers.tosspayments.com에서 상점 개설 후
+  //   1) 여기 TOSS_CLIENT_KEY를 라이브 클라이언트 키(live_gck_...)로 교체
+  //   2) Netlify 환경변수 TOSS_SECRET_KEY에 라이브 시크릿 키(live_gsk_...) 설정
+  const TOSS_CLIENT_KEY = 'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm'
+  const PRICE = 8900
+  const CONFIRM_URL = '/api/confirm-payment'
   // 카카오 개발자 콘솔(developers.kakao.com) 앱의 JavaScript 키를 넣으면 카카오톡 공유 카드가 활성화돼요.
   // 키가 없어도 모바일 공유 시트(카카오톡 선택 가능) → 클립보드 복사 순으로 자동 대체됩니다.
   const KAKAO_JS_KEY = ''
@@ -528,7 +567,24 @@ ${symNote}
 마지막에 **핵심 한 줄 요약**을 볼드로 작성해주세요.`
   }
 
-  async function analyze() {
+  const PREMIUM_EXTRA = `
+
+## 프리미엄 추가 분석 요청 (매우 중요)
+이것은 유료 프리미엄 리포트입니다. 위의 모든 섹션을 무료판보다 훨씬 깊고 상세하게(각 섹션 5~8문장) 작성하고, '### 🌱 오늘의 실천' 뒤에 아래 프리미엄 전용 섹션을 추가로 작성해주세요.
+
+### 📅 12개월 운세 흐름
+이 꿈과 신수 괘를 바탕으로 이번 달부터 12개월의 운세 흐름을 토정비결식으로 풀어주세요. 3개월 단위(1~3월차/4~6월차/7~9월차/10~12월차)로 나눠 각 시기의 길흉화복, 조심할 것, 잡아야 할 기회를 제시해주세요.
+
+### 🍀 행운 아이템
+이 꿈의 기운과 별자리·오행을 종합해 행운의 색, 숫자, 방위, 요일을 각각 이유와 함께 제시하고, 당분간 피하면 좋은 것 1가지도 알려주세요.
+
+### 💞 관계 · 💰 재물 · 🩺 건강 각론
+세 영역별로 이 꿈이 시사하는 바를 각각 3~4문장씩 구체적으로 풀어주세요. 재물은 들어오는 운과 새는 운을 나눠서, 관계는 가까운 사람과의 역학을, 건강은 마음 돌봄 중심으로.
+
+### 📓 꿈 일기 코칭
+이 꿈 이후 주목해서 기록하면 좋을 꿈 신호 3가지와, 같은 상징이 다시 나타났을 때의 의미 변화를 읽는 법을 코칭해주세요.`
+
+  function collectData() {
     const data = {
       dreamText: document.getElementById('dreamText').value.trim(),
       emotion: document.getElementById('emotion').value,
@@ -541,24 +597,114 @@ ${symNote}
       birthDate: document.getElementById('birthDate').value,
       dreamDate: document.getElementById('dreamDate').value,
     }
-    if (data.dreamText.length < 10) { alert('꿈 내용을 조금 더 자세히 적어주세요! (10자 이상)'); return }
+    if (data.dreamText.length < 10) { alert('꿈 내용을 조금 더 자세히 적어주세요! (10자 이상)'); return null }
+    return data
+  }
+
+  // ── 토스페이먼츠 결제위젯 ──────────────────────────────────────────
+  let tossWidgets = null
+
+  function loadTossSdk() {
+    return new Promise((resolve, reject) => {
+      if (window.TossPayments) return resolve()
+      const s = document.createElement('script')
+      s.src = 'https://js.tosspayments.com/v2/standard'
+      s.onload = resolve
+      s.onerror = () => reject(new Error('결제 SDK 로드 실패 — 네트워크를 확인해주세요'))
+      document.head.appendChild(s)
+    })
+  }
+
+  async function startPayment() {
+    const data = collectData()
+    if (!data) return
+    sessionStorage.setItem('dreamProData', JSON.stringify(data))
+    const btn = document.getElementById('analyzeBtn')
+    btn.disabled = true
+    try {
+      await loadTossSdk()
+      if (!tossWidgets) {
+        const toss = TossPayments(TOSS_CLIENT_KEY)
+        tossWidgets = toss.widgets({ customerKey: TossPayments.ANONYMOUS })
+        await tossWidgets.setAmount({ currency: 'KRW', value: PRICE })
+        await Promise.all([
+          tossWidgets.renderPaymentMethods({ selector: '#payment-method', variantKey: 'DEFAULT' }),
+          tossWidgets.renderAgreement({ selector: '#agreement', variantKey: 'AGREEMENT' }),
+        ])
+      }
+      document.getElementById('payCard').classList.add('show')
+      document.getElementById('payCard').scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } catch (e) {
+      alert('결제 모듈을 불러오지 못했어요: ' + e.message)
+    } finally {
+      btn.disabled = false
+    }
+  }
+
+  async function requestPay() {
+    if (!tossWidgets) { alert('결제 모듈이 준비되지 않았어요. 위의 결제 버튼을 다시 눌러주세요.'); return }
+    if (!sessionStorage.getItem('dreamProData')) { alert('꿈 정보가 없어요. 다시 입력해주세요!'); return }
+    try {
+      await tossWidgets.requestPayment({
+        orderId: 'dream-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+        orderName: 'AI 꿈분석기 프리미엄 리포트',
+        successUrl: location.origin + location.pathname,
+        failUrl: location.origin + location.pathname,
+      })
+    } catch (e) {
+      if (e && e.code === 'USER_CANCEL') return
+      alert('결제 요청에 실패했어요: ' + (e.message || e.code || '알 수 없는 오류'))
+    }
+  }
+
+  // 결제 후 리다이렉트 처리: 성공(paymentKey) → 승인 검증 → 리포트 생성 / 실패(code) → 안내
+  window.addEventListener('DOMContentLoaded', async () => {
+    const q = new URLSearchParams(location.search)
+    if (q.get('code')) {
+      history.replaceState(null, '', location.pathname)
+      alert('결제가 완료되지 않았어요: ' + (q.get('message') || q.get('code')))
+      return
+    }
+    const paymentKey = q.get('paymentKey')
+    if (!paymentKey) return
+    history.replaceState(null, '', location.pathname)
+    const saved = sessionStorage.getItem('dreamProData')
+    if (!saved) { alert('꿈 정보가 만료되었어요. 결제가 승인된 경우 운영자에게 문의해주세요.'); return }
+    const data = JSON.parse(saved)
+    restoreForm(data)
+    document.getElementById('loading').classList.add('show')
+    document.getElementById('analyzeBtn').disabled = true
+    try {
+      const c = await fetch(CONFIRM_URL, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentKey, orderId: q.get('orderId'), amount: Number(q.get('amount')) })
+      })
+      const cj = await c.json()
+      if (!c.ok || cj.error) throw new Error(cj.error || '결제 승인에 실패했어요')
+      await runAnalysis(data)
+      sessionStorage.removeItem('dreamProData')
+    } catch (e) {
+      alert('오류가 발생했어요: ' + e.message + '\n결제가 승인되었는데 리포트를 받지 못했다면 운영자에게 문의해주세요.')
+    } finally {
+      document.getElementById('loading').classList.remove('show')
+      document.getElementById('analyzeBtn').disabled = false
+    }
+  })
+
+  function restoreForm(data) {
+    const map = { dreamText:'dreamText', emotion:'emotion', vividness:'vividness', recurring:'recurring', gender:'gender', ageGroup:'ageGroup', context:'context', preSleep:'preSleep', birthDate:'birthDate', dreamDate:'dreamDate' }
+    for (const [k, id] of Object.entries(map)) { const el = document.getElementById(id); if (el && data[k]) el.value = data[k] }
+  }
+
+  async function runAnalysis(data) {
     lastDreamExcerpt = data.dreamText.length > 200 ? data.dreamText.slice(0, 200) + '…' : data.dreamText
     const symbols = matchSymbols(data.dreamText)
     const fate = buildFate(data)
-    document.getElementById('analyzeBtn').disabled = true
-    document.getElementById('loading').classList.add('show')
     document.getElementById('result').classList.remove('show')
-    try {
-      const res = await fetch(PROXY_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prompt:buildPrompt(data, symbols, fate)}) })
-      const json = await res.json()
-      if (json.error) throw new Error(json.error.message||json.error||'API 오류')
-      renderResult(symbols, fate, json.content[0].text)
-    } catch(e) {
-      alert('분석 중 오류가 발생했어요: '+e.message)
-    } finally {
-      document.getElementById('analyzeBtn').disabled = false
-      document.getElementById('loading').classList.remove('show')
-    }
+    const res = await fetch(PROXY_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prompt: buildPrompt(data, symbols, fate) + PREMIUM_EXTRA, premium: true}) })
+    const json = await res.json()
+    if (json.error) throw new Error(json.error.message||json.error||'API 오류')
+    renderResult(symbols, fate, json.content[0].text)
   }
 
   function renderResult(symbols, fate, text) {
@@ -586,12 +732,7 @@ ${symNote}
       }
       html += `</div>`
     }
-    html += `<div class="section-label">AI 꿈 해석 리포트</div><div class="analysis-content" id="analysisText">${renderMarkdown(text)}</div>`
-    html += `<a href="dream-analyzer-pro.html" style="display:flex;align-items:center;gap:14px;margin-top:20px;padding:18px 20px;background:linear-gradient(135deg,rgba(251,191,36,0.1),rgba(139,92,246,0.1));border:1px solid rgba(251,191,36,0.35);border-radius:12px;text-decoration:none;color:inherit">
-      <span style="font-size:28px">✦</span>
-      <span style="flex:1"><strong style="color:var(--secondary)">더 깊은 해몽이 궁금하다면 — 프리미엄 심층 리포트</strong><br><span style="font-size:13px;color:var(--muted)">12개월 운세 흐름 · 행운 아이템 · 관계/재물/건강 각론 · 꿈 일기 코칭까지 (8,900원)</span></span>
-      <span style="color:var(--secondary);font-weight:800">→</span>
-    </a>`
+    html += `<div class="section-label">✦ 프리미엄 심층 리포트</div><div class="analysis-content" id="analysisText">${renderMarkdown(text)}</div>`
     const oneLiner = text.match(/\*\*\s*핵심 한 줄 요약\s*[:：]?\s*([^*]+)\*\*/)
     lastShare = (summary ? summary.title + '\n' : '') + (oneLiner ? '"' + oneLiner[1].trim() + '"' : text.replace(/[#*]/g, '').trim().slice(0, 80) + '…')
     lastAnalysisText = text
@@ -696,6 +837,7 @@ ${symNote}
 
   function resetForm() {
     document.getElementById('result').classList.remove('show')
+    document.getElementById('payCard').classList.remove('show')
     document.getElementById('emailRow').classList.remove('show')
     document.getElementById('emailAddr').value = ''
     ;['dreamText','context','preSleep','birthDate','dreamDate'].forEach(id=>document.getElementById(id).value='')

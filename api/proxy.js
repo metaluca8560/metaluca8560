@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end()
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
-  const { prompt } = req.body
+  const { prompt, premium } = req.body
   if (!prompt) return res.status(400).json({ error: 'prompt required' })
 
   const apiKey = process.env.CLAUDE_API_KEY
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 2500,
+        max_tokens: premium ? 4500 : 2500,
         messages: [{ role: 'user', content: prompt }],
       }),
     })
