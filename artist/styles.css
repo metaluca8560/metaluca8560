@@ -185,7 +185,8 @@ em { font-style: normal; }
 @media (min-width: 760px) {
   .nav-meta { display: block; }
   .work { grid-template-columns: 64px 1.4fr 1fr; align-items: end; }
-  .work:nth-child(even) .work-idx { order: 3; }
+  .work:nth-child(even) { grid-template-columns: 1fr 1.4fr 64px; }
+  .work:nth-child(even) .work-idx { order: 3; justify-self: end; }
   .work:nth-child(even) .work-media { order: 2; }
   .work:nth-child(even) .work-info { order: 1; text-align: right; }
   .work-info { padding-bottom: 6px; }
