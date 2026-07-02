@@ -117,6 +117,8 @@
     .price-tag { font-size: 15px; font-weight: 800; color: var(--secondary); }
     .pay-card { display: none; }
     .pay-card.show { display: block; }
+    .acct-box { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--surface2); border: 1px dashed rgba(251,191,36,0.4); border-radius: 10px; padding: 12px 14px; font-size: 14px; margin-bottom: 12px; flex-wrap: wrap; }
+    .acct-box b { color: var(--secondary); }
     .pay-links { display: grid; gap: 10px; }
     .pay-kakao { background: #FEE500; color: #191919; width: 100%; justify-content: center; font-weight: 800; }
     .pay-kakao:hover { background: #ffd900; }
@@ -194,9 +196,13 @@
   <div class="card pay-card" id="payCard" style="margin-top:20px">
     <div class="card-title">송금하고 리포트 받기 — 5,900원</div>
     <p style="font-size:14px;color:var(--muted);margin-bottom:16px">아래 버튼으로 <b style="color:var(--secondary)">5,900원</b>을 보내주세요. 송금 후 보내신 분 성함을 입력하고 "송금 완료"를 누르면 리포트가 생성됩니다.</p>
+    <div class="acct-box">
+      <span>🏦 받는 계좌 — <b>토스뱅크 1000-6022-1741</b></span>
+      <button class="btn btn-secondary" onclick="copyAccount()">계좌 복사</button>
+    </div>
     <div class="pay-links">
-      <button class="btn pay-kakao" onclick="openPayLink('kakao')">🟡 카카오페이로 5,900원 보내기</button>
-      <button class="btn pay-toss" onclick="openPayLink('toss')">🔵 토스로 5,900원 보내기</button>
+      <button class="btn pay-toss" onclick="openPayLink('toss')">🔵 토스 앱으로 5,900원 보내기</button>
+      <button class="btn pay-kakao" onclick="openPayLink('kakao')">🟡 카카오페이로 보내기 (계좌 복사)</button>
     </div>
     <div class="field" style="margin-top:16px">
       <label>보내신 분 성함 <span class="hint">입금 확인에 사용돼요</span></label>
@@ -305,12 +311,12 @@
 </main>
 <script>
   const PROXY_URL = '/api/proxy'
-  // ── 결제 설정 (송금 링크 방식 — 사업자 없이 바로 사용 가능) ──────────
-  // KAKAOPAY_LINK: 카카오톡 → 페이 → 송금 → 링크 만들기에서 생성한 송금 링크
-  // TOSS_ME_LINK: 토스 앱 → 토스아이디 만들기 → https://toss.me/아이디 형식 (뒤에 /5900 붙이면 금액 자동 입력)
-  // 링크가 비어 있으면 해당 버튼 클릭 시 준비 중 안내가 표시됩니다.
+  // ── 결제 설정 (계좌 송금 방식 — 사업자 없이 바로 사용 가능) ──────────
+  const BANK_NAME = '토스뱅크'
+  const ACCOUNT_NO = '1000-6022-1741'
+  const ACCOUNT_HOLDER = '' // 예금주명 (선택 — 넣으면 복사 문구에 포함)
+  // 카카오페이 송금 링크가 있으면 입력 (없으면 계좌 복사 + 카카오페이 계좌송금 안내로 동작)
   const KAKAOPAY_LINK = ''
-  const TOSS_ME_LINK = ''
   const PRICE = 5900
   // 송금 완료 클릭 시 운영자에게 알림(입금자명·시간)을 보낼 n8n 웹훅 (미설정 시 알림 생략)
   const N8N_PAYMENT_WEBHOOK_URL = 'https://lucame296.app.n8n.cloud/webhook/dream-payment-notify'
@@ -624,10 +630,26 @@ ${symNote}
     document.getElementById('payCard').scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
+  function accountText() {
+    return BANK_NAME + ' ' + ACCOUNT_NO + (ACCOUNT_HOLDER ? ' (' + ACCOUNT_HOLDER + ')' : '')
+  }
+
+  function copyAccount(silent) {
+    return navigator.clipboard.writeText(accountText())
+      .then(() => { if (!silent) alert('계좌번호가 복사됐어요!\n' + accountText() + ' · 5,900원') })
+      .catch(() => { if (!silent) alert('복사에 실패했어요. 계좌번호: ' + accountText()) })
+  }
+
   function openPayLink(type) {
-    const link = type === 'kakao' ? KAKAOPAY_LINK : TOSS_ME_LINK
-    if (!link) { alert((type === 'kakao' ? '카카오페이' : '토스') + ' 송금 링크 준비 중이에요. 다른 방법으로 보내주세요!'); return }
-    window.open(link, '_blank')
+    if (type === 'toss') {
+      // 토스 공식 URL 스킴: 토스 앱이 열리며 계좌·금액이 자동 입력됨 (모바일 전용)
+      location.href = 'supertoss://send?amount=' + PRICE + '&bank=' + encodeURIComponent(BANK_NAME) + '&accountNo=' + ACCOUNT_NO.replace(/-/g, '')
+      // 토스 앱이 없는 환경 대비: 화면이 그대로면 계좌 복사로 안내
+      setTimeout(() => { if (!document.hidden) copyAccount(true).then(() => alert('토스 앱이 열리지 않으면 복사된 계좌번호로 직접 보내주세요!\n' + accountText() + ' · 5,900원')) }, 1500)
+      return
+    }
+    if (KAKAOPAY_LINK) { window.open(KAKAOPAY_LINK, '_blank'); return }
+    copyAccount(true).then(() => alert('계좌번호가 복사됐어요!\n카카오톡 → 페이 → 송금 → 계좌송금에 붙여넣고 5,900원을 보내주세요 💛\n' + accountText()))
   }
 
   async function confirmTransfer() {
