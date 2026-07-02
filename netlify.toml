@@ -1,0 +1,8 @@
+[functions]
+  directory = "netlify/functions"
+
+# 분석기들이 호출하는 /api/proxy를 Netlify Function으로 연결
+[[redirects]]
+  from = "/api/proxy"
+  to = "/.netlify/functions/proxy"
+  status = 200
