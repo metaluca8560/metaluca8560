@@ -202,7 +202,7 @@
     </div>
     <div class="pay-links">
       <button class="btn pay-toss" onclick="openPayLink('toss')">🔵 토스 앱으로 5,900원 보내기</button>
-      <button class="btn pay-kakao" onclick="openPayLink('kakao')">🟡 카카오페이로 보내기 (계좌 복사)</button>
+      <button class="btn pay-kakao" onclick="openPayLink('kakao')">🟡 카카오페이로 5,900원 보내기</button>
     </div>
     <div class="field" style="margin-top:16px">
       <label>보내신 분 성함 <span class="hint">입금 확인에 사용돼요</span></label>
@@ -316,7 +316,7 @@
   const ACCOUNT_NO = '1000-6022-1741'
   const ACCOUNT_HOLDER = '' // 예금주명 (선택 — 넣으면 복사 문구에 포함)
   // 카카오페이 송금 링크가 있으면 입력 (없으면 계좌 복사 + 카카오페이 계좌송금 안내로 동작)
-  const KAKAOPAY_LINK = ''
+  const KAKAOPAY_LINK = 'https://qr.kakaopay.com/FRzTVY4W8'
   const PRICE = 5900
   // 송금 완료 클릭 시 운영자에게 알림(입금자명·시간)을 보낼 n8n 웹훅 (미설정 시 알림 생략)
   const N8N_PAYMENT_WEBHOOK_URL = 'https://lucame296.app.n8n.cloud/webhook/dream-payment-notify'
