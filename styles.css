@@ -3,16 +3,16 @@
    색은 아래 :root 변수에서 변경
    ============================================================ */
 :root {
-  --bg: #0e0b18;
-  --bg-2: #151024;
-  --panel: rgba(201, 184, 255, 0.05);
-  --panel-border: rgba(201, 184, 255, 0.14);
-  --text: #efeaf9;
-  --muted: #9d93b8;
-  --lav: #c9b8ff;
-  --violet: #8b5cf6;
-  --gold: #e3c98f;
-  --grad: linear-gradient(115deg, #8b5cf6, #c9b8ff);
+  --bg: #241c3f;
+  --bg-2: #322858;
+  --panel: rgba(226, 216, 255, 0.09);
+  --panel-border: rgba(226, 216, 255, 0.22);
+  --text: #f7f4ff;
+  --muted: #beb3dc;
+  --lav: #d6c8ff;
+  --violet: #9d75ff;
+  --gold: #f0d9a4;
+  --grad: linear-gradient(115deg, #9d75ff, #d6c8ff);
   --radius: 20px;
   --font: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
@@ -21,8 +21,8 @@
 body {
   font-family: var(--font);
   background:
-    radial-gradient(60% 38% at 50% 0%, rgba(139, 92, 246, 0.16), transparent 70%),
-    linear-gradient(180deg, var(--bg-2), var(--bg) 40%);
+    radial-gradient(60% 38% at 50% 0%, rgba(157, 117, 255, 0.3), transparent 70%),
+    linear-gradient(180deg, var(--bg-2), var(--bg) 45%);
   color: var(--text);
   line-height: 1.6;
   min-height: 100dvh;
@@ -34,7 +34,7 @@ a { color: inherit; text-decoration: none; }
   position: fixed; z-index: -1; pointer-events: none;
   width: 460px; height: 460px; border-radius: 50%;
   bottom: -220px; right: -160px;
-  background: var(--violet); filter: blur(140px); opacity: 0.14;
+  background: var(--violet); filter: blur(140px); opacity: 0.3;
 }
 
 /* ---------- 폰 컬럼 ---------- */
@@ -49,7 +49,13 @@ a { color: inherit; text-decoration: none; }
 .profile { text-align: center; }
 .avatar {
   display: inline-block; border-radius: 50%;
-  filter: drop-shadow(0 6px 26px rgba(139, 92, 246, 0.35));
+  filter: drop-shadow(0 6px 26px rgba(157, 117, 255, 0.45));
+}
+.avatar img {
+  width: 112px; height: 112px; object-fit: cover;
+  border-radius: 50%; display: block;
+  border: 3px solid var(--lav);
+  box-shadow: 0 0 0 5px rgba(157, 117, 255, 0.25);
 }
 .house {
   margin-top: 18px;

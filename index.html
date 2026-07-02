@@ -19,8 +19,11 @@
   <main class="phone">
     <!-- ===== 프로필 ===== -->
     <section class="profile">
-      <div class="avatar" aria-hidden="true">
-        <svg viewBox="0 0 104 104" width="104" height="104">
+      <div class="avatar">
+        <!-- profile.jpg를 저장소 루트에 올리면 자동으로 이 사진이 표시됩니다 -->
+        <img id="avatarImg" src="profile.jpg" alt="루카 프로필"
+             onerror="this.remove();document.getElementById('avatarSvg').style.display='block';" />
+        <svg id="avatarSvg" style="display:none" viewBox="0 0 104 104" width="104" height="104" aria-hidden="true">
           <defs>
             <linearGradient id="avGrad" x1="0" y1="104" x2="104" y2="0" gradientUnits="userSpaceOnUse">
               <stop offset="0" stop-color="#8b5cf6" />
@@ -80,11 +83,6 @@
           <span class="tile-glyph">▶</span>
           <span class="tile-name">유튜브</span>
           <span class="tile-sub">YouTube</span>
-        </a>
-        <a class="tile" data-link="marpple" href="#">
-          <span class="tile-glyph">▣</span>
-          <span class="tile-name">굿즈샵</span>
-          <span class="tile-sub">Marpple</span>
         </a>
         <a class="tile" data-link="github" href="#">
           <span class="tile-glyph">⌥</span>
