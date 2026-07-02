@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>우리 시장 가자 — 전국 전통시장 길잡이</title>
+  <meta name="description" content="전국 전통시장·시골 5일장 찾기. 다음 장날 자동 계산, 시장의 주무기(특산물·먹거리), 이번 달 제철 식재료, 교통·길찾기까지 한눈에." />
+  <meta property="og:title" content="우리 시장 가자 — 전국 전통시장 길잡이" />
+  <meta property="og:description" content="다음 장날 언제? 이 시장 주무기는? 이번 달 제철은? 한 번에 확인하세요." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://metaluca8560.github.io/metaluca8560/market/" />
+  <meta property="og:image" content="https://metaluca8560.github.io/metaluca8560/market/og-image.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="우리 시장 가자" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://metaluca8560.github.io/metaluca8560/market/og-image.png" />
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="wrap topbar-in">
+      <a href="#" class="logo" id="homeBtn">🛒 우리 시장 <em>가자</em></a>
+      <span class="topbar-sub">전국 전통시장 길잡이</span>
+    </div>
+  </header>
+
+  <div class="notice">
+    <div class="wrap">✏️ 지금은 <strong>예시 데이터</strong>예요. <code>app.js</code>의 <code>MARKETS</code>에 우리 동네 시장을 넣으면 바로 내 앱이 됩니다.</div>
+  </div>
+
+  <main class="wrap main">
+
+    <!-- 목록 화면 -->
+    <section id="listView">
+      <div class="hero">
+        <h1>오늘, 어느 시장 가볼까요?</h1>
+        <p>전국 전통시장·시골 5일장, 다음 장날·특산물·가는 길을 한눈에.</p>
+      </div>
+      <div id="seasonal" class="seasonal"></div>
+      <div class="filters" id="filters">
+        <button class="filter is-on" data-f="all">전체</button>
+        <button class="filter" data-f="5일장">5일장</button>
+        <button class="filter" data-f="상설">상설시장</button>
+      </div>
+      <div class="region-filters" id="regionFilters"></div>
+      <div id="marketList" class="market-list"></div>
+    </section>
+
+    <!-- 상세 화면 (선택 시) -->
+    <section id="detailView" hidden></section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p><strong>우리 시장 가자</strong> — 전국 전통시장 길잡이 (MVP)</p>
+      <p class="fine">시장 운영시간·교통 정보는 변동될 수 있어요. 방문 전 한 번 더 확인하세요. 제철 식재료는 지역·해마다 조금씩 달라요. 온누리상품권 사용처는 시장마다 다릅니다.</p>
+      <p class="fine">© <span id="year"></span> 우리 시장 가자</p>
+    </div>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

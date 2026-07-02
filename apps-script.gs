@@ -94,3 +94,41 @@ function json(obj) {
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
+
+// ── Claude API 프록시 (틱톡 분석기용) ──
+var CLAUDE_API_KEY = ""; // 여기에 Claude API 키 입력
+
+function doPost(e) {
+  // 기존 폼 처리와 Claude 프록시 분기
+  try {
+    var body = JSON.parse(e.postData.contents);
+    if (body.type === "claude_proxy") {
+      return claudeProxy(body.prompt);
+    }
+  } catch (err) {}
+
+  // 기존 폼 처리 (위에서 이미 정의됨 — 아래는 중복 방지용 안전망)
+  return json({ result: "error", message: "invalid request" });
+}
+
+function claudeProxy(prompt) {
+  var response = UrlFetchApp.fetch("https://api.anthropic.com/v1/messages", {
+    method: "post",
+    contentType: "application/json",
+    headers: {
+      "x-api-key": CLAUDE_API_KEY,
+      "anthropic-version": "2023-06-01",
+    },
+    payload: JSON.stringify({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 1500,
+      messages: [{ role: "user", content: prompt }],
+    }),
+    muteHttpExceptions: true,
+  });
+
+  var result = JSON.parse(response.getContentText());
+  return ContentService
+    .createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON);
+}

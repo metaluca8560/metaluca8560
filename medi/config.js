@@ -4,4 +4,4 @@
 //
 // 비워두면( "" ) AI 문진과 실시간 병원목록은 비활성화되고,
 // 앱은 기존 룰기반 문진 + 위치기반 지도검색 + 공식포털 링크로 동작합니다.
-window.MEDI_API_BASE = "";
+window.MEDI_API_BASE = "https://small-recipe-9345.atlia0318.workers.dev";
