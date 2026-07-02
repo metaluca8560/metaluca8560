@@ -8,6 +8,7 @@ const LINKS = {
   instagram: "https://www.instagram.com/metaluca2750",
   tiktok: "https://www.tiktok.com/@metaluca2750",
   blog: "https://naver.me/FLEwyESn",
+  youtube: "https://youtube.com/@metaluca8563?si=C_WhYZQBKxnsDU8g",
   spatial: "https://www.spatial.io/s/metarukas-Healing-space-627e1fa4bf651d0001da7543?share=5565475882378913124",
   marpple: "https://marpple.shop/kr/metaluca_2750/",
   kmong: "", // E-book 주소 생기면 여기에
