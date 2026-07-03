@@ -130,6 +130,18 @@
     .disclaimer b { color: var(--secondary); }
     @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .symbol-grid { grid-template-columns: 1fr; } .insight-grid { grid-template-columns: 1fr 1fr; } }
   </style>
+  <script>
+    (function () {
+      var GA_ID = '' // Google Analytics 4 측정 ID (예: G-ABC123XYZ) — 넣으면 방문자 통계 수집 시작
+      if (!GA_ID) return
+      var s = document.createElement('script'); s.async = true
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID
+      document.head.appendChild(s)
+      window.dataLayer = window.dataLayer || []
+      window.gtag = function () { dataLayer.push(arguments) }
+      gtag('js', new Date()); gtag('config', GA_ID)
+    })()
+  </script>
 </head>
 <body>
 <canvas id="stars" aria-hidden="true"></canvas>
@@ -633,6 +645,7 @@ ${symNote}
       const json = await res.json()
       if (json.error) throw new Error(json.error.message||json.error||'API 오류')
       renderResult(symbols, fate, json.content[0].text)
+      if (window.gtag) gtag('event', 'dream_analyze', { tier: 'free' })
     } catch(e) {
       alert('분석 중 오류가 발생했어요: '+e.message)
     } finally {

@@ -18,6 +18,18 @@
   <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
   <link rel="stylesheet" href="styles.css" />
+  <script>
+    (function () {
+      var GA_ID = '' // Google Analytics 4 측정 ID (예: G-ABC123XYZ) — 넣으면 방문자 통계 수집 시작
+      if (!GA_ID) return
+      var s = document.createElement('script'); s.async = true
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID
+      document.head.appendChild(s)
+      window.dataLayer = window.dataLayer || []
+      window.gtag = function () { dataLayer.push(arguments) }
+      gtag('js', new Date()); gtag('config', GA_ID)
+    })()
+  </script>
 </head>
 <body>
   <div class="bg-glow" aria-hidden="true"></div>
