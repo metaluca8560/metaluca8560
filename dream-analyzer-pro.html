@@ -402,7 +402,43 @@
     requestAnimationFrame(draw)
   })()
 
-  const PROXY_URL = '/api/proxy'
+  const PROXY_URL = '/api/dream'
+  // 스트리밍 프록시(/api/dream) 호출 — SSE 이벤트를 조립해 전체 리포트 텍스트 반환
+  async function callDreamAI(prompt, premium) {
+    const res = await fetch(PROXY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, premium }) })
+    const ctype = res.headers.get('content-type') || ''
+    if (!res.ok || ctype.indexOf('text/event-stream') === -1) {
+      let msg = 'API 오류 (' + res.status + ')'
+      try { const j = await res.json(); msg = (j.error && (j.error.message || j.error)) || msg } catch (e) {}
+      throw new Error(msg)
+    }
+    const reader = res.body.getReader()
+    const decoder = new TextDecoder()
+    const progress = document.querySelector('#loading p')
+    let buf = '', text = ''
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buf += decoder.decode(value, { stream: true })
+      let idx
+      while ((idx = buf.indexOf('\n')) >= 0) {
+        const line = buf.slice(0, idx).trim(); buf = buf.slice(idx + 1)
+        if (line.indexOf('data:') !== 0) continue
+        const payload = line.slice(5).trim()
+        if (!payload || payload === '[DONE]') continue
+        let ev
+        try { ev = JSON.parse(payload) } catch (e) { continue }
+        if (ev.type === 'content_block_delta' && ev.delta && ev.delta.text) {
+          text += ev.delta.text
+          if (progress) progress.textContent = '리포트 작성 중... ' + text.length + '자 ✍️'
+        }
+        if (ev.type === 'error') throw new Error((ev.error && ev.error.message) || '스트림 오류')
+      }
+    }
+    if (!text) throw new Error('응답이 비어 있어요. 잠시 후 다시 시도해주세요.')
+    return text
+  }
+
   // ── 결제 설정 (계좌 송금 방식 — 사업자 없이 바로 사용 가능) ──────────
   const BANK_NAME = '토스뱅크'
   const ACCOUNT_NO = '1000-6022-1741'
@@ -789,10 +825,8 @@ ${symNote}
     const symbols = matchSymbols(data.dreamText)
     const fate = buildFate(data)
     document.getElementById('result').classList.remove('show')
-    const res = await fetch(PROXY_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({prompt: buildPrompt(data, symbols, fate) + PREMIUM_EXTRA, premium: true}) })
-    const json = await res.json()
-    if (json.error) throw new Error(json.error.message||json.error||'API 오류')
-    renderResult(symbols, fate, json.content[0].text)
+    const text = await callDreamAI(buildPrompt(data, symbols, fate) + PREMIUM_EXTRA, true)
+    renderResult(symbols, fate, text)
   }
 
   function renderResult(symbols, fate, text) {
