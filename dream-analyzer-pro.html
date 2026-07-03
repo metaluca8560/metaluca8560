@@ -149,6 +149,18 @@
     .perk-list li::before { content: '✦'; color: var(--secondary); flex-shrink: 0; }
     @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .symbol-grid { grid-template-columns: 1fr; } .insight-grid { grid-template-columns: 1fr 1fr; } }
   </style>
+  <script>
+    (function () {
+      var GA_ID = '' // Google Analytics 4 측정 ID (예: G-ABC123XYZ) — 넣으면 방문자 통계 수집 시작
+      if (!GA_ID) return
+      var s = document.createElement('script'); s.async = true
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID
+      document.head.appendChild(s)
+      window.dataLayer = window.dataLayer || []
+      window.gtag = function () { dataLayer.push(arguments) }
+      gtag('js', new Date()); gtag('config', GA_ID)
+    })()
+  </script>
 </head>
 <body>
 <canvas id="stars" aria-hidden="true"></canvas>
@@ -708,6 +720,7 @@ ${symNote}
     sessionStorage.setItem('dreamProData', JSON.stringify(data))
     document.getElementById('payCard').classList.add('show')
     document.getElementById('payCard').scrollIntoView({ behavior: 'smooth', block: 'start' })
+    if (window.gtag) gtag('event', 'premium_pay_open', { value: PRICE, currency: 'KRW' })
   }
 
   function accountText() {
@@ -744,6 +757,7 @@ ${symNote}
       notifyPayment(payerName, data) // 운영자 알림 (실패해도 진행)
       await runAnalysis(data)
       sessionStorage.removeItem('dreamProData')
+      if (window.gtag) gtag('event', 'premium_transfer_confirm', { value: PRICE, currency: 'KRW' })
       document.getElementById('payCard').classList.remove('show')
     } catch (e) {
       alert('리포트 생성 중 오류가 발생했어요: ' + e.message + '\n송금하셨는데 리포트를 받지 못했다면 운영자에게 문의해주세요.')
