@@ -7,7 +7,7 @@
   <meta name="description" content="프로이트·융·동양철학·점성학·토정비결 다섯 관점의 심층 해몽 + 12개월 운세 흐름 + 행운 아이템까지, 결제 후 받아보는 프리미엄 꿈 해석 리포트" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="AI 꿈분석기 프리미엄 ✦ — 심층 해몽 리포트" />
-  <meta property="og:description" content="다섯 관점 심층 해몽 + 12개월 운세 흐름 + 행운 아이템 + 관계/재물/건강 각론까지, 가장 깊은 꿈 리포트 (5,900원)" />
+  <meta property="og:description" content="다섯 관점 심층 해몽 + 12개월 운세 흐름 + 행운 아이템 + 관계/재물/건강 각론까지, 가장 깊은 꿈 리포트 (3,900원)" />
   <meta property="og:image" content="https://luca-darakbang.netlify.app/dream-og-pro.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -176,7 +176,7 @@
   <div class="hero">
     <h1>당신의 꿈,<br><span>프리미엄 심층 해몽</span></h1>
     <p>다섯 관점 교차 해석에 12개월 운세 흐름과 행운 아이템까지 — 가장 깊은 리포트</p>
-    <div class="pro-badge">✦ PREMIUM — 1회 5,900원 · 무료판보다 3배 깊은 심층 분석</div>
+    <div class="pro-badge">✦ PREMIUM — 1회 3,900원 · 무료판보다 3배 깊은 심층 분석</div>
     <div class="lens-row">
       <span class="lens-chip">🛋️ 프로이트 — 소원충족 · 꿈작업</span>
       <span class="lens-chip">🌓 융 — 원형 · 집단무의식 · 보상</span>
@@ -221,20 +221,20 @@
   </div>
 
   <button class="btn btn-gold" id="analyzeBtn" onclick="startPayment()">
-    ✦ <span class="price-tag" style="color:inherit">5,900원</span> 결제하고 프리미엄 해몽 받기
+    ✦ <span class="price-tag" style="color:inherit">3,900원</span> 결제하고 프리미엄 해몽 받기
   </button>
 
   <div class="card pay-card" id="payCard" style="margin-top:20px">
-    <div class="card-title">송금하고 리포트 받기 — 5,900원</div>
-    <p style="font-size:14.5px;line-height:1.8;margin-bottom:16px"><b style="color:var(--secondary)">①</b> 아래 버튼으로 <b style="color:var(--secondary)">5,900원</b> 송금 → <b style="color:var(--secondary)">②</b> 이 화면으로 <b>꼭 돌아와서</b> 성함 입력 → <b style="color:var(--secondary)">③</b> "송금 완료" 버튼을 눌러야 리포트가 생성돼요!</p>
+    <div class="card-title">송금하고 리포트 받기 — 3,900원</div>
+    <p style="font-size:14.5px;line-height:1.8;margin-bottom:16px"><b style="color:var(--secondary)">①</b> 아래 버튼으로 <b style="color:var(--secondary)">3,900원</b> 송금 → <b style="color:var(--secondary)">②</b> 이 화면으로 <b>꼭 돌아와서</b> 성함 입력 → <b style="color:var(--secondary)">③</b> "송금 완료" 버튼을 눌러야 리포트가 생성돼요!</p>
     <p style="font-size:13px;color:#f87171;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:8px;padding:10px 12px;margin-bottom:16px">⚠️ 송금만 하고 이 화면을 닫으면 리포트를 받을 수 없어요 — 송금 후 반드시 돌아와 주세요!</p>
     <div class="acct-box">
       <span>🏦 받는 계좌 — <b>토스뱅크 1000-6022-1741</b></span>
       <button class="btn btn-secondary" onclick="copyAccount()">계좌 복사</button>
     </div>
     <div class="pay-links">
-      <button class="btn pay-toss" onclick="openPayLink('toss')">🔵 토스 앱으로 5,900원 보내기</button>
-      <button class="btn pay-kakao" onclick="openPayLink('kakao')">🟡 카카오페이로 5,900원 보내기</button>
+      <button class="btn pay-toss" onclick="openPayLink('toss')">🔵 토스 앱으로 3,900원 보내기</button>
+      <button class="btn pay-kakao" onclick="openPayLink('kakao')">🟡 카카오페이로 3,900원 보내기</button>
     </div>
     <div class="field" style="margin-top:16px">
       <label>보내신 분 성함 <span class="hint">입금 확인에 사용돼요</span></label>
@@ -446,7 +446,7 @@
   const ACCOUNT_HOLDER = '' // 예금주명 (선택 — 넣으면 복사 문구에 포함)
   // 카카오페이 송금 링크가 있으면 입력 (없으면 계좌 복사 + 카카오페이 계좌송금 안내로 동작)
   const KAKAOPAY_LINK = 'https://qr.kakaopay.com/FRzTVY4W8'
-  const PRICE = 5900
+  const PRICE = 3900
   // 송금 완료 클릭 시 운영자에게 알림(입금자명·시간)을 보낼 n8n 웹훅 (미설정 시 알림 생략)
   const N8N_PAYMENT_WEBHOOK_URL = 'https://lucame296.app.n8n.cloud/webhook/dream-payment-notify'
   // 카카오 개발자 콘솔(developers.kakao.com) 앱의 JavaScript 키를 넣으면 카카오톡 공유 카드가 활성화돼요.
@@ -766,7 +766,7 @@ ${symNote}
 
   function copyAccount(silent) {
     return navigator.clipboard.writeText(accountText())
-      .then(() => { if (!silent) alert('계좌번호가 복사됐어요!\n' + accountText() + ' · 5,900원') })
+      .then(() => { if (!silent) alert('계좌번호가 복사됐어요!\n' + accountText() + ' · 3,900원') })
       .catch(() => { if (!silent) alert('복사에 실패했어요. 계좌번호: ' + accountText()) })
   }
 
@@ -775,11 +775,11 @@ ${symNote}
       // 토스 공식 URL 스킴: 토스 앱이 열리며 계좌·금액이 자동 입력됨 (모바일 전용)
       location.href = 'supertoss://send?amount=' + PRICE + '&bank=' + encodeURIComponent(BANK_NAME) + '&accountNo=' + ACCOUNT_NO.replace(/-/g, '')
       // 토스 앱이 없는 환경 대비: 화면이 그대로면 계좌 복사로 안내
-      setTimeout(() => { if (!document.hidden) copyAccount(true).then(() => alert('토스 앱이 열리지 않으면 복사된 계좌번호로 직접 보내주세요!\n' + accountText() + ' · 5,900원')) }, 1500)
+      setTimeout(() => { if (!document.hidden) copyAccount(true).then(() => alert('토스 앱이 열리지 않으면 복사된 계좌번호로 직접 보내주세요!\n' + accountText() + ' · 3,900원')) }, 1500)
       return
     }
     if (KAKAOPAY_LINK) { window.open(KAKAOPAY_LINK, '_blank'); return }
-    copyAccount(true).then(() => alert('계좌번호가 복사됐어요!\n카카오톡 → 페이 → 송금 → 계좌송금에 붙여넣고 5,900원을 보내주세요 💛\n' + accountText()))
+    copyAccount(true).then(() => alert('계좌번호가 복사됐어요!\n카카오톡 → 페이 → 송금 → 계좌송금에 붙여넣고 3,900원을 보내주세요 💛\n' + accountText()))
   }
 
   async function confirmTransfer() {
