@@ -5,7 +5,7 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "dream-payment-notify",
-        "responseMode": "lastNode",
+        "responseMode": "responseNode",
         "options": {
           "allowedOrigins": "*"
         }
