@@ -16,7 +16,15 @@
         (테스트 키에서는 체험용으로 충전이 반영되지만 "미승인" 표시가 붙습니다.
          라이브 키에서는 승인 없이는 실제 청구가 완료되지 않습니다)
    ============================================================ */
+/* 3) supabaseUrl / supabaseAnonKey — 클라우드 지갑 (선택)
+      - 설정하면: 이메일 로그인 + 어느 기기에서나 같은 잔액(DB 저장) + 회원 간 실제 송금.
+        supabase.com 무료 프로젝트 생성 → SQL Editor에서 supabase-schema.sql 실행 →
+        [Settings > API]의 Project URL과 anon public 키를 아래에 입력. (SUPABASE.md 참고)
+      - 비워두면: 지금처럼 이 브라우저에만 저장되는 로컬 데모 모드.
+      - anon 키는 공개되어도 되는 키입니다. service_role 키는 절대 여기 넣지 마세요! */
 window.CLOPAY_CONFIG = {
   clientKey: "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm", // 공식 문서 공용 테스트 키
   confirmEndpoint: "", // Apps Script 웹 앱 URL (…/exec)
+  supabaseUrl: "",     // 예: https://xxxx.supabase.co
+  supabaseAnonKey: "", // Supabase anon public 키
 };

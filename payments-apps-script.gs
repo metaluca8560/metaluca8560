@@ -10,6 +10,10 @@
  * 3) [프로젝트 설정(⚙️) > 스크립트 속성]에 TOSS_SECRET_KEY 추가
  *    - 테스트: 아래 기본값(공식 문서 공용 테스트 키)을 그대로 써도 됩니다
  *    - 실결제: 토스페이먼츠 [내 개발정보]의 라이브 시크릿 키(live_gsk_...)를 넣으세요
+ *    클라우드 지갑(Supabase)을 쓰면 스크립트 속성 2개를 추가하세요 (SUPABASE.md 참고):
+ *    - SUPABASE_URL         : https://xxxx.supabase.co
+ *    - SUPABASE_SERVICE_KEY : Supabase service_role 키 (비밀! 여기에만 저장)
+ *    → 승인 성공 시 해당 회원의 DB 지갑 잔액까지 자동 반영됩니다
  * 4) 함수 드롭다운에서 testConfirm 선택 후 ▶ 실행 → 권한 허용
  * 5) [배포] > [새 배포] > 유형 "웹 앱" (실행: 나 / 액세스: 모든 사용자) → 웹 앱 URL 복사
  * 6) pay-config.js 의 confirmEndpoint 에 그 URL(…/exec)을 붙여넣기
@@ -80,8 +84,16 @@ function doPost(e) {
       return json({ ok: false, code: payment.code || String(status), message: payment.message || "결제 승인에 실패했습니다." });
     }
 
-    // ---- 승인 성공: 원장 기록 + 알림 ----
-    logRow(orderId, amount, "승인완료", payment.method || "", payment.paymentKey || paymentKey);
+    // ---- 승인 성공: (클라우드 지갑이면) DB 잔액 반영 ----
+    var userId = String(body.userId || "");
+    var credited = false;
+    if (userId) {
+      credited = creditSupabaseWallet(userId, amount, orderId);
+    }
+
+    // ---- 원장 기록 + 알림 ----
+    logRow(orderId, amount, "승인완료" + (userId ? (credited ? "·지갑반영" : "·지갑반영실패") : ""),
+           payment.method || "", payment.paymentKey || paymentKey);
     if (NOTIFY_EMAIL) {
       try {
         MailApp.sendEmail({
@@ -99,6 +111,7 @@ function doPost(e) {
     }
     return json({
       ok: true,
+      credited: credited,
       payment: {
         orderId: payment.orderId,
         method: payment.method,
@@ -109,6 +122,35 @@ function doPost(e) {
     });
   } catch (err) {
     return json({ ok: false, message: String(err) });
+  }
+}
+
+/**
+ * 승인된 카드 충전을 Supabase 클라우드 지갑에 반영.
+ * supabase-schema.sql 의 credit_wallet RPC(서비스 롤 전용, 주문번호 중복 방지)를 호출.
+ * SUPABASE_URL / SUPABASE_SERVICE_KEY 미설정 시 false 반환 (로컬 지갑 모드).
+ */
+function creditSupabaseWallet(userId, amount, orderId) {
+  try {
+    var props = PropertiesService.getScriptProperties();
+    var url = props.getProperty("SUPABASE_URL");
+    var key = props.getProperty("SUPABASE_SERVICE_KEY");
+    if (!url || !key) return false;
+    var res = UrlFetchApp.fetch(url.replace(/\/$/, "") + "/rest/v1/rpc/credit_wallet", {
+      method: "post",
+      contentType: "application/json",
+      headers: { apikey: key, Authorization: "Bearer " + key },
+      payload: JSON.stringify({
+        p_user_id: userId,
+        p_amount: amount,
+        p_order_id: orderId,
+        p_name: "카드 충전 (토스페이먼츠)",
+      }),
+      muteHttpExceptions: true,
+    });
+    return res.getResponseCode() === 200;
+  } catch (e) {
+    return false;
   }
 }
 

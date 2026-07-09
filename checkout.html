@@ -131,8 +131,13 @@ function showError(msg, isHtml) {
     btn.addEventListener("click", async () => {
       btn.disabled = true;
       const orderId = "clopay_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+      // 클라우드 지갑 사용 중이면 어느 계정에 충전할지 함께 보관
+      let user = null;
+      try { user = JSON.parse(localStorage.getItem("clopay_user")); } catch (e) {}
       // 성공 페이지에서 금액 위변조를 대조할 수 있도록 주문 정보를 보관
-      localStorage.setItem("clopay_pending", JSON.stringify({ orderId, amount, at: Date.now() }));
+      localStorage.setItem("clopay_pending", JSON.stringify({
+        orderId, amount, at: Date.now(), userId: (user && user.id) || null,
+      }));
       try {
         await widgets.requestPayment({
           orderId,

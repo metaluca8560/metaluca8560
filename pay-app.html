@@ -253,6 +253,14 @@
 
   .settings-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 4px; border-bottom: 1px solid var(--border); font-size: 0.88rem; font-weight: 600; }
   .settings-row:last-child { border-bottom: none; }
+
+  .field {
+    width: 100%; background: var(--card2); border: 1px solid var(--border); color: var(--text);
+    border-radius: 14px; padding: 14px; font-size: 0.95rem; font-family: inherit;
+    margin-bottom: 10px; outline: none; transition: border-color 0.2s;
+  }
+  .field:focus { border-color: var(--accent); }
+  .field::placeholder { color: var(--muted); }
   .settings-row .sub { color: var(--muted); font-size: 0.74rem; font-weight: 500; margin-top: 3px; }
 </style>
 </head>
@@ -317,7 +325,11 @@
   <!-- ===== 송금 ===== -->
   <section class="view" id="view-send">
     <h2 class="section">받는 사람</h2>
-    <div class="card" style="padding: 14px 14px 6px;">
+    <div class="card" id="sendEmailCard" hidden style="padding: 16px;">
+      <input class="field" id="sendEmail" type="email" placeholder="받는 사람 이메일 (가입 회원)"
+             autocomplete="off" style="margin-bottom: 0;" oninput="updateSendDisplay()">
+    </div>
+    <div class="card" id="contactCard" style="padding: 14px 14px 6px;">
       <div class="contacts" id="contactList"></div>
     </div>
     <div class="card">
@@ -344,16 +356,37 @@
     </div>
     <h2 class="section">설정</h2>
     <div class="card" style="padding: 6px 16px;">
+      <div class="settings-row" id="accountRow" hidden>
+        <div>계정<div class="sub" id="accountEmail"></div></div>
+        <button class="btn ghost" style="width:auto; padding:8px 14px; font-size:0.78rem;" onclick="doLogout()">로그아웃</button>
+      </div>
       <div class="settings-row">
         <div>결제 비밀번호<div class="sub">송금·결제 시 PIN 확인</div></div>
         <button class="btn ghost" style="width:auto; padding:8px 14px; font-size:0.78rem;" onclick="changePin()">변경</button>
       </div>
-      <div class="settings-row">
+      <div class="settings-row" id="resetRow">
         <div>데모 데이터 초기화<div class="sub">잔액·거래내역을 처음 상태로 되돌립니다</div></div>
         <button class="btn danger" style="width:auto; padding:8px 14px; font-size:0.78rem;" onclick="resetAll()">초기화</button>
       </div>
     </div>
-    <p class="qr-hint" style="margin-top: 8px;">⚠️ 이 앱은 학습용 데모입니다. 실제 금전 거래가 이루어지지 않으며,<br>모든 데이터는 이 기기의 브라우저에만 저장됩니다.</p>
+    <p class="qr-hint" id="footNote" style="margin-top: 8px;">⚠️ 이 앱은 학습용 데모입니다. 실제 금전 거래가 이루어지지 않으며,<br>모든 데이터는 이 기기의 브라우저에만 저장됩니다.</p>
+  </section>
+
+  <!-- ===== 로그인 (클라우드 모드 전용) ===== -->
+  <section class="view" id="view-login">
+    <div class="card" style="margin-top: 8vh; text-align: center; padding: 28px 22px;">
+      <div style="font-size: 2.6rem; margin-bottom: 10px;">💳</div>
+      <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 6px;">클로페이 시작하기</h3>
+      <p style="color: var(--muted); font-size: 0.8rem; line-height: 1.5; margin-bottom: 18px;">
+        이메일로 로그인하면 어느 기기에서나<br>같은 지갑을 쓸 수 있어요</p>
+      <input class="field" id="authEmail" type="email" placeholder="이메일" autocomplete="email">
+      <input class="field" id="authPw" type="password" placeholder="비밀번호 (6자 이상)" autocomplete="current-password">
+      <div class="btn-row" style="margin-top: 12px;">
+        <button class="btn primary" id="loginBtn" onclick="doLogin()">로그인</button>
+        <button class="btn ghost" id="signupBtn" onclick="doSignup()">회원가입</button>
+      </div>
+      <p id="authMsg" style="font-size: 0.78rem; margin-top: 14px; min-height: 1.2em; color: var(--warn); line-height: 1.5;"></p>
+    </div>
   </section>
 </div>
 
@@ -371,6 +404,13 @@
 
 <div id="toast"></div>
 
+<script src="pay-config.js"></script>
+<script>
+// 클라우드 지갑이 설정된 경우에만 Supabase SDK 로드 (로컬 데모 모드는 오프라인 유지)
+if (window.CLOPAY_CONFIG && CLOPAY_CONFIG.supabaseUrl && CLOPAY_CONFIG.supabaseAnonKey) {
+  document.write('<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"><\/script>');
+}
+</script>
 <script>
 /* ===== qrcode-generator v1.5.0 (MIT, Kazuhiko Arase) — 오프라인 동작을 위해 인라인 ===== */
 //---------------------------------------------------------------------
@@ -2675,6 +2715,15 @@ var qrcode = function() {
 <script>
 "use strict";
 
+/* ================= 모드 ================= */
+// 클라우드 모드: pay-config.js에 Supabase 설정이 있고 SDK 로드에 성공한 경우.
+// 아니면 이 브라우저에만 저장되는 로컬 데모 모드.
+const CFG = window.CLOPAY_CONFIG || {};
+const CLOUD_CONFIGURED = !!(CFG.supabaseUrl && CFG.supabaseAnonKey);
+const CLOUD = CLOUD_CONFIGURED && !!window.supabase;
+let sb = null;          // Supabase 클라이언트
+let currentUser = null; // { id, email }
+
 /* ================= 상태 ================= */
 const LS_KEY = "clopay_v1";
 const CONTACTS = [
@@ -2695,7 +2744,7 @@ const DEFAULT_STATE = () => ({
   ],
 });
 
-let state = load();
+let state = CLOUD ? { balance: 0, pin: null, tx: [] } : load();
 function load() {
   try {
     const raw = localStorage.getItem(LS_KEY);
@@ -2703,7 +2752,13 @@ function load() {
   } catch (e) {}
   return DEFAULT_STATE();
 }
-function save() { localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+// 클라우드 모드에서 잔액·거래는 DB가 원본이므로 로컬에 저장하지 않음
+function save() { if (CLOUD) return; localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+// PIN은 모드와 무관하게 기기별 보관 (클라우드 모드는 별도 키)
+function persistPin() {
+  if (CLOUD) localStorage.setItem("clopay_pin", state.pin || "");
+  else save();
+}
 
 /* ================= 유틸 ================= */
 const fmt = (n) => n.toLocaleString("ko-KR");
@@ -2879,10 +2934,14 @@ function simulateStorePay() {
   const stores = ["GS25 강남점", "스타벅스 역삼점", "김밥천국", "올리브영", "CGV 용산", "교보문고", "버거킹", "다이소"];
   const store = stores[Math.floor(Math.random() * stores.length)];
   const cat = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
-  requirePin(() => {
-    state.balance -= n;
-    state.tx.push({ type: "pay", name: store, amount: n, cat, at: Date.now() });
-    save(); render();
+  requirePin(async () => {
+    if (CLOUD) {
+      if (!(await cloudRpc("pay_store", { p_store: store, p_amount: n, p_cat: cat }))) return;
+    } else {
+      state.balance -= n;
+      state.tx.push({ type: "pay", name: store, amount: n, cat, at: Date.now() });
+      save(); render();
+    }
     payAmountStr = ""; updatePayDisplay();
     openSuccess("결제 완료!", n, store);
     vibrate([30, 50, 30]);
@@ -2917,7 +2976,10 @@ function updateSendDisplay() {
   const sub = document.getElementById("sendAmountKorean");
   if (n > state.balance) { sub.textContent = "잔액이 부족해요 (보유 " + fmt(state.balance) + "원)"; sub.style.color = "var(--danger)"; }
   else { sub.textContent = n > 0 ? korean(n) : ""; sub.style.color = ""; }
-  document.getElementById("sendBtn").disabled = !(n > 0 && n <= state.balance && selectedContact);
+  const hasRecipient = CLOUD
+    ? /\S+@\S+\.\S+/.test((document.getElementById("sendEmail").value || "").trim())
+    : !!selectedContact;
+  document.getElementById("sendBtn").disabled = !(n > 0 && n <= state.balance && hasRecipient);
 }
 function addSendAmount(v) {
   sendAmountStr = String(parseInt(sendAmountStr || "0", 10) + v);
@@ -2927,8 +2989,25 @@ function clearSendAmount() { sendAmountStr = ""; vibrate(8); updateSendDisplay()
 
 function startSend() {
   const n = parseInt(sendAmountStr || "0", 10);
+  if (n <= 0 || n > state.balance) return;
+
+  if (CLOUD) {
+    const email = (document.getElementById("sendEmail").value || "").trim().toLowerCase();
+    if (!/\S+@\S+\.\S+/.test(email)) return;
+    if (currentUser && email === currentUser.email) return toast("나에게는 송금할 수 없어요");
+    requirePin(async () => {
+      if (!(await cloudRpc("send_money", { p_receiver_email: email, p_amount: n }))) return;
+      sendAmountStr = "";
+      document.getElementById("sendEmail").value = "";
+      updateSendDisplay();
+      openSuccess("송금 완료!", n, email + " 님에게 보냈어요");
+      vibrate([30, 50, 30]);
+    });
+    return;
+  }
+
   const c = CONTACTS.find(x => x.id === selectedContact);
-  if (!c || n <= 0 || n > state.balance) return;
+  if (!c) return;
   requirePin(() => {
     state.balance -= n;
     state.tx.push({ type: "send", name: c.name + "님에게 송금", amount: n, cat: null, at: Date.now() });
@@ -2962,10 +3041,15 @@ function openCharge() {
 function goCheckout(n) {
   location.href = "checkout.html?amount=" + n;
 }
-function doCharge(n) {
-  state.balance += n;
-  state.tx.push({ type: "charge", name: "지갑 충전", amount: n, cat: null, at: Date.now() });
-  save(); render(); closeSheet();
+async function doCharge(n) {
+  if (CLOUD) {
+    if (!(await cloudRpc("demo_charge", { p_amount: n }))) return;
+  } else {
+    state.balance += n;
+    state.tx.push({ type: "charge", name: "지갑 충전", amount: n, cat: null, at: Date.now() });
+    save(); render();
+  }
+  closeSheet();
   toast("💰 " + fmt(n) + "원이 충전되었어요");
   vibrate(20);
 }
@@ -3015,7 +3099,7 @@ function handlePinComplete() {
     renderPinSheet();
   } else if (pinStage === "setup2") {
     if (pinBuffer === pinFirstEntry) {
-      state.pin = pinBuffer; save();
+      state.pin = pinBuffer; persistPin();
       const cb = pinCallback; // closeSheet()가 pinCallback을 비우므로 먼저 보관
       closeSheet(); toast("🔒 비밀번호가 설정되었어요");
       if (cb) setTimeout(cb, 250);
@@ -3068,6 +3152,7 @@ function closeSheet() {
 
 /* ================= 초기화 ================= */
 function resetAll() {
+  if (CLOUD) return; // 클라우드 모드에서는 숨겨져 있음
   if (!confirm("잔액과 거래내역이 모두 초기화됩니다. 계속할까요?")) return;
   state = DEFAULT_STATE(); save();
   payAmountStr = ""; sendAmountStr = ""; selectedContact = null;
@@ -3075,19 +3160,137 @@ function resetAll() {
   toast("데모 데이터가 초기화되었어요");
 }
 
+/* ================= 클라우드 지갑 (Supabase) ================= */
+async function loadCloudState() {
+  const [w, t] = await Promise.all([
+    sb.from("wallets").select("balance").eq("user_id", currentUser.id).single(),
+    sb.from("transactions").select("type,name,amount,cat,at")
+      .eq("user_id", currentUser.id).order("at", { ascending: false }).limit(100),
+  ]);
+  if (w.error) { toast("지갑을 불러오지 못했어요: " + w.error.message); return false; }
+  state.balance = Number(w.data.balance);
+  state.tx = (t.data || []).map(x => ({
+    type: x.type, name: x.name, amount: Number(x.amount), cat: x.cat,
+    at: new Date(x.at).getTime(),
+  }));
+  return true;
+}
+
+// 잔액을 바꾸는 모든 동작은 DB 함수(RPC)로만 — 성공 시 최신 상태 다시 로드
+async function cloudRpc(fn, args) {
+  try {
+    const { error } = await sb.rpc(fn, args);
+    if (error) { toast(error.message || "요청을 처리하지 못했어요"); return false; }
+    await loadCloudState();
+    render(); updatePayDisplay(); updateSendDisplay();
+    return true;
+  } catch (e) {
+    toast("네트워크 오류: " + (e.message || e));
+    return false;
+  }
+}
+
+function authMsg(m) { document.getElementById("authMsg").textContent = m || ""; }
+function authBusy(b) {
+  document.getElementById("loginBtn").disabled = b;
+  document.getElementById("signupBtn").disabled = b;
+}
+function readAuthInput() {
+  const email = (document.getElementById("authEmail").value || "").trim().toLowerCase();
+  const pw = document.getElementById("authPw").value || "";
+  if (!/\S+@\S+\.\S+/.test(email)) { authMsg("이메일 주소를 확인해 주세요"); return null; }
+  if (pw.length < 6) { authMsg("비밀번호는 6자 이상이어야 해요"); return null; }
+  return { email, pw };
+}
+async function doLogin() {
+  const input = readAuthInput();
+  if (!input) return;
+  authBusy(true); authMsg("");
+  const { error } = await sb.auth.signInWithPassword({ email: input.email, password: input.pw });
+  authBusy(false);
+  if (error) {
+    return authMsg(/invalid/i.test(error.message)
+      ? "이메일 또는 비밀번호가 올바르지 않아요" : error.message);
+  }
+  await afterLogin();
+}
+async function doSignup() {
+  const input = readAuthInput();
+  if (!input) return;
+  authBusy(true); authMsg("");
+  const { data, error } = await sb.auth.signUp({ email: input.email, password: input.pw });
+  authBusy(false);
+  if (error) {
+    return authMsg(/already/i.test(error.message)
+      ? "이미 가입된 이메일이에요. 로그인해 주세요" : error.message);
+  }
+  if (!data || !data.session) {
+    return authMsg("확인 메일을 보냈어요 📮 메일의 링크를 누른 뒤 로그인해 주세요");
+  }
+  await afterLogin();
+}
+async function afterLogin() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return authMsg("로그인 상태를 확인하지 못했어요. 다시 시도해 주세요");
+  currentUser = { id: session.user.id, email: (session.user.email || "").toLowerCase() };
+  // 결제 페이지(checkout)가 충전 대상 계정을 알 수 있도록 보관
+  localStorage.setItem("clopay_user", JSON.stringify(currentUser));
+  state.pin = localStorage.getItem("clopay_pin") || null;
+  await loadCloudState();
+  enterApp();
+}
+async function doLogout() {
+  try { await sb.auth.signOut(); } catch (e) {}
+  localStorage.removeItem("clopay_user");
+  currentUser = null;
+  state = { balance: 0, pin: null, tx: [] };
+  showLoginView();
+}
+function enterApp() {
+  document.querySelector("nav.tabbar").style.display = "";
+  document.getElementById("accountRow").hidden = false;
+  document.getElementById("accountEmail").textContent = currentUser.email;
+  document.getElementById("resetRow").hidden = true;
+  document.getElementById("sendEmailCard").hidden = false;
+  document.getElementById("contactCard").hidden = true;
+  document.getElementById("footNote").innerHTML =
+    "☁️ 클라우드 지갑 모드 — 잔액과 거래내역이 계정에 저장되어<br>어느 기기에서나 같은 지갑을 사용할 수 있어요.";
+  render(); updatePayDisplay(); updateSendDisplay();
+  showTab("home");
+}
+function showLoginView() {
+  document.querySelector("nav.tabbar").style.display = "none";
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  document.getElementById("view-login").classList.add("active");
+}
+
 /* ================= 부트스트랩 ================= */
-buildKeypad(document.getElementById("payKeypad"), (k) => {
-  payAmountStr = applyKey(payAmountStr, k, 8);
+(async function boot() {
+  buildKeypad(document.getElementById("payKeypad"), (k) => {
+    payAmountStr = applyKey(payAmountStr, k, 8);
+    updatePayDisplay();
+  });
+  buildKeypad(document.getElementById("sendKeypad"), (k) => {
+    sendAmountStr = applyKey(sendAmountStr, k, 8);
+    updateSendDisplay();
+  });
+
+  if (CLOUD) {
+    sb = supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey);
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) await afterLogin();
+    else showLoginView();
+    return;
+  }
+
+  if (CLOUD_CONFIGURED && !window.supabase) {
+    toast("클라우드 모듈을 불러오지 못해 로컬 모드로 실행돼요");
+  }
+  renderContacts();
+  render();
   updatePayDisplay();
-});
-buildKeypad(document.getElementById("sendKeypad"), (k) => {
-  sendAmountStr = applyKey(sendAmountStr, k, 8);
   updateSendDisplay();
-});
-renderContacts();
-render();
-updatePayDisplay();
-updateSendDisplay();
+})();
 </script>
 </body>
 </html>
