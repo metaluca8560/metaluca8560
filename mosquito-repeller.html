@@ -76,9 +76,15 @@
   .power-btn .label { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
   .power-btn.on {
     border-color: var(--accent);
-    box-shadow: 0 0 0 6px var(--accent-dim), 0 0 40px rgba(74, 222, 128, 0.25);
+    background: linear-gradient(145deg, #22c55e, #15803d);
+    box-shadow: 0 0 0 8px var(--accent-dim), 0 0 60px rgba(74, 222, 128, 0.5);
+    animation: glow-pulse 1.2s ease-in-out infinite;
   }
-  .power-btn.on .label { color: var(--accent); }
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 0 8px var(--accent-dim), 0 0 40px rgba(74, 222, 128, 0.4); }
+    50%      { box-shadow: 0 0 0 14px rgba(74, 222, 128, 0.25), 0 0 80px rgba(74, 222, 128, 0.7); }
+  }
+  .power-btn.on .label { color: #dcfce7; }
   .power-btn.on .icon { animation: buzz 0.15s infinite alternate; }
   @keyframes buzz {
     from { transform: translate(-1.5px, 1px) rotate(-3deg); }
@@ -100,6 +106,49 @@
     0%   { transform: scale(1); opacity: 0.7; }
     100% { transform: scale(1.7); opacity: 0; }
   }
+
+  /* 파형 시각화 */
+  .scope-wrap { margin-top: 4px; }
+  #scope {
+    width: 100%;
+    height: 64px;
+    display: block;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .scope-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 8px;
+    min-height: 1.2em;
+  }
+  .scope-status .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--muted); opacity: 0.4;
+  }
+  .scope-status.live { color: var(--accent); }
+  .scope-status.live .dot { background: var(--accent); opacity: 1; animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0.3; } }
+
+  .test-btn {
+    width: 100%;
+    margin-top: 16px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 0;
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .test-btn:active { background: var(--accent-dim); }
 
   .freq-display {
     text-align: center;
@@ -220,6 +269,13 @@
       </div>
     </div>
 
+    <div class="scope-wrap">
+      <canvas id="scope"></canvas>
+      <div class="scope-status" id="scopeStatus">
+        <span class="dot"></span><span id="scopeText">꺼짐 — 신호 없음</span>
+      </div>
+    </div>
+
     <div class="slider-row">
       <label>
         <span>주파수 조절</span>
@@ -235,6 +291,8 @@
       </label>
       <input type="range" id="volSlider" min="0" max="100" step="1" value="70">
     </div>
+
+    <button class="test-btn" id="testBtn">🔊 스피커 테스트 — 들리는 "삐" 소리 재생</button>
 
     <div class="presets" id="presets">
       <button class="preset" data-freq="14000">
@@ -302,6 +360,55 @@
   const volSlider = document.getElementById('volSlider');
   const volLabel = document.getElementById('volLabel');
   const timerRemain = document.getElementById('timerRemain');
+  const scope = document.getElementById('scope');
+  const scopeStatus = document.getElementById('scopeStatus');
+  const scopeText = document.getElementById('scopeText');
+  const testBtn = document.getElementById('testBtn');
+
+  let analyser = null;
+  let scopeRAF = null;
+  const scopeCtx = scope.getContext('2d');
+
+  function drawScope() {
+    if (!analyser) return;
+    const dpr = window.devicePixelRatio || 1;
+    const w = scope.clientWidth, h = scope.clientHeight;
+    if (scope.width !== w * dpr) { scope.width = w * dpr; scope.height = h * dpr; }
+    const data = new Float32Array(analyser.fftSize);
+    analyser.getFloatTimeDomainData(data);
+    scopeCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    scopeCtx.clearRect(0, 0, w, h);
+    scopeCtx.beginPath();
+    scopeCtx.strokeStyle = '#4ade80';
+    scopeCtx.lineWidth = 1.5;
+    // 표본 일부만 그려서 고주파도 파형처럼 보이게
+    const n = Math.min(data.length, 512);
+    let rms = 0;
+    for (let i = 0; i < n; i++) {
+      const x = (i / (n - 1)) * w;
+      const y = h / 2 - data[i] * (h / 2 - 4);
+      i === 0 ? scopeCtx.moveTo(x, y) : scopeCtx.lineTo(x, y);
+      rms += data[i] * data[i];
+    }
+    scopeCtx.stroke();
+    rms = Math.sqrt(rms / n);
+    if (running) {
+      const active = rms > 0.001;
+      scopeStatus.classList.toggle('live', active);
+      scopeText.textContent = active
+        ? '신호 출력 중 — ' + freqValue.textContent + ' kHz (안 들리는 게 정상이에요)'
+        : '볼륨이 0이에요 — 볼륨을 올려주세요';
+      scopeRAF = requestAnimationFrame(drawScope);
+    }
+  }
+
+  function stopScope() {
+    if (scopeRAF) { cancelAnimationFrame(scopeRAF); scopeRAF = null; }
+    scopeStatus.classList.remove('live');
+    scopeText.textContent = '꺼짐 — 신호 없음';
+    scopeCtx.setTransform(1, 0, 0, 1, 0, 0);
+    scopeCtx.clearRect(0, 0, scope.width, scope.height);
+  }
 
   function currentFreq() { return Number(freqSlider.value); }
   function currentGain() {
@@ -353,7 +460,11 @@
     osc.type = 'sine';
     osc.frequency.value = currentFreq();
     gainNode.gain.value = 0;
-    osc.connect(gainNode).connect(audioCtx.destination);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 2048;
+    osc.connect(gainNode);
+    gainNode.connect(analyser);
+    analyser.connect(audioCtx.destination);
     osc.start();
     // 클릭 노이즈 방지용 페이드 인
     gainNode.gain.setTargetAtTime(currentGain(), audioCtx.currentTime, 0.05);
@@ -363,6 +474,9 @@
     powerBtn.setAttribute('aria-pressed', 'true');
     powerLabel.textContent = '작동 중 · 눌러서 끄기';
     powerIcon.textContent = '🚫';
+
+    if (scopeRAF) cancelAnimationFrame(scopeRAF);
+    scopeRAF = requestAnimationFrame(drawScope);
 
     if (sweepMode) startSweep();
 
@@ -375,6 +489,8 @@
   function stop() {
     running = false;
     stopSweep();
+    stopScope();
+    analyser = null;
     if (gainNode && audioCtx) {
       gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.05);
       const o = osc;
@@ -391,6 +507,28 @@
   }
 
   powerBtn.addEventListener('click', () => running ? stop() : start());
+
+  // 스피커 테스트: 누구나 들리는 880Hz 삐- 3회
+  testBtn.addEventListener('click', async () => {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+    const t0 = audioCtx.currentTime;
+    for (let i = 0; i < 3; i++) {
+      const beepOsc = audioCtx.createOscillator();
+      const beepGain = audioCtx.createGain();
+      beepOsc.type = 'sine';
+      beepOsc.frequency.value = 880;
+      const on = t0 + i * 0.35, off = on + 0.18;
+      beepGain.gain.setValueAtTime(0, on);
+      beepGain.gain.linearRampToValueAtTime(0.25, on + 0.02);
+      beepGain.gain.linearRampToValueAtTime(0, off);
+      beepOsc.connect(beepGain).connect(audioCtx.destination);
+      beepOsc.start(on);
+      beepOsc.stop(off + 0.05);
+    }
+    testBtn.textContent = '🔊 삐- 소리가 들리면 스피커 정상!';
+    setTimeout(() => { testBtn.textContent = '🔊 스피커 테스트 — 들리는 "삐" 소리 재생'; }, 2500);
+  });
 
   freqSlider.addEventListener('input', () => {
     setSweep(false);
