@@ -261,6 +261,26 @@
   }
   .field:focus { border-color: var(--accent); }
   .field::placeholder { color: var(--muted); }
+
+  /* QR 탭 모드 전환 */
+  .segment {
+    display: flex; background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 4px; margin-bottom: 14px;
+  }
+  .segment button {
+    flex: 1; background: none; border: none; color: var(--muted);
+    font-weight: 700; font-size: 0.82rem; padding: 10px 0; border-radius: 10px;
+    cursor: pointer; font-family: inherit; transition: background 0.2s, color 0.2s;
+  }
+  .segment button.active { background: var(--accent-dim); color: var(--accent); }
+
+  /* QR 스캐너 */
+  .scan-box { position: relative; border-radius: 16px; overflow: hidden; background: #000; aspect-ratio: 1; }
+  .scan-box video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .scan-frame {
+    position: absolute; inset: 14%; border: 3px solid rgba(96, 165, 250, 0.9);
+    border-radius: 18px; box-shadow: 0 0 0 999px rgba(0, 0, 0, 0.35); pointer-events: none;
+  }
   .settings-row .sub { color: var(--muted); font-size: 0.74rem; font-weight: 500; margin-top: 3px; }
 </style>
 </head>
@@ -295,17 +315,29 @@
     <div class="card" id="statsCard"></div>
   </section>
 
-  <!-- ===== QR 결제 ===== -->
+  <!-- ===== QR (결제 · 받기 · 스캔) ===== -->
   <section class="view" id="view-pay">
-    <div class="card">
+    <div class="segment" id="qrSegment">
+      <button class="active" data-mode="store" onclick="setQrMode('store')">🏪 결제</button>
+      <button data-mode="receive" onclick="setQrMode('receive')">📥 받기</button>
+      <button data-mode="scan" onclick="setQrMode('scan')">📷 스캔</button>
+    </div>
+    <div class="card" id="qrCard">
       <div class="qr-box">
         <div class="qr-amount" id="qrAmountText">금액을 입력하세요</div>
         <div class="qr-canvas-wrap"><div id="qrTarget"></div></div>
         <div class="qr-timer" id="qrTimer"></div>
-        <div class="qr-hint">가맹점에 이 QR코드를 보여주세요.<br>코드는 60초마다 자동 갱신됩니다.</div>
+        <div class="qr-hint" id="qrHint">가맹점에 이 QR코드를 보여주세요.<br>코드는 60초마다 자동 갱신됩니다.</div>
       </div>
     </div>
-    <div class="card">
+    <div class="card" id="scanCard" hidden>
+      <div class="scan-box">
+        <video id="scanVideo" playsinline muted></video>
+        <div class="scan-frame"></div>
+      </div>
+      <p class="qr-hint" id="scanStatus" style="margin-top: 12px;">카메라를 시작하는 중…</p>
+    </div>
+    <div class="card" id="qrAmountCard">
       <div class="amount-display">
         <div class="val placeholder" id="payAmountDisplay">얼마를 결제할까요?</div>
         <div class="sub" id="payAmountKorean"></div>
@@ -2795,7 +2827,11 @@ function showTab(tab) {
   document.getElementById("view-" + tab).classList.add("active");
   document.querySelectorAll("nav.tabbar button").forEach(b =>
     b.classList.toggle("active", b.dataset.tab === tab));
-  if (tab === "pay") refreshQR();
+  if (tab === "pay") {
+    if (qrMode === "scan") startScan(); else refreshQR();
+  } else {
+    stopScan();
+  }
   window.scrollTo({ top: 0 });
 }
 
@@ -2870,16 +2906,18 @@ let qrTimerId = null, qrSecondsLeft = 60;
 
 function updatePayDisplay() {
   const n = parseInt(payAmountStr || "0", 10);
+  const receive = qrMode === "receive";
   const disp = document.getElementById("payAmountDisplay");
   if (n > 0) {
     disp.textContent = fmt(n) + " 원";
     disp.classList.remove("placeholder");
   } else {
-    disp.textContent = "얼마를 결제할까요?";
+    disp.textContent = receive ? "얼마를 받을까요? (선택)" : "얼마를 결제할까요?";
     disp.classList.add("placeholder");
   }
   document.getElementById("payAmountKorean").textContent = n > 0 ? korean(n) : "";
-  document.getElementById("qrAmountText").textContent = n > 0 ? fmt(n) + " 원" : "금액을 입력하세요";
+  document.getElementById("qrAmountText").textContent =
+    n > 0 ? fmt(n) + " 원" : (receive ? "금액 미지정" : "금액을 입력하세요");
   document.getElementById("simulatePayBtn").disabled = !(n > 0 && n <= state.balance);
   refreshQR();
 }
@@ -2889,18 +2927,27 @@ function addPayAmount(v) {
 }
 function clearPayAmount() { payAmountStr = ""; vibrate(8); updatePayDisplay(); }
 
-function refreshQR() {
+let qrMode = "store"; // 'store'(가맹점 결제) | 'receive'(받기) | 'scan'(스캔)
+
+function setQrMode(m) {
+  qrMode = m;
+  document.querySelectorAll("#qrSegment button").forEach(b =>
+    b.classList.toggle("active", b.dataset.mode === m));
+  document.getElementById("qrCard").hidden = m === "scan";
+  document.getElementById("qrAmountCard").hidden = m === "scan";
+  document.getElementById("scanCard").hidden = m !== "scan";
+  document.getElementById("simulatePayBtn").hidden = m !== "store";
+  if (m === "scan") startScan();
+  else { stopScan(); updatePayDisplay(); }
+  vibrate(8);
+}
+
+function drawQR(text) {
   const target = document.getElementById("qrTarget");
-  const n = parseInt(payAmountStr || "0", 10);
-  const payload = JSON.stringify({
-    app: "clopay-demo", v: 1,
-    token: Math.random().toString(36).slice(2, 10).toUpperCase(),
-    amount: n || null, ts: Date.now(),
-  });
   target.innerHTML = "";
   try {
     const qr = qrcode(0, "M"); // 타입 자동, 오류복원 레벨 M
-    qr.addData(payload);
+    qr.addData(text);
     qr.make();
     target.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0 });
     const svg = target.querySelector("svg");
@@ -2909,22 +2956,175 @@ function refreshQR() {
   } catch (e) {
     fallbackQR(target);
   }
-  // 60초 갱신 타이머
-  qrSecondsLeft = 60;
+}
+
+// 내 받기 QR에 담기는 송금 링크 (아무 카메라 앱으로 스캔해도 이 앱이 열림)
+function receiveUrl(n) {
+  return location.origin + location.pathname
+    + "?to=" + encodeURIComponent(currentUser.email)
+    + (n > 0 ? "&amt=" + n : "");
+}
+
+function refreshQR() {
+  if (qrMode === "scan") return;
   clearInterval(qrTimerId);
+  const timerEl = document.getElementById("qrTimer");
+  const hintEl = document.getElementById("qrHint");
+  const n = parseInt(payAmountStr || "0", 10);
+
+  if (qrMode === "receive") {
+    timerEl.textContent = "";
+    if (!CLOUD || !currentUser) {
+      document.getElementById("qrTarget").innerHTML =
+        `<div style="width:200px;height:200px;display:flex;align-items:center;justify-content:center;
+         text-align:center;color:#334155;font-size:0.82rem;font-weight:700;line-height:1.6;">
+         받기 QR은 클라우드 지갑<br>(로그인)에서 쓸 수 있어요</div>`;
+      hintEl.innerHTML = "SUPABASE.md 설정 후 로그인하면<br>내 QR로 회원 송금을 받을 수 있어요.";
+      return;
+    }
+    drawQR(receiveUrl(n));
+    hintEl.innerHTML = "상대가 이 QR을 스캔하면 나에게 보내는<br>송금 화면이 열려요. (기본 카메라 앱도 OK)"
+      + (n > 0 ? "" : "<br>금액을 입력하면 QR에 함께 담겨요.");
+    return;
+  }
+
+  // 가맹점 결제 코드 (60초마다 갱신되는 일회용 토큰)
+  drawQR(JSON.stringify({
+    app: "clopay-demo", v: 1,
+    token: Math.random().toString(36).slice(2, 10).toUpperCase(),
+    amount: n || null, ts: Date.now(),
+  }));
+  hintEl.innerHTML = "가맹점에 이 QR코드를 보여주세요.<br>코드는 60초마다 자동 갱신됩니다.";
+  qrSecondsLeft = 60;
   qrTimerId = setInterval(() => {
     qrSecondsLeft--;
     if (qrSecondsLeft <= 0) { refreshQR(); return; }
-    const t = document.getElementById("qrTimer");
-    if (t) t.textContent = `🔄 ${qrSecondsLeft}초 후 갱신`;
+    timerEl.textContent = `🔄 ${qrSecondsLeft}초 후 갱신`;
   }, 1000);
-  const t = document.getElementById("qrTimer");
-  if (t) t.textContent = "🔄 60초 후 갱신";
+  timerEl.textContent = "🔄 60초 후 갱신";
 }
 function fallbackQR(target) {
   // 오프라인 등으로 QR 라이브러리를 못 불러온 경우: 안내 표시
   target.innerHTML = `<div style="width:200px;height:200px;display:flex;align-items:center;justify-content:center;
     text-align:center;color:#334155;font-size:0.8rem;font-weight:700;line-height:1.5;">QR 생성 모듈을<br>불러오지 못했어요<br><br>(네트워크 확인 후 새로고침)</div>`;
+}
+
+/* ================= QR 스캐너 ================= */
+let scanStream = null, scanTimer = null, scanDetector = null;
+
+async function startScan() {
+  const status = document.getElementById("scanStatus");
+  const video = document.getElementById("scanVideo");
+  stopScan();
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    status.innerHTML = "이 브라우저는 카메라를 지원하지 않아요.<br>휴대폰 <b>기본 카메라 앱</b>으로 QR을 스캔해도 똑같이 동작해요.";
+    return;
+  }
+  try {
+    scanStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" }, audio: false,
+    });
+  } catch (e) {
+    status.innerHTML = "카메라를 열 수 없어요" + (e && e.name ? " (" + e.name + ")" : "") +
+      ".<br>권한을 허용했는지 확인하거나, 휴대폰 <b>기본 카메라 앱</b>으로 스캔해 주세요.";
+    return;
+  }
+  video.srcObject = scanStream;
+  try { await video.play(); } catch (e) {}
+
+  // 디코더: 브라우저 내장 BarcodeDetector 우선, 없으면 jsQR(별도 파일) 지연 로드
+  scanDetector = null;
+  if ("BarcodeDetector" in window) {
+    try {
+      const fmts = await BarcodeDetector.getSupportedFormats();
+      if (fmts.includes("qr_code")) scanDetector = new BarcodeDetector({ formats: ["qr_code"] });
+    } catch (e) {}
+  }
+  if (!scanDetector && !window.jsQR) {
+    status.textContent = "스캔 모듈을 불러오는 중…";
+    const ok = await loadScript("jsqr.min.js");
+    if (!ok || !window.jsQR) {
+      status.textContent = "스캔 모듈을 불러오지 못했어요. 네트워크 확인 후 다시 시도해 주세요.";
+      stopScan();
+      return;
+    }
+  }
+  if (!scanStream) return; // 로드 중 사용자가 스캔 모드를 벗어난 경우
+  status.textContent = "QR코드를 사각형 안에 맞춰주세요";
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  scanTimer = setInterval(async () => {
+    if (!video.videoWidth) return;
+    try {
+      let text = null;
+      if (scanDetector) {
+        const codes = await scanDetector.detect(video);
+        if (codes.length) text = codes[0].rawValue;
+      } else {
+        canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0);
+        const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const r = jsQR(img.data, img.width, img.height);
+        if (r && r.data) text = r.data;
+      }
+      if (text) { stopScan(); vibrate(30); handleScanned(text); }
+    } catch (e) {}
+  }, 350);
+}
+
+function stopScan() {
+  clearInterval(scanTimer); scanTimer = null;
+  if (scanStream) { scanStream.getTracks().forEach(t => t.stop()); scanStream = null; }
+  const v = document.getElementById("scanVideo");
+  if (v) v.srcObject = null;
+}
+
+function loadScript(src) {
+  return new Promise((res) => {
+    const s = document.createElement("script");
+    s.src = src;
+    s.onload = () => res(true);
+    s.onerror = () => res(false);
+    document.head.appendChild(s);
+  });
+}
+
+function handleScanned(text) {
+  // 1) 클로페이 받기 QR / 송금 링크 (?to=이메일&amt=금액)
+  try {
+    const u = new URL(text);
+    const to = u.searchParams.get("to");
+    if (to) { applySendLink(to, u.searchParams.get("amt")); return; }
+  } catch (e) {}
+  // 2) 가맹점 결제 데모 QR
+  try {
+    const p = JSON.parse(text);
+    if (p && p.app === "clopay-demo") {
+      toast("가맹점 결제용 QR이에요 (손님이 보여주는 코드)");
+      setQrMode("store");
+      return;
+    }
+  } catch (e) {}
+  toast("클로페이 QR이 아니에요");
+  setQrMode("store");
+}
+
+// QR 스캔·링크 클릭으로 들어온 송금 요청을 송금 탭에 채움
+function applySendLink(to, amt) {
+  if (!CLOUD) {
+    toast("송금 QR은 클라우드 지갑(로그인) 설정 후 쓸 수 있어요");
+    if (document.getElementById("view-pay").classList.contains("active")) setQrMode("store");
+    return;
+  }
+  const n = parseInt(amt || "0", 10);
+  setQrMode("store"); // 스캔 모드 정리
+  showTab("send");
+  document.getElementById("sendEmail").value = to;
+  if (n > 0) sendAmountStr = String(n);
+  updateSendDisplay();
+  toast("📥 " + to + " 님에게 보내기" + (n > 0 ? " · " + fmt(n) + "원" : ""));
+  vibrate(20);
 }
 
 function simulateStorePay() {
@@ -3257,6 +3457,10 @@ function enterApp() {
     "☁️ 클라우드 지갑 모드 — 잔액과 거래내역이 계정에 저장되어<br>어느 기기에서나 같은 지갑을 사용할 수 있어요.";
   render(); updatePayDisplay(); updateSendDisplay();
   showTab("home");
+  if (pendingLink) { // QR/링크로 진입한 송금 요청 적용
+    const l = pendingLink; pendingLink = null;
+    applySendLink(l.to, l.amt);
+  }
 }
 function showLoginView() {
   document.querySelector("nav.tabbar").style.display = "none";
@@ -3265,6 +3469,16 @@ function showLoginView() {
 }
 
 /* ================= 부트스트랩 ================= */
+// QR/링크로 들어온 송금 딥링크 (?to=이메일&amt=금액)
+let pendingLink = null;
+(function parseDeepLink() {
+  const p = new URLSearchParams(location.search);
+  if (p.get("to")) {
+    pendingLink = { to: p.get("to"), amt: p.get("amt") };
+    history.replaceState(null, "", location.pathname); // 새로고침 시 반복 적용 방지
+  }
+})();
+
 (async function boot() {
   buildKeypad(document.getElementById("payKeypad"), (k) => {
     payAmountStr = applyKey(payAmountStr, k, 8);
@@ -3279,7 +3493,7 @@ function showLoginView() {
     sb = supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey);
     const { data: { session } } = await sb.auth.getSession();
     if (session) await afterLogin();
-    else showLoginView();
+    else showLoginView(); // 로그인하면 afterLogin → enterApp에서 딥링크 적용
     return;
   }
 
@@ -3290,6 +3504,10 @@ function showLoginView() {
   render();
   updatePayDisplay();
   updateSendDisplay();
+  if (pendingLink) {
+    pendingLink = null;
+    toast("송금 QR·링크는 클라우드 지갑(로그인) 설정 후 쓸 수 있어요");
+  }
 })();
 </script>
 </body>
