@@ -1,9 +1,9 @@
 name: Deploy to GitHub Pages
 
+# github-pages 환경 보호 규칙이 main 배포만 허용하므로 main에서만 실행
 on:
   push:
     branches:
-      - claude/payment-app-dev-s6zmbz
       - main
   workflow_dispatch:
 
