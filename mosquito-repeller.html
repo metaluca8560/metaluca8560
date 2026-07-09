@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>🦟 모기 퇴치기 — 초음파 주파수 발생기</title>
+<style>
+  :root {
+    --bg: #0b1120;
+    --card: #131c31;
+    --card2: #1a2540;
+    --accent: #4ade80;
+    --accent-dim: rgba(74, 222, 128, 0.15);
+    --danger: #f87171;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: rgba(148, 163, 184, 0.15);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", "Noto Sans KR", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(74, 222, 128, 0.08), transparent),
+      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(96, 165, 250, 0.06), transparent);
+  }
+  .app {
+    width: 100%;
+    max-width: 420px;
+  }
+  header { text-align: center; margin-bottom: 24px; }
+  header h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+  header p { color: var(--muted); font-size: 0.85rem; margin-top: 6px; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  /* 메인 원형 버튼 */
+  .power-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 0 16px;
+  }
+  .power-btn {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--card2);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .power-btn:active { transform: scale(0.97); }
+  .power-btn .icon { font-size: 3rem; line-height: 1; transition: transform 0.3s; }
+  .power-btn .label { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+  .power-btn.on {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 6px var(--accent-dim), 0 0 40px rgba(74, 222, 128, 0.25);
+  }
+  .power-btn.on .label { color: var(--accent); }
+  .power-btn.on .icon { animation: buzz 0.15s infinite alternate; }
+  @keyframes buzz {
+    from { transform: translate(-1.5px, 1px) rotate(-3deg); }
+    to   { transform: translate(1.5px, -1px) rotate(3deg); }
+  }
+  /* 퍼지는 파동 링 */
+  .ring {
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .power-btn.on .ring { animation: ripple 2s ease-out infinite; }
+  .power-btn.on .ring:nth-child(2) { animation-delay: 0.66s; }
+  .power-btn.on .ring:nth-child(3) { animation-delay: 1.33s; }
+  @keyframes ripple {
+    0%   { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(1.7); opacity: 0; }
+  }
+
+  .freq-display {
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .freq-display .value { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; }
+  .freq-display .value span { font-size: 1.1rem; color: var(--muted); font-weight: 600; margin-left: 4px; }
+  .freq-display .hint { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+  /* 슬라이더 */
+  .slider-row { margin-top: 20px; }
+  .slider-row label {
+    display: flex; justify-content: space-between;
+    font-size: 0.8rem; color: var(--muted); margin-bottom: 10px; font-weight: 600;
+  }
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--card2);
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 4px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--border);
+    cursor: pointer;
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 4px solid var(--bg);
+    cursor: pointer;
+  }
+
+  /* 프리셋 */
+  .presets {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .preset {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 10px;
+    cursor: pointer;
+    text-align: left;
+    color: var(--text);
+    transition: border-color 0.2s, background 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .preset:active { background: var(--accent-dim); }
+  .preset.active { border-color: var(--accent); background: var(--accent-dim); }
+  .preset .name { font-size: 0.85rem; font-weight: 700; }
+  .preset .desc { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+
+  /* 타이머 */
+  .timer-row { display: flex; gap: 8px; margin-top: 4px; }
+  .timer-btn {
+    flex: 1;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 0;
+    color: var(--text);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .timer-btn.active { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+  .section-title { font-size: 0.8rem; font-weight: 700; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .timer-remain { text-align: center; font-size: 0.8rem; color: var(--accent); margin-top: 10px; min-height: 1.2em; font-variant-numeric: tabular-nums; }
+
+  /* 안내문 */
+  .notice {
+    background: rgba(248, 113, 113, 0.08);
+    border: 1px solid rgba(248, 113, 113, 0.25);
+    border-radius: 16px;
+    padding: 16px;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .notice strong { color: var(--danger); }
+  .notice ul { margin: 8px 0 0 18px; }
+  footer { text-align: center; font-size: 0.72rem; color: var(--muted); opacity: 0.6; margin-top: 8px; padding-bottom: 20px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>🦟 모기 퇴치기</h1>
+    <p>초음파 주파수 발생기 · Ultrasonic Repeller</p>
+  </header>
+
+  <div class="card">
+    <div class="power-wrap">
+      <button class="power-btn" id="powerBtn" aria-pressed="false">
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="ring"></div>
+        <div class="icon" id="powerIcon">🦟</div>
+        <div class="label" id="powerLabel">눌러서 켜기</div>
+      </button>
+      <div class="freq-display">
+        <div class="value"><span id="freqValue">17.5</span><span>kHz</span></div>
+        <div class="hint" id="freqHint"></div>
+      </div>
+    </div>
+
+    <div class="slider-row">
+      <label>
+        <span>주파수 조절</span>
+        <span>8 kHz ~ 22 kHz</span>
+      </label>
+      <input type="range" id="freqSlider" min="8000" max="22000" step="100" value="17500">
+    </div>
+
+    <div class="slider-row">
+      <label>
+        <span>볼륨</span>
+        <span id="volLabel">70%</span>
+      </label>
+      <input type="range" id="volSlider" min="0" max="100" step="1" value="70">
+    </div>
+
+    <div class="presets" id="presets">
+      <button class="preset" data-freq="14000">
+        <div class="name">🦟 일반 모드</div>
+        <div class="desc">14 kHz · 대부분 들림</div>
+      </button>
+      <button class="preset active" data-freq="17500">
+        <div class="name">🌙 수면 모드</div>
+        <div class="desc">17.5 kHz · 성인 귀에 거의 안 들림</div>
+      </button>
+      <button class="preset" data-freq="20000">
+        <div class="name">🔇 무음 모드</div>
+        <div class="desc">20 kHz · 사람에겐 안 들림</div>
+      </button>
+      <button class="preset" data-freq="16000">
+        <div class="name">⚡ 스윕 모드</div>
+        <div class="desc">14~20 kHz 왕복 · 적응 방지</div>
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">⏰ 자동 꺼짐 타이머</div>
+    <div class="timer-row">
+      <button class="timer-btn active" data-min="0">계속</button>
+      <button class="timer-btn" data-min="30">30분</button>
+      <button class="timer-btn" data-min="60">1시간</button>
+      <button class="timer-btn" data-min="480">8시간</button>
+    </div>
+    <div class="timer-remain" id="timerRemain"></div>
+  </div>
+
+  <div class="notice">
+    <strong>⚠️ 솔직한 안내</strong><br>
+    여러 과학 연구에 따르면 초음파 앱의 모기 퇴치 효과는 <strong>입증되지 않았습니다</strong>. 재미로 사용해 주시고, 실제 모기 예방은 아래 방법이 확실해요:
+    <ul>
+      <li>DEET·이카리딘 성분 기피제 사용</li>
+      <li>모기장 · 방충망 점검</li>
+      <li>고인 물 제거 (화분 받침 등)</li>
+      <li>취침 시 선풍기 바람 (모기 비행 방해)</li>
+    </ul>
+  </div>
+
+  <footer>스마트폰 스피커는 대부분 20kHz 부근까지 재생 가능합니다</footer>
+</div>
+
+<script>
+(function () {
+  let audioCtx = null;
+  let osc = null;
+  let gainNode = null;
+  let running = false;
+  let sweepRAF = null;
+  let sweepMode = false;
+  let timerEnd = null;
+  let timerTick = null;
+  let wakeLock = null;
+
+  const powerBtn = document.getElementById('powerBtn');
+  const powerIcon = document.getElementById('powerIcon');
+  const powerLabel = document.getElementById('powerLabel');
+  const freqSlider = document.getElementById('freqSlider');
+  const freqValue = document.getElementById('freqValue');
+  const freqHint = document.getElementById('freqHint');
+  const volSlider = document.getElementById('volSlider');
+  const volLabel = document.getElementById('volLabel');
+  const timerRemain = document.getElementById('timerRemain');
+
+  function currentFreq() { return Number(freqSlider.value); }
+  function currentGain() {
+    // 고음역에서 청감 보정 없이 선형 볼륨
+    return Math.pow(Number(volSlider.value) / 100, 2) * 0.5;
+  }
+
+  function updateDisplay() {
+    const f = currentFreq();
+    freqValue.textContent = (f / 1000).toFixed(1);
+    if (sweepMode) {
+      freqHint.textContent = '⚡ 14~20 kHz 자동 왕복 중';
+    } else if (f >= 19000) {
+      freqHint.textContent = '사람 귀에는 들리지 않는 영역';
+    } else if (f >= 17000) {
+      freqHint.textContent = '어린이·청소년만 들을 수 있는 영역';
+    } else {
+      freqHint.textContent = '대부분의 사람이 들을 수 있는 영역';
+    }
+  }
+
+  function startSweep() {
+    const lo = 14000, hi = 20000, period = 6000; // 6초 왕복
+    const t0 = performance.now();
+    function step(now) {
+      if (!running || !osc) return;
+      const phase = ((now - t0) % period) / period;           // 0~1
+      const tri = phase < 0.5 ? phase * 2 : 2 - phase * 2;    // 삼각파 0~1~0
+      const f = lo + (hi - lo) * tri;
+      osc.frequency.setTargetAtTime(f, audioCtx.currentTime, 0.02);
+      freqValue.textContent = (f / 1000).toFixed(1);
+      sweepRAF = requestAnimationFrame(step);
+    }
+    sweepRAF = requestAnimationFrame(step);
+  }
+
+  function stopSweep() {
+    if (sweepRAF) { cancelAnimationFrame(sweepRAF); sweepRAF = null; }
+  }
+
+  async function start() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+
+    osc = audioCtx.createOscillator();
+    gainNode = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = currentFreq();
+    gainNode.gain.value = 0;
+    osc.connect(gainNode).connect(audioCtx.destination);
+    osc.start();
+    // 클릭 노이즈 방지용 페이드 인
+    gainNode.gain.setTargetAtTime(currentGain(), audioCtx.currentTime, 0.05);
+
+    running = true;
+    powerBtn.classList.add('on');
+    powerBtn.setAttribute('aria-pressed', 'true');
+    powerLabel.textContent = '작동 중 · 눌러서 끄기';
+    powerIcon.textContent = '🚫';
+
+    if (sweepMode) startSweep();
+
+    // 화면 꺼짐 방지 (지원 브라우저만)
+    try {
+      if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen');
+    } catch (e) { /* 미지원/거부 시 무시 */ }
+  }
+
+  function stop() {
+    running = false;
+    stopSweep();
+    if (gainNode && audioCtx) {
+      gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.05);
+      const o = osc;
+      setTimeout(() => { try { o.stop(); o.disconnect(); } catch (e) {} }, 300);
+    }
+    osc = null;
+    powerBtn.classList.remove('on');
+    powerBtn.setAttribute('aria-pressed', 'false');
+    powerLabel.textContent = '눌러서 켜기';
+    powerIcon.textContent = '🦟';
+    clearTimer();
+    updateDisplay();
+    if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+  }
+
+  powerBtn.addEventListener('click', () => running ? stop() : start());
+
+  freqSlider.addEventListener('input', () => {
+    setSweep(false);
+    document.querySelectorAll('.preset').forEach(p => p.classList.remove('active'));
+    if (osc) osc.frequency.setTargetAtTime(currentFreq(), audioCtx.currentTime, 0.02);
+    updateDisplay();
+  });
+
+  volSlider.addEventListener('input', () => {
+    volLabel.textContent = volSlider.value + '%';
+    if (gainNode) gainNode.gain.setTargetAtTime(currentGain(), audioCtx.currentTime, 0.05);
+  });
+
+  function setSweep(on) {
+    sweepMode = on;
+    stopSweep();
+    if (on && running) startSweep();
+    if (!on) updateDisplay();
+  }
+
+  document.querySelectorAll('.preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.preset').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const isSweep = btn.querySelector('.name').textContent.includes('스윕');
+      if (isSweep) {
+        setSweep(true);
+        updateDisplay();
+      } else {
+        setSweep(false);
+        freqSlider.value = btn.dataset.freq;
+        if (osc) osc.frequency.setTargetAtTime(currentFreq(), audioCtx.currentTime, 0.02);
+        updateDisplay();
+      }
+      if (!running) start();
+    });
+  });
+
+  // 타이머
+  function clearTimer() {
+    timerEnd = null;
+    if (timerTick) { clearInterval(timerTick); timerTick = null; }
+    timerRemain.textContent = '';
+    document.querySelectorAll('.timer-btn').forEach(b => b.classList.toggle('active', b.dataset.min === '0'));
+  }
+
+  document.querySelectorAll('.timer-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.timer-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const min = Number(btn.dataset.min);
+      if (timerTick) { clearInterval(timerTick); timerTick = null; }
+      if (min === 0) { timerEnd = null; timerRemain.textContent = ''; return; }
+      timerEnd = Date.now() + min * 60 * 1000;
+      timerTick = setInterval(() => {
+        const left = timerEnd - Date.now();
+        if (left <= 0) { stop(); return; }
+        const h = Math.floor(left / 3600000);
+        const m = Math.floor((left % 3600000) / 60000);
+        const s = Math.floor((left % 60000) / 1000);
+        timerRemain.textContent = '남은 시간 ' +
+          (h > 0 ? h + ':' : '') +
+          String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      }, 500);
+      if (!running) start();
+    });
+  });
+
+  // 백그라운드 복귀 시 wake lock 재요청
+  document.addEventListener('visibilitychange', async () => {
+    if (running && document.visibilityState === 'visible' && 'wakeLock' in navigator && !wakeLock) {
+      try { wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+    }
+  });
+
+  updateDisplay();
+})();
+</script>
+</body>
+</html>
