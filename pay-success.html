@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b1120">
+<title>💳 클로페이 — 결제 완료</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💳</text></svg>">
+<style>
+  :root {
+    --bg: #0b1120; --card: #131c31; --card2: #1a2540;
+    --accent: #60a5fa; --accent2: #34d399; --danger: #f87171; --warn: #fbbf24;
+    --text: #e2e8f0; --muted: #94a3b8; --border: rgba(148, 163, 184, 0.15);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", "Noto Sans KR", sans-serif;
+    background: var(--bg); color: var(--text); min-height: 100dvh;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+    background-image: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(52,211,153,0.10), transparent);
+  }
+  .card {
+    width: 100%; max-width: 400px; text-align: center;
+    background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 32px 24px;
+  }
+  .circle {
+    width: 84px; height: 84px; margin: 0 auto 16px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 2.4rem;
+    background: rgba(52,211,153,0.15); border: 2px solid var(--accent2);
+    animation: pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .circle.spin { border: 3px solid var(--card2); border-top-color: var(--accent); animation: rot 0.9s linear infinite; font-size: 0; }
+  .circle.warn { background: rgba(251,191,36,0.12); border-color: var(--warn); }
+  .circle.err { background: rgba(248,113,113,0.12); border-color: var(--danger); }
+  @keyframes pop { from { transform: scale(0.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes rot { to { transform: rotate(360deg); } }
+  h1 { font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; }
+  .amt { font-size: 1.7rem; font-weight: 800; color: var(--accent2); margin: 10px 0 4px; }
+  p.desc { color: var(--muted); font-size: 0.82rem; line-height: 1.6; margin: 8px 0 20px; word-break: keep-all; }
+  .note {
+    font-size: 0.74rem; color: var(--warn); border: 1px solid rgba(251,191,36,0.35);
+    border-radius: 12px; padding: 10px 12px; margin-bottom: 16px; line-height: 1.5; text-align: left;
+  }
+  .btn {
+    display: block; width: 100%; border: none; border-radius: 16px; padding: 15px;
+    font-size: 0.95rem; font-weight: 800; cursor: pointer; font-family: inherit; text-decoration: none;
+    background: linear-gradient(135deg, var(--accent), #3b82f6); color: #fff;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="circle spin" id="icon"></div>
+  <h1 id="title">결제 승인 중…</h1>
+  <div class="amt" id="amt"></div>
+  <p class="desc" id="desc">잠시만 기다려 주세요.</p>
+  <div class="note" id="note" hidden></div>
+  <a class="btn" href="pay-app.html" id="backBtn" hidden>지갑으로 돌아가기</a>
+</div>
+
+<script src="pay-config.js"></script>
+<script>
+"use strict";
+const CFG = window.CLOPAY_CONFIG || {};
+const q = new URLSearchParams(location.search);
+const paymentKey = q.get("paymentKey");
+const orderId = q.get("orderId");
+const amount = parseInt(q.get("amount") || "0", 10);
+const fmt = (n) => n.toLocaleString("ko-KR");
+
+const el = (id) => document.getElementById(id);
+function finish(kind, title, desc, noteHtml) {
+  const icon = el("icon");
+  icon.className = "circle" + (kind === "ok" ? "" : kind === "warn" ? " warn" : " err");
+  icon.textContent = kind === "ok" ? "✅" : kind === "warn" ? "⚠️" : "❌";
+  el("title").textContent = title;
+  el("desc").innerHTML = desc;
+  if (noteHtml) { el("note").hidden = false; el("note").innerHTML = noteHtml; }
+  el("backBtn").hidden = false;
+}
+
+function creditWallet(label) {
+  const LS_KEY = "clopay_v1";
+  let state;
+  try { state = JSON.parse(localStorage.getItem(LS_KEY)) || null; } catch (e) { state = null; }
+  if (!state) state = { balance: 0, pin: null, tx: [] };
+  state.balance += amount;
+  state.tx.push({ type: "charge", name: label, amount, cat: null, at: Date.now() });
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+}
+
+(async function main() {
+  if (!paymentKey || !orderId || !(amount > 0)) {
+    return finish("err", "잘못된 접근이에요", "결제 정보가 없어요. 앱에서 충전을 다시 시도해 주세요.");
+  }
+  el("amt").textContent = fmt(amount) + " 원";
+
+  // 이미 처리한 주문이면 중복 충전 방지 (새로고침 대비)
+  const credited = JSON.parse(localStorage.getItem("clopay_credited") || "[]");
+  if (credited.includes(orderId)) {
+    return finish("ok", "이미 충전 완료된 결제예요", "이 결제는 이전에 지갑에 반영되었어요.");
+  }
+
+  // 결제 요청 시 보관해둔 주문 정보와 대조 (금액 위변조 1차 확인)
+  let pending = null;
+  try { pending = JSON.parse(localStorage.getItem("clopay_pending")); } catch (e) {}
+  if (!pending || pending.orderId !== orderId || pending.amount !== amount) {
+    return finish("err", "결제 정보가 일치하지 않아요",
+      "요청한 금액과 결제된 금액이 달라 충전을 중단했어요.<br>고객센터(카드사)에서 결제 취소 여부를 확인해 주세요.");
+  }
+
+  const isCloud = !!pending.userId; // 클라우드 지갑 계정으로 충전하는 결제인지
+
+  if (CFG.confirmEndpoint) {
+    // ---- 정식 흐름: 백엔드(Apps Script)에서 토스페이먼츠 승인 API 호출 ----
+    // 클라우드 지갑이면 승인 성공 시 백엔드가 DB 잔액까지 반영(credit_wallet)
+    try {
+      const res = await fetch(CFG.confirmEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" }, // preflight 회피 (Apps Script)
+        body: JSON.stringify({ paymentKey, orderId, amount, userId: pending.userId || null }),
+      });
+      const data = await res.json();
+      if (data && data.ok) {
+        if (isCloud) {
+          // DB가 원본이므로 브라우저 지갑은 건드리지 않음
+          if (!data.credited) {
+            credited.push(orderId);
+            localStorage.setItem("clopay_credited", JSON.stringify(credited));
+            localStorage.removeItem("clopay_pending");
+            return finish("warn", "승인 완료, 지갑 반영 확인 필요",
+              "결제 승인은 완료되었지만 클라우드 지갑 반영에 실패했어요.",
+              "Apps Script의 스크립트 속성에 <b>SUPABASE_URL / SUPABASE_SERVICE_KEY</b>가 " +
+              "설정되어 있는지 확인해 주세요. 주문번호를 알려주시면 수동 반영할 수 있어요.<br>(주문번호: " + orderId + ")");
+          }
+        } else {
+          creditWallet("카드 충전 (토스페이먼츠)");
+        }
+        credited.push(orderId);
+        localStorage.setItem("clopay_credited", JSON.stringify(credited));
+        localStorage.removeItem("clopay_pending");
+        finish("ok", "충전 완료!", (data.payment && data.payment.method ? data.payment.method + " · " : "") + "결제가 승인되고 지갑에 반영되었어요.");
+      } else {
+        finish("err", "결제 승인에 실패했어요",
+          (data && data.message ? data.message : "승인 서버 응답 오류") + "<br>결제 금액은 청구되지 않았거나 자동 취소됩니다.");
+      }
+    } catch (e) {
+      finish("err", "승인 서버에 연결하지 못했어요",
+        "네트워크를 확인한 뒤 이 페이지를 새로고침하면 승인을 다시 시도해요.<br>(주문번호: " + orderId + ")");
+    }
+  } else if (isCloud) {
+    // ---- 클라우드 지갑인데 승인 백엔드가 없음: 신뢰할 반영 경로가 없으므로 충전 불가 ----
+    finish("err", "승인 서버가 필요해요",
+      "클라우드 지갑은 승인 백엔드가 있어야 충전이 반영돼요.<br>결제 금액은 승인되지 않아 청구되지 않습니다.",
+      "payments-apps-script.gs를 배포하고 pay-config.js의 <b>confirmEndpoint</b>에 " +
+      "URL을 넣은 뒤 다시 시도해 주세요. (PAYMENTS.md 2단계)");
+  } else {
+    // ---- 승인 백엔드 미설정: 인증까지만 완료된 상태 ----
+    const isTest = (CFG.clientKey || "").startsWith("test_");
+    creditWallet(isTest ? "카드 충전 (테스트·미승인)" : "카드 충전 (승인 대기)");
+    credited.push(orderId);
+    localStorage.setItem("clopay_credited", JSON.stringify(credited));
+    localStorage.removeItem("clopay_pending");
+    finish("warn", "결제 인증 완료 (승인 생략)",
+      "지갑에는 반영했지만, 결제 <b>승인</b> 단계가 생략되었어요.",
+      "💡 <b>pay-config.js의 confirmEndpoint</b>가 비어 있어요.<br>" +
+      "payments-apps-script.gs를 Apps Script 웹 앱으로 배포하고 URL을 넣으면 " +
+      "실제 승인까지 자동으로 처리됩니다." +
+      (isTest ? "<br>(지금은 테스트 키라 실제 돈은 결제되지 않았어요)" : "<br><b>⚠️ 라이브 키에서는 승인 없이는 매출이 확정되지 않습니다!</b>"));
+  }
+})();
+</script>
+</body>
+</html>
