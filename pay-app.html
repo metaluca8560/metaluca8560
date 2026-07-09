@@ -2944,15 +2944,23 @@ function startSend() {
 function openCharge() {
   openSheet(`
     <h3>충전하기</h3>
-    <p class="desc">데모 지갑에 금액을 충전합니다 (실제 결제 아님)</p>
+    <p class="desc">💳 카드·간편결제로 충전 (토스페이먼츠 결제창)</p>
     <div class="btn-row" style="margin-bottom:10px;">
-      <button class="btn ghost" onclick="doCharge(10000)">+ 1만원</button>
-      <button class="btn ghost" onclick="doCharge(30000)">+ 3만원</button>
+      <button class="btn primary" onclick="goCheckout(10000)">1만원 충전</button>
+      <button class="btn primary" onclick="goCheckout(30000)">3만원 충전</button>
     </div>
+    <div class="btn-row" style="margin-bottom:18px;">
+      <button class="btn primary" onclick="goCheckout(50000)">5만원 충전</button>
+      <button class="btn primary" onclick="goCheckout(100000)">10만원 충전</button>
+    </div>
+    <p class="desc" style="margin-bottom:10px;">또는 결제 없이 데모 충전</p>
     <div class="btn-row">
-      <button class="btn ghost" onclick="doCharge(50000)">+ 5만원</button>
-      <button class="btn ghost" onclick="doCharge(100000)">+ 10만원</button>
+      <button class="btn ghost" onclick="doCharge(10000)">+ 1만원 (데모)</button>
+      <button class="btn ghost" onclick="doCharge(50000)">+ 5만원 (데모)</button>
     </div>`);
+}
+function goCheckout(n) {
+  location.href = "checkout.html?amount=" + n;
 }
 function doCharge(n) {
   state.balance += n;
