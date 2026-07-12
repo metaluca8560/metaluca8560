@@ -5,7 +5,7 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "youtube-analysis-notify",
-        "responseMode": "lastNode",
+        "responseMode": "responseNode",
         "options": {
           "allowedOrigins": "*"
         }

@@ -1,0 +1,61 @@
+{
+  "name": "꿈분석기 결과 이메일 발송",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dream-analysis-email",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "d1e2a3b4-0001-4001-8001-000000000001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "dream-analysis-email"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.body.email }}",
+        "subject": "🌙 AI 꿈분석기 — 해석 결과가 도착했어요",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;max-width:640px;margin:0 auto;background:#12121f;color:#f0f0f5;border-radius:14px;padding:32px;\"><h1 style=\"font-size:22px;margin:0 0 4px;\">🌙 AI 꿈분석기</h1><p style=\"color:#8a8aa3;font-size:13px;margin:0 0 24px;\">프로이트 · 융 · 동양철학 · 점성학 · 토정비결, 다섯 관점의 교차 해석</p><div style=\"background:#1a1a2e;border-radius:10px;padding:16px 18px;margin-bottom:16px;\"><div style=\"font-size:12px;color:#fbbf24;font-weight:700;margin-bottom:6px;\">한 줄 요약</div><div style=\"font-size:15px;line-height:1.7;white-space:pre-wrap;\">{{ $json.body.summary }}</div></div><div style=\"background:#1a1a2e;border-radius:10px;padding:16px 18px;margin-bottom:16px;\"><div style=\"font-size:12px;color:#8b5cf6;font-weight:700;margin-bottom:6px;\">꿈 내용</div><div style=\"font-size:14px;color:#c9c9d9;line-height:1.7;white-space:pre-wrap;\">{{ $json.body.dream }}</div></div><div style=\"background:#1a1a2e;border-radius:10px;padding:16px 18px;margin-bottom:24px;\"><div style=\"font-size:12px;color:#8b5cf6;font-weight:700;margin-bottom:6px;\">해석 리포트 전문</div><div style=\"font-size:14px;line-height:1.8;white-space:pre-wrap;\">{{ $json.body.analysis }}</div></div><a href=\"{{ $json.body.pageUrl }}\" style=\"display:inline-block;background:#8b5cf6;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;\">나도 꿈 분석하기 →</a><p style=\"color:#8a8aa3;font-size:11px;line-height:1.7;margin:24px 0 0;\">⚠️ 꿈 해석·점성학·토정비결은 과학적으로 검증된 진단이 아니며, 자기 성찰과 재미를 위한 참고 자료입니다.<br/>AI 트렌드 다락방 — AI 꿈분석기</p></div>",
+        "options": {}
+      },
+      "id": "d1e2a3b4-0002-4002-8002-000000000002",
+      "name": "Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "OK"
+      },
+      "id": "d1e2a3b4-0003-4003-8003-000000000003",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [720, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [{ "node": "Gmail", "type": "main", "index": 0 }]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [{ "node": "Respond", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

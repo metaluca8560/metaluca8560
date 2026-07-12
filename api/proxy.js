@@ -43,7 +43,7 @@ export default async function handler(req, res) {
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || 'unknown'
   if (isRateLimited(ip)) return res.status(429).json({ error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' })
 
-  const { prompt } = req.body || {}
+  const { prompt, premium } = req.body || {}
   if (!prompt || typeof prompt !== 'string') return res.status(400).json({ error: 'prompt required' })
   if (prompt.length > 8000) return res.status(400).json({ error: '입력이 너무 깁니다. (최대 8,000자)' })
 
@@ -60,7 +60,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1500,
+        max_tokens: premium ? 4500 : 2500,
         messages: [{ role: 'user', content: prompt }],
       }),
     })

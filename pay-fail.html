@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b1120">
+<title>💳 클로페이 — 결제 실패</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💳</text></svg>">
+<style>
+  :root {
+    --bg: #0b1120; --card: #131c31; --danger: #f87171;
+    --accent: #60a5fa; --text: #e2e8f0; --muted: #94a3b8; --border: rgba(148, 163, 184, 0.15);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", "Noto Sans KR", sans-serif;
+    background: var(--bg); color: var(--text); min-height: 100dvh;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+    background-image: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(248,113,113,0.08), transparent);
+  }
+  .card {
+    width: 100%; max-width: 400px; text-align: center;
+    background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 32px 24px;
+  }
+  .circle {
+    width: 84px; height: 84px; margin: 0 auto 16px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 2.4rem;
+    background: rgba(248,113,113,0.12); border: 2px solid var(--danger);
+  }
+  h1 { font-size: 1.2rem; font-weight: 800; margin-bottom: 10px; }
+  p { color: var(--muted); font-size: 0.84rem; line-height: 1.6; margin-bottom: 20px; word-break: keep-all; }
+  code { color: var(--danger); font-size: 0.78rem; }
+  .btn {
+    display: block; width: 100%; border: none; border-radius: 16px; padding: 15px;
+    font-size: 0.95rem; font-weight: 800; cursor: pointer; font-family: inherit; text-decoration: none;
+    background: linear-gradient(135deg, var(--accent), #3b82f6); color: #fff;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="circle">❌</div>
+  <h1>결제가 완료되지 않았어요</h1>
+  <p id="msg">결제가 취소되었거나 실패했어요.<br>금액은 청구되지 않았습니다.</p>
+  <a class="btn" href="pay-app.html">지갑으로 돌아가기</a>
+</div>
+<script>
+"use strict";
+const q = new URLSearchParams(location.search);
+const code = q.get("code"), message = q.get("message");
+if (code || message) {
+  document.getElementById("msg").innerHTML =
+    (message ? message.replace(/</g, "&lt;") : "결제에 실패했어요.") +
+    (code ? "<br><code>" + code.replace(/</g, "&lt;") + "</code>" : "") +
+    "<br>금액은 청구되지 않았습니다.";
+}
+</script>
+</body>
+</html>
