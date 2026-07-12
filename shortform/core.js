@@ -450,6 +450,9 @@ function resetForm() {
 }
 
 // ── 초기화 ───────────────────────────────────────────
+// 구 분석기 주소에서 리다이렉트될 때 ?platform=youtube|tiktok|reels 로 탭 지정
+const initialPlatform = new URLSearchParams(location.search).get('platform')
+if (PLATFORMS[initialPlatform]) currentPlatform = initialPlatform
 
 renderForm()
 renderHistory()
