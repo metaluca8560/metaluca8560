@@ -37,7 +37,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://discordapp.com/api/webhooks/1520355603032313977/82s1QoPv-jkcabrYLRYZ9bhL4Cv3HxOgM4DEZHulzElL3iEHRHa0fkJxWtRkkDccVQn2",
+        "url": "YOUR_DISCORD_WEBHOOK_URL",
         "sendBody": true,
         "contentType": "json",
         "body": "={{ JSON.stringify({ content: '🎬 **YouTube Shorts 분석 완료!**\\n\\n**📌 영상:** ' + $('Webhook').item.json.body.title + '\\n\\n**📊 핵심 지표**\\n• 조회수: ' + $('Webhook').item.json.body.metrics.views + '\\n• 참여율: ' + $('Webhook').item.json.body.metrics.engagement + '\\n• 시청 완료율: ' + $('Webhook').item.json.body.metrics.watchTime + '\\n\\n**🤖 AI 분석 (요약)**\\n' + $('Webhook').item.json.body.analysis.substring(0, 1500) }) }}",
