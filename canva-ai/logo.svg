@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="캔바×AI 클래스 로고">
+  <defs>
+    <linearGradient id="cvGrad" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#7c3aed"/>
+      <stop offset="0.5" stop-color="#c026d3"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <radialGradient id="cvCore" cx="0.35" cy="0.3" r="0.9">
+      <stop offset="0" stop-color="#170e24"/>
+      <stop offset="1" stop-color="#0a0510"/>
+    </radialGradient>
+    <filter id="cvGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="48" cy="48" r="42" fill="url(#cvCore)"/>
+  <circle cx="48" cy="48" r="42" fill="none" stroke="url(#cvGrad)" stroke-width="3.5" filter="url(#cvGlow)"/>
+  <ellipse cx="48" cy="48" rx="41" ry="14" fill="none" stroke="url(#cvGrad)" stroke-width="2" opacity="0.5" transform="rotate(-24 48 48)"/>
+  <!-- 크리에이티브 스파크 -->
+  <path d="M48 28 L53.5 42.5 L68 48 L53.5 53.5 L48 68 L42.5 53.5 L28 48 L42.5 42.5 Z" fill="url(#cvGrad)" filter="url(#cvGlow)"/>
+  <circle cx="66" cy="32" r="4" fill="#22d3ee" filter="url(#cvGlow)"/>
+</svg>
