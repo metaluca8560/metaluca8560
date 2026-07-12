@@ -36,7 +36,17 @@ function getSpreadsheet() {
   return ss;
 }
 
+// 진입점: 폼 제출(URL 인코딩)과 Claude 프록시 요청(JSON)을 하나의 doPost에서 분기
+// (Apps Script는 같은 이름의 함수를 두 번 정의하면 나중 것만 동작하므로 반드시 하나여야 합니다)
 function doPost(e) {
+  try {
+    var body = JSON.parse(e.postData.contents);
+    if (body.type === "claude_proxy") return claudeProxy(body.prompt);
+  } catch (err) {} // JSON이 아니면 폼 제출로 간주
+  return handleFormSubmit(e);
+}
+
+function handleFormSubmit(e) {
   try {
     var p = (e && e.parameter) ? e.parameter : {};
     var name = p.name || "";
@@ -96,27 +106,17 @@ function json(obj) {
 }
 
 // ── Claude API 프록시 (틱톡 분석기용) ──
-var CLAUDE_API_KEY = ""; // 여기에 Claude API 키 입력
-
-function doPost(e) {
-  // 기존 폼 처리와 Claude 프록시 분기
-  try {
-    var body = JSON.parse(e.postData.contents);
-    if (body.type === "claude_proxy") {
-      return claudeProxy(body.prompt);
-    }
-  } catch (err) {}
-
-  // 기존 폼 처리 (위에서 이미 정의됨 — 아래는 중복 방지용 안전망)
-  return json({ result: "error", message: "invalid request" });
-}
-
+// ⚠️ API 키를 코드에 직접 쓰지 마세요 (저장소가 공개라 키가 유출됩니다).
+// Apps Script 편집기의 [프로젝트 설정 > 스크립트 속성]에서 CLAUDE_API_KEY 속성으로 등록하세요.
 function claudeProxy(prompt) {
+  var apiKey = PropertiesService.getScriptProperties().getProperty("CLAUDE_API_KEY");
+  if (!apiKey) return json({ error: "CLAUDE_API_KEY 스크립트 속성이 설정되지 않았습니다." });
+  if (!prompt || String(prompt).length > 8000) return json({ error: "invalid prompt" });
   var response = UrlFetchApp.fetch("https://api.anthropic.com/v1/messages", {
     method: "post",
     contentType: "application/json",
     headers: {
-      "x-api-key": CLAUDE_API_KEY,
+      "x-api-key": apiKey,
       "anthropic-version": "2023-06-01",
     },
     payload: JSON.stringify({
