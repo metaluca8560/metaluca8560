@@ -384,7 +384,15 @@ async function sendNotify(platform, d, engRate, analysis) {
       body: JSON.stringify({
         platform,
         title: PLATFORMS[platform].historyTitle(d),
-        metrics: { views: d.views, engagement: engRate ? engRate + '%' : '–' },
+        // n8n 슬랙/디코 템플릿이 참조하는 필드 전체 (없는 플랫폼 지표는 '–')
+        metrics: {
+          views: d.views,
+          engagement: engRate ? engRate + '%' : '–',
+          likeRate: d.views && d.likes ? ((d.likes / d.views) * 100).toFixed(1) + '%' : '–',
+          subConversion: d.views && d.newSubs ? ((d.newSubs / d.views) * 100).toFixed(3) + '%' : '–',
+          watchTime: d.watchTime ? d.watchTime + '%' : '–',
+          newSubs: d.newSubs || 0,
+        },
         analysis,
       }),
     })
