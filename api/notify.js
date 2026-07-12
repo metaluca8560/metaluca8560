@@ -1,10 +1,9 @@
-// Claude API 프록시 (Vercel Serverless Function)
+// n8n 웹훅 알림 프록시 (Vercel Serverless Function)
 //
-// 보안 설정:
-// - 허용 출처: 환경변수 ALLOWED_ORIGINS (쉼표 구분, 예: "https://mysite.com,http://localhost:8000")
-//   미설정 시 배포된 자기 도메인만 허용됩니다. 로컬 테스트 시 localhost를 추가하세요.
-// - IP당 분당 10회 요청 제한 (서버리스 인스턴스 단위의 1차 방어선 — 완벽하진 않지만
-//   무제한 호출은 차단됩니다. 더 강하게 막으려면 Vercel Firewall 규칙을 추가하세요.)
+// 웹훅 주소를 클라이언트 코드에 노출하지 않기 위한 중계 함수입니다.
+// Vercel 환경변수 N8N_WEBHOOK_URL 에 n8n 웹훅 주소를 설정하세요.
+// (예: https://xxxx.app.n8n.cloud/webhook/youtube-analysis-notify)
+// 허용 출처 규칙은 api/proxy.js 와 동일합니다 (ALLOWED_ORIGINS).
 
 const RATE_LIMIT = { windowMs: 60_000, max: 10 }
 const hits = new Map()
@@ -41,31 +40,18 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
 
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || 'unknown'
-  if (isRateLimited(ip)) return res.status(429).json({ error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' })
+  if (isRateLimited(ip)) return res.status(429).json({ error: '요청이 너무 많습니다.' })
 
-  const { prompt } = req.body || {}
-  if (!prompt || typeof prompt !== 'string') return res.status(400).json({ error: 'prompt required' })
-  if (prompt.length > 8000) return res.status(400).json({ error: '입력이 너무 깁니다. (최대 8,000자)' })
-
-  const apiKey = process.env.CLAUDE_API_KEY
-  if (!apiKey) return res.status(500).json({ error: 'CLAUDE_API_KEY 환경변수가 설정되지 않았습니다.' })
+  const webhookUrl = process.env.N8N_WEBHOOK_URL
+  if (!webhookUrl) return res.status(200).json({ skipped: 'N8N_WEBHOOK_URL 미설정 — 알림 생략' })
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch(webhookUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1500,
-        messages: [{ role: 'user', content: prompt }],
-      }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body || {}),
     })
-    const data = await response.json()
-    res.status(response.status).json(data)
+    res.status(200).json({ ok: response.ok })
   } catch (err) {
     res.status(500).json({ error: err.message })
   }
