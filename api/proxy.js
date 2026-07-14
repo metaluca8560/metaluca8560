@@ -43,9 +43,19 @@ export default async function handler(req, res) {
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || 'unknown'
   if (isRateLimited(ip)) return res.status(429).json({ error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' })
 
-  const { prompt, premium } = req.body || {}
+  const { prompt, image, premium } = req.body || {}
   if (!prompt || typeof prompt !== 'string') return res.status(400).json({ error: 'prompt required' })
   if (prompt.length > 8000) return res.status(400).json({ error: '입력이 너무 깁니다. (최대 8,000자)' })
+  if (image && (typeof image.data !== 'string' || image.data.length > 3_000_000)) {
+    return res.status(400).json({ error: '이미지가 너무 큽니다. (최대 약 2MB)' })
+  }
+
+  const content = image && image.data
+    ? [
+        { type: 'image', source: { type: 'base64', media_type: image.media_type || 'image/jpeg', data: image.data } },
+        { type: 'text', text: prompt },
+      ]
+    : prompt
 
   const apiKey = process.env.CLAUDE_API_KEY
   if (!apiKey) return res.status(500).json({ error: 'CLAUDE_API_KEY 환경변수가 설정되지 않았습니다.' })
@@ -61,7 +71,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: premium ? 4500 : 2500,
-        messages: [{ role: 'user', content: prompt }],
+        messages: [{ role: 'user', content }],
       }),
     })
     const data = await response.json()
