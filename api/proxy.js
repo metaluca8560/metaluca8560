@@ -30,9 +30,13 @@ function isRateLimited(ip) {
 }
 
 export default async function handler(req, res) {
+  // Origin 헤더가 있는 요청(브라우저 CORS 컨텍스트)만 허용 목록을 검사해요.
+  // 앱인토스 웹뷰 등 네이티브 컨텍스트는 Origin이 없을 수 있어 통과시키되,
+  // 레이트리밋이 남용을 막는 1차 방어선이 됩니다.
+  const hasOrigin = Boolean(req.headers.origin)
   const origin = resolveOrigin(req)
-  if (!origin) return res.status(403).json({ error: '허용되지 않은 출처입니다.' })
-  res.setHeader('Access-Control-Allow-Origin', origin)
+  if (hasOrigin && !origin) return res.status(403).json({ error: '허용되지 않은 출처입니다.' })
+  if (origin) res.setHeader('Access-Control-Allow-Origin', origin)
   res.setHeader('Vary', 'Origin')
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
