@@ -95,7 +95,12 @@
     .analysis-content li { margin-bottom: 6px; }
     .analysis-content strong { color: var(--text); }
     .action-row { display: flex; gap: 10px; margin-top: 20px; }
-    .disclaimer { color: var(--muted); font-size: 12px; text-align: center; margin-top: 24px; line-height: 1.6; }
+    .disclaimer { color: var(--muted); font-size: 12px; text-align: center; margin-top: 16px; line-height: 1.6; }
+    .privacy-detail { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-top: 24px; font-size: 13px; }
+    .privacy-detail summary { cursor: pointer; font-weight: 700; color: var(--muted); }
+    .privacy-detail summary:hover { color: var(--text); }
+    .privacy-detail ul { padding: 12px 0 4px 20px; color: var(--muted); line-height: 1.7; }
+    .privacy-detail strong { color: var(--text); }
     @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .stat-grid { grid-template-columns: 1fr 1fr; } }
   </style>
 </head>
@@ -169,10 +174,22 @@
   <div class="result card" id="result" style="margin-top:24px">
     <div id="resultContent"></div>
     <div class="action-row">
+      <button class="btn btn-secondary" style="color:var(--text);border-color:var(--primary)" onclick="shareResult()">📤 결과 공유하기</button>
       <button class="btn btn-secondary" onclick="copyResult()">결과 복사</button>
       <button class="btn btn-secondary" onclick="resetForm()">새 분석</button>
     </div>
   </div>
+
+  <details class="privacy-detail">
+    <summary>🔒 개인정보 처리 안내</summary>
+    <ul>
+      <li><strong>처리 항목</strong> — 업로드한 명세서 이미지, 입력한 급여·공제 금액, 부양가족 수</li>
+      <li><strong>이용 목적</strong> — AI 해석 결과 생성에만 사용해요.</li>
+      <li><strong>보관</strong> — 서비스 서버에 저장하지 않으며, 분석 요청 처리 후 즉시 폐기돼요.</li>
+      <li><strong>처리 위탁</strong> — 해석 생성을 위해 이미지·입력값이 AI 처리 서버(Anthropic API)로 전송돼요. 학습에 사용되지 않아요.</li>
+      <li><strong>권장 사항</strong> — 이름·주민등록번호·사번 등 개인 식별정보는 가리고 업로드해 주세요.</li>
+    </ul>
+  </details>
 
   <p class="disclaimer">본 결과는 2026년 공시 요율 기준의 참고용 정보이며 법적 효력이 없습니다.<br>정확한 내용은 회사 급여 담당자 또는 노무사와 확인하세요.</p>
 </main>
@@ -265,10 +282,16 @@
 - 고용보험(근로자 부담): 0.9%
 - 산재보험: 전액 회사 부담 (근로자 명세서에서 공제되면 이상)
 - 소득세: 근로소득 간이세액표 기준 (부양가족 수에 따라 다름), 지방소득세 = 소득세의 10%
-- 2026년 최저임금: 시급 10,320원 / 월 2,156,880원 (주 40시간, 월 209시간 기준)`
+- 2026년 최저임금: 시급 10,320원 / 월 2,156,880원 (주 40시간, 월 209시간 기준)
+
+## 판정 시 주의사항
+- 국민연금·건강보험은 "기준소득월액/보수월액"(보통 전년도 소득 기준) 기준이라 현재 월급으로 계산한 값과 다를 수 있어요. 10% 이내 차이는 문제 삼지 말고 이 이유를 설명해주세요.
+- 국민연금 기준소득월액 상한(637만원) 때문에 고연봉자는 요율보다 적게 나올 수 있어요.
+- 최저임금 판단은 반드시 근로시간을 알 수 없다는 전제 하에 조심스럽게 언급하세요 (단시간 근로 가능성).`
 
   const OUTPUT_FORMAT = `## 출력 형식
 다음 섹션을 한국어로, 각 섹션 제목은 ### 마크다운 헤딩으로 작성해주세요. 어려운 용어는 사회초년생도 이해하도록 쉽게 풀어주세요.
+마크다운 표(| 구분)는 사용하지 말고 불릿(- )과 볼드만 사용하세요. 금액은 천 단위 콤마와 "원"을 붙여주세요.
 
 ### 📋 명세서 한눈에 보기
 지급 총액, 공제 총액, 실수령액을 요약하고 공제율(%)을 알려주세요.
@@ -287,6 +310,11 @@
 
   function buildPhotoPrompt(deps) {
     return `당신은 한국의 급여·노무 전문가입니다. 첨부된 급여명세서 이미지를 읽고 해석해주세요.
+
+## 이미지 판독 규칙 (가장 중요)
+1. 먼저 이미지의 지급 항목과 공제 항목을 **적힌 그대로** 옮겨 적으세요. 숫자가 흐릿하거나 잘려서 확실하지 않으면 절대 추측하지 말고 "판독 불가"로 표시하세요.
+2. 옮겨 적은 뒤 검산하세요: 지급 합계 − 공제 합계 = 실수령액이 맞는지, 각 합계가 항목 합과 일치하는지. 안 맞으면 판독 오류 가능성을 먼저 의심하고 그 사실을 알려주세요.
+3. 명세서에 없는 항목이나 금액을 지어내지 마세요.
 
 ${RATE_INFO}
 
@@ -413,6 +441,40 @@ ${OUTPUT_FORMAT}`
   }
 
   function copyResult() { const el = document.getElementById('analysisText'); if (!el) return; navigator.clipboard.writeText(el.innerText).then(() => alert('해석 결과가 클립보드에 복사됐어요!')) }
+
+  // ── 공유하기: 앱인토스 SDK → Web Share API → 클립보드 순으로 폴백 ──
+  // 앱인토스 미니앱으로 패키징할 때는 @apps-in-toss/web-framework의
+  // share()/getTossShareLink()를 window.AppsInToss = { share, getTossShareLink }로
+  // 노출하면 아래 어댑터가 자동으로 SDK 공유를 사용해요.
+  function buildShareText() {
+    const el = document.getElementById('analysisText')
+    let summary = ''
+    if (el) {
+      const bolds = el.querySelectorAll('strong')
+      if (bolds.length) summary = bolds[bolds.length - 1].innerText
+    }
+    return `🧾 급여명세서 AI 해석기\n${summary || '내 월급에서 뭐가 얼마나 빠지는지 30초 만에 확인해보세요!'}`
+  }
+
+  async function shareResult() {
+    const text = buildShareText()
+    try {
+      if (window.AppsInToss && typeof window.AppsInToss.share === 'function') {
+        let url = location.href
+        if (typeof window.AppsInToss.getTossShareLink === 'function') {
+          try { url = await window.AppsInToss.getTossShareLink() } catch (_) {}
+        }
+        await window.AppsInToss.share({ message: `${text}\n${url}` })
+        return
+      }
+    } catch (_) { /* SDK 공유 실패 시 아래 폴백으로 */ }
+    if (navigator.share) {
+      try { await navigator.share({ title: '급여명세서 해석기', text, url: location.href }); return }
+      catch (e) { if (e.name === 'AbortError') return }
+    }
+    await navigator.clipboard.writeText(`${text}\n${location.href}`)
+    alert('공유 문구가 클립보드에 복사됐어요!')
+  }
 
   function resetForm() {
     document.getElementById('result').classList.remove('show')
