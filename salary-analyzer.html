@@ -295,6 +295,7 @@
   const OUTPUT_FORMAT = `## 출력 형식
 다음 섹션을 한국어로, 각 섹션 제목은 ### 마크다운 헤딩으로 작성해주세요. 어려운 용어는 사회초년생도 이해하도록 쉽게 풀어주세요.
 마크다운 표(| 구분)는 사용하지 말고 불릿(- )과 볼드만 사용하세요. 금액은 천 단위 콤마와 "원"을 붙여주세요.
+모든 텍스트는 자연스러운 한국어로만 작성하세요. 영어 단어를 섞지 마세요 (고유명사 제외).
 
 ### 📋 명세서 한눈에 보기
 지급 총액, 공제 총액, 실수령액을 요약하고 공제율(%)을 알려주세요.
@@ -381,7 +382,7 @@ ${OUTPUT_FORMAT}`
     document.getElementById('loading').classList.add('show')
     document.getElementById('result').classList.remove('show')
     try {
-      const body = { prompt }
+      const body = { prompt, temperature: 0.2 }
       if (image) body.image = image
       const res = await fetch(PROXY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
       const json = await res.json()
