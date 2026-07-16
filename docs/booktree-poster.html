@@ -1,0 +1,341 @@
+<title>북트리 페스티벌 포스터</title>
+<style>
+  :root{
+    --page-bg:#e9e4d8;
+    --night:#0d1626;
+    --night-2:#16233a;
+    --night-3:#1d2d49;
+    --lamp:#ffc65c;
+    --lamp-soft:rgba(255,198,92,.16);
+    --leaf:#79d18b;
+    --coral:#ff7a6e;
+    --paper:#f3ecdd;
+    --muted:#93a3bd;
+    --line:rgba(243,236,221,.14);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --page-bg:#080c14; }
+  }
+  :root[data-theme="dark"]{ --page-bg:#080c14; }
+  :root[data-theme="light"]{ --page-bg:#e9e4d8; }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ background:var(--page-bg); }
+  body{
+    font-family:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",-apple-system,sans-serif;
+    display:flex; justify-content:center; padding:40px 14px 64px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .poster{
+    width:min(660px,100%);
+    background:
+      radial-gradient(120% 55% at 50% 0%, #1a2b47 0%, var(--night) 58%),
+      var(--night);
+    color:var(--paper);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 30px 80px rgba(4,8,16,.55), 0 4px 16px rgba(4,8,16,.35);
+    position:relative;
+  }
+  /* faint stars on the whole sheet */
+  .poster::before{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background-image:
+      radial-gradient(1.2px 1.2px at 12% 6%, rgba(243,236,221,.55) 50%, transparent 51%),
+      radial-gradient(1px 1px at 82% 4%, rgba(243,236,221,.4) 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 68% 11%, rgba(255,198,92,.5) 50%, transparent 51%),
+      radial-gradient(1px 1px at 30% 14%, rgba(243,236,221,.35) 50%, transparent 51%),
+      radial-gradient(1.2px 1.2px at 91% 18%, rgba(243,236,221,.4) 50%, transparent 51%),
+      radial-gradient(1px 1px at 7% 22%, rgba(255,198,92,.4) 50%, transparent 51%);
+  }
+
+  .inner{ position:relative; padding:30px 34px 34px; }
+
+  /* ── top bar ─────────────────────────── */
+  .topbar{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:11.5px; letter-spacing:.22em; color:var(--muted);
+    text-transform:uppercase; font-weight:600;
+    border-bottom:1px solid var(--line); padding-bottom:14px;
+  }
+  .topbar .free{
+    color:var(--night); background:var(--lamp);
+    padding:3px 10px; border-radius:999px; letter-spacing:.14em; font-weight:800;
+  }
+
+  /* ── tree ────────────────────────────── */
+  .tree-wrap{ position:relative; display:flex; flex-direction:column; align-items:center; padding:30px 0 6px; }
+  .halo{
+    position:absolute; top:36px; left:50%; transform:translateX(-50%);
+    width:340px; height:300px; border-radius:50%;
+    background:radial-gradient(closest-side, var(--lamp-soft), transparent 72%);
+    pointer-events:none;
+  }
+  .star{
+    color:var(--lamp); font-size:26px; line-height:1; margin-bottom:8px;
+    text-shadow:0 0 14px rgba(255,198,92,.9), 0 0 34px rgba(255,198,92,.5);
+  }
+  .tree{ display:flex; flex-direction:column; align-items:center; gap:5px; position:relative; }
+  .row{ display:flex; gap:5px; align-items:flex-end; }
+  .bk{ height:15px; border-radius:2.5px; box-shadow:inset 0 -3px 0 rgba(0,0,0,.28); }
+  .bk.g{ background:var(--leaf); }
+  .bk.y{ background:var(--lamp); }
+  .bk.c{ background:var(--coral); }
+  .bk.p{ background:var(--paper); }
+  .bk.b{ background:#4f7fca; }
+  .bk.t1{ transform:rotate(-2.5deg); } .bk.t2{ transform:rotate(2deg); }
+  .trunk{ display:flex; flex-direction:column; align-items:center; gap:4px; margin-top:6px; }
+  .trunk .bk{ height:12px; background:#8a6a44; box-shadow:inset 0 -3px 0 rgba(0,0,0,.3); }
+  .lights{ position:absolute; inset:0; pointer-events:none; }
+  .lt{
+    position:absolute; width:6px; height:6px; border-radius:50%;
+    background:var(--lamp);
+    box-shadow:0 0 8px 2px rgba(255,198,92,.85);
+    animation:twinkle 2.6s ease-in-out infinite;
+  }
+  .lt:nth-child(2n){ animation-delay:.9s; }
+  .lt:nth-child(3n){ animation-delay:1.7s; animation-duration:3.4s; }
+  @keyframes twinkle{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
+  @media (prefers-reduced-motion: reduce){ .lt{ animation:none; } }
+
+  /* ── title ───────────────────────────── */
+  .hero{ text-align:center; margin-top:22px; }
+  .hero .kicker{
+    display:inline-block; font-size:13px; font-weight:700; letter-spacing:.1em;
+    color:var(--coral); margin-bottom:12px;
+  }
+  .hero h1{
+    font-size:clamp(58px,14vw,92px); line-height:.92; font-weight:900;
+    letter-spacing:-.03em; text-wrap:balance;
+    color:var(--paper);
+  }
+  .hero h1 .tree-word{
+    color:var(--lamp);
+    text-shadow:0 0 26px rgba(255,198,92,.35);
+  }
+  .hero .sub{
+    margin-top:14px; font-size:clamp(19px,4.2vw,24px); font-weight:800; letter-spacing:-.01em;
+  }
+  .hero .slogan{
+    margin-top:8px; font-size:14.5px; color:var(--muted); font-weight:500;
+  }
+
+  /* ── when / where strip ──────────────── */
+  .meta{
+    display:grid; grid-template-columns:1fr 1fr 1fr;
+    border-block:1px solid var(--line);
+    margin-top:26px;
+  }
+  .meta > div{ padding:14px 8px; text-align:center; }
+  .meta > div + div{ border-left:1px solid var(--line); }
+  .meta .lb{ font-size:10.5px; letter-spacing:.22em; color:var(--muted); font-weight:700; margin-bottom:5px; }
+  .meta .vl{ font-size:16px; font-weight:800; font-variant-numeric:tabular-nums; }
+  .meta .vl small{ font-size:12px; font-weight:600; color:var(--muted); }
+
+  /* ── passport ticket band ────────────── */
+  .ticket{
+    margin-top:22px; background:var(--lamp); color:var(--night);
+    border-radius:8px; padding:16px 20px;
+    display:flex; align-items:center; gap:16px; position:relative;
+  }
+  .ticket::before,.ticket::after{
+    content:""; position:absolute; top:50%; width:16px; height:16px; border-radius:50%;
+    background:var(--night); transform:translateY(-50%);
+  }
+  .ticket::before{ left:-8px; } .ticket::after{ right:-8px; }
+  .ticket .tk-main{ flex:1; }
+  .ticket .tk-lb{ font-size:10.5px; letter-spacing:.2em; font-weight:800; opacity:.75; }
+  .ticket .tk-tt{ font-size:18px; font-weight:900; letter-spacing:-.01em; margin-top:3px; }
+  .ticket .tk-goal{
+    font-size:12px; font-weight:800; text-align:right; line-height:1.5;
+    border-left:2px dashed rgba(13,22,38,.35); padding-left:16px; white-space:nowrap;
+  }
+
+  /* ── zones ───────────────────────────── */
+  .sec-lb{
+    margin-top:30px; font-size:11px; letter-spacing:.26em; color:var(--muted);
+    font-weight:700; display:flex; align-items:center; gap:12px;
+  }
+  .sec-lb::after{ content:""; flex:1; height:1px; background:var(--line); }
+  .zones{ margin-top:14px; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .zone{
+    background:var(--night-2); border:1px solid var(--line); border-radius:8px;
+    padding:13px 15px;
+  }
+  .zone .zn{ font-size:10.5px; font-weight:800; letter-spacing:.16em; color:var(--leaf); }
+  .zone h3{ font-size:15.5px; font-weight:800; margin-top:4px; letter-spacing:-.01em; }
+  .zone p{ font-size:12px; color:var(--muted); margin-top:4px; line-height:1.55; }
+  .zone.wide{ grid-column:1 / -1; display:flex; align-items:center; gap:14px;
+    background:var(--night-3); border-color:rgba(255,198,92,.35); }
+  .zone.wide .zbody{ flex:1; }
+  .zone.wide .ztime{
+    font-size:20px; font-weight:900; color:var(--lamp); white-space:nowrap;
+    font-variant-numeric:tabular-nums;
+    text-shadow:0 0 18px rgba(255,198,92,.4);
+  }
+
+  /* ── highlights timeline ─────────────── */
+  .tl{ margin-top:14px; display:flex; flex-direction:column; gap:0; }
+  .tl-row{
+    display:grid; grid-template-columns:64px 14px 1fr; align-items:center;
+    padding:9px 0;
+  }
+  .tl-row + .tl-row{ border-top:1px dashed var(--line); }
+  .tl-time{ font-size:13.5px; font-weight:800; color:var(--lamp); font-variant-numeric:tabular-nums; }
+  .tl-dot{ width:7px; height:7px; border-radius:50%; background:var(--leaf); justify-self:center; }
+  .tl-row.hot .tl-dot{ background:var(--lamp); box-shadow:0 0 8px rgba(255,198,92,.8); }
+  .tl-name{ font-size:14px; font-weight:700; }
+  .tl-name small{ font-weight:500; color:var(--muted); margin-left:8px; font-size:12px; }
+  .tl-row.hot .tl-name{ color:var(--lamp); }
+
+  /* ── footer ──────────────────────────── */
+  .foot{
+    margin-top:28px; border-top:1px solid var(--line); padding-top:18px;
+    display:flex; align-items:center; gap:18px;
+  }
+  .foot .apply{ flex:1; }
+  .foot .tags{ font-size:13px; font-weight:700; color:var(--leaf); line-height:1.7; }
+  .foot .org{ font-size:11px; color:var(--muted); margin-top:8px; line-height:1.7; }
+  .qr{
+    width:74px; height:74px; border-radius:6px; flex:none;
+    background:
+      conic-gradient(var(--paper) 25%, transparent 0 50%, var(--paper) 0 75%, transparent 0) 0 0/24px 24px,
+      var(--night-2);
+    border:1px solid var(--line);
+    display:flex; align-items:flex-end; justify-content:center;
+    font-size:9px; letter-spacing:.14em; color:var(--night);
+    position:relative;
+  }
+  .qr span{
+    position:absolute; inset:auto 0 -20px; text-align:center;
+    color:var(--muted); font-weight:700;
+  }
+
+  @media (max-width:520px){
+    .inner{ padding:24px 20px 30px; }
+    .zones{ grid-template-columns:1fr; }
+    .meta .vl{ font-size:14px; }
+    .ticket{ flex-direction:column; align-items:flex-start; gap:10px; }
+    .ticket .tk-goal{ border-left:0; padding-left:0; text-align:left;
+      border-top:2px dashed rgba(13,22,38,.35); padding-top:10px; width:100%; }
+  }
+</style>
+
+<div class="poster">
+  <div class="inner">
+
+    <div class="topbar">
+      <span>청소년 북 페스티벌</span>
+      <span class="free">입장 무료</span>
+    </div>
+
+    <div class="tree-wrap">
+      <div class="halo"></div>
+      <div class="star">✦</div>
+      <div class="tree">
+        <div class="row"><span class="bk y t1" style="width:34px"></span></div>
+        <div class="row"><span class="bk g" style="width:30px"></span><span class="bk c t2" style="width:26px"></span></div>
+        <div class="row"><span class="bk p t1" style="width:28px"></span><span class="bk b" style="width:36px"></span><span class="bk g t2" style="width:24px"></span></div>
+        <div class="row"><span class="bk c" style="width:32px"></span><span class="bk y t1" style="width:26px"></span><span class="bk p" style="width:30px"></span><span class="bk g t2" style="width:28px"></span></div>
+        <div class="row"><span class="bk b t2" style="width:30px"></span><span class="bk g" style="width:34px"></span><span class="bk c t1" style="width:24px"></span><span class="bk y" style="width:30px"></span><span class="bk p t2" style="width:26px"></span></div>
+        <div class="row"><span class="bk g t1" style="width:28px"></span><span class="bk p" style="width:32px"></span><span class="bk y t2" style="width:28px"></span><span class="bk b" style="width:26px"></span><span class="bk c t1" style="width:30px"></span><span class="bk g" style="width:28px"></span></div>
+        <div class="trunk">
+          <span class="bk" style="width:34px"></span>
+          <span class="bk" style="width:40px"></span>
+        </div>
+        <div class="lights">
+          <span class="lt" style="top:8%;  left:46%"></span>
+          <span class="lt" style="top:22%; left:30%"></span>
+          <span class="lt" style="top:26%; left:66%"></span>
+          <span class="lt" style="top:42%; left:18%"></span>
+          <span class="lt" style="top:46%; left:52%"></span>
+          <span class="lt" style="top:50%; left:80%"></span>
+          <span class="lt" style="top:66%; left:8%"></span>
+          <span class="lt" style="top:70%; left:38%"></span>
+          <span class="lt" style="top:64%; left:64%"></span>
+          <span class="lt" style="top:74%; left:90%"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero">
+      <span class="kicker">책 읽으러 오지 마, 놀러 와</span>
+      <h1>BOOK<br><span class="tree-word">TREE</span></h1>
+      <div class="sub">북트리 페스티벌</div>
+      <div class="slogan">페이지를 넘겨, 세계가 열려 — 책으로 자라고, 꿈으로 피어나다</div>
+    </div>
+
+    <div class="meta">
+      <div>
+        <div class="lb">DATE</div>
+        <div class="vl">2026. 10. 24 <small>SAT</small></div>
+      </div>
+      <div>
+        <div class="lb">TIME</div>
+        <div class="vl">13:00 – 20:30</div>
+      </div>
+      <div>
+        <div class="lb">PLACE</div>
+        <div class="vl">○○청소년센터 광장</div>
+      </div>
+    </div>
+
+    <div class="ticket">
+      <div class="tk-main">
+        <div class="tk-lb">MISSION PASSPORT</div>
+        <div class="tk-tt">독서 레벨 여권 들고, 5개 존 미션 격파</div>
+      </div>
+      <div class="tk-goal">Lv.3 만개 달성 시<br>한정판 굿즈 증정</div>
+    </div>
+
+    <div class="sec-lb">FIVE ZONES</div>
+    <div class="zones">
+      <div class="zone">
+        <div class="zn">ZONE 1</div>
+        <h3>트리 광장</h3>
+        <p>기부한 책으로 다 같이 쌓는 대형 북트리 — 한 줄 추천사 야광 태그 달기</p>
+      </div>
+      <div class="zone">
+        <div class="zn">ZONE 2</div>
+        <h3>북적북적 마켓</h3>
+        <p>책 블라인드 데이트 · 십대 플리마켓 · 밸런스 게임 투표벽</p>
+      </div>
+      <div class="zone">
+        <div class="zn">ZONE 3</div>
+        <h3>북 아뜰리에</h3>
+        <p>장르 조향 디퓨저 · 커스텀 북커버 · 금박 필사 · 활판 인쇄</p>
+      </div>
+      <div class="zone">
+        <div class="zn">ZONE 4 · 5</div>
+        <h3>스테이지 &amp; 시크릿 서재</h3>
+        <p>책터뷰 스피치 배틀 · AI 문장 테라피 · 책BTI · 북트리 인생네컷</p>
+      </div>
+      <div class="zone wide">
+        <div class="zbody">
+          <div class="zn" style="color:var(--lamp)">HIGHLIGHT</div>
+          <h3>북트리 점등식</h3>
+          <p>1,500권의 트리에 불이 켜지는 순간 — 전원 카운트다운</p>
+        </div>
+        <div class="ztime">19:30</div>
+      </div>
+    </div>
+
+    <div class="sec-lb">TIME TABLE</div>
+    <div class="tl">
+      <div class="tl-row"><span class="tl-time">14:00</span><span class="tl-dot"></span><span class="tl-name">책터뷰 스피치 배틀<small>관객 투표로 올해의 책터뷰어 선정</small></span></div>
+      <div class="tl-row"><span class="tl-time">17:00</span><span class="tl-dot"></span><span class="tl-name">북 골든벨 퀴즈쇼<small>최후 생존자에게 e북 리더기</small></span></div>
+      <div class="tl-row"><span class="tl-time">18:30</span><span class="tl-dot"></span><span class="tl-name">시크릿 게스트 토크<small>당일 공개, 힌트는 SNS에서</small></span></div>
+      <div class="tl-row hot"><span class="tl-time">19:30</span><span class="tl-dot"></span><span class="tl-name">북트리 점등식<small>인증샷 피크 타임</small></span></div>
+    </div>
+
+    <div class="foot">
+      <div class="apply">
+        <div class="tags">#북트리페스티벌 #텍스트힙 #내인생책3초소개</div>
+        <div class="org">대상 중·고등학생 및 청소년 누구나 · 행사 후 트리의 모든 책은 참가자 이름으로 기부됩니다<br>주최 ○○청소년센터 · 문의 000-0000-0000</div>
+      </div>
+      <div class="qr"><span>사전신청</span></div>
+    </div>
+
+  </div>
+</div>
