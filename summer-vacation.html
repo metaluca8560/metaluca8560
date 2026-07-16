@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>여름휴가 몰빵 계산기 — AI 트렌드 다락방</title>
+  <meta name="description" content="남은 연차만 입력하면 2026년 공휴일 조합으로 가장 긴 여름휴가를 설계해드려요." />
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg1: #d9f3ff; --bg2: #f2fbff; --surface: #ffffff; --border: #d5e8f2;
+      --primary: #0797d3; --primary-deep: #0369a1; --primary-glow: rgba(7,151,211,0.16);
+      --coral: #ff5a5f; --melon: #ff6b81; --leaf: #17a34a; --sand: #fff5d6;
+      --text: #123047; --muted: #587a92; --radius: 16px;
+    }
+    body { background: linear-gradient(180deg, var(--bg1), var(--bg2) 420px, #fff); color: var(--text); font-family: 'Pretendard', -apple-system, sans-serif; min-height: 100vh; line-height: 1.6; }
+    .header { padding: 18px 24px; display: flex; align-items: center; gap: 12px; }
+    .header a { text-decoration: none; color: var(--muted); font-size: 14px; }
+    .header a:hover { color: var(--text); }
+    .header-logo { width: 30px; height: 30px; }
+    .header-title { font-size: 17px; font-weight: 800; color: var(--primary-deep); }
+    .header-sep { color: var(--border); margin: 0 2px; }
+    .main { max-width: 720px; margin: 0 auto; padding: 24px 20px 80px; }
+    .hero { text-align: center; margin-bottom: 32px; }
+    .hero .sun { font-size: 44px; }
+    .hero h1 { font-size: clamp(27px, 5vw, 40px); font-weight: 900; letter-spacing: -1.2px; line-height: 1.22; margin-top: 6px; }
+    .hero h1 span { color: var(--primary); }
+    .hero p { color: var(--muted); margin-top: 10px; font-size: 15.5px; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 1.5px solid rgba(7,151,211,0.35); border-radius: 20px; padding: 5px 14px; font-size: 13px; font-weight: 700; color: var(--primary-deep); margin-top: 14px; box-shadow: 0 4px 14px rgba(7,151,211,0.08); }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; margin-bottom: 18px; box-shadow: 0 6px 24px rgba(18,48,71,0.05); }
+    .field { margin-bottom: 18px; }
+    label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+    label .hint { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 6px; }
+    .stepper { display: flex; align-items: center; gap: 14px; }
+    .stepper button { width: 52px; height: 52px; border-radius: 14px; border: 1.5px solid var(--border); background: #f6fbfe; color: var(--primary-deep); font-size: 26px; font-weight: 800; cursor: pointer; transition: all .15s; }
+    .stepper button:hover { border-color: var(--primary); background: var(--primary-glow); }
+    .stepper .count { flex: 1; text-align: center; font-size: 34px; font-weight: 900; color: var(--primary-deep); }
+    .stepper .count small { display: block; font-size: 12px; font-weight: 600; color: var(--muted); }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip { border: 1.5px solid var(--border); background: #fff; color: var(--muted); border-radius: 20px; padding: 8px 16px; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: all .15s; }
+    .chip.on { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 4px 12px var(--primary-glow); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 15px 28px; border: none; border-radius: 12px; font-family: inherit; font-size: 16px; font-weight: 800; cursor: pointer; transition: all .2s; }
+    .btn-primary { background: linear-gradient(135deg, #06b6d4, var(--primary)); color: #fff; width: 100%; }
+    .btn-primary:hover:not(:disabled) { box-shadow: 0 10px 26px var(--primary-glow); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-secondary { background: #fff; color: var(--muted); border: 1.5px solid var(--border); font-size: 13px; padding: 9px 14px; }
+    .btn-secondary:hover { color: var(--text); border-color: var(--primary); }
+    .result { display: none; }
+    .result.show { display: block; }
+    .plan { border: 1.5px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 12px; cursor: pointer; transition: all .15s; background: #fff; }
+    .plan:hover { border-color: var(--primary); }
+    .plan.best { border: 2px solid var(--primary); background: linear-gradient(180deg, #f0fbff, #fff); position: relative; }
+    .plan.best::before { content: '🏆 최장 몰빵'; position: absolute; top: -11px; left: 16px; background: var(--primary); color: #fff; font-size: 11px; font-weight: 800; border-radius: 10px; padding: 2px 10px; }
+    .plan .days { font-size: 24px; font-weight: 900; color: var(--primary-deep); }
+    .plan .days b { color: var(--coral); }
+    .plan .range { font-size: 14.5px; font-weight: 700; margin: 2px 0 6px; }
+    .plan .detail { font-size: 13px; color: var(--muted); }
+    .plan .eff { float: right; text-align: right; font-size: 12px; color: var(--muted); }
+    .plan .eff strong { display: block; font-size: 19px; color: var(--leaf); }
+    .cal-wrap { overflow-x: auto; margin-top: 8px; }
+    .cal { border-collapse: collapse; margin: 0 auto; }
+    .cal caption { font-weight: 800; font-size: 14px; padding: 8px 0 6px; }
+    .cal th { font-size: 11px; color: var(--muted); padding: 4px 0; width: 40px; font-weight: 700; }
+    .cal th:first-child, .cal td:first-child { color: var(--coral); }
+    .cal td { text-align: center; font-size: 13px; padding: 0; height: 38px; }
+    .cal td span { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; font-weight: 600; }
+    .cal td.hol span { color: var(--coral); font-weight: 800; }
+    .cal td.in span { background: #d2f1ff; }
+    .cal td.leave span { background: var(--primary); color: #fff; font-weight: 800; }
+    .cal td.holin span { background: #ffe1e3; color: var(--coral); font-weight: 800; }
+    .legend { display: flex; gap: 14px; justify-content: center; font-size: 12px; color: var(--muted); margin-top: 10px; flex-wrap: wrap; }
+    .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
+    .section-label { font-size: 13px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin: 26px 0 14px; display: flex; align-items: center; gap: 8px; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .loading { display: none; text-align: center; padding: 32px; }
+    .loading.show { display: block; }
+    .spinner { width: 44px; height: 44px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 14px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading p { color: var(--muted); font-size: 14px; }
+    .ai-box { background: #f6fbfe; border-radius: 12px; padding: 20px; font-size: 15px; line-height: 1.8; }
+    .ai-box h3 { font-size: 15px; font-weight: 800; color: var(--primary-deep); margin: 16px 0 8px; }
+    .ai-box h3:first-child { margin-top: 0; }
+    .ai-box ul { padding-left: 20px; }
+    .ai-box li { margin-bottom: 6px; }
+    .action-row { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+    .disclaimer { color: var(--muted); font-size: 12px; text-align: center; margin-top: 20px; line-height: 1.6; }
+    @media (max-width: 480px) { .card { padding: 20px; } }
+  </style>
+</head>
+<body>
+<header class="header">
+  <img src="logo.svg" class="header-logo" alt="logo" />
+  <a href="index.html">AI 트렌드 다락방</a>
+  <span class="header-sep">›</span>
+  <span class="header-title">여름휴가 몰빵 계산기</span>
+</header>
+<main class="main">
+  <div class="hero">
+    <div class="sun">🏖️</div>
+    <h1>연차 아끼면서<br><span>여름휴가 최대로 몰빵</span></h1>
+    <p>남은 연차만 알려주세요. 공휴일에 착 붙여서<br>가장 긴 휴가 조합을 찾아드릴게요</p>
+    <div class="badge">🍉 2026년 공휴일·대체공휴일 반영</div>
+  </div>
+
+  <div class="card">
+    <div class="field">
+      <label>몰빵할 수 있는 연차 <span class="hint">휴가에 쓸 수 있는 최대 연차 개수</span></label>
+      <div class="stepper">
+        <button type="button" onclick="bump(-1)">−</button>
+        <div class="count"><span id="leaveCount">3</span><small>개</small></div>
+        <button type="button" onclick="bump(1)">＋</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>언제 떠나고 싶어요?</label>
+      <div class="chips" id="periodChips">
+        <button class="chip" data-p="7">7월</button>
+        <button class="chip" data-p="8">8월</button>
+        <button class="chip" data-p="9">9월</button>
+        <button class="chip" data-p="10">10월 초</button>
+        <button class="chip on" data-p="all">아무 때나!</button>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="calc()">🌊 몰빵 조합 찾기</button>
+  </div>
+
+  <div class="result" id="result">
+    <div class="section-label">추천 몰빵 조합</div>
+    <div id="plans"></div>
+    <div class="section-label">휴가 달력</div>
+    <div class="card" style="padding:18px">
+      <div class="cal-wrap" id="calendar"></div>
+      <div class="legend">
+        <span><i style="background:#d2f1ff"></i>휴가 기간</span>
+        <span><i style="background:var(--primary)"></i>연차 사용</span>
+        <span><i style="background:#ffe1e3"></i>주말·공휴일</span>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="aiBtn" onclick="aiPlan()" style="background:linear-gradient(135deg,var(--melon),var(--coral))">🧳 이 날짜로 AI 여행 플랜 받기</button>
+    <div class="loading" id="loading"><div class="spinner"></div><p>AI가 여행 플랜을 짜고 있어요...</p></div>
+    <div class="card result" id="aiResult" style="margin-top:16px">
+      <div class="ai-box" id="aiContent"></div>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-secondary" style="color:var(--primary-deep);border-color:var(--primary)" onclick="shareResult()">📤 휴가 계획 공유하기</button>
+      <button class="btn btn-secondary" onclick="resetForm()">다시 계산</button>
+    </div>
+  </div>
+
+  <p class="disclaimer">2026년 관공서 공휴일 기준(임시공휴일 미포함)이며, 회사별 휴무 규정과 다를 수 있어요.<br>입력한 정보는 저장되지 않아요.</p>
+</main>
+<script>
+  const PROXY_URL = '/api/proxy'
+
+  // 2026년 7~10월 공휴일 (대체공휴일 포함, 관공서 기준)
+  const HOLIDAYS = {
+    '2026-08-15': '광복절',
+    '2026-08-17': '대체공휴일',
+    '2026-09-24': '추석 연휴',
+    '2026-09-25': '추석',
+    '2026-09-26': '추석 연휴',
+    '2026-10-03': '개천절',
+    '2026-10-05': '대체공휴일',
+    '2026-10-09': '한글날',
+  }
+  const RANGE = { start: '2026-07-01', end: '2026-10-12' }
+  const PERIODS = {
+    '7':   ['2026-07-01', '2026-07-31'],
+    '8':   ['2026-08-01', '2026-08-31'],
+    '9':   ['2026-09-01', '2026-09-30'],
+    '10':  ['2026-10-01', '2026-10-12'],
+    'all': [RANGE.start, RANGE.end],
+  }
+
+  function toDate(s) { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d) }
+  function fmtKey(dt) { return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0') + '-' + String(dt.getDate()).padStart(2,'0') }
+  function fmtKo(dt) { return (dt.getMonth()+1) + '/' + dt.getDate() + '(' + '일월화수목금토'[dt.getDay()] + ')' }
+  function isDayOff(dt) { const d = dt.getDay(); return d === 0 || d === 6 || !!HOLIDAYS[fmtKey(dt)] }
+
+  // 기간 내 모든 날짜 배열
+  function buildDays(startKey, endKey) {
+    const days = []
+    for (let dt = toDate(startKey); dt <= toDate(endKey); dt = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()+1)) {
+      days.push({ dt: new Date(dt), key: fmtKey(dt), off: isDayOff(dt) })
+    }
+    return days
+  }
+
+  // 핵심: 연차 n개 이하로 만들 수 있는 최장 연속 휴가 구간 탐색 (슬라이딩 윈도우)
+  function findPlans(maxLeaves, periodKey) {
+    const [ps, pe] = PERIODS[periodKey]
+    const days = buildDays(ps, pe)
+    const found = []
+    for (let n = 0; n <= maxLeaves; n++) {
+      let bestForN = null, left = 0, used = 0
+      for (let right = 0; right < days.length; right++) {
+        if (!days[right].off) used++
+        while (used > n) { if (!days[left].off) used--; left++ }
+        const len = right - left + 1
+        if (!bestForN || len > bestForN.len) bestForN = { len, left, right, used }
+      }
+      if (bestForN) {
+        const { left: l, right: r } = bestForN
+        const leaves = days.slice(l, r+1).filter(d => !d.off).length // 실제 사용 연차
+        found.push({ start: days[l], end: days[r], len: r - l + 1, leaves, days: days.slice(l, r+1) })
+      }
+    }
+    // 중복 제거(같은 구간), 연차 수 오름차순 → 길이가 늘어나는 조합만 남김
+    const uniq = [], seen = new Set()
+    found.sort((a,b) => a.leaves - b.leaves)
+    let maxLen = 0
+    for (const p of found) {
+      const k = p.start.key + '~' + p.end.key
+      if (seen.has(k) || p.len <= maxLen) continue
+      seen.add(k); maxLen = p.len
+      uniq.push(p)
+    }
+    return uniq.sort((a,b) => b.len - a.len).slice(0, 4)
+  }
+
+  // ── UI ──
+  let leaves = 3, period = 'all', selectedPlan = null, planList = []
+  function bump(d) { leaves = Math.min(15, Math.max(0, leaves + d)); document.getElementById('leaveCount').textContent = leaves }
+  document.querySelectorAll('#periodChips .chip').forEach(c => c.addEventListener('click', () => {
+    document.querySelectorAll('#periodChips .chip').forEach(x => x.classList.remove('on'))
+    c.classList.add('on'); period = c.dataset.p
+  }))
+
+  function calc() {
+    planList = findPlans(leaves, period)
+    if (!planList.length) { alert('조합을 찾지 못했어요. 기간을 넓혀보세요!'); return }
+    selectedPlan = planList[0]
+    renderPlans()
+    document.getElementById('result').classList.add('show')
+    document.getElementById('aiResult').classList.remove('show')
+    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  function planTitle(p) {
+    return p.leaves === 0
+      ? `연차 0개로 <b>${p.len}일</b> 꿀휴가`
+      : `연차 <b>${p.leaves}개</b>로 <b>${p.len}일</b> 휴가`
+  }
+
+  function renderPlans() {
+    const wrap = document.getElementById('plans')
+    wrap.innerHTML = planList.map((p, i) => {
+      const holidayNames = [...new Set(p.days.map(d => HOLIDAYS[d.key]).filter(Boolean))].join(', ')
+      return `<div class="plan ${p === selectedPlan ? 'best' : ''}" onclick="selectPlan(${i})">
+        <div class="eff">연차 1개당<strong>${p.leaves ? (p.len / p.leaves).toFixed(1) : '∞'}일</strong></div>
+        <div class="days">${planTitle(p)}</div>
+        <div class="range">${fmtKo(p.start.dt)} ~ ${fmtKo(p.end.dt)}</div>
+        <div class="detail">${holidayNames ? '🎌 ' + holidayNames + ' 포함' : '주말 연결 조합'}</div>
+      </div>`
+    }).join('')
+    renderCalendar()
+  }
+
+  function selectPlan(i) { selectedPlan = planList[i]; renderPlans() }
+
+  function renderCalendar() {
+    const p = selectedPlan
+    const inPlan = new Set(p.days.map(d => d.key))
+    const leaveDays = new Set(p.days.filter(d => !d.off).map(d => d.key))
+    const months = [...new Set(p.days.map(d => d.dt.getMonth()))]
+    let html = ''
+    for (const m of months) {
+      const y = 2026
+      const first = new Date(y, m, 1), last = new Date(y, m+1, 0)
+      html += `<table class="cal"><caption>${m+1}월</caption><tr>` + ['일','월','화','수','목','금','토'].map(d => `<th>${d}</th>`).join('') + '</tr><tr>'
+      for (let i = 0; i < first.getDay(); i++) html += '<td></td>'
+      for (let d = 1; d <= last.getDate(); d++) {
+        const dt = new Date(y, m, d), key = fmtKey(dt)
+        if (dt.getDay() === 0 && d !== 1) html += '</tr><tr>'
+        let cls = ''
+        if (inPlan.has(key)) cls = leaveDays.has(key) ? 'leave' : (isDayOff(dt) ? 'holin' : 'in')
+        else if (HOLIDAYS[key]) cls = 'hol'
+        html += `<td class="${cls}"><span>${d}</span></td>`
+      }
+      html += '</tr></table>'
+    }
+    document.getElementById('calendar').innerHTML = html
+  }
+
+  // ── AI 여행 플랜 ──
+  async function aiPlan() {
+    const p = selectedPlan
+    const prompt = `당신은 한국 직장인의 휴가 계획을 도와주는 여행 플래너입니다.
+
+## 휴가 정보
+- 기간: ${fmtKo(p.start.dt)} ~ ${fmtKo(p.end.dt)} (총 ${p.len}일)
+- 사용 연차: ${p.leaves}개
+- 계절: 2026년 여름${p.start.dt.getMonth() >= 8 ? '~초가을' : ''}
+
+## 요청
+이 기간에 맞는 여행 플랜을 한국어로 제안해주세요. 각 섹션 제목은 ### 마크다운 헤딩으로 작성해주세요. 표는 사용하지 말고 불릿만 사용하세요. 영어 단어를 섞지 마세요.
+
+### 🏝️ 추천 여행 코스 3가지
+기간 길이에 맞는 국내 1곳, 해외 2곳을 이유와 함께 추천해주세요. ${p.len}일이라는 기간을 충분히 활용하는 코스여야 해요.
+
+### 📅 날짜별 활용 팁
+출발·귀국 날짜를 언제로 잡으면 좋은지, 성수기 요금·혼잡 피하는 팁을 알려주세요.
+
+### 🎒 준비 체크리스트
+이 계절에 꼭 챙겨야 할 것 5가지를 알려주세요.
+
+마지막에 **한 줄 요약**을 볼드로 작성해주세요.`
+    document.getElementById('aiBtn').disabled = true
+    document.getElementById('loading').classList.add('show')
+    document.getElementById('aiResult').classList.remove('show')
+    try {
+      const res = await fetch(PROXY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, temperature: 0.7 }) })
+      const json = await res.json()
+      if (json.error) throw new Error(json.error.message || json.error || 'API 오류')
+      document.getElementById('aiContent').innerHTML = renderMarkdown(json.content[0].text)
+      document.getElementById('aiResult').classList.add('show')
+      document.getElementById('aiResult').scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } catch (e) {
+      alert('플랜 생성 중 오류가 발생했어요: ' + e.message)
+    } finally {
+      document.getElementById('aiBtn').disabled = false
+      document.getElementById('loading').classList.remove('show')
+    }
+  }
+
+  function renderMarkdown(text) {
+    return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/### (.+)/g,'<h3>$1</h3>').replace(/## (.+)/g,'<h3>$1</h3>')
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/^- (.+)/gm,'<li>$1</li>').replace(/(<li>.*<\/li>\n?)+/g,m=>`<ul>${m}</ul>`)
+      .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')
+  }
+
+  // ── 공유 (앱인토스 SDK → Web Share → 클립보드) ──
+  function buildShareText() {
+    const p = selectedPlan
+    if (!p) return '🏖️ 여름휴가 몰빵 계산기 — 연차 아끼면서 가장 긴 휴가 만들기!'
+    return `🏖️ 여름휴가 몰빵 계산 결과\n연차 ${p.leaves}개로 ${p.len}일 휴가! (${fmtKo(p.start.dt)}~${fmtKo(p.end.dt)})\n너도 몰빵 조합 찾아봐 👇`
+  }
+  async function shareResult() {
+    const text = buildShareText()
+    try {
+      if (window.AppsInToss && typeof window.AppsInToss.share === 'function') {
+        let url = location.href
+        if (typeof window.AppsInToss.getTossShareLink === 'function') {
+          try { url = await window.AppsInToss.getTossShareLink() } catch (_) {}
+        }
+        await window.AppsInToss.share({ message: `${text}\n${url}` })
+        return
+      }
+    } catch (_) {}
+    if (navigator.share) {
+      try { await navigator.share({ title: '여름휴가 몰빵 계산기', text, url: location.href }); return }
+      catch (e) { if (e.name === 'AbortError') return }
+    }
+    await navigator.clipboard.writeText(`${text}\n${location.href}`)
+    alert('공유 문구가 클립보드에 복사됐어요!')
+  }
+
+  function resetForm() {
+    document.getElementById('result').classList.remove('show')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+</script>
+</body>
+</html>
