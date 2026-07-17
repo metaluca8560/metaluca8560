@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>여름휴가 몰빵 계산기 — AI 트렌드 다락방</title>
+  <title>여름휴가 몰빵계산기 — AI 트렌드 다락방</title>
   <meta name="description" content="남은 연차만 입력하면 2026년 공휴일 조합으로 가장 긴 여름휴가를 설계해드려요." />
   <link rel="icon" type="image/svg+xml" href="logo.svg" />
   <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
@@ -95,7 +95,7 @@
   <img src="logo.svg" class="header-logo" alt="logo" />
   <a href="index.html">AI 트렌드 다락방</a>
   <span class="header-sep">›</span>
-  <span class="header-title">여름휴가 몰빵 계산기</span>
+  <span class="header-title">여름휴가 몰빵계산기</span>
 </header>
 <main class="main">
   <div class="hero">
@@ -337,8 +337,8 @@
   // ── 공유 (앱인토스 SDK → Web Share → 클립보드) ──
   function buildShareText() {
     const p = selectedPlan
-    if (!p) return '🏖️ 여름휴가 몰빵 계산기 — 연차 아끼면서 가장 긴 휴가 만들기!'
-    return `🏖️ 여름휴가 몰빵 계산 결과\n연차 ${p.leaves}개로 ${p.len}일 휴가! (${fmtKo(p.start.dt)}~${fmtKo(p.end.dt)})\n너도 몰빵 조합 찾아봐 👇`
+    if (!p) return '🏖️ 여름휴가 몰빵계산기 — 연차 아끼면서 가장 긴 휴가 만들기!'
+    return `🏖️ 여름휴가 몰빵 결과\n연차 ${p.leaves}개로 ${p.len}일 휴가! (${fmtKo(p.start.dt)}~${fmtKo(p.end.dt)})\n너도 몰빵 조합 찾아봐 👇`
   }
   async function shareResult() {
     const text = buildShareText()
@@ -353,7 +353,7 @@
       }
     } catch (_) {}
     if (navigator.share) {
-      try { await navigator.share({ title: '여름휴가 몰빵 계산기', text, url: location.href }); return }
+      try { await navigator.share({ title: '여름휴가 몰빵계산기', text, url: location.href }); return }
       catch (e) { if (e.name === 'AbortError') return }
     }
     await navigator.clipboard.writeText(`${text}\n${location.href}`)
