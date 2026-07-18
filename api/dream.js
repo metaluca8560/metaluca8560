@@ -12,6 +12,8 @@ const hits = new Map()
 
 function resolveOrigin(req) {
   const origin = req.headers.origin || ''
+  // 앱인토스 미니앱은 <appName>.(private-)apps.tossmini.com 도메인에서 실행돼요 — 전부 허용
+  if (/^https:\/\/[a-z0-9-]+\.(private-apps|apps)\.tossmini\.com$/.test(origin)) return origin
   const allowed = (process.env.ALLOWED_ORIGINS || '')
     .split(',').map(s => s.trim()).filter(Boolean)
   if (allowed.length === 0 && req.headers.host) allowed.push(`https://${req.headers.host}`)
