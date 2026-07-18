@@ -117,7 +117,7 @@ function startReveal(drawnArr) {
     var faceFront = document.createElement("div");
     faceFront.className = "reading-card-face face-front" + (entry.reversed ? " is-reversed" : "");
     var img = document.createElement("img");
-    img.src = "https://vaulted-bus-346411.web.app/tarot/images/cards/" + entry.card.code + ".jpg";
+    img.src = "images/cards/" + entry.card.code + ".jpg";
     img.alt = entry.card.nameKo;
     faceFront.appendChild(img);
 
