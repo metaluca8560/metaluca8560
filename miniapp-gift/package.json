@@ -1,0 +1,20 @@
+{
+  "name": "gift-money-miniapp",
+  "private": true,
+  "version": "1.0.0",
+  "description": "축의금 계산기 — 앱인토스 미니앱 패키지",
+  "type": "module",
+  "scripts": {
+    "web:dev": "node sync.mjs && vite --port 5181",
+    "web:build": "node sync.mjs && vite build",
+    "dev": "ait dev",
+    "build": "ait build",
+    "deploy": "ait deploy"
+  },
+  "dependencies": {
+    "@apps-in-toss/web-framework": "^2.10.6"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}

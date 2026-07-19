@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>퇴직금 미리보기 — AI 트렌드 다락방</title>
+  <meta name="description" content="입사일과 월급만 넣으면 예상 퇴직금과 연차수당을 계산하고 AI가 해석해드려요." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="퇴직금 미리보기 💰" />
+  <meta property="og:description" content="지금 퇴사하면 얼마 받을까? 입사일과 월급만 넣으면 퇴직금 + 연차수당을 바로 계산해드려요" />
+  <meta property="og:image" content="https://metaluca8560.vercel.app/severance-og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://metaluca8560.vercel.app/severance-calc.html" />
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f0d08;
+      --card: #1a1710;
+      --card2: #221e14;
+      --line: #3a3322;
+      --text: #f3eee2;
+      --muted: #a89c82;
+      --gold: #fbbf24;
+      --gold-deep: #d97706;
+      --green: #4ade80;
+      --rose: #fb7185;
+    }
+    html { -webkit-text-size-adjust: 100%; }
+    body { font-family: 'Pretendard', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 60px; }
+    .wrap { max-width: 560px; margin: 0 auto; padding: 0 18px; }
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0 6px; }
+    .header a { color: var(--muted); font-size: 14px; text-decoration: none; }
+    .hero { padding: 22px 0 10px; }
+    .hero h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; }
+    .hero h1 em { font-style: normal; color: var(--gold); }
+    .hero p { margin-top: 8px; color: var(--muted); font-size: 15px; line-height: 1.55; }
+    .section-label { font-size: 14px; font-weight: 700; color: var(--muted); margin: 24px 0 10px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 13.5px; font-weight: 600; color: var(--muted); margin-bottom: 7px; }
+    .field input {
+      width: 100%; background: var(--card); border: 1.5px solid var(--line); color: var(--text);
+      border-radius: 12px; padding: 14px 16px; font-size: 16px; font-family: inherit;
+      color-scheme: dark;
+    }
+    .field input:focus { outline: none; border-color: var(--gold); }
+    .field .unit-note { font-size: 12px; color: var(--muted); margin-top: 5px; }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .cta {
+      width: 100%; margin-top: 24px; background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+      color: #241703; border: none; border-radius: 16px; padding: 17px 0;
+      font-size: 17px; font-weight: 800; cursor: pointer; font-family: inherit;
+      box-shadow: 0 8px 24px rgba(217,119,6,.28);
+    }
+    .err { display: none; margin-top: 16px; background: rgba(251,113,133,.1); border: 1.5px solid rgba(251,113,133,.4); color: var(--rose); border-radius: 14px; padding: 14px 16px; font-size: 14px; line-height: 1.5; }
+    .err.show { display: block; }
+
+    #result { display: none; margin-top: 32px; }
+    #result.show { display: block; }
+    .total-card {
+      background: linear-gradient(135deg, rgba(251,191,36,.16), rgba(217,119,6,.06));
+      border: 1.5px solid rgba(251,191,36,.45); border-radius: 20px; padding: 24px; text-align: center;
+    }
+    .total-card .t { font-size: 14px; font-weight: 700; color: var(--gold); }
+    .total-card .amount { font-size: 38px; font-weight: 800; margin-top: 8px; letter-spacing: -1px; }
+    .total-card .sub { margin-top: 6px; color: var(--muted); font-size: 13px; }
+    .breakdown { margin-top: 12px; background: var(--card); border: 1.5px solid var(--line); border-radius: 18px; padding: 6px 20px; }
+    .bd-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .bd-row:last-child { border-bottom: none; }
+    .bd-row span { color: var(--muted); font-size: 14px; }
+    .bd-row b { font-size: 16px; font-weight: 700; }
+    .bd-row b.gold { color: var(--gold); }
+    .analysis-content { background: var(--card); border: 1.5px solid var(--line); border-radius: 16px; padding: 18px; font-size: 14.5px; line-height: 1.7; }
+    .analysis-content h3 { color: var(--gold); font-size: 16px; margin: 14px 0 6px; }
+    .analysis-content h3:first-child { margin-top: 0; }
+    .analysis-content ul { padding-left: 18px; }
+    .ai-loading { display: none; text-align: center; padding: 22px 0; color: var(--muted); font-size: 14px; }
+    .ai-loading.show { display: block; }
+    .spinner { width: 30px; height: 30px; border-radius: 50%; margin: 0 auto 12px; border: 3.5px solid var(--line); border-top-color: var(--gold); animation: spin .9s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .actions { display: flex; gap: 10px; margin-top: 24px; }
+    .actions button { flex: 1; border-radius: 14px; padding: 14px 0; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; border: 1.5px solid var(--line); background: var(--card); color: var(--text); }
+    .actions .primary { background: linear-gradient(135deg, var(--gold), var(--gold-deep)); color: #241703; border: none; }
+    .disclaimer { margin-top: 22px; color: var(--muted); font-size: 12px; line-height: 1.6; text-align: center; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header class="header">
+    <span style="font-size:14px;font-weight:700;color:var(--gold)">SEVERANCE PAY</span>
+    <a href="index.html">AI 트렌드 다락방</a>
+  </header>
+
+  <section class="hero">
+    <h1>지금 퇴사하면 <em>얼마?</em></h1>
+    <p>입사일과 월급만 넣으면 예상 퇴직금이랑 연차수당을<br>바로 계산하고, AI가 챙길 것까지 알려드려요.</p>
+  </section>
+
+  <div class="section-label">📅 재직 기간</div>
+  <div class="row2">
+    <div class="field">
+      <label for="joinDate">입사일</label>
+      <input type="date" id="joinDate">
+    </div>
+    <div class="field">
+      <label for="leaveDate">퇴사 (예정)일</label>
+      <input type="date" id="leaveDate">
+    </div>
+  </div>
+
+  <div class="section-label">💵 급여 정보</div>
+  <div class="field">
+    <label for="salary">월급 (세전, 최근 3개월 평균)</label>
+    <input type="text" id="salary" inputmode="numeric" placeholder="예: 3,000,000">
+    <div class="unit-note">기본급 + 고정수당 포함 금액이 정확해요</div>
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label for="bonus">연간 상여금 (선택)</label>
+      <input type="text" id="bonus" inputmode="numeric" placeholder="예: 2,000,000">
+    </div>
+    <div class="field">
+      <label for="leaves">남은 연차 (선택)</label>
+      <input type="text" id="leaves" inputmode="numeric" placeholder="예: 5">
+    </div>
+  </div>
+
+  <button class="cta" onclick="calc()">퇴직금 계산하기 💰</button>
+  <div class="err" id="errBox"></div>
+
+  <section id="result">
+    <div class="total-card">
+      <div class="t">예상 수령액 합계 (세전)</div>
+      <div class="amount" id="totalAmount">-</div>
+      <div class="sub" id="totalSub"></div>
+    </div>
+    <div class="breakdown" id="breakdown"></div>
+    <div class="ai-loading" id="aiLoading"><div class="spinner"></div>AI가 리포트를 쓰고 있어요...</div>
+    <div id="aiSection" style="display:none">
+      <div class="section-label">🤖 AI 퇴직금 리포트</div>
+      <div class="analysis-content" id="analysisText"></div>
+    </div>
+    <div class="actions">
+      <button class="primary" onclick="shareResult()">공유하기</button>
+      <button onclick="resetForm()">다시 계산</button>
+    </div>
+    <p class="disclaimer">고용노동부 퇴직금 산정 방식(평균임금 × 30일 × 재직일수/365)을 따른 추정치예요.<br>상여·수당 구성, 퇴직소득세에 따라 실수령액은 달라질 수 있어요.</p>
+  </section>
+</div>
+
+<script>
+  const PROXY_URL = '/api/proxy'
+
+  // 숫자 입력 콤마 처리
+  ;['salary','bonus'].forEach(id => {
+    const el = document.getElementById(id)
+    el.addEventListener('input', () => {
+      const v = el.value.replace(/[^\d]/g, '')
+      el.value = v ? Number(v).toLocaleString('ko-KR') : ''
+    })
+  })
+  // 기본값: 퇴사일 = 오늘
+  document.getElementById('leaveDate').value = new Date().toISOString().slice(0, 10)
+
+  const num = id => Number(document.getElementById(id).value.replace(/[^\d]/g, '')) || 0
+  const won = v => Math.round(v).toLocaleString('ko-KR') + '원'
+
+  let last = null
+
+  function calc() {
+    const join = new Date(document.getElementById('joinDate').value)
+    const leave = new Date(document.getElementById('leaveDate').value)
+    const salary = num('salary'), bonus = num('bonus'), leaves = num('leaves')
+    const errBox = document.getElementById('errBox')
+    errBox.classList.remove('show')
+
+    if (!document.getElementById('joinDate').value || isNaN(join.getTime())) return showErr('입사일을 입력해주세요.')
+    if (isNaN(leave.getTime()) || leave <= join) return showErr('퇴사일이 입사일보다 늦어야 해요.')
+    if (!salary) return showErr('월급을 입력해주세요.')
+
+    const days = Math.floor((leave - join) / 86400000)
+    const years = days / 365
+
+    // 최근 3개월 일수 (퇴사일 기준 역산)
+    const threeMonthsAgo = new Date(leave); threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3)
+    const days3 = Math.max(89, Math.floor((leave - threeMonthsAgo) / 86400000))
+
+    // 평균임금(1일) = (3개월 임금 + 연상여 3/12) / 3개월 일수
+    const dailyAvg = (salary * 3 + bonus * (3 / 12)) / days3
+    // 퇴직금: 1년 이상 재직 시
+    const severance = years >= 1 ? dailyAvg * 30 * (days / 365) : 0
+    // 연차수당 = 통상시급(월급/209) × 8시간 × 남은 연차
+    const leavePay = (salary / 209) * 8 * leaves
+    const total = severance + leavePay
+
+    last = { join: document.getElementById('joinDate').value, leave: document.getElementById('leaveDate').value,
+             salary, bonus, leaves, days, years, dailyAvg, severance, leavePay, total }
+
+    document.getElementById('totalAmount').textContent = won(total)
+    document.getElementById('totalSub').textContent =
+      `재직 ${Math.floor(years)}년 ${Math.floor((days % 365) / 30)}개월 (${days.toLocaleString()}일) 기준`
+
+    let bd = `
+      <div class="bd-row"><span>예상 퇴직금</span><b class="gold">${years >= 1 ? won(severance) : '1년 미만 (해당 없음)'}</b></div>
+      <div class="bd-row"><span>남은 연차수당 (${leaves}개)</span><b>${leaves ? won(leavePay) : '-'}</b></div>
+      <div class="bd-row"><span>1일 평균임금</span><b>${won(dailyAvg)}</b></div>`
+    document.getElementById('breakdown').innerHTML = bd
+
+    document.getElementById('result').classList.add('show')
+    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' })
+    askAI()
+  }
+
+  function showErr(msg) {
+    const box = document.getElementById('errBox')
+    box.textContent = msg; box.classList.add('show')
+  }
+
+  async function askAI() {
+    const d = last
+    document.getElementById('aiSection').style.display = 'none'
+    document.getElementById('aiLoading').classList.add('show')
+    const prompt = [
+      '당신은 한국 노동법과 퇴직 재테크에 밝은 친절한 상담사입니다. 아래 계산 결과를 해석해주세요.',
+      `- 재직기간: ${d.days}일 (약 ${d.years.toFixed(1)}년)`,
+      `- 월급(세전): ${d.salary.toLocaleString()}원, 연간 상여: ${d.bonus.toLocaleString()}원, 남은 연차: ${d.leaves}개`,
+      `- 예상 퇴직금(세전): ${Math.round(d.severance).toLocaleString()}원`,
+      `- 연차수당: ${Math.round(d.leavePay).toLocaleString()}원`,
+      '',
+      '아래 형식의 마크다운으로, 전부 한국어로만 답하세요 (영어 혼용 금지). 각 섹션은 2~3문장으로 간결하게:',
+      '### 세금 떼면 실제로 얼마?',
+      '(퇴직소득세는 근속연수공제 덕에 일반 소득세보다 훨씬 가볍다는 점과 대략적인 실수령 범위)',
+      '### 놓치기 쉬운 체크리스트',
+      '(- 리스트 3개: 퇴직금 IRP 수령, 연차 소진 vs 수당, 퇴직 전 확인할 것)',
+      '### 한 줄 조언',
+      '(이 사람 상황에 맞는 현실적인 조언 1~2문장)',
+    ].join('\n')
+    try {
+      const res = await fetch(PROXY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, temperature: 0.2 }) })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'AI 호출 실패')
+      const text = (data.content && data.content[0] && data.content[0].text) || ''
+      document.getElementById('analysisText').innerHTML = renderMarkdown(text)
+      document.getElementById('aiSection').style.display = 'block'
+    } catch (e) {
+      document.getElementById('analysisText').innerHTML = 'AI 리포트를 불러오지 못했어요. 위 계산 결과는 그대로 사용할 수 있어요.'
+      document.getElementById('aiSection').style.display = 'block'
+    } finally {
+      document.getElementById('aiLoading').classList.remove('show')
+    }
+  }
+
+  function renderMarkdown(text) {
+    return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/### (.+)/g,'<h3>$1</h3>').replace(/## (.+)/g,'<h3>$1</h3>')
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/^- (.+)/gm,'<li>$1</li>').replace(/(<li>.*<\/li>\n?)+/g,m=>`<ul>${m}</ul>`)
+      .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')
+  }
+
+  // ── 공유하기: 앱인토스 SDK → Web Share API → 클립보드 순으로 폴백 ──
+  function buildShareText() {
+    const t = last ? `예상 퇴직금+연차수당이 ${won(last.total)}이래요!` : '입사일이랑 월급만 넣으면 예상 퇴직금 바로 계산!'
+    return `💰 퇴직금 미리보기\n${t}`
+  }
+
+  async function shareResult() {
+    const text = buildShareText()
+    try {
+      if (window.AppsInToss && typeof window.AppsInToss.share === 'function') {
+        let url = location.href
+        if (typeof window.AppsInToss.getTossShareLink === 'function') {
+          try { url = await window.AppsInToss.getTossShareLink() } catch (_) {}
+        }
+        await window.AppsInToss.share({ message: `${text}\n${url}` })
+        return
+      }
+    } catch (_) { /* SDK 공유 실패 시 아래 폴백으로 */ }
+    if (navigator.share) {
+      try { await navigator.share({ title: '퇴직금 미리보기', text, url: location.href }); return }
+      catch (e) { if (e.name === 'AbortError') return }
+    }
+    await navigator.clipboard.writeText(`${text}\n${location.href}`)
+    alert('공유 문구가 클립보드에 복사됐어요!')
+  }
+
+  function resetForm() {
+    document.getElementById('result').classList.remove('show')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+</script>
+</body>
+</html>
