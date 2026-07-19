@@ -16,7 +16,7 @@ export default defineConfig({
   },
   outdir: 'dist',
   brand: {
-    displayName: '퇴직금 미리보기',
+    displayName: '퇴사 타이밍 시뮬레이터',
     primaryColor: '#fbbf24',
     icon: 'https://metaluca8560.vercel.app/severance-calc-icon.png',
   },
