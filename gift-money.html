@@ -88,6 +88,41 @@
     .actions button { flex: 1; border-radius: 14px; padding: 14px 0; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; border: 1.5px solid var(--line); background: var(--card); color: var(--text); }
     .actions .primary { background: linear-gradient(135deg, var(--pink), var(--pink-deep)); color: #fff; border: none; }
     .disclaimer { margin-top: 20px; color: var(--muted); font-size: 12px; line-height: 1.6; text-align: center; }
+    @keyframes pop { 0% { transform: scale(.85); opacity: 0; } 70% { transform: scale(1.03); } 100% { transform: scale(1); opacity: 1; } }
+    .pop { animation: pop .5s cubic-bezier(.2,1.4,.4,1) both; }
+    .confetti-bit { position: fixed; top: -12px; width: 10px; height: 14px; border-radius: 3px; pointer-events: none; z-index: 99; animation: cfall linear forwards; }
+    @keyframes cfall { to { transform: translateY(110vh) rotate(720deg); opacity: .9; } }
+    /* ── 경조사 장부 ── */
+    .record-btn { width: 100%; margin-top: 12px; background: var(--card2); border: 1.5px dashed rgba(244,114,182,.5); color: var(--pink); border-radius: 14px; padding: 13px 0; font-size: 14.5px; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .ledger-sum { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .ledger-sum > div { background: var(--card); border: 1.5px solid var(--line); border-radius: 16px; padding: 14px 16px; text-align: center; }
+    .ledger-sum .l { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+    .ledger-sum .v { font-size: 18px; font-weight: 800; margin-top: 5px; }
+    .ledger-sum .v.gave { color: var(--pink); }
+    .ledger-sum .v.got { color: var(--gold); }
+    .ledger-search { width: 100%; background: var(--card); border: 1.5px solid var(--line); color: var(--text); border-radius: 12px; padding: 13px 16px; font-size: 14.5px; font-family: inherit; margin-top: 10px; }
+    .ledger-search:focus { outline: none; border-color: var(--pink); }
+    .person-sum { display: none; margin-top: 10px; background: rgba(251,191,36,.08); border: 1.5px solid rgba(251,191,36,.4); border-radius: 14px; padding: 13px 16px; font-size: 13.5px; line-height: 1.6; }
+    .person-sum.show { display: block; }
+    .person-sum b { color: var(--gold); }
+    .ledger-row { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-top: 8px; }
+    .ledger-row .dir { font-size: 11px; font-weight: 800; border-radius: 999px; padding: 4px 9px; white-space: nowrap; }
+    .ledger-row .dir.gave { background: rgba(244,114,182,.15); color: var(--pink); }
+    .ledger-row .dir.got { background: rgba(251,191,36,.15); color: var(--gold); }
+    .ledger-row .info { flex: 1; min-width: 0; }
+    .ledger-row .nm { font-size: 14.5px; font-weight: 700; }
+    .ledger-row .meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .ledger-row .amt { font-size: 15px; font-weight: 800; white-space: nowrap; }
+    .ledger-row .del { background: none; border: none; color: var(--muted); font-size: 16px; cursor: pointer; padding: 4px; }
+    .ledger-empty { color: var(--muted); font-size: 13.5px; text-align: center; padding: 18px 0; }
+    #ledgerForm { display: none; background: var(--card2); border: 1.5px solid var(--line); border-radius: 16px; padding: 16px; margin-top: 10px; }
+    #ledgerForm.show { display: block; }
+    #ledgerForm input, #ledgerForm select { width: 100%; background: var(--card); border: 1.5px solid var(--line); color: var(--text); border-radius: 10px; padding: 12px 14px; font-size: 14.5px; font-family: inherit; margin-bottom: 9px; color-scheme: dark; }
+    #ledgerForm .fr { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    #ledgerForm .dirseg { display: flex; gap: 8px; margin-bottom: 9px; }
+    #ledgerForm .dirseg button { flex: 1; background: var(--card); border: 1.5px solid var(--line); color: var(--text); border-radius: 10px; padding: 11px 0; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+    #ledgerForm .dirseg button.on { border-color: var(--pink); color: var(--pink); background: rgba(244,114,182,.1); }
+    .save-btn { width: 100%; background: linear-gradient(135deg, var(--pink), var(--pink-deep)); color: #fff; border: none; border-radius: 12px; padding: 13px 0; font-size: 15px; font-weight: 800; cursor: pointer; font-family: inherit; }
   </style>
 </head>
 <body>
@@ -146,6 +181,30 @@
     </div>
     <p class="disclaimer">금액은 2026년 일반적인 시세 기준 참고용이에요.<br>마음이 담긴 금액이라면 정답은 없어요 :)</p>
   </section>
+
+  <div class="section-label">📒 내 경조사 장부</div>
+  <div class="ledger-sum">
+    <div><div class="l">내가 낸 마음</div><div class="v gave" id="sumGave">0원</div></div>
+    <div><div class="l">내가 받은 마음</div><div class="v got" id="sumGot">0원</div></div>
+  </div>
+  <input class="ledger-search" id="ledgerSearch" placeholder="🔍 이름으로 찾기 — 이 분이 나한테 얼마 냈더라?">
+  <div class="person-sum" id="personSum"></div>
+  <div id="ledgerList"></div>
+  <button class="record-btn" onclick="toggleForm()">✏️ 기록 추가하기</button>
+  <div id="ledgerForm">
+    <div class="dirseg" id="dirSeg">
+      <button data-v="gave" class="on">내가 냈어요</button>
+      <button data-v="got">내가 받았어요</button>
+    </div>
+    <input type="text" id="lgName" placeholder="이름 (예: 김민지)">
+    <div class="fr">
+      <select id="lgEvent"><option>결혼식</option><option>장례식</option><option>돌잔치</option><option>개업식</option><option>기타</option></select>
+      <input type="text" id="lgAmount" inputmode="numeric" placeholder="금액 (예: 100,000)">
+    </div>
+    <input type="date" id="lgDate">
+    <button class="save-btn" onclick="saveEntry()">장부에 저장 💾</button>
+  </div>
+  <p class="disclaimer">장부 기록은 서버 전송 없이 내 폰에만 저장돼요 🔒</p>
 </div>
 
 <script>
@@ -230,10 +289,121 @@
       html += `<div class="section-label">봉투에는 이렇게</div>
         <div class="envelope"><div class="lbl">봉투 앞면 문구</div><div class="txt">${esc(d.envelope)}</div></div>`
     }
+    html += `<button class="record-btn" onclick="recordFromResult()">📒 이 금액 장부에 기록하기</button>`
     document.getElementById('resultContent').innerHTML = html
+    const card = document.querySelector('.amount-card')
+    if (card) { card.classList.add('pop') }
+    confetti(36)
     document.getElementById('result').classList.add('show')
     document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+
+  // ── 폭죽: 결과의 임팩트 담당 ──
+  function confetti(n) {
+    const colors = ['#f472b6','#fbbf24','#4ade80','#60a5fa','#fff']
+    for (let i = 0; i < (n || 36); i++) {
+      const c = document.createElement('div')
+      c.className = 'confetti-bit'
+      c.style.left = Math.random() * 100 + 'vw'
+      c.style.background = colors[Math.floor(Math.random() * colors.length)]
+      c.style.animationDuration = (1.4 + Math.random() * 1.4) + 's'
+      c.style.animationDelay = Math.random() * .3 + 's'
+      document.body.appendChild(c)
+      setTimeout(() => c.remove(), 3200)
+    }
+  }
+
+  // ── 경조사 장부: 폰에만 저장되는 주고받은 기록 ──
+  const LKEY = 'giftLedger'
+  const loadLedger = () => { try { return JSON.parse(localStorage.getItem(LKEY) || '[]') } catch (_) { return [] } }
+  const saveLedger = list => { try { localStorage.setItem(LKEY, JSON.stringify(list)) } catch (_) {} }
+  const fmtWon = v => v >= 10000 && v % 10000 === 0 ? (v / 10000) + '만원' : v.toLocaleString('ko-KR') + '원'
+
+  document.getElementById('lgDate').value = new Date().toISOString().slice(0, 10)
+  document.getElementById('lgAmount').addEventListener('input', e => {
+    const v = e.target.value.replace(/[^\d]/g, '')
+    e.target.value = v ? Number(v).toLocaleString('ko-KR') : ''
+  })
+  document.querySelectorAll('#dirSeg button').forEach(b => {
+    b.onclick = () => { document.querySelectorAll('#dirSeg button').forEach(x => x.classList.remove('on')); b.classList.add('on') }
+  })
+
+  function toggleForm() { document.getElementById('ledgerForm').classList.toggle('show') }
+
+  function saveEntry() {
+    const name = document.getElementById('lgName').value.trim()
+    const amount = Number(document.getElementById('lgAmount').value.replace(/[^\d]/g, '')) || 0
+    if (!name || !amount) { alert('이름과 금액을 입력해주세요!'); return }
+    const list = loadLedger()
+    list.push({
+      id: Date.now(), name,
+      dir: document.querySelector('#dirSeg button.on').dataset.v,
+      event: document.getElementById('lgEvent').value,
+      amount,
+      date: document.getElementById('lgDate').value,
+    })
+    saveLedger(list)
+    document.getElementById('lgName').value = ''; document.getElementById('lgAmount').value = ''
+    document.getElementById('ledgerForm').classList.remove('show')
+    renderLedger()
+  }
+
+  function delEntry(id) {
+    if (!confirm('이 기록을 지울까요?')) return
+    saveLedger(loadLedger().filter(e => e.id !== id))
+    renderLedger()
+  }
+
+  function recordFromResult() {
+    const m = String(lastAmount).match(/([\d.]+)\s*만/)
+    const amt = m ? Math.round(parseFloat(m[1]) * 10000) : Number(String(lastAmount).replace(/[^\d]/g, '')) || 0
+    document.getElementById('ledgerForm').classList.add('show')
+    document.getElementById('lgAmount').value = amt ? amt.toLocaleString('ko-KR') : ''
+    const ev = segVal('eventSeg')
+    const sel = document.getElementById('lgEvent')
+    ;[...sel.options].forEach(o => { if (o.value === ev) sel.value = ev })
+    document.getElementById('ledgerForm').scrollIntoView({ behavior: 'smooth', block: 'center' })
+    document.getElementById('lgName').focus()
+  }
+
+  function renderLedger() {
+    const q = document.getElementById('ledgerSearch').value.trim()
+    const all = loadLedger().sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+    const list = q ? all.filter(e => e.name.includes(q)) : all
+
+    let gave = 0, got = 0
+    all.forEach(e => { e.dir === 'gave' ? gave += e.amount : got += e.amount })
+    document.getElementById('sumGave').textContent = fmtWon(gave)
+    document.getElementById('sumGot').textContent = fmtWon(got)
+
+    // 이름 검색 시: 상호성 요약 — 이 앱의 킬러 기능
+    const ps = document.getElementById('personSum')
+    if (q && list.length) {
+      let pg = 0, pr = 0
+      list.forEach(e => { e.dir === 'gave' ? pg += e.amount : pr += e.amount })
+      ps.innerHTML = `<b>${q}</b>님과의 기록 — 내가 낸 ${fmtWon(pg)} · 받은 ${fmtWon(pr)}<br>` +
+        (pr > 0 ? `이분이 주신 만큼 <b>${fmtWon(pr)}</b> 안팎으로 돌려드리면 딱 좋아요 :)` : '아직 받은 기록은 없어요.')
+      ps.classList.add('show')
+    } else { ps.classList.remove('show') }
+
+    const el = document.getElementById('ledgerList')
+    if (!list.length) {
+      el.innerHTML = `<div class="ledger-empty">${q ? '검색 결과가 없어요' : '아직 기록이 없어요. 첫 경조사를 기록해보세요!'}</div>`
+      return
+    }
+    el.innerHTML = list.map(e => `
+      <div class="ledger-row">
+        <span class="dir ${e.dir}">${e.dir === 'gave' ? '냈음' : '받음'}</span>
+        <div class="info">
+          <div class="nm">${esc(e.name)}</div>
+          <div class="meta">${esc(e.event)} · ${esc(e.date || '')}</div>
+        </div>
+        <span class="amt">${fmtWon(e.amount)}</span>
+        <button class="del" onclick="delEntry(${e.id})">✕</button>
+      </div>`).join('')
+  }
+  document.getElementById('ledgerSearch').addEventListener('input', renderLedger)
+  renderLedger()
 
   // ── 공유하기: 앱인토스 SDK → Web Share API → 클립보드 순으로 폴백 ──
   function buildShareText() {

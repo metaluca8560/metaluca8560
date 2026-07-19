@@ -95,6 +95,36 @@
     .err { display: none; margin-top: 16px; background: rgba(251,113,133,.1); border: 1.5px solid rgba(251,113,133,.4); color: var(--rose); border-radius: 14px; padding: 14px 16px; font-size: 14px; }
     .err.show { display: block; }
     .disclaimer { margin-top: 20px; color: var(--muted); font-size: 12px; text-align: center; }
+    .streak {
+      display: none; margin-top: 12px; background: rgba(251,146,60,.1); border: 1.5px solid rgba(251,146,60,.4);
+      color: var(--orange); border-radius: 999px; padding: 8px 16px; font-size: 13.5px; font-weight: 700; width: fit-content;
+    }
+    .streak.show { display: block; }
+    .payer-box { margin-top: 10px; }
+    .payer-box input {
+      width: 100%; background: var(--card); border: 1.5px solid var(--line); color: var(--text);
+      border-radius: 12px; padding: 14px 16px; font-size: 15px; font-family: inherit;
+    }
+    .payer-box input:focus { outline: none; border-color: var(--orange); }
+    .btn-payer {
+      width: 100%; margin-top: 10px; background: var(--card); border: 1.5px solid var(--orange);
+      color: var(--orange); border-radius: 16px; padding: 15px 0; font-size: 16px; font-weight: 800;
+      cursor: pointer; font-family: inherit;
+    }
+    .payer-result {
+      display: none; margin-top: 12px; background: linear-gradient(135deg, rgba(251,146,60,.16), rgba(234,88,12,.05));
+      border: 1.5px solid rgba(251,146,60,.55); border-radius: 18px; padding: 22px; text-align: center;
+    }
+    .payer-result.show { display: block; }
+    .payer-result .who { font-size: 28px; font-weight: 800; }
+    .payer-result .who b { color: var(--orange); }
+    .payer-result .msg { margin-top: 6px; color: var(--muted); font-size: 13.5px; }
+    @keyframes pop { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.06); } 100% { transform: scale(1); opacity: 1; } }
+    .pop { animation: pop .45s cubic-bezier(.2,1.4,.4,1) both; }
+    @keyframes landing { 0%,100% { transform: scale(1); } 40% { transform: scale(1.12) rotate(-2deg); } 70% { transform: scale(.97) rotate(1deg); } }
+    .landing { animation: landing .5s ease both; }
+    .confetti-bit { position: fixed; top: -12px; width: 10px; height: 14px; border-radius: 3px; pointer-events: none; z-index: 99; animation: cfall linear forwards; }
+    @keyframes cfall { to { transform: translateY(110vh) rotate(720deg); opacity: .9; } }
   </style>
 </head>
 <body>
@@ -107,6 +137,7 @@
   <section class="hero">
     <h1>오늘 점심 <em>뭐먹지?</em></h1>
     <p>11시 반의 영원한 고민, 3초 만에 끝내드려요.<br>룰렛을 돌리거나, AI한테 취향을 말해보세요.</p>
+    <div class="streak" id="streakBadge"></div>
   </section>
 
   <div class="section-label">오늘 상황은?</div>
@@ -158,6 +189,17 @@
       <button onclick="resetForm()">다시 고르기</button>
     </div>
   </section>
+
+  <div class="section-label">🎯 오늘 누가 쏘나 (내기 룰렛)</div>
+  <div class="payer-box">
+    <input type="text" id="crew" placeholder="이름을 쉼표로 넣어주세요 (예: 루카, 민지, 준호)">
+    <button class="btn-payer" id="btnPayer" onclick="pickPayer()">쏘는 사람 뽑기 🫰</button>
+  </div>
+  <div class="payer-result" id="payerResult">
+    <div class="who">🎉 오늘은 <b id="payerName"></b> 찬스!</div>
+    <div class="msg" id="payerMsg"></div>
+  </div>
+
   <p class="disclaimer">매일 하나씩, 점심 고민은 여기서 끝!</p>
 </div>
 
@@ -204,9 +246,12 @@
         clearInterval(timer)
         lastPick = m
         document.getElementById('menuTag').textContent = m[2] + ' — 오늘은 이거다!'
-        document.getElementById('roulette').classList.remove('spinning')
+        const rl = document.getElementById('roulette')
+        rl.classList.remove('spinning'); rl.classList.remove('landing')
+        void rl.offsetWidth; rl.classList.add('landing')
         document.getElementById('btnRoll').disabled = false
         spinning = false
+        bumpStreak()
       }
     }, 70 + i)
   }
@@ -278,12 +323,15 @@
     document.getElementById('menuEmoji').textContent = d.picks[0].emoji || '🍽️'
     document.getElementById('menuName').textContent = d.picks[0].name
     document.getElementById('menuTag').textContent = 'AI가 고른 오늘의 픽!'
+    bumpStreak()
   }
 
   // ── 공유하기: 앱인토스 SDK → Web Share API → 클립보드 순으로 폴백 ──
   function buildShareText() {
     const pick = (lastAI && lastAI.name) || (lastPick && lastPick[1])
-    return `🍜 오늘 점심 뭐먹지?\n${pick ? `오늘의 픽은 "${pick}"! 너도 돌려봐 ㅋㅋ` : '점심 고민 3초 컷, 룰렛 돌려봐!'}`
+    let t = pick ? `오늘의 픽은 "${pick}"! 너도 돌려봐 ㅋㅋ` : '점심 고민 3초 컷, 룰렛 돌려봐!'
+    if (lastPayer) t += `\n그리고 오늘 쏘는 사람은... ${lastPayer} 🫰ㅋㅋㅋ`
+    return `🍜 오늘 점심 뭐먹지?\n${t}`
   }
 
   async function shareResult() {
@@ -310,6 +358,80 @@
     document.getElementById('aiResult').classList.remove('show')
     document.querySelectorAll('#moodChips button').forEach(b => b.classList.remove('on'))
     window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  // ── 폭죽: 시선 강탈 담당 ──
+  function confetti(n) {
+    const colors = ['#fb923c','#fbbf24','#4ade80','#60a5fa','#f472b6','#fff']
+    for (let i = 0; i < (n || 44); i++) {
+      const c = document.createElement('div')
+      c.className = 'confetti-bit'
+      c.style.left = Math.random() * 100 + 'vw'
+      c.style.background = colors[Math.floor(Math.random() * colors.length)]
+      c.style.animationDuration = (1.4 + Math.random() * 1.4) + 's'
+      c.style.animationDelay = Math.random() * .3 + 's'
+      c.style.transform = `rotate(${Math.random() * 360}deg)`
+      document.body.appendChild(c)
+      setTimeout(() => c.remove(), 3200)
+    }
+  }
+
+  // ── 출석 스트릭: "N일째 점심 정하는 중" ──
+  function bumpStreak() {
+    const today = new Date().toISOString().slice(0, 10)
+    let s = {}
+    try { s = JSON.parse(localStorage.getItem('lunchStreak') || '{}') } catch (_) {}
+    if (s.last !== today) {
+      const y = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+      s = { last: today, count: s.last === y ? (s.count || 0) + 1 : 1 }
+      localStorage.setItem('lunchStreak', JSON.stringify(s))
+    }
+    showStreak()
+  }
+  function showStreak() {
+    let s = {}
+    try { s = JSON.parse(localStorage.getItem('lunchStreak') || '{}') } catch (_) {}
+    const el = document.getElementById('streakBadge')
+    if (s.count >= 2) { el.textContent = `🔥 ${s.count}일째 점심 정하는 중`; el.classList.add('show') }
+  }
+  showStreak()
+
+  // ── 오늘 누가 쏘나: 내기 룰렛 ──
+  let payerSpinning = false, lastPayer = null
+  try { document.getElementById('crew').value = localStorage.getItem('lunchCrew') || '' } catch (_) {}
+
+  function pickPayer() {
+    if (payerSpinning) return
+    const names = document.getElementById('crew').value.split(/[,，\s]+/).map(s => s.trim()).filter(Boolean)
+    if (names.length < 2) {
+      document.getElementById('payerName').textContent = ''
+      const r = document.getElementById('payerResult')
+      r.classList.add('show')
+      r.querySelector('.who').innerHTML = '두 명 이상 넣어야 내기죠! 😆'
+      document.getElementById('payerMsg').textContent = '이름을 쉼표로 구분해서 넣어주세요'
+      return
+    }
+    try { localStorage.setItem('lunchCrew', document.getElementById('crew').value) } catch (_) {}
+    payerSpinning = true
+    const r = document.getElementById('payerResult')
+    r.classList.add('show'); r.classList.remove('pop')
+    r.querySelector('.who').innerHTML = '🎲 <b id="payerName"></b>'
+    const nameEl = () => document.getElementById('payerName')
+    document.getElementById('payerMsg').textContent = '운명의 룰렛이 돌아갑니다...'
+    let i = 0, ticks = 18 + Math.floor(Math.random() * 8)
+    const timer = setInterval(() => {
+      nameEl().textContent = names[Math.floor(Math.random() * names.length)]
+      if (++i >= ticks) {
+        clearInterval(timer)
+        lastPayer = names[Math.floor(Math.random() * names.length)]
+        r.querySelector('.who').innerHTML = `🎉 오늘은 <b>${lastPayer}</b> 찬스!`
+        document.getElementById('payerMsg').textContent = '맛있게 먹고 다음엔 꼭 갚기로 해요 ㅋㅋ'
+        r.classList.add('pop')
+        confetti()
+        bumpStreak()
+        payerSpinning = false
+      }
+    }, 80)
   }
 </script>
 </body>
