@@ -65,14 +65,24 @@
       border: 1.5px solid rgba(251,191,36,.45); border-radius: 20px; padding: 24px; text-align: center;
     }
     .total-card .t { font-size: 14px; font-weight: 700; color: var(--gold); }
-    .total-card .amount { font-size: 38px; font-weight: 800; margin-top: 8px; letter-spacing: -1px; }
+    .total-card .amount { font-size: 38px; font-weight: 800; margin-top: 8px; letter-spacing: -1px; font-variant-numeric: tabular-nums; }
     .total-card .sub { margin-top: 6px; color: var(--muted); font-size: 13px; }
+    @keyframes pop { 0% { transform: scale(.85); opacity: 0; } 70% { transform: scale(1.03); } 100% { transform: scale(1); opacity: 1; } }
+    .pop { animation: pop .5s cubic-bezier(.2,1.4,.4,1) both; }
     .breakdown { margin-top: 12px; background: var(--card); border: 1.5px solid var(--line); border-radius: 18px; padding: 6px 20px; }
     .bd-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
     .bd-row:last-child { border-bottom: none; }
     .bd-row span { color: var(--muted); font-size: 14px; }
     .bd-row b { font-size: 16px; font-weight: 700; }
     .bd-row b.gold { color: var(--gold); }
+    .bd-row .delta { display: block; font-size: 12.5px; font-weight: 700; color: var(--green); text-align: right; margin-top: 3px; }
+    .bd-row .when { display: block; font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .timing-note { margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .unlock {
+      margin-top: 12px; background: rgba(74,222,128,.08); border: 1.5px solid rgba(74,222,128,.4);
+      border-radius: 16px; padding: 15px 18px; font-size: 14px; line-height: 1.6;
+    }
+    .unlock b { color: var(--green); }
     .analysis-content { background: var(--card); border: 1.5px solid var(--line); border-radius: 16px; padding: 18px; font-size: 14.5px; line-height: 1.7; }
     .analysis-content h3 { color: var(--gold); font-size: 16px; margin: 14px 0 6px; }
     .analysis-content h3:first-child { margin-top: 0; }
@@ -138,6 +148,9 @@
       <div class="sub" id="totalSub"></div>
     </div>
     <div class="breakdown" id="breakdown"></div>
+    <div class="section-label">⏰ 퇴사 타이밍 시뮬레이터</div>
+    <div id="timing"></div>
+    <p class="timing-note">월급이 지금과 같다고 가정한 단순 추정이에요. 연봉 인상이 예정돼 있다면 더 벌어져요!</p>
     <div class="ai-loading" id="aiLoading"><div class="spinner"></div>AI가 리포트를 쓰고 있어요...</div>
     <div id="aiSection" style="display:none">
       <div class="section-label">🤖 AI 퇴직금 리포트</div>
@@ -199,7 +212,10 @@
     last = { join: document.getElementById('joinDate').value, leave: document.getElementById('leaveDate').value,
              salary, bonus, leaves, days, years, dailyAvg, severance, leavePay, total }
 
-    document.getElementById('totalAmount').textContent = won(total)
+    // 금액 카운트업 롤링 — 결과의 임팩트 담당
+    const tc = document.querySelector('.total-card')
+    tc.classList.remove('pop'); void tc.offsetWidth; tc.classList.add('pop')
+    countUp(document.getElementById('totalAmount'), total, 900)
     document.getElementById('totalSub').textContent =
       `재직 ${Math.floor(years)}년 ${Math.floor((days % 365) / 30)}개월 (${days.toLocaleString()}일) 기준`
 
@@ -209,9 +225,50 @@
       <div class="bd-row"><span>1일 평균임금</span><b>${won(dailyAvg)}</b></div>`
     document.getElementById('breakdown').innerHTML = bd
 
+    renderTiming(join, leave, salary, bonus, dailyAvg, severance, years)
+
     document.getElementById('result').classList.add('show')
     document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' })
     askAI()
+  }
+
+  // 퇴사 시점을 미뤘을 때 퇴직금이 얼마나 커지는지 — 이 앱의 킬러 기능
+  function renderTiming(join, leave, salary, bonus, dailyAvg, nowSeverance, nowYears) {
+    const el = document.getElementById('timing')
+    const fmtDate = d => `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`
+
+    // 1년 미만: 퇴직금이 처음 생기는 날을 알려주는 게 최고의 정보
+    if (nowYears < 1) {
+      const unlock = new Date(join.getTime() + 365 * 86400000)
+      const sevAtUnlock = dailyAvg * 30
+      el.innerHTML = `<div class="unlock">아직 1년 미만이라 퇴직금이 없어요.<br>
+        <b>${fmtDate(unlock)}</b>까지 버티면 퇴직금 <b>${won(sevAtUnlock)}</b>이 생겨요!<br>
+        그 전에 퇴사하면 0원이니, 며칠 차이라면 꼭 채우세요.</div>`
+      return
+    }
+
+    const rows = [[1, '+1개월 더 버티면'], [3, '+3개월 더 버티면'], [6, '+6개월 더 버티면'], [12, '+1년 더 버티면']]
+    let html = ''
+    rows.forEach(([m, label]) => {
+      const d2 = new Date(leave); d2.setMonth(d2.getMonth() + m)
+      const days2 = Math.floor((d2 - join) / 86400000)
+      const sev2 = dailyAvg * 30 * (days2 / 365)
+      const delta = sev2 - nowSeverance
+      html += `<div class="bd-row"><span>${label}<span class="when">${fmtDate(d2)} 퇴사</span></span>
+        <b>${won(sev2)}<span class="delta">+${won(delta)}</span></b></div>`
+    })
+    el.innerHTML = `<div class="breakdown">${html}</div>`
+  }
+
+  function countUp(el, target, dur) {
+    const start = performance.now()
+    const tick = now => {
+      const p = Math.min(1, (now - start) / dur)
+      const eased = 1 - Math.pow(1 - p, 3)
+      el.textContent = won(target * eased)
+      if (p < 1) requestAnimationFrame(tick)
+    }
+    requestAnimationFrame(tick)
   }
 
   function showErr(msg) {
