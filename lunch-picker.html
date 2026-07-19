@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>오늘 점심 뭐먹지? — AI 트렌드 다락방</title>
+  <meta name="description" content="기분과 상황만 고르면 룰렛과 AI가 오늘의 점심 메뉴를 정해드려요." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="오늘 점심 뭐먹지? 🍜" />
+  <meta property="og:description" content="11시 반의 영원한 고민 끝! 룰렛 돌리거나 AI한테 물어보세요. 오늘의 메뉴가 3초 만에 나와요" />
+  <meta property="og:image" content="https://metaluca8560.vercel.app/lunch-og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://metaluca8560.vercel.app/lunch-picker.html" />
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #170e08;
+      --card: #241710;
+      --card2: #2d1d13;
+      --line: #46301f;
+      --text: #f8ede4;
+      --muted: #b39a86;
+      --orange: #fb923c;
+      --orange-deep: #ea580c;
+      --rose: #fb7185;
+    }
+    html { -webkit-text-size-adjust: 100%; }
+    body { font-family: 'Pretendard', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 60px; }
+    .wrap { max-width: 560px; margin: 0 auto; padding: 0 18px; }
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0 6px; }
+    .header a { color: var(--muted); font-size: 14px; text-decoration: none; }
+    .hero { padding: 22px 0 8px; }
+    .hero h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; }
+    .hero h1 em { font-style: normal; color: var(--orange); }
+    .hero p { margin-top: 8px; color: var(--muted); font-size: 15px; line-height: 1.55; }
+    .section-label { font-size: 14px; font-weight: 700; color: var(--muted); margin: 22px 0 10px; }
+    .seg { display: flex; gap: 8px; flex-wrap: wrap; }
+    .seg button {
+      flex: 1; min-width: 90px; background: var(--card); border: 1.5px solid var(--line); color: var(--text);
+      border-radius: 12px; padding: 12px 0; font-size: 14.5px; font-weight: 600; cursor: pointer; font-family: inherit;
+    }
+    .seg button.on { border-color: var(--orange); background: rgba(251,146,60,.1); color: var(--orange); }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chips button {
+      background: var(--card); border: 1.5px solid var(--line); color: var(--text);
+      border-radius: 999px; padding: 10px 16px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+    }
+    .chips button.on { border-color: var(--orange); background: rgba(251,146,60,.1); color: var(--orange); }
+
+    /* 룰렛 */
+    .roulette {
+      margin-top: 26px; background: var(--card); border: 2px solid var(--line); border-radius: 22px;
+      padding: 30px 20px; text-align: center; position: relative; overflow: hidden;
+    }
+    .roulette.spinning { border-color: var(--orange); }
+    .menu-emoji { font-size: 58px; line-height: 1.1; }
+    .menu-name { font-size: 26px; font-weight: 800; margin-top: 10px; min-height: 34px; }
+    .menu-tag { color: var(--muted); font-size: 13.5px; margin-top: 6px; min-height: 18px; }
+    .btns2 { display: flex; gap: 10px; margin-top: 22px; }
+    .btns2 button {
+      flex: 1; border-radius: 16px; padding: 16px 0; font-size: 16px; font-weight: 800;
+      cursor: pointer; font-family: inherit; border: none;
+    }
+    .btn-roll { background: linear-gradient(135deg, var(--orange), var(--orange-deep)); color: #2b1204;
+      box-shadow: 0 8px 24px rgba(234,88,12,.3); }
+    .btn-ai { background: var(--card); border: 1.5px solid var(--orange) !important; color: var(--orange); }
+    .btn-ai:disabled, .btn-roll:disabled { opacity: .5; }
+
+    .loading { display: none; text-align: center; padding: 30px 0 6px; }
+    .loading.show { display: block; }
+    .spinner { width: 36px; height: 36px; border-radius: 50%; margin: 0 auto 12px; border: 4px solid var(--line); border-top-color: var(--orange); animation: spin .9s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading p { color: var(--muted); font-size: 14px; }
+
+    #aiResult { display: none; margin-top: 24px; }
+    #aiResult.show { display: block; }
+    .pick {
+      background: var(--card); border: 1.5px solid var(--line); border-radius: 18px;
+      padding: 18px 20px; margin-bottom: 10px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .pick.first { border-color: rgba(251,146,60,.55); background: linear-gradient(135deg, rgba(251,146,60,.12), rgba(234,88,12,.04)); }
+    .pick .em { font-size: 34px; line-height: 1.2; }
+    .pick .nm { font-size: 17px; font-weight: 800; }
+    .pick .nm .crown { font-size: 13px; color: var(--orange); font-weight: 700; margin-left: 6px; }
+    .pick .why { margin-top: 5px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+    .combo { background: var(--card2); border: 1.5px solid var(--line); border-radius: 14px; padding: 13px 16px; font-size: 13.5px; color: var(--text); line-height: 1.5; margin-top: 4px; }
+    .combo b { color: var(--orange); }
+    .actions { display: flex; gap: 10px; margin-top: 22px; }
+    .actions button { flex: 1; border-radius: 14px; padding: 14px 0; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; border: 1.5px solid var(--line); background: var(--card); color: var(--text); }
+    .actions .primary { background: linear-gradient(135deg, var(--orange), var(--orange-deep)); color: #2b1204; border: none; }
+    .err { display: none; margin-top: 16px; background: rgba(251,113,133,.1); border: 1.5px solid rgba(251,113,133,.4); color: var(--rose); border-radius: 14px; padding: 14px 16px; font-size: 14px; }
+    .err.show { display: block; }
+    .disclaimer { margin-top: 20px; color: var(--muted); font-size: 12px; text-align: center; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header class="header">
+    <span style="font-size:14px;font-weight:700;color:var(--orange)">LUNCH PICKER</span>
+    <a href="index.html">AI 트렌드 다락방</a>
+  </header>
+
+  <section class="hero">
+    <h1>오늘 점심 <em>뭐먹지?</em></h1>
+    <p>11시 반의 영원한 고민, 3초 만에 끝내드려요.<br>룰렛을 돌리거나, AI한테 취향을 말해보세요.</p>
+  </section>
+
+  <div class="section-label">오늘 상황은?</div>
+  <div class="seg" id="whoSeg">
+    <button data-v="혼밥" class="on">혼밥 🙋</button>
+    <button data-v="동료들과 팀 점심">팀 점심 👥</button>
+    <button data-v="특별한 사람과 함께">특별한 날 💕</button>
+  </div>
+
+  <div class="section-label">당기는 느낌 (여러 개 OK)</div>
+  <div class="chips" id="moodChips">
+    <button data-v="얼큰한 국물">얼큰한 국물 🌶️</button>
+    <button data-v="든든한 밥심">든든한 밥심 🍚</button>
+    <button data-v="가볍고 건강하게">가볍게 🥗</button>
+    <button data-v="시원한 면">시원한 면 🧊</button>
+    <button data-v="기름진 위로">기름진 위로 🍗</button>
+    <button data-v="새로운 도전">새로운 도전 ✨</button>
+  </div>
+
+  <div class="section-label">예산은?</div>
+  <div class="seg" id="budgetSeg">
+    <button data-v="1만원 이하">~1만원</button>
+    <button data-v="1만원대" class="on">1만원대</button>
+    <button data-v="가격 상관없음">상관없음</button>
+  </div>
+
+  <div class="roulette" id="roulette">
+    <div class="menu-emoji" id="menuEmoji">🍽️</div>
+    <div class="menu-name" id="menuName">뭐 먹을지 정해드려요</div>
+    <div class="menu-tag" id="menuTag">룰렛 또는 AI 추천을 눌러보세요</div>
+  </div>
+
+  <div class="btns2">
+    <button class="btn-roll" id="btnRoll" onclick="spin()">🎰 룰렛 돌리기</button>
+    <button class="btn-ai" id="btnAI" onclick="askAI()">🤖 AI 추천 받기</button>
+  </div>
+  <div class="err" id="errBox"></div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>AI 셰프가 메뉴를 고르고 있어요...</p>
+  </div>
+
+  <section id="aiResult">
+    <div class="section-label">🍴 오늘의 AI 추천 3선</div>
+    <div id="picks"></div>
+    <div class="actions">
+      <button class="primary" onclick="shareResult()">공유하기</button>
+      <button onclick="resetForm()">다시 고르기</button>
+    </div>
+  </section>
+  <p class="disclaimer">매일 하나씩, 점심 고민은 여기서 끝!</p>
+</div>
+
+<script>
+  const PROXY_URL = '/api/proxy'
+
+  // 룰렛 메뉴 풀 (로컬 — AI 없이도 바로 재미)
+  const MENUS = [
+    ['🍜','칼국수','비 오는 날 국룰'], ['🍖','제육볶음','한국인의 소울푸드'], ['🍣','초밥','오늘은 나에게 선물'],
+    ['🍔','수제버거','가끔은 이게 진리'], ['🌶️','마라탕','스트레스엔 마라'], ['🍚','김치찌개','실패 없는 선택'],
+    ['🍝','파스타','기분전환엔 양식'], ['🥘','부대찌개','다 같이 끓여먹기'], ['🍗','치킨','점심부터 치킨 어때'],
+    ['🥟','만두전골','든든하고 뜨끈하게'], ['🍛','돈카츠','바삭함이 필요할 때'], ['🥗','포케','가볍게 리셋'],
+    ['🍲','국밥','혼밥 최강자'], ['🌯','부리토','한 손에 든든'], ['🍱','도시락','오늘은 간편하게'],
+    ['🦪','물회','여름 한정 시원함'], ['🍕','피자','나눠먹기 좋은 날'], ['🥩','스테이크덮밥','고기 충전'],
+    ['🍤','새우튀김우동','바삭+뜨끈 조합'], ['🌭','핫도그','간단하지만 확실한'], ['🥬','쌈밥','채소가 당기는 날'],
+    ['🍙','김밥+라면','클래식은 영원하다'], ['🦑','오징어볶음','매콤하게 확 깨기'], ['🍧','냉면','더위 리셋 버튼'],
+  ]
+
+  let spinning = false, lastPick = null, lastAI = null
+
+  function segInit(id) {
+    const seg = document.getElementById(id)
+    seg.querySelectorAll('button').forEach(b => {
+      b.onclick = () => { seg.querySelectorAll('button').forEach(x => x.classList.remove('on')); b.classList.add('on') }
+    })
+  }
+  segInit('whoSeg'); segInit('budgetSeg')
+  document.querySelectorAll('#moodChips button').forEach(b => { b.onclick = () => b.classList.toggle('on') })
+  const segVal = id => document.querySelector(`#${id} button.on`).dataset.v
+  const moods = () => [...document.querySelectorAll('#moodChips button.on')].map(b => b.dataset.v)
+
+  function spin() {
+    if (spinning) return
+    spinning = true
+    document.getElementById('roulette').classList.add('spinning')
+    document.getElementById('btnRoll').disabled = true
+    let i = 0, ticks = 22 + Math.floor(Math.random() * 10)
+    const timer = setInterval(() => {
+      const m = MENUS[Math.floor(Math.random() * MENUS.length)]
+      document.getElementById('menuEmoji').textContent = m[0]
+      document.getElementById('menuName').textContent = m[1]
+      document.getElementById('menuTag').textContent = ''
+      if (++i >= ticks) {
+        clearInterval(timer)
+        lastPick = m
+        document.getElementById('menuTag').textContent = m[2] + ' — 오늘은 이거다!'
+        document.getElementById('roulette').classList.remove('spinning')
+        document.getElementById('btnRoll').disabled = false
+        spinning = false
+      }
+    }, 70 + i)
+  }
+
+  async function askAI() {
+    document.getElementById('errBox').classList.remove('show')
+    document.getElementById('aiResult').classList.remove('show')
+    document.getElementById('loading').classList.add('show')
+    document.getElementById('btnAI').disabled = true
+
+    const today = new Date()
+    const month = today.getMonth() + 1
+    const prompt = [
+      '당신은 한국 직장가 점심 메뉴를 꿰고 있는 유쾌한 미식 큐레이터입니다. 오늘의 점심 메뉴를 추천해주세요.',
+      `- 상황: ${segVal('whoSeg')}`,
+      `- 당기는 느낌: ${moods().join(', ') || '특별히 없음 (알아서 추천)'}`,
+      `- 예산: ${segVal('budgetSeg')}`,
+      `- 시기: ${month}월 (계절감 반영)`,
+      '',
+      '규칙: 반드시 아래 JSON만 출력. 다른 텍스트 금지. 모든 값은 한국어 (영어 혼용 금지).',
+      'picks는 정확히 3개, 첫 번째가 최고 추천. emoji는 메뉴와 어울리는 이모지 1개.',
+      'why는 이 상황/기분/계절에 왜 이 메뉴인지 재치있게 1~2문장. combo는 곁들이면 좋은 사이드+음료 조합 1문장.',
+      '{"picks":[{"emoji":"","name":"","why":"","combo":""}]}',
+    ].join('\n')
+
+    try {
+      const res = await fetch(PROXY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, temperature: 0.8 }) })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'AI 호출 실패')
+      const text = (data.content && data.content[0] && data.content[0].text) || ''
+      renderAI(text)
+    } catch (e) {
+      const box = document.getElementById('errBox')
+      box.textContent = '앗, ' + (e.message || '추천에 실패했어요.') + ' 룰렛으로 정해보는 건 어때요?'
+      box.classList.add('show')
+    } finally {
+      document.getElementById('loading').classList.remove('show')
+      document.getElementById('btnAI').disabled = false
+    }
+  }
+
+  function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+
+  function renderAI(text) {
+    let d = null
+    try { const m = text.match(/\{[\s\S]*\}/); if (m) d = JSON.parse(m[0]) } catch (_) {}
+    if (!d || !Array.isArray(d.picks) || !d.picks.length) {
+      const box = document.getElementById('errBox')
+      box.textContent = '추천을 읽는 데 실패했어요. 한 번만 다시 눌러주세요!'
+      box.classList.add('show')
+      return
+    }
+    lastAI = d.picks[0]
+    let html = ''
+    d.picks.slice(0, 3).forEach((p, i) => {
+      html += `<div class="pick${i === 0 ? ' first' : ''}">
+        <div class="em">${esc(p.emoji) || '🍽️'}</div>
+        <div>
+          <div class="nm">${esc(p.name)}${i === 0 ? '<span class="crown">👑 오늘의 픽</span>' : ''}</div>
+          <div class="why">${esc(p.why)}</div>
+          ${p.combo ? `<div class="combo"><b>꿀조합</b> ${esc(p.combo)}</div>` : ''}
+        </div>
+      </div>`
+    })
+    document.getElementById('picks').innerHTML = html
+    document.getElementById('aiResult').classList.add('show')
+    document.getElementById('aiResult').scrollIntoView({ behavior: 'smooth', block: 'start' })
+    // 룰렛 카드에도 1등 반영
+    document.getElementById('menuEmoji').textContent = d.picks[0].emoji || '🍽️'
+    document.getElementById('menuName').textContent = d.picks[0].name
+    document.getElementById('menuTag').textContent = 'AI가 고른 오늘의 픽!'
+  }
+
+  // ── 공유하기: 앱인토스 SDK → Web Share API → 클립보드 순으로 폴백 ──
+  function buildShareText() {
+    const pick = (lastAI && lastAI.name) || (lastPick && lastPick[1])
+    return `🍜 오늘 점심 뭐먹지?\n${pick ? `오늘의 픽은 "${pick}"! 너도 돌려봐 ㅋㅋ` : '점심 고민 3초 컷, 룰렛 돌려봐!'}`
+  }
+
+  async function shareResult() {
+    const text = buildShareText()
+    try {
+      if (window.AppsInToss && typeof window.AppsInToss.share === 'function') {
+        let url = location.href
+        if (typeof window.AppsInToss.getTossShareLink === 'function') {
+          try { url = await window.AppsInToss.getTossShareLink() } catch (_) {}
+        }
+        await window.AppsInToss.share({ message: `${text}\n${url}` })
+        return
+      }
+    } catch (_) { /* SDK 공유 실패 시 아래 폴백으로 */ }
+    if (navigator.share) {
+      try { await navigator.share({ title: '오늘 점심 뭐먹지?', text, url: location.href }); return }
+      catch (e) { if (e.name === 'AbortError') return }
+    }
+    await navigator.clipboard.writeText(`${text}\n${location.href}`)
+    alert('공유 문구가 클립보드에 복사됐어요!')
+  }
+
+  function resetForm() {
+    document.getElementById('aiResult').classList.remove('show')
+    document.querySelectorAll('#moodChips button').forEach(b => b.classList.remove('on'))
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+</script>
+</body>
+</html>
