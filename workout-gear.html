@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>운동복 뭐사지? — AI 트렌드 다락방</title>
+  <meta name="description" content="종목만 고르면 AI가 필수템 리스트와 적정 가격대, 어디서 살지까지 알려드려요." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="운동복 뭐사지? 🏋️" />
+  <meta property="og:description" content="운동 시작 전 쇼핑 가이드 — 종목만 고르면 AI가 필수템 + 가격대 + 어디서 살지 알려드려요" />
+  <meta property="og:image" content="https://metaluca8560.vercel.app/gear-og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://metaluca8560.vercel.app/workout-gear.html" />
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117;
+      --card: #161d27;
+      --card2: #1c2532;
+      --line: #2a3546;
+      --text: #e8eef7;
+      --muted: #8b9bb4;
+      --lime: #a3e635;
+      --lime-deep: #84cc16;
+      --amber: #fbbf24;
+      --rose: #fb7185;
+    }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'Pretendard', -apple-system, sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; padding-bottom: 60px;
+    }
+    .wrap { max-width: 560px; margin: 0 auto; padding: 0 18px; }
+    .header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 0 6px;
+    }
+    .header a { color: var(--muted); font-size: 14px; text-decoration: none; }
+    .hero { padding: 22px 0 10px; }
+    .hero h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; }
+    .hero h1 em { font-style: normal; color: var(--lime); }
+    .hero p { margin-top: 8px; color: var(--muted); font-size: 15px; line-height: 1.55; }
+    .section-label { font-size: 14px; font-weight: 700; color: var(--muted); margin: 26px 0 10px; }
+    .section-label b { color: var(--lime); margin-right: 4px; }
+
+    .sports { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .sport {
+      background: var(--card); border: 1.5px solid var(--line); border-radius: 16px;
+      padding: 14px 6px 12px; text-align: center; cursor: pointer; user-select: none;
+      transition: border-color .15s, transform .1s;
+    }
+    .sport:active { transform: scale(.96); }
+    .sport .ico { font-size: 28px; display: block; }
+    .sport .nm { display: block; margin-top: 6px; font-size: 13.5px; font-weight: 600; color: var(--text); }
+    .sport.on { border-color: var(--lime); background: rgba(163,230,53,.09); }
+    .sport.on .nm { color: var(--lime); }
+
+    .seg { display: flex; gap: 8px; }
+    .seg button {
+      flex: 1; background: var(--card); border: 1.5px solid var(--line); color: var(--text);
+      border-radius: 12px; padding: 12px 0; font-size: 14.5px; font-weight: 600; cursor: pointer;
+      font-family: inherit; transition: border-color .15s;
+    }
+    .seg button.on { border-color: var(--lime); background: rgba(163,230,53,.09); color: var(--lime); }
+    .seg .hint { display:block; font-size: 11.5px; font-weight: 500; color: var(--muted); margin-top: 3px; }
+    .seg button.on .hint { color: var(--lime); opacity: .8; }
+
+    .cta {
+      width: 100%; margin-top: 30px; background: linear-gradient(135deg, var(--lime), var(--lime-deep));
+      color: #14210a; border: none; border-radius: 16px; padding: 17px 0;
+      font-size: 17px; font-weight: 800; cursor: pointer; font-family: inherit;
+      box-shadow: 0 8px 24px rgba(132,204,22,.25);
+    }
+    .cta:disabled { opacity: .45; box-shadow: none; }
+
+    .loading { display: none; text-align: center; padding: 46px 0 10px; }
+    .loading.show { display: block; }
+    .spinner {
+      width: 42px; height: 42px; border-radius: 50%; margin: 0 auto 16px;
+      border: 4px solid var(--line); border-top-color: var(--lime);
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading p { color: var(--muted); font-size: 14.5px; line-height: 1.6; }
+
+    #result { display: none; margin-top: 34px; }
+    #result.show { display: block; }
+    .sum-card {
+      background: linear-gradient(135deg, rgba(163,230,53,.14), rgba(132,204,22,.05));
+      border: 1.5px solid rgba(163,230,53,.4); border-radius: 18px; padding: 20px;
+    }
+    .sum-card .t { font-size: 13px; font-weight: 700; color: var(--lime); margin-bottom: 8px; }
+    .sum-card .b { font-size: 15.5px; line-height: 1.65; }
+    .budget {
+      margin-top: 12px; background: var(--card); border: 1.5px solid var(--line);
+      border-radius: 18px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .budget span { color: var(--muted); font-size: 14px; font-weight: 600; }
+    .budget b { color: var(--lime); font-size: 20px; font-weight: 800; }
+
+    .item {
+      background: var(--card); border: 1.5px solid var(--line); border-radius: 16px;
+      padding: 16px 18px; margin-bottom: 10px;
+    }
+    .item .top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .item .nm { font-size: 16px; font-weight: 700; }
+    .item .pr { font-size: 14px; font-weight: 700; color: var(--lime); white-space: nowrap; }
+    .item .ds { margin-top: 7px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+    .badge { display: inline-block; font-size: 11.5px; font-weight: 700; border-radius: 999px; padding: 3px 10px; margin-bottom: 8px; }
+    .badge.must { background: rgba(163,230,53,.15); color: var(--lime); }
+    .badge.good { background: rgba(251,191,36,.13); color: var(--amber); }
+    .badge.later { background: rgba(139,155,180,.15); color: var(--muted); }
+
+    .where {
+      background: var(--card2); border: 1.5px solid var(--line); border-radius: 16px;
+      padding: 15px 18px; margin-bottom: 10px;
+    }
+    .where .pl { font-size: 15px; font-weight: 700; }
+    .where .tp { margin-top: 5px; color: var(--muted); font-size: 13.5px; line-height: 1.5; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      background: var(--card); border: 1.5px solid var(--line); color: var(--text);
+      border-radius: 999px; padding: 9px 16px; font-size: 13.5px; font-weight: 600; cursor: pointer;
+      font-family: inherit;
+    }
+    .chip:active { border-color: var(--lime); color: var(--lime); }
+
+    .mistakes { background: var(--card); border: 1.5px solid var(--line); border-radius: 16px; padding: 6px 18px; }
+    .mistakes li { list-style: none; padding: 11px 0; font-size: 14px; line-height: 1.55; color: var(--text); border-bottom: 1px solid var(--line); }
+    .mistakes li:last-child { border-bottom: none; }
+    .mistakes li::before { content: '⚠️ '; }
+
+    .analysis-content { background: var(--card); border: 1.5px solid var(--line); border-radius: 16px; padding: 18px; font-size: 14.5px; line-height: 1.7; }
+    .analysis-content h3 { color: var(--lime); font-size: 16px; margin: 14px 0 6px; }
+    .analysis-content ul { padding-left: 18px; }
+
+    .actions { display: flex; gap: 10px; margin-top: 24px; }
+    .actions button {
+      flex: 1; border-radius: 14px; padding: 14px 0; font-size: 15px; font-weight: 700;
+      cursor: pointer; font-family: inherit; border: 1.5px solid var(--line);
+      background: var(--card); color: var(--text);
+    }
+    .actions .primary { background: linear-gradient(135deg, var(--lime), var(--lime-deep)); color: #14210a; border: none; }
+    .disclaimer { margin-top: 22px; color: var(--muted); font-size: 12px; line-height: 1.6; text-align: center; }
+    .err {
+      display: none; margin-top: 18px; background: rgba(251,113,133,.1); border: 1.5px solid rgba(251,113,133,.4);
+      color: var(--rose); border-radius: 14px; padding: 14px 16px; font-size: 14px; line-height: 1.5;
+    }
+    .err.show { display: block; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header class="header">
+    <span style="font-size:14px;font-weight:700;color:var(--lime)">WORKOUT GEAR</span>
+    <a href="index.html">AI 트렌드 다락방</a>
+  </header>
+
+  <section class="hero">
+    <h1>운동복 <em>뭐사지?</em></h1>
+    <p>종목이랑 레벨만 고르면, AI가 필수템 리스트부터<br>적정 가격대·어디서 살지까지 정리해드려요.</p>
+  </section>
+
+  <div class="section-label"><b>1</b> 어떤 운동 시작해요?</div>
+  <div class="sports" id="sports"></div>
+
+  <div class="section-label"><b>2</b> 지금 나의 단계는?</div>
+  <div class="seg" id="levelSeg">
+    <button data-v="입문">입문<span class="hint">처음이에요</span></button>
+    <button data-v="취미" class="on">취미<span class="hint">몇 달 됐어요</span></button>
+    <button data-v="진심">진심<span class="hint">장비 욕심나요</span></button>
+  </div>
+
+  <div class="section-label"><b>3</b> 쇼핑 예산은?</div>
+  <div class="seg" id="budgetSeg">
+    <button data-v="5만원 이하">~5만원</button>
+    <button data-v="10만원 안팎" class="on">~10만원</button>
+    <button data-v="20만원 안팎">~20만원</button>
+    <button data-v="예산 제한 없음">상관없음</button>
+  </div>
+
+  <button class="cta" id="btnGo" disabled>쇼핑 리스트 뽑기 🛒</button>
+  <div class="err" id="errBox"></div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>AI가 쇼핑 리스트를 짜고 있어요...<br>가격대까지 계산 중 (10초 정도 걸려요)</p>
+  </div>
+
+  <section id="result">
+    <div id="resultContent"></div>
+    <div class="actions">
+      <button class="primary" onclick="shareResult()">공유하기</button>
+      <button onclick="resetForm()">다시 고르기</button>
+    </div>
+    <p class="disclaimer">AI가 시장 정보를 바탕으로 안내하는 참고용 가이드예요.<br>특정 쇼핑몰과 제휴 관계가 없고, 실제 가격은 시기에 따라 달라질 수 있어요.</p>
+  </section>
+</div>
+
+<script>
+  const PROXY_URL = '/api/proxy'
+
+  const SPORTS = [
+    ['🏋️','헬스'], ['🏃','러닝'], ['🧘','요가·필라테스'],
+    ['💃','줌바'], ['🤸','에어로빅'], ['🎾','테니스'],
+    ['🏸','배드민턴'], ['⛳','골프'], ['🏊','수영'],
+    ['🥾','등산'], ['🚴','자전거'], ['⚽','축구·풋살'],
+  ]
+
+  let sport = null
+
+  const sportsEl = document.getElementById('sports')
+  SPORTS.forEach(([ico, nm]) => {
+    const d = document.createElement('div')
+    d.className = 'sport'
+    d.innerHTML = `<span class="ico">${ico}</span><span class="nm">${nm}</span>`
+    d.onclick = () => {
+      document.querySelectorAll('.sport').forEach(x => x.classList.remove('on'))
+      d.classList.add('on')
+      sport = nm
+      document.getElementById('btnGo').disabled = false
+    }
+    sportsEl.appendChild(d)
+  })
+
+  function segInit(id) {
+    const seg = document.getElementById(id)
+    seg.querySelectorAll('button').forEach(b => {
+      b.onclick = () => {
+        seg.querySelectorAll('button').forEach(x => x.classList.remove('on'))
+        b.classList.add('on')
+      }
+    })
+  }
+  segInit('levelSeg'); segInit('budgetSeg')
+  const segVal = id => document.querySelector(`#${id} button.on`).dataset.v
+
+  document.getElementById('btnGo').onclick = analyze
+
+  async function analyze() {
+    if (!sport) return
+    const level = segVal('levelSeg'), budget = segVal('budgetSeg')
+    document.getElementById('errBox').classList.remove('show')
+    document.getElementById('result').classList.remove('show')
+    document.getElementById('loading').classList.add('show')
+    document.getElementById('btnGo').disabled = true
+
+    const prompt = [
+      '당신은 한국의 운동용품 쇼핑 가이드 전문가입니다. 아래 조건의 사람에게 운동복·용품 쇼핑 가이드를 만들어주세요.',
+      `- 종목: ${sport}`,
+      `- 레벨: ${level}`,
+      `- 예산: ${budget}`,
+      '',
+      '규칙:',
+      '1. 반드시 아래 JSON 형식으로만 답하세요. JSON 외의 텍스트, 코드펜스, 설명을 붙이지 마세요.',
+      '2. 모든 값은 한국어로만 작성하세요. 영어 단어 혼용 금지 (브랜드명 제외).',
+      '3. items는 5~7개. priority는 "필수", "권장", "나중에" 중 하나. 예산 안에서 필수템부터 채우세요.',
+      '4. price는 "2~4만원" 같은 현실적인 한국 온라인 시세 범위로.',
+      '5. where는 3~4곳. 한국에서 실제로 많이 쓰는 구매처(온라인몰·오프라인)와 그곳에서 사면 좋은 이유.',
+      '6. keywords는 검색창에 그대로 칠 수 있는 구체적인 검색어 4~6개.',
+      '7. mistakes는 이 종목 입문자가 옷·장비 살 때 흔히 하는 실수 3개.',
+      '',
+      '{"summary":"이 사람에게 맞는 쇼핑 전략 2~3문장","totalBudget":"예상 총액 범위","items":[{"name":"","desc":"고를 때 팁 1문장","price":"","priority":"필수"}],"where":[{"place":"","tip":""}],"keywords":[""],"mistakes":[""]}',
+    ].join('\n')
+
+    try {
+      const res = await fetch(PROXY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, temperature: 0.3 }) })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'AI 호출에 실패했어요.')
+      const text = (data.content && data.content[0] && data.content[0].text) || ''
+      renderResult(text)
+    } catch (e) {
+      const box = document.getElementById('errBox')
+      box.textContent = '앗, ' + (e.message || '분석에 실패했어요.') + ' 잠시 후 다시 시도해주세요.'
+      box.classList.add('show')
+    } finally {
+      document.getElementById('loading').classList.remove('show')
+      document.getElementById('btnGo').disabled = false
+    }
+  }
+
+  function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+
+  function renderResult(text) {
+    let d = null
+    try {
+      const m = text.match(/\{[\s\S]*\}/)
+      if (m) d = JSON.parse(m[0])
+    } catch (_) {}
+
+    let html = ''
+    if (d && Array.isArray(d.items)) {
+      html += `<div class="sum-card"><div class="t">🎯 ${esc(sport)} · ${esc(segVal('levelSeg'))} 맞춤 쇼핑 전략</div><div class="b">${esc(d.summary)}</div></div>`
+      if (d.totalBudget) html += `<div class="budget"><span>예상 총 예산</span><b>${esc(d.totalBudget)}</b></div>`
+
+      const groups = [['필수','must','꼭 필요해요'], ['권장','good','있으면 좋아요'], ['나중에','later','급하지 않아요']]
+      groups.forEach(([key, cls, label]) => {
+        const items = d.items.filter(i => i.priority === key)
+        if (!items.length) return
+        html += `<div class="section-label">🛒 ${key} — ${label}</div>`
+        items.forEach(i => {
+          html += `<div class="item"><span class="badge ${cls}">${key}</span><div class="top"><span class="nm">${esc(i.name)}</span><span class="pr">${esc(i.price)}</span></div><div class="ds">${esc(i.desc)}</div></div>`
+        })
+      })
+
+      if (Array.isArray(d.where) && d.where.length) {
+        html += `<div class="section-label">📍 어디서 사면 좋아요?</div>`
+        d.where.forEach(w => { html += `<div class="where"><div class="pl">${esc(w.place)}</div><div class="tp">${esc(w.tip)}</div></div>` })
+      }
+      if (Array.isArray(d.keywords) && d.keywords.length) {
+        html += `<div class="section-label">🔍 검색 꿀키워드 (누르면 복사)</div><div class="chips">`
+        d.keywords.forEach(k => { html += `<button class="chip" onclick="copyKeyword(this)">${esc(k)}</button>` })
+        html += `</div>`
+      }
+      if (Array.isArray(d.mistakes) && d.mistakes.length) {
+        html += `<div class="section-label">입문자가 흔히 하는 실수</div><ul class="mistakes">`
+        d.mistakes.forEach(mi => { html += `<li>${esc(mi)}</li>` })
+        html += `</ul>`
+      }
+      window.__lastSummary = d.summary || ''
+    } else {
+      // JSON 파싱 실패 시 원문 그대로 보여주기
+      html += `<div class="section-label">AI 쇼핑 가이드</div><div class="analysis-content">${renderMarkdown(text)}</div>`
+      window.__lastSummary = ''
+    }
+    document.getElementById('resultContent').innerHTML = html
+    document.getElementById('result').classList.add('show')
+    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  function renderMarkdown(text) {
+    return esc(text)
+      .replace(/### (.+)/g,'<h3>$1</h3>').replace(/## (.+)/g,'<h3>$1</h3>')
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/^- (.+)/gm,'<li>$1</li>').replace(/(<li>.*<\/li>\n?)+/g,m=>`<ul>${m}</ul>`)
+      .replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')
+  }
+
+  function copyKeyword(el) {
+    navigator.clipboard.writeText(el.textContent).then(() => {
+      const t = el.textContent; el.textContent = '복사됨!'
+      setTimeout(() => { el.textContent = t }, 900)
+    })
+  }
+
+  // ── 공유하기: 앱인토스 SDK → Web Share API → 클립보드 순으로 폴백 ──
+  function buildShareText() {
+    const s = window.__lastSummary
+    return `🏋️ 운동복 뭐사지?\n${sport ? sport + ' 시작 전 쇼핑 리스트 뽑아봤어요! ' : ''}${s ? '\n' + s : '종목만 고르면 AI가 필수템이랑 가격대 알려줘요.'}`
+  }
+
+  async function shareResult() {
+    const text = buildShareText()
+    try {
+      if (window.AppsInToss && typeof window.AppsInToss.share === 'function') {
+        let url = location.href
+        if (typeof window.AppsInToss.getTossShareLink === 'function') {
+          try { url = await window.AppsInToss.getTossShareLink() } catch (_) {}
+        }
+        await window.AppsInToss.share({ message: `${text}\n${url}` })
+        return
+      }
+    } catch (_) { /* SDK 공유 실패 시 아래 폴백으로 */ }
+    if (navigator.share) {
+      try { await navigator.share({ title: '운동복 뭐사지?', text, url: location.href }); return }
+      catch (e) { if (e.name === 'AbortError') return }
+    }
+    await navigator.clipboard.writeText(`${text}\n${location.href}`)
+    alert('공유 문구가 클립보드에 복사됐어요!')
+  }
+
+  function resetForm() {
+    document.getElementById('result').classList.remove('show')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+</script>
+</body>
+</html>
