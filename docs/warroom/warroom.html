@@ -166,25 +166,29 @@
   <header>
     <h1>METALUCA <span class="accent">미니앱 워룸</span></h1>
     <p class="brief">
-      2026-07-24 갱신 · 최신 커밋 <span class="commit">ee9d85c</span> (PR #55 머지 — 클로페이·레포 공유 카드) ·
-      <b>클로페이 풀스택 완성 + 보안 조치 실서비스 반영</b> — 테스트 결제·클라우드 지갑 가입까지 검증 끝, 라이브 키만 남음 ·
+      2026-07-24 갱신 · 최신 커밋 <span class="commit">7621e10</span> (PR #54~#59 하루 6연속 머지) ·
+      <b>클로페이 풀스택 완성 + 보안 조치 + 푸름이 공유 카드 3종</b> — 테스트 결제·클라우드 지갑 가입까지 검증 끝, 라이브 키만 남음 ·
       다음 타깃: 랜딩 리드 폼 완성 (1순위) → 숏폼 통합 대시보드 (2순위)
     </p>
   </header>
 
   <section>
     <div class="stats">
-      <div class="tile"><div class="num">114</div><div class="label">누적 커밋</div></div>
+      <div class="tile"><div class="num">118</div><div class="label">누적 커밋</div></div>
       <div class="tile"><div class="num ok">9</div><div class="label">토스 미니앱 (miniapp-*)</div></div>
       <div class="tile"><div class="num gold">12+</div><div class="label">웹 도구 (분석기·계산기)</div></div>
-      <div class="tile"><div class="num mono">#55</div><div class="label">최근 머지 PR</div></div>
+      <div class="tile"><div class="num mono">#59</div><div class="label">최근 머지 PR</div></div>
     </div>
   </section>
 
   <section>
     <h2>최근 작업 흐름 <small>머지 순</small></h2>
     <ul class="timeline">
-      <li class="fix"><span class="t">API 프록시·웹훅 보안 조치</span><span class="hash">7/24</span>
+      <li class="brand"><span class="t">푸름이 공유 카드 3종</span><span class="hash">#55~59</span>
+        <div class="d">클로페이 OG · 레포 소셜 프리뷰 · 워룸 OG — 카톡 공유 시 빈 카드 해소, 전신 푸름이로 시리즈 통일</div></li>
+      <li class="feat"><span class="t">클라우드 지갑 가입 플로우 완성</span><span class="hash">#54</span>
+        <div class="d">Supabase 인증 URL 설정 + 가입 메일 리다이렉트 수정 — 가입→인증→로그인 검증 완료</div></li>
+      <li class="fix"><span class="t">API 프록시·웹훅 보안 조치</span><span class="hash">#54</span>
         <div class="d">Netlify 프록시 출처 제한 + 레이트리밋, n8n 웹훅 서버 중계화 — IDEA-TRACES A항 해소</div></li>
       <li class="feat"><span class="t">클로페이 2단계 완성</span><span class="hash">7/24</span>
         <div class="d">승인 백엔드(Apps Script) + Supabase 클라우드 지갑 연결 — 테스트 결제 완주 가능</div></li>
