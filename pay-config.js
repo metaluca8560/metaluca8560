@@ -24,7 +24,7 @@
       - anon 키는 공개되어도 되는 키입니다. service_role 키는 절대 여기 넣지 마세요! */
 window.CLOPAY_CONFIG = {
   clientKey: "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm", // 공식 문서 공용 테스트 키
-  confirmEndpoint: "", // Apps Script 웹 앱 URL (…/exec)
-  supabaseUrl: "",     // 예: https://xxxx.supabase.co
-  supabaseAnonKey: "", // Supabase anon public 키
+  confirmEndpoint: "https://script.google.com/macros/s/AKfycbxe9GQLJwFgsUoBQ43jSOwmJCjGtKhpMEqis_KU8-8FB24am6S6K3qSLaEej-4dQ2sDrg/exec", // Apps Script 웹 앱 (클로페이 결제승인)
+  supabaseUrl: "https://ermdkptzpipumxkqaiex.supabase.co",
+  supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVybWRrcHR6cGlwdW14a3FhaWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4Nzc0NTUsImV4cCI6MjEwMDQ1MzQ1NX0.rVlX1qHA18kYa9B7klSofztByhvZqXw-LMDXNPv0i_E",
 };
