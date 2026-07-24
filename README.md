@@ -30,4 +30,4 @@ python3 -m http.server 8000
 ## 배포
 
 정적 파일이라 Netlify, GitHub Pages, Vercel 등 어디든 그대로 올리면 됩니다.
-현재 배포: https://metaluca8560.netlify.app/
+현재 배포: https://luca-darakbang.netlify.app/ (Netlify 프로젝트 luca-darakbang, main 푸시 시 자동 배포)
