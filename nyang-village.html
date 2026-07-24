@@ -8,6 +8,9 @@
   <meta property="og:type" content="website" />
   <meta property="og:title" content="디지털 다락방 마을 냥이동 🐱" />
   <meta property="og:description" content="고양이가 되어 냥이동에 전입하세요. 1기 주민 1,000명 한정 — 나만의 픽셀 주민증 발급" />
+  <meta property="og:image" content="https://metaluca8560.vercel.app/nyang-og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:url" content="https://metaluca8560.vercel.app/nyang-village.html" />
   <link rel="icon" type="image/svg+xml" href="logo.svg" />
   <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
@@ -24,6 +27,7 @@
       --gold: #f5c84c;
       --gold-deep: #e0a92e;
       --sky: #8fb8ff;
+      --rose: #fb7185;
     }
     html { -webkit-text-size-adjust: 100%; }
     body { font-family: 'Pretendard', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 60px; }
@@ -37,7 +41,20 @@
     .hero .underline { width: 120px; height: 3px; background: var(--gold); margin: 14px auto 0; border-radius: 2px; }
     .hero p { margin-top: 14px; color: var(--muted); font-size: 15px; line-height: 1.6; }
     .notice { margin-top: 18px; background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 13px 16px; font-size: 13.5px; color: var(--sky); text-align: center; }
+    .pop { margin-top: 10px; text-align: center; font-size: 14px; color: var(--muted); }
+    .pop b { color: var(--gold); font-size: 17px; }
     .section-label { font-size: 14px; font-weight: 700; color: var(--muted); margin: 24px 0 10px; }
+    .elders { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .elder {
+      background: var(--card); border: 1.5px solid var(--line); border-radius: 14px;
+      padding: 14px 10px 12px; text-align: center;
+    }
+    .elder canvas { width: 60px; height: 48px; image-rendering: pixelated; }
+    .elder .nm { margin-top: 6px; font-size: 15px; font-weight: 800; color: var(--gold); }
+    .elder .rl { margin-top: 2px; font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .recent { margin-top: 10px; background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 16px; font-size: 13.5px; color: var(--muted); display: none; }
+    .recent.show { display: block; }
+    .recent span { color: var(--text); font-weight: 600; }
     .field input {
       width: 100%; background: var(--card); border: 1.5px solid var(--line); color: var(--text);
       border-radius: 12px; padding: 14px 16px; font-size: 15px; font-family: inherit;
@@ -60,6 +77,8 @@
       box-shadow: 0 8px 24px rgba(224,169,46,.25);
     }
     .cta:disabled { opacity: .5; cursor: default; }
+    .err { display: none; margin-top: 16px; background: rgba(251,113,133,.1); border: 1.5px solid rgba(251,113,133,.4); color: var(--rose); border-radius: 14px; padding: 14px 16px; font-size: 14px; }
+    .err.show { display: block; }
     .result { display: none; margin-top: 28px; }
     .result.show { display: block; }
     .result .frame { border-radius: 18px; overflow: hidden; border: 1.5px solid var(--line); box-shadow: 0 16px 40px rgba(0,0,0,.45); }
@@ -86,7 +105,23 @@
       <div class="underline"></div>
       <p>디지털 다락방 마을 만들기 프로젝트 — 최종 목표 인구 100만.<br />고양이가 되어 첫 마을 <b>냥이동</b>에 전입하세요.</p>
       <div class="notice">🏠 1기 주민 1,000명 한정 · 전입 즉시 픽셀 주민증 발급</div>
+      <p class="pop" id="popBox" hidden>현재 전입 주민 <b id="popNow">0</b> / 1,000명</p>
     </section>
+
+    <p class="section-label">먼저 전입한 주민들</p>
+    <div class="elders">
+      <div class="elder">
+        <canvas id="elder1" width="40" height="32"></canvas>
+        <p class="nm">루릭</p>
+        <p class="rl">1번째 주민 · 촌장<br />텔레그램에 사는 검은냥</p>
+      </div>
+      <div class="elder">
+        <canvas id="elder2" width="40" height="32"></canvas>
+        <p class="nm">푸름이</p>
+        <p class="rl">2번째 주민 · 부촌장<br />슬랙에 사는 고등어냥</p>
+      </div>
+    </div>
+    <div class="recent" id="recentBox">🐾 최근 전입: <span id="recentNames"></span></div>
 
     <p class="section-label">전입자 이름 (닉네임)</p>
     <div class="field"><input id="nameInput" type="text" maxlength="10" placeholder="예: 루카" autocomplete="off" /></div>
@@ -95,6 +130,7 @@
     <div class="breeds" id="breedGrid"></div>
 
     <button class="cta" id="issueBtn">냥이동 전입신고 하기 🐾</button>
+    <div class="err" id="errBox"></div>
 
     <section class="result" id="result">
       <div class="frame"><canvas id="cardCanvas" width="750" height="960"></canvas></div>
@@ -109,6 +145,8 @@
     </footer>
   </div>
 
+  <script src="https://fastly.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="nyang-config.js"></script>
   <script>
     // ── 픽셀 고양이 도트맵 ──────────────────────────────
     // . 빈칸 / b 몸통 / p 무늬 / c 가슴·주둥이 / e 눈 / n 코
@@ -139,6 +177,10 @@
       { key: 'white',   name: '흰냥',     b: '#f2f4fa', p: '#d8dcea', c: '#ffffff' },
     ];
     var EYE = '#101426', NOSE = '#e88ca0';
+    function breedOf(key) {
+      for (var i = 0; i < BREEDS.length; i++) if (BREEDS[i].key === key) return BREEDS[i];
+      return BREEDS[0];
+    }
 
     function drawCat(ctx, breed, x, y, px) {
       for (var r = 0; r < CAT_GRID.length; r++) {
@@ -150,6 +192,10 @@
         }
       }
     }
+
+    // 명예 주민 아바타
+    drawCat(document.getElementById('elder1').getContext('2d'), breedOf('black'), 0, 0, 2);
+    drawCat(document.getElementById('elder2').getContext('2d'), breedOf('mackerel'), 0, 0, 2);
 
     // ── 종류 선택 버튼 ──────────────────────────────
     var grid = document.getElementById('breedGrid');
@@ -172,14 +218,43 @@
       grid.appendChild(btn);
     });
 
-    // ── 주민번호: 같은 이름이면 항상 같은 번호 (1~1000) ──
-    function residentNo(name) {
+    // ── 클라우드 명부 (Supabase) — 설정 없으면 로컬 데모 모드 ──
+    var CFG = window.NYANG_CONFIG || {};
+    var sb = (CFG.supabaseUrl && CFG.supabaseAnonKey && window.supabase)
+      ? window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey)
+      : null;
+
+    function refreshStats() {
+      if (!sb) return;
+      sb.rpc('nyang_stats').then(function (res) {
+        if (res.error || !res.data) return;
+        var popBox = document.getElementById('popBox');
+        popBox.hidden = false;
+        document.getElementById('popNow').textContent = res.data.total.toLocaleString();
+        if (res.data.total >= 1000) {
+          var btn = document.getElementById('issueBtn');
+          btn.disabled = true;
+          btn.textContent = '1기 주민 모집 마감 🙀';
+        }
+        var recent = (res.data.recent || []).filter(function (r) { return r.resident_no > 2; });
+        if (recent.length) {
+          document.getElementById('recentNames').textContent = recent.map(function (r) {
+            return r.name + ' (' + r.resident_no + '번)';
+          }).join(' · ');
+          document.getElementById('recentBox').classList.add('show');
+        }
+      });
+    }
+    refreshStats();
+
+    // ── 로컬 데모 모드: 같은 이름이면 항상 같은 번호 (3~1000) ──
+    function localResidentNo(name) {
       var saved = {};
       try { saved = JSON.parse(localStorage.getItem('nyangResidents') || '{}'); } catch (e) {}
       if (saved[name]) return saved[name];
       var h = 0;
       for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
-      var no = (h % 999) + 2; // 1번 주민은 촌장님 몫
+      var no = (h % 998) + 3; // 1·2번은 촌장단 몫
       saved[name] = no;
       try { localStorage.setItem('nyangResidents', JSON.stringify(saved)); } catch (e) {}
       return no;
@@ -190,7 +265,7 @@
     var ctx = canvas.getContext('2d');
     var W = canvas.width, H = canvas.height;
 
-    function drawCard(name, breed) {
+    function drawCard(name, breed, no) {
       // 배경
       ctx.fillStyle = '#0d1226';
       ctx.fillRect(0, 0, W, H);
@@ -213,7 +288,7 @@
       ctx.fillStyle = '#8b93bd';
       ctx.font = '600 22px Pretendard';
       var ey = 'DIGITAL DARAKBANG PROJECT';
-      ctx.fillText(ey.split('').join(' '), W / 2, 92);
+      ctx.fillText(ey.split('').join(' '), W / 2, 92);
       ctx.fillStyle = '#eef1ff';
       ctx.font = '800 44px Pretendard';
       ctx.fillText('디지털 다락방 마을 냥이동', W / 2, 152);
@@ -231,7 +306,7 @@
       // 주민 정보
       ctx.fillStyle = '#eef1ff';
       ctx.font = '700 34px Pretendard';
-      ctx.fillText('냥이동 ' + residentNo(name) + '번째 주민', W / 2, 758);
+      ctx.fillText('냥이동 ' + no + '번째 주민', W / 2, 758);
       var d = new Date();
       var dateStr = d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0');
       ctx.fillStyle = '#9aa3cf';
@@ -254,13 +329,47 @@
 
     // ── 동작 ──────────────────────────────
     var result = document.getElementById('result');
-    document.getElementById('issueBtn').addEventListener('click', function () {
+    var errBox = document.getElementById('errBox');
+    var issueBtn = document.getElementById('issueBtn');
+
+    function showErr(msg) {
+      errBox.textContent = msg;
+      errBox.classList.add('show');
+    }
+
+    issueBtn.addEventListener('click', function () {
       var name = document.getElementById('nameInput').value.trim();
+      errBox.classList.remove('show');
       if (!name) { document.getElementById('nameInput').focus(); return; }
-      drawCard(name, BREEDS[selected]);
-      result.classList.add('show');
-      result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      var breed = BREEDS[selected];
+
+      function issue(no) {
+        drawCard(name, breed, no);
+        result.classList.add('show');
+        result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        refreshStats();
+      }
+
+      if (!sb) { issue(localResidentNo(name)); return; }
+
+      issueBtn.disabled = true;
+      issueBtn.textContent = '전입신고 처리 중…';
+      sb.rpc('nyang_move_in', { p_name: name, p_breed: breed.key }).then(function (res) {
+        issueBtn.disabled = false;
+        issueBtn.textContent = '냥이동 전입신고 하기 🐾';
+        if (res.error) {
+          // 이미 전입한 이름인데 다른 종류를 고른 경우 등 DB 메시지를 그대로 안내
+          showErr(res.error.message || '전입신고에 실패했어요. 잠시 후 다시 시도해 주세요.');
+          return;
+        }
+        if (res.data.existing) {
+          breed = breedOf(res.data.breed); // 처음 전입할 때 고른 종류 유지
+          showErr('이미 전입한 이름이라 기존 주민증을 다시 발급했어요. (' + res.data.resident_no + '번)');
+        }
+        issue(res.data.resident_no);
+      });
     });
+
     document.getElementById('retryBtn').addEventListener('click', function () {
       result.classList.remove('show');
       window.scrollTo({ top: 0, behavior: 'smooth' });
