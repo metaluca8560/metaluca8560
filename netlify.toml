@@ -12,3 +12,9 @@
   from = "/api/confirm-payment"
   to = "/.netlify/functions/confirm-payment"
   status = 200
+
+# n8n 웹훅 알림 중계 (웹훅 주소를 클라이언트에 노출하지 않기 위함)
+[[redirects]]
+  from = "/api/notify"
+  to = "/.netlify/functions/notify"
+  status = 200

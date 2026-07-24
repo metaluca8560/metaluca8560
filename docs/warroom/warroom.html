@@ -178,6 +178,10 @@
   <section>
     <h2>최근 작업 흐름 <small>머지 순</small></h2>
     <ul class="timeline">
+      <li class="fix"><span class="t">API 프록시·웹훅 보안 조치</span><span class="hash">7/24</span>
+        <div class="d">Netlify 프록시 출처 제한 + 레이트리밋, n8n 웹훅 서버 중계화 — IDEA-TRACES A항 해소</div></li>
+      <li class="feat"><span class="t">클로페이 2단계 완성</span><span class="hash">7/24</span>
+        <div class="d">승인 백엔드(Apps Script) + Supabase 클라우드 지갑 연결 — 테스트 결제 완주 가능</div></li>
       <li class="brand"><span class="t">콘솔 appName 정합 3연타</span><span class="hash">79d44c4</span>
         <div class="d">gift → gyeongjosa-note · lunch → lunch-molppang · severance → severance-pay, 브랜딩도 콘솔 앱 이름에 맞춤</div></li>
       <li class="feat"><span class="t">7·8·9호 킬러 기능</span><span class="hash">d7d80f6</span>
@@ -199,8 +203,8 @@
       <div class="row"><span class="name">배포</span><span class="desc">metaluca8560.netlify.app · 정적 빌드, 푸시하면 자동 반영</span><span class="pill live">LIVE</span></div>
       <div class="row"><span class="name">클로페이 결제</span><span class="desc">승인 백엔드(Apps Script) 연결 완료 · 테스트 결제 완주 + 구글시트 원장 + 메일 알림 — 남은 건 라이브 전환(사업자·PG 계약)뿐</span><span class="pill live">2/3 단계</span></div>
       <div class="row"><span class="name">클라우드 지갑</span><span class="desc">Supabase 연결 완료 (Seoul) · 이메일 로그인 + 기기 간 잔액 동기화 + 회원 간 송금 활성</span><span class="pill live">LIVE</span></div>
-      <div class="row"><span class="name">API 프록시 보안</span><span class="desc">출처 제한·사용량 상한 미적용 — IDEA-TRACES 2부 A항 조치 필요</span><span class="pill hot">조치 필요</span></div>
-      <div class="row"><span class="name">n8n 알림</span><span class="desc">유튜브 분석기 웹훅 연동됨 · 시크릿 헤더 검증 권장</span><span class="pill wip">보강</span></div>
+      <div class="row"><span class="name">API 프록시 보안</span><span class="desc">7/24 조치 완료 — Netlify 프록시 2종(일반·꿈 스트리밍)에 출처 허용목록 + 분당 10회 제한 + 입력 8천자 상한</span><span class="pill live">조치 완료</span></div>
+      <div class="row"><span class="name">n8n 알림</span><span class="desc">웹훅 주소를 HTML에서 제거, 서버 중계(/api/notify)로 이전 — n8n 웹훅 경로 재발급 후 환경변수 등록만 권장</span><span class="pill live">조치 완료</span></div>
     </div>
   </section>
 

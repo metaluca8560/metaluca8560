@@ -447,14 +447,14 @@
   // 카카오페이 송금 링크가 있으면 입력 (없으면 계좌 복사 + 카카오페이 계좌송금 안내로 동작)
   const KAKAOPAY_LINK = 'https://qr.kakaopay.com/FRzTVY4W8'
   const PRICE = 3900
-  // 송금 완료 클릭 시 운영자에게 알림(입금자명·시간)을 보낼 n8n 웹훅 (미설정 시 알림 생략)
-  const N8N_PAYMENT_WEBHOOK_URL = 'https://lucame296.app.n8n.cloud/webhook/dream-payment-notify'
+  // 송금 완료 클릭 시 운영자 알림 — n8n 웹훅 주소는 서버 중계(/api/notify)가 보관해요 (클라이언트 미노출)
+  const N8N_PAYMENT_WEBHOOK_URL = '/api/notify?kind=payment'
   // 카카오 개발자 콘솔(developers.kakao.com) 앱의 JavaScript 키를 넣으면 카카오톡 공유 카드가 활성화돼요.
   // 키가 없어도 모바일 공유 시트(카카오톡 선택 가능) → 클립보드 복사 순으로 자동 대체됩니다.
   const KAKAO_JS_KEY = ''
-  // n8n에 n8n-dream-email-workflow.json을 임포트·활성화하면 이 웹훅으로 결과 이메일이 발송돼요.
-  // 미설정이거나 전송 실패 시 기기의 메일 앱(mailto)으로 자동 대체됩니다.
-  const N8N_EMAIL_WEBHOOK_URL = 'https://lucame296.app.n8n.cloud/webhook/dream-analysis-email'
+  // 결과 이메일 발송 — n8n 웹훅 주소는 서버 중계(/api/notify)가 보관해요 (클라이언트 미노출).
+  // n8n에 n8n-dream-email-workflow.json을 임포트·활성화하면 발송되고, 실패 시 메일 앱(mailto)으로 자동 대체됩니다.
+  const N8N_EMAIL_WEBHOOK_URL = '/api/notify?kind=email'
 
   let lastShare = null // 마지막 분석 결과의 공유용 요약
   let lastAnalysisText = null // 마지막 AI 리포트 전문 (이메일 발송용)
