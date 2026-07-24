@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>디지털 다락방 마을 냥이동 — 주민증 발급소</title>
+  <meta name="description" content="디지털 다락방 마을 만들기 프로젝트. 고양이가 되어 첫 마을 냥이동에 전입하고 픽셀 주민증을 발급받으세요." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="디지털 다락방 마을 냥이동 🐱" />
+  <meta property="og:description" content="고양이가 되어 냥이동에 전입하세요. 1기 주민 1,000명 한정 — 나만의 픽셀 주민증 발급" />
+  <meta property="og:url" content="https://metaluca8560.vercel.app/nyang-village.html" />
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1226;
+      --card: #151b36;
+      --card2: #1b2244;
+      --line: #2a3360;
+      --text: #eef1ff;
+      --muted: #9aa3cf;
+      --gold: #f5c84c;
+      --gold-deep: #e0a92e;
+      --sky: #8fb8ff;
+    }
+    html { -webkit-text-size-adjust: 100%; }
+    body { font-family: 'Pretendard', -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 60px; }
+    .wrap { max-width: 560px; margin: 0 auto; padding: 0 18px; }
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 18px 0 6px; }
+    .header a { color: var(--muted); font-size: 14px; text-decoration: none; }
+    .hero { padding: 22px 0 8px; text-align: center; }
+    .hero .eyebrow { font-size: 12px; letter-spacing: 4px; color: var(--muted); font-weight: 600; }
+    .hero h1 { margin-top: 8px; font-size: 30px; font-weight: 800; letter-spacing: -0.5px; }
+    .hero h1 em { font-style: normal; color: var(--gold); }
+    .hero .underline { width: 120px; height: 3px; background: var(--gold); margin: 14px auto 0; border-radius: 2px; }
+    .hero p { margin-top: 14px; color: var(--muted); font-size: 15px; line-height: 1.6; }
+    .notice { margin-top: 18px; background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 13px 16px; font-size: 13.5px; color: var(--sky); text-align: center; }
+    .section-label { font-size: 14px; font-weight: 700; color: var(--muted); margin: 24px 0 10px; }
+    .field input {
+      width: 100%; background: var(--card); border: 1.5px solid var(--line); color: var(--text);
+      border-radius: 12px; padding: 14px 16px; font-size: 15px; font-family: inherit;
+    }
+    .field input:focus { outline: none; border-color: var(--gold); }
+    .breeds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .breeds button {
+      background: var(--card); border: 1.5px solid var(--line); color: var(--text);
+      border-radius: 12px; padding: 10px 4px 8px; cursor: pointer; font-family: inherit;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .breeds button canvas { width: 44px; height: 40px; image-rendering: pixelated; }
+    .breeds button span { font-size: 12.5px; font-weight: 600; }
+    .breeds button.on { border-color: var(--gold); background: rgba(245,200,76,.08); }
+    .breeds button.on span { color: var(--gold); }
+    .cta {
+      width: 100%; margin-top: 26px; background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+      color: #241a05; border: none; border-radius: 16px; padding: 17px 0;
+      font-size: 17px; font-weight: 800; cursor: pointer; font-family: inherit;
+      box-shadow: 0 8px 24px rgba(224,169,46,.25);
+    }
+    .cta:disabled { opacity: .5; cursor: default; }
+    .result { display: none; margin-top: 28px; }
+    .result.show { display: block; }
+    .result .frame { border-radius: 18px; overflow: hidden; border: 1.5px solid var(--line); box-shadow: 0 16px 40px rgba(0,0,0,.45); }
+    .result canvas { width: 100%; display: block; }
+    .btn-row { display: flex; gap: 10px; margin-top: 14px; }
+    .btn-row button {
+      flex: 1; background: var(--card2); border: 1.5px solid var(--line); color: var(--text);
+      border-radius: 14px; padding: 14px 0; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
+    }
+    .btn-row button.primary { background: linear-gradient(135deg, var(--gold), var(--gold-deep)); color: #241a05; border: none; }
+    .foot { margin-top: 44px; text-align: center; color: var(--muted); font-size: 12.5px; line-height: 1.7; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <a href="index.html">← 다락방</a>
+      <a href="#" id="shareLink">공유</a>
+    </div>
+
+    <section class="hero">
+      <p class="eyebrow">DIGITAL DARAKBANG PROJECT</p>
+      <h1>디지털 다락방 마을 <em>냥이동</em></h1>
+      <div class="underline"></div>
+      <p>디지털 다락방 마을 만들기 프로젝트 — 최종 목표 인구 100만.<br />고양이가 되어 첫 마을 <b>냥이동</b>에 전입하세요.</p>
+      <div class="notice">🏠 1기 주민 1,000명 한정 · 전입 즉시 픽셀 주민증 발급</div>
+    </section>
+
+    <p class="section-label">전입자 이름 (닉네임)</p>
+    <div class="field"><input id="nameInput" type="text" maxlength="10" placeholder="예: 루카" autocomplete="off" /></div>
+
+    <p class="section-label">고양이 종류</p>
+    <div class="breeds" id="breedGrid"></div>
+
+    <button class="cta" id="issueBtn">냥이동 전입신고 하기 🐾</button>
+
+    <section class="result" id="result">
+      <div class="frame"><canvas id="cardCanvas" width="750" height="960"></canvas></div>
+      <div class="btn-row">
+        <button class="primary" id="saveBtn">주민증 저장</button>
+        <button id="retryBtn">다시 만들기</button>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <p>제작 디지털다락방 · © <span id="year"></span> LUCA</p>
+    </footer>
+  </div>
+
+  <script>
+    // ── 픽셀 고양이 도트맵 ──────────────────────────────
+    // . 빈칸 / b 몸통 / p 무늬 / c 가슴·주둥이 / e 눈 / n 코
+    var CAT_GRID = [
+      '....................',
+      '..pp..........pp....',
+      '..bpp........ppb....',
+      '..bbbp......pbbb....',
+      '..bbbbbbbbbbbbbb....',
+      '..bbbbbbbbbbbbbb....',
+      '..bbebbbbbbbebbb....',
+      '..bbbbbccbbbbbbb....',
+      '..bbbbccccbbbbbb....',
+      '...bbbbcnbbbbbb.....',
+      '..bbbbbbbbbbbbbb..p.',
+      '..bpbbbbbbbbpbbb.pp.',
+      '..bpbbccccbbpbbb.pb.',
+      '..bbbbccccbbbbbbppb.',
+      '..bbbbbbbbbbbbbbbb..',
+      '...bbb..bbb..bbb....',
+    ];
+    var BREEDS = [
+      { key: 'cheese',  name: '치즈냥',   b: '#f2b04a', p: '#d18a2a', c: '#fae4b8' },
+      { key: 'tuxedo',  name: '턱시도냥', b: '#2e3548', p: '#1d2334', c: '#f4f5fa' },
+      { key: 'mackerel',name: '고등어냥', b: '#9aa5b8', p: '#5d6a80', c: '#e8ecf4' },
+      { key: 'calico',  name: '삼색냥',   b: '#f4f0e6', p: '#e09a3e', c: '#f4f0e6' },
+      { key: 'black',   name: '검은냥',   b: '#23283a', p: '#171b2a', c: '#3a4158' },
+      { key: 'white',   name: '흰냥',     b: '#f2f4fa', p: '#d8dcea', c: '#ffffff' },
+    ];
+    var EYE = '#101426', NOSE = '#e88ca0';
+
+    function drawCat(ctx, breed, x, y, px) {
+      for (var r = 0; r < CAT_GRID.length; r++) {
+        for (var col = 0; col < CAT_GRID[r].length; col++) {
+          var ch = CAT_GRID[r][col];
+          if (ch === '.') continue;
+          ctx.fillStyle = ch === 'b' ? breed.b : ch === 'p' ? breed.p : ch === 'c' ? breed.c : ch === 'e' ? EYE : NOSE;
+          ctx.fillRect(x + col * px, y + r * px, px, px);
+        }
+      }
+    }
+
+    // ── 종류 선택 버튼 ──────────────────────────────
+    var grid = document.getElementById('breedGrid');
+    var selected = 0;
+    BREEDS.forEach(function (b, i) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      var cv = document.createElement('canvas');
+      cv.width = 40; cv.height = 32;
+      drawCat(cv.getContext('2d'), b, 0, 0, 2);
+      var sp = document.createElement('span');
+      sp.textContent = b.name;
+      btn.appendChild(cv); btn.appendChild(sp);
+      btn.addEventListener('click', function () {
+        selected = i;
+        grid.querySelectorAll('button').forEach(function (el) { el.classList.remove('on'); });
+        btn.classList.add('on');
+      });
+      if (i === 0) btn.classList.add('on');
+      grid.appendChild(btn);
+    });
+
+    // ── 주민번호: 같은 이름이면 항상 같은 번호 (1~1000) ──
+    function residentNo(name) {
+      var saved = {};
+      try { saved = JSON.parse(localStorage.getItem('nyangResidents') || '{}'); } catch (e) {}
+      if (saved[name]) return saved[name];
+      var h = 0;
+      for (var i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+      var no = (h % 999) + 2; // 1번 주민은 촌장님 몫
+      saved[name] = no;
+      try { localStorage.setItem('nyangResidents', JSON.stringify(saved)); } catch (e) {}
+      return no;
+    }
+
+    // ── 주민증 카드 렌더링 ──────────────────────────────
+    var canvas = document.getElementById('cardCanvas');
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height;
+
+    function drawCard(name, breed) {
+      // 배경
+      ctx.fillStyle = '#0d1226';
+      ctx.fillRect(0, 0, W, H);
+      // 별
+      var seed = 7;
+      function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+      for (var i = 0; i < 90; i++) {
+        var s = rnd() < 0.85 ? 2 : 4;
+        ctx.fillStyle = 'rgba(238,241,255,' + (0.25 + rnd() * 0.5) + ')';
+        ctx.fillRect(Math.floor(rnd() * W), Math.floor(60 + rnd() * (H - 260)), s, s);
+      }
+      // 큰 별 3개 (포스터 오마주)
+      ctx.fillStyle = '#dfe6ff';
+      ctx.fillRect(W - 130, 220, 16, 16);
+      ctx.fillRect(W - 90, 190, 22, 22);
+      ctx.fillRect(W - 160, 180, 10, 10);
+
+      ctx.textAlign = 'center';
+      // 상단
+      ctx.fillStyle = '#8b93bd';
+      ctx.font = '600 22px Pretendard';
+      var ey = 'DIGITAL DARAKBANG PROJECT';
+      ctx.fillText(ey.split('').join(' '), W / 2, 92);
+      ctx.fillStyle = '#eef1ff';
+      ctx.font = '800 44px Pretendard';
+      ctx.fillText('디지털 다락방 마을 냥이동', W / 2, 152);
+      ctx.fillStyle = '#f5c84c';
+      ctx.fillRect(W / 2 - 110, 178, 220, 5);
+
+      // 고양이 (20칸 × px)
+      var px = 22;
+      drawCat(ctx, breed, (W - 20 * px) / 2, 280, px);
+
+      // 이름
+      ctx.fillStyle = '#f5c84c';
+      ctx.font = '800 68px Pretendard';
+      ctx.fillText(name, W / 2, 700);
+      // 주민 정보
+      ctx.fillStyle = '#eef1ff';
+      ctx.font = '700 34px Pretendard';
+      ctx.fillText('냥이동 ' + residentNo(name) + '번째 주민', W / 2, 758);
+      var d = new Date();
+      var dateStr = d.getFullYear() + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + String(d.getDate()).padStart(2, '0');
+      ctx.fillStyle = '#9aa3cf';
+      ctx.font = '500 28px Pretendard';
+      ctx.fillText('전입일 ' + dateStr, W / 2, 806);
+      ctx.fillText(breed.name, W / 2, 848);
+
+      // 하단 바
+      ctx.fillStyle = '#f5c84c';
+      ctx.fillRect(0, H - 88, W, 4);
+      ctx.fillStyle = '#10162e';
+      ctx.fillRect(0, H - 84, W, 84);
+      ctx.fillStyle = '#c7cdf0';
+      ctx.font = '600 22px Pretendard';
+      ctx.fillText('디지털 다락방 마을 만들기 프로젝트 · 1기 주민 1,000명 한정', W / 2, H - 50);
+      ctx.fillStyle = '#8b93bd';
+      ctx.font = '500 18px Pretendard';
+      ctx.fillText('제작 디지털다락방 · © ' + d.getFullYear() + ' LUCA', W / 2, H - 22);
+    }
+
+    // ── 동작 ──────────────────────────────
+    var result = document.getElementById('result');
+    document.getElementById('issueBtn').addEventListener('click', function () {
+      var name = document.getElementById('nameInput').value.trim();
+      if (!name) { document.getElementById('nameInput').focus(); return; }
+      drawCard(name, BREEDS[selected]);
+      result.classList.add('show');
+      result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    document.getElementById('retryBtn').addEventListener('click', function () {
+      result.classList.remove('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    document.getElementById('saveBtn').addEventListener('click', function () {
+      var a = document.createElement('a');
+      a.download = '냥이동-주민증.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+    document.getElementById('shareLink').addEventListener('click', function (e) {
+      e.preventDefault();
+      if (navigator.share) navigator.share({ title: '디지털 다락방 마을 냥이동', url: location.href });
+      else { navigator.clipboard.writeText(location.href); alert('링크를 복사했어요!'); }
+    });
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
