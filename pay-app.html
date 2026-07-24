@@ -3418,7 +3418,11 @@ async function doSignup() {
   const input = readAuthInput();
   if (!input) return;
   authBusy(true); authMsg("");
-  const { data, error } = await sb.auth.signUp({ email: input.email, password: input.pw });
+  const { data, error } = await sb.auth.signUp({
+    email: input.email, password: input.pw,
+    // 인증 메일 링크가 localhost(Supabase 기본 Site URL)가 아니라 이 지갑 페이지로 돌아오게
+    options: { emailRedirectTo: location.origin + location.pathname },
+  });
   authBusy(false);
   if (error) {
     return authMsg(/already/i.test(error.message)
