@@ -152,7 +152,10 @@ function showError(msg, isHtml) {
       }
     });
   } catch (e) {
-    showError("결제위젯 초기화 실패: " + (e.message || e));
+    // 원인 추적용으로 토스 SDK 에러 코드를 함께 표시
+    console.error("결제위젯 초기화 실패:", e);
+    const detail = (e && e.code ? "[" + e.code + "] " : "") + ((e && e.message) || e);
+    showError("결제위젯 초기화 실패: " + detail);
   }
 })();
 </script>
