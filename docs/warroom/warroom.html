@@ -1,0 +1,242 @@
+<title>METALUCA 미니앱 워룸</title>
+<style>
+  :root {
+    --bg: #241c3f;
+    --bg-2: #322858;
+    --panel: rgba(226, 216, 255, 0.07);
+    --panel-border: rgba(226, 216, 255, 0.18);
+    --text: #f7f4ff;
+    --muted: #beb3dc;
+    --lav: #d6c8ff;
+    --violet: #9d75ff;
+    --gold: #f0d9a4;
+    --ok: #8fd9a8;
+    --warn: #f0c26b;
+    --hot: #f08f8f;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { color-scheme: dark; }
+  body {
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    background:
+      radial-gradient(60% 38% at 50% 0%, rgba(157, 117, 255, 0.28), transparent 70%),
+      linear-gradient(180deg, var(--bg-2), var(--bg) 45%);
+    background-attachment: fixed;
+    color: var(--text);
+    line-height: 1.65;
+    min-height: 100dvh;
+  }
+  .wrap {
+    width: min(760px, 100%);
+    margin: 0 auto;
+    padding: 44px 20px 64px;
+    display: flex; flex-direction: column; gap: 40px;
+  }
+
+  /* ---- 헤더 ---- */
+  header h1 {
+    font-size: clamp(26px, 6vw, 38px);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-wrap: balance;
+  }
+  header h1 .accent { color: var(--violet); }
+  .brief {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .brief b { color: var(--lav); font-weight: 700; }
+  .brief .commit { font-family: var(--mono); color: var(--gold); font-size: 13px; }
+
+  /* ---- 섹션 타이틀 ---- */
+  h2 {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  h2 small { font-weight: 500; color: var(--muted); letter-spacing: 0; margin-left: 8px; font-size: 13px; }
+
+  /* ---- 스탯 타일 ---- */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .tile {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    padding: 18px 16px 14px;
+  }
+  .tile .num {
+    font-size: 30px; font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--lav);
+  }
+  .tile .num.gold { color: var(--gold); }
+  .tile .num.ok { color: var(--ok); }
+  .tile .num.mono { font-family: var(--mono); font-size: 22px; }
+  .tile .label { margin-top: 4px; font-size: 13px; color: var(--muted); }
+
+  /* ---- 타임라인 ---- */
+  .timeline { list-style: none; border-left: 2px solid rgba(214, 200, 255, 0.25); }
+  .timeline li {
+    position: relative;
+    padding: 0 0 18px 20px;
+  }
+  .timeline li:last-child { padding-bottom: 0; }
+  .timeline li::before {
+    content: "";
+    position: absolute; left: -7px; top: 7px;
+    width: 12px; height: 12px; border-radius: 3px;
+    background: var(--violet);
+  }
+  .timeline li.feat::before { background: var(--ok); }
+  .timeline li.fix::before { background: var(--hot); }
+  .timeline li.brand::before { background: var(--gold); }
+  .timeline .t { font-weight: 700; color: var(--text); }
+  .timeline .d { color: var(--muted); font-size: 14px; }
+  .timeline .hash { font-family: var(--mono); font-size: 12px; color: var(--gold); margin-left: 6px; }
+
+  /* ---- 상태 보드 ---- */
+  .board { display: flex; flex-direction: column; gap: 10px; }
+  .row {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+    padding: 12px 16px;
+  }
+  .row .name { font-weight: 700; min-width: 130px; }
+  .row .desc { color: var(--muted); font-size: 14px; flex: 1 1 220px; }
+  .row .desc code { font-family: var(--mono); font-size: 12px; color: var(--lav); }
+  .pill {
+    font-size: 12px; font-weight: 700;
+    padding: 2px 10px; border-radius: 999px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .pill.live { background: rgba(143, 217, 168, 0.15); color: var(--ok); }
+  .pill.wip  { background: rgba(240, 194, 107, 0.15); color: var(--warn); }
+  .pill.hot  { background: rgba(240, 143, 143, 0.15); color: var(--hot); }
+  .pill.hold { background: rgba(190, 179, 220, 0.15); color: var(--muted); }
+
+  /* ---- 백로그 ---- */
+  .backlog { display: flex; flex-direction: column; gap: 10px; counter-reset: rank; }
+  .item {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-left: 3px solid var(--violet);
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+  .item.p1 { border-left-color: var(--gold); }
+  .item.p2 { border-left-color: var(--ok); }
+  .item .head { font-weight: 700; }
+  .item .why { color: var(--muted); font-size: 14px; margin-top: 2px; }
+  .item .tag {
+    display: inline-block; margin-top: 8px;
+    font-family: var(--mono); font-size: 12px;
+    color: var(--gold);
+  }
+
+  /* ---- 각주 ---- */
+  .note {
+    border-top: 1px solid var(--panel-border);
+    padding-top: 18px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .note b { color: var(--lav); }
+  .note code { font-family: var(--mono); font-size: 12px; color: var(--gold); }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>METALUCA <span class="accent">미니앱 워룸</span></h1>
+    <p class="brief">
+      2026-07-24 갱신 · 최신 커밋 <span class="commit">79d44c4</span> (7/19) ·
+      <b>7·8·9호 미니앱 출시 + 콘솔 appName 정합 완료</b> ·
+      다음 타깃: 랜딩 리드 폼 완성 (1순위) → 숏폼 통합 대시보드 (2순위)
+    </p>
+  </header>
+
+  <section>
+    <div class="stats">
+      <div class="tile"><div class="num">112</div><div class="label">누적 커밋</div></div>
+      <div class="tile"><div class="num ok">9</div><div class="label">토스 미니앱 (miniapp-*)</div></div>
+      <div class="tile"><div class="num gold">12+</div><div class="label">웹 도구 (분석기·계산기)</div></div>
+      <div class="tile"><div class="num mono">#53</div><div class="label">최근 머지 PR</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>최근 작업 흐름 <small>머지 순</small></h2>
+    <ul class="timeline">
+      <li class="brand"><span class="t">콘솔 appName 정합 3연타</span><span class="hash">79d44c4</span>
+        <div class="d">gift → gyeongjosa-note · lunch → lunch-molppang · severance → severance-pay, 브랜딩도 콘솔 앱 이름에 맞춤</div></li>
+      <li class="feat"><span class="t">7·8·9호 킬러 기능</span><span class="hash">d7d80f6</span>
+        <div class="d">퇴사 타이밍 시뮬 / 쏘기 룰렛+스트릭 / 경조사 장부</div></li>
+      <li class="feat"><span class="t">7·8·9호 미니앱 신규</span><span class="hash">1c973a9</span>
+        <div class="d">퇴직금 미리보기 · 오늘 점심 뭐먹지? · 축의금 계산기</div></li>
+      <li class="feat"><span class="t">6호 미니앱</span><span class="hash">42c7139</span>
+        <div class="d">운동복 뭐사지? (workout-gear)</div></li>
+      <li class="brand"><span class="t">OG 배너 3종</span><span class="hash">3aecf62</span>
+        <div class="d">푸름이 등장하는 카톡 공유 미리보기 — 급여·몰빵·숏폼</div></li>
+      <li class="fix"><span class="t">앱인토스 도메인 출처 허용</span><span class="hash">cf999e8</span>
+        <div class="d">*.tossmini.com 출처 허용으로 미니앱 로딩 이슈 해결</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>인프라 · 연동 상태</h2>
+    <div class="board">
+      <div class="row"><span class="name">배포</span><span class="desc">metaluca8560.netlify.app · 정적 빌드, 푸시하면 자동 반영</span><span class="pill live">LIVE</span></div>
+      <div class="row"><span class="name">클로페이 결제</span><span class="desc">토스페이먼츠 결제위젯 · 현재 <code>테스트 키</code> 단계 (1/3) — 승인 백엔드(Apps Script) 미연결</span><span class="pill wip">1/3 단계</span></div>
+      <div class="row"><span class="name">클라우드 지갑</span><span class="desc">Supabase 미설정 → 로컬 데모 모드 (기기별 잔액)</span><span class="pill hold">선택</span></div>
+      <div class="row"><span class="name">API 프록시 보안</span><span class="desc">출처 제한·사용량 상한 미적용 — IDEA-TRACES 2부 A항 조치 필요</span><span class="pill hot">조치 필요</span></div>
+      <div class="row"><span class="name">n8n 알림</span><span class="desc">유튜브 분석기 웹훅 연동됨 · 시크릿 헤더 검증 권장</span><span class="pill wip">보강</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>백로그 <small>우선순 · IDEA-TRACES 기준</small></h2>
+    <div class="backlog">
+      <div class="item p1">
+        <div class="head">랜딩 리드 폼 + 카카오 챗봇 연결 완성</div>
+        <div class="why">매출 직결 · 설정만 남음 — "이번 주에 끝내기" 판정</div>
+        <span class="tag">1순위</span>
+      </div>
+      <div class="item p2">
+        <div class="head">숏폼 분석기 3종 → 통합 대시보드</div>
+        <div class="why">코드 중복 70~80% 해소 · 탭 전환 단일 앱 + 분석 이력 저장 · n8n 주간 자동 분석으로 확장</div>
+        <span class="tag">2순위</span>
+      </div>
+      <div class="item">
+        <div class="head">메디컬 앱 + MedInfo MCP 연동</div>
+        <div class="why">병원·약국·응급실 실시간 조회로 포트폴리오 대표작 승격</div>
+        <span class="tag">3순위</span>
+      </div>
+      <div class="item">
+        <div class="head">클로페이 승인 백엔드 붙이기</div>
+        <div class="why">PAYMENTS.md 2단계 — Apps Script 배포 5분 작업, 결제 완주 + 구글시트 원장</div>
+        <span class="tag">단기</span>
+      </div>
+      <div class="item">
+        <div class="head">미니 앱 실험 (10호~)</div>
+        <div class="why">아이디어 즉시 프로토타이핑 트랙 — 여가 시간에</div>
+        <span class="tag">상시</span>
+      </div>
+    </div>
+  </section>
+
+  <p class="note">
+    이 워룸은 <b>Claude Code가 레포 데이터로 갱신하는 상태판</b>입니다.
+    소스는 레포 <code>docs/warroom/</code>에 있으며, 세션에서 "워룸 갱신해줘"라고 하면
+    같은 URL로 최신 상태가 반영됩니다.
+  </p>
+</div>
