@@ -17,10 +17,11 @@ create table if not exists public.nyang_residents (
   created_at  timestamptz not null default now()
 );
 
--- 일반 주민 6종 + 촌장단 전용 2종 (재실행에도 안전하게 별도 제약으로)
+-- 일반 주민 9종 + 촌장단 전용 2종 (재실행에도 안전하게 별도 제약으로)
 alter table public.nyang_residents drop constraint if exists nyang_residents_breed_check;
 alter table public.nyang_residents add constraint nyang_residents_breed_check
-  check (breed in ('cheese','tuxedo','mackerel','calico','black','white','russianblue','sphynx'));
+  check (breed in ('cheese','tuxedo','mackerel','calico','black','white',
+                   'siamese','cow','brown','russianblue','sphynx'));
 
 -- ---------- RLS: 공개 명부(이름·종류·번호)라 누구나 읽기 가능 ----------
 alter table public.nyang_residents enable row level security;
@@ -43,7 +44,7 @@ begin
   if v_name is null or v_name = '' or length(v_name) > 10 then
     raise exception '이름은 1~10자로 입력해 주세요';
   end if;
-  if p_breed not in ('cheese','tuxedo','mackerel','calico','black','white') then
+  if p_breed not in ('cheese','tuxedo','mackerel','calico','black','white','siamese','cow','brown') then
     raise exception '고양이 종류가 올바르지 않습니다';
   end if;
 
