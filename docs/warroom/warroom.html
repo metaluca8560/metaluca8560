@@ -160,7 +160,7 @@
     <h1>METALUCA <span class="accent">미니앱 워룸</span></h1>
     <p class="brief">
       2026-07-24 갱신 ·
-      <b>클로페이 승인 백엔드 연결 완료 (2/3단계)</b> — 테스트 결제 완주 가능 ·
+      <b>클로페이 풀스택 완성 (2/3단계)</b> — 승인 백엔드 + Supabase 클라우드 지갑 연결, 라이브 키만 남음 ·
       7·8·9호 미니앱 출시 + 콘솔 appName 정합 완료 ·
       다음 타깃: 랜딩 리드 폼 완성 (1순위) → 숏폼 통합 대시보드 (2순위)
     </p>
@@ -198,7 +198,7 @@
     <div class="board">
       <div class="row"><span class="name">배포</span><span class="desc">metaluca8560.netlify.app · 정적 빌드, 푸시하면 자동 반영</span><span class="pill live">LIVE</span></div>
       <div class="row"><span class="name">클로페이 결제</span><span class="desc">승인 백엔드(Apps Script) 연결 완료 · 테스트 결제 완주 + 구글시트 원장 + 메일 알림 — 남은 건 라이브 전환(사업자·PG 계약)뿐</span><span class="pill live">2/3 단계</span></div>
-      <div class="row"><span class="name">클라우드 지갑</span><span class="desc">Supabase 미설정 → 로컬 데모 모드 (기기별 잔액)</span><span class="pill hold">선택</span></div>
+      <div class="row"><span class="name">클라우드 지갑</span><span class="desc">Supabase 연결 완료 (Seoul) · 이메일 로그인 + 기기 간 잔액 동기화 + 회원 간 송금 활성</span><span class="pill live">LIVE</span></div>
       <div class="row"><span class="name">API 프록시 보안</span><span class="desc">출처 제한·사용량 상한 미적용 — IDEA-TRACES 2부 A항 조치 필요</span><span class="pill hot">조치 필요</span></div>
       <div class="row"><span class="name">n8n 알림</span><span class="desc">유튜브 분석기 웹훅 연동됨 · 시크릿 헤더 검증 권장</span><span class="pill wip">보강</span></div>
     </div>
@@ -223,8 +223,8 @@
         <span class="tag">3순위</span>
       </div>
       <div class="item">
-        <div class="head">클로페이 Supabase 클라우드 지갑 (선택)</div>
-        <div class="why">승인 백엔드는 7/24 연결 완료 ✅ — 다음 선택지는 기기 간 잔액 동기화·회원 간 송금 (10분)</div>
+        <div class="head">클로페이 테스트 체크리스트 완주</div>
+        <div class="why">백엔드·클라우드 지갑 모두 7/24 연결 완료 ✅ — main 머지 후 PAYMENTS.md 체크리스트 6항목 검증</div>
         <span class="tag">단기</span>
       </div>
       <div class="item">
