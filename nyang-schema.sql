@@ -13,9 +13,14 @@ create table if not exists public.nyang_residents (
   id          bigint generated always as identity primary key,
   resident_no int  not null unique,
   name        text not null unique,
-  breed       text not null check (breed in ('cheese','tuxedo','mackerel','calico','black','white')),
+  breed       text not null,
   created_at  timestamptz not null default now()
 );
+
+-- 일반 주민 6종 + 촌장단 전용 2종 (재실행에도 안전하게 별도 제약으로)
+alter table public.nyang_residents drop constraint if exists nyang_residents_breed_check;
+alter table public.nyang_residents add constraint nyang_residents_breed_check
+  check (breed in ('cheese','tuxedo','mackerel','calico','black','white','russianblue','sphynx'));
 
 -- ---------- RLS: 공개 명부(이름·종류·번호)라 누구나 읽기 가능 ----------
 alter table public.nyang_residents enable row level security;
@@ -83,6 +88,6 @@ grant execute on function public.nyang_stats() to anon, authenticated;
 
 -- ---------- 명예 주민 (촌장단) ----------
 insert into public.nyang_residents (resident_no, name, breed) values
-  (1, '루릭',   'black'),
-  (2, '푸름이', 'mackerel')
+  (1, '푸름이', 'russianblue'),
+  (2, '루릭',   'sphynx')
 on conflict do nothing;

@@ -112,13 +112,13 @@
     <div class="elders">
       <div class="elder">
         <canvas id="elder1" width="40" height="32"></canvas>
-        <p class="nm">루릭</p>
-        <p class="rl">1번째 주민 · 촌장<br />텔레그램에 사는 검은냥</p>
+        <p class="nm">푸름이</p>
+        <p class="rl">1번째 주민 · 촌장<br />슬랙에 사는 러시안블루</p>
       </div>
       <div class="elder">
         <canvas id="elder2" width="40" height="32"></canvas>
-        <p class="nm">푸름이</p>
-        <p class="rl">2번째 주민 · 부촌장<br />슬랙에 사는 고등어냥</p>
+        <p class="nm">루릭</p>
+        <p class="rl">2번째 주민 · 부촌장<br />텔레그램에 사는 스핑크스</p>
       </div>
     </div>
     <div class="recent" id="recentBox">🐾 최근 전입: <span id="recentNames"></span></div>
@@ -176,9 +176,15 @@
       { key: 'black',   name: '검은냥',   b: '#23283a', p: '#171b2a', c: '#3a4158' },
       { key: 'white',   name: '흰냥',     b: '#f2f4fa', p: '#d8dcea', c: '#ffffff' },
     ];
+    // 촌장단 전용 묘종 (선택 목록에는 없음)
+    var ELDER_BREEDS = [
+      { key: 'russianblue', name: '러시안블루', b: '#8494ad', p: '#65758f', c: '#a9b6cb' },
+      { key: 'sphynx',      name: '스핑크스',   b: '#e6c0a8', p: '#cfa088', c: '#f4dcc9' },
+    ];
     var EYE = '#101426', NOSE = '#e88ca0';
     function breedOf(key) {
-      for (var i = 0; i < BREEDS.length; i++) if (BREEDS[i].key === key) return BREEDS[i];
+      var all = BREEDS.concat(ELDER_BREEDS);
+      for (var i = 0; i < all.length; i++) if (all[i].key === key) return all[i];
       return BREEDS[0];
     }
 
@@ -193,9 +199,9 @@
       }
     }
 
-    // 명예 주민 아바타
-    drawCat(document.getElementById('elder1').getContext('2d'), breedOf('black'), 0, 0, 2);
-    drawCat(document.getElementById('elder2').getContext('2d'), breedOf('mackerel'), 0, 0, 2);
+    // 명예 주민 아바타 — 1번 푸름이(러시안블루), 2번 루릭(스핑크스)
+    drawCat(document.getElementById('elder1').getContext('2d'), breedOf('russianblue'), 0, 0, 2);
+    drawCat(document.getElementById('elder2').getContext('2d'), breedOf('sphynx'), 0, 0, 2);
 
     // ── 종류 선택 버튼 ──────────────────────────────
     var grid = document.getElementById('breedGrid');
