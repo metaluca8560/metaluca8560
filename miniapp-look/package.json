@@ -1,0 +1,20 @@
+{
+  "name": "najombwa-miniapp",
+  "private": true,
+  "version": "1.0.0",
+  "description": "나좀봐 — 청각장애인 대화 도우미, 앱인토스 미니앱 패키지",
+  "type": "module",
+  "scripts": {
+    "web:dev": "vite --port 5178",
+    "web:build": "vite build",
+    "dev": "ait dev",
+    "build": "ait build",
+    "deploy": "ait deploy"
+  },
+  "dependencies": {
+    "@apps-in-toss/web-framework": "^2.10.6"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
+  }
+}
