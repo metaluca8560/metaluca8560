@@ -203,7 +203,7 @@ a { color: inherit; text-decoration: none; }
 .m-jujuya em { background: #fdeef7; color: #d6409f; }
 .m-luna em   { background: var(--sky-tint); color: var(--sky); }
 .m-hermi em  { background: #eceaf0; color: #55505e; }
-.m-clo em    { background: #fdeee8; color: #c65d3b; }
+.m-clo em    { background: #f7efe3; color: #8a6844; }
 
 /* ---------- 대상별 서비스 ---------- */
 .aud-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
