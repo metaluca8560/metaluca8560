@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>루카 LUCA — 디지털다락방 운영자 & 창작 디렉터</title>
-  <meta name="description" content="Luca, Connecting Ideas & People. 디지털다락방을 운영하며 사람과 AI를 연결하고, 아이디어를 실행으로 만듭니다." />
-  <meta property="og:title" content="루카 LUCA — 디지털다락방" />
-  <meta property="og:description" content="사람과 AI를 연결하고, 아이디어를 실행으로 만드는 탐험가" />
+  <title>루카 LUCA — AI를 가장 쉽게 현장에 적용시키는 교육 파트너 | 디지털다락방</title>
+  <meta name="description" content="생성형 AI 교육·Canva 강의·AI 자동화 구축. ChatGPT, Claude, Gemini, NotebookLM을 기업·공공기관·학교·개인의 현장에 가장 쉽게 적용시키는 교육 파트너, 디지털다락방 루카입니다." />
+  <meta name="keywords" content="AI 강사, Canva 강사, ChatGPT 강의, 생성형 AI, AI 자동화, NotebookLM, Claude, Gemini, Google AI Studio, AI 교육, AI 컨설팅" />
+  <meta property="og:title" content="루카 LUCA — AI를 가장 쉽게 현장에 적용시키는 교육 파트너" />
+  <meta property="og:description" content="생성형 AI 교육 · Canva 클래스 · AI 자동화 구축 — 캐릭터 세계관으로 배우는 가장 쉬운 AI, 디지털다락방" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://luca-darakbang.netlify.app/" />
   <meta property="og:image" content="https://luca-darakbang.netlify.app/og-image.jpg" />
@@ -18,6 +19,18 @@
   <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
   <link rel="stylesheet" href="styles.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "루카 (LUCA)",
+    "url": "https://luca-darakbang.netlify.app/",
+    "jobTitle": "AI 교육 파트너 · 디지털다락방 운영자",
+    "description": "생성형 AI 교육, Canva 강의, AI 자동화 구축을 캐릭터 세계관으로 풀어내는 교육 파트너",
+    "knowsAbout": ["생성형 AI", "ChatGPT", "Claude", "Gemini", "NotebookLM", "Google AI Studio", "Canva", "AI 자동화", "AI 교육"],
+    "email": "mailto:atlia0318@gmail.com"
+  }
+  </script>
   <script>
     (function () {
       var GA_ID = '' // Google Analytics 4 측정 ID (예: G-ABC123XYZ) — 넣으면 방문자 통계 수집 시작
@@ -32,88 +45,296 @@
   </script>
 </head>
 <body>
-  <div class="bg-glow" aria-hidden="true"></div>
 
-  <main class="phone">
-    <!-- ===== 프로필 ===== -->
-    <section class="profile">
+  <main class="page">
+
+    <!-- ===== Hero — "왜 당신이어야 하는가"를 3초 안에 ===== -->
+    <header class="hero">
       <div class="avatar">
-        <!-- profile.jpg를 저장소 루트에 올리면 자동으로 이 사진이 표시됩니다 -->
         <img id="avatarImg" src="profile.jpg" alt="루카 프로필"
              onerror="this.remove();document.getElementById('avatarSvg').style.display='block';" />
         <svg id="avatarSvg" style="display:none" viewBox="0 0 104 104" width="104" height="104" aria-hidden="true">
           <defs>
             <linearGradient id="avGrad" x1="0" y1="104" x2="104" y2="0" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#8b5cf6" />
-              <stop offset="1" stop-color="#c9b8ff" />
+              <stop offset="0" stop-color="#7c3aed" />
+              <stop offset="1" stop-color="#a78bfa" />
             </linearGradient>
           </defs>
-          <circle cx="52" cy="52" r="50" fill="rgba(139,92,246,.08)" stroke="url(#avGrad)" stroke-width="2" />
+          <circle cx="52" cy="52" r="50" fill="rgba(124,58,237,.06)" stroke="url(#avGrad)" stroke-width="2" />
           <path d="M52 26 L76 47 V72 a3 3 0 0 1-3 3 H31 a3 3 0 0 1-3-3 V47 Z" fill="none" stroke="url(#avGrad)" stroke-width="4.5" stroke-linejoin="round" />
-          <circle cx="52" cy="56" r="4.5" fill="#c9b8ff" />
+          <circle cx="52" cy="56" r="4.5" fill="#7c3aed" />
         </svg>
       </div>
-      <p class="house">디지털다락방</p>
-      <h1 class="name">루카 <span class="name-en">LUCA</span></h1>
-      <p class="role">운영자 &amp; 창작 디렉터</p>
-      <p class="tagline">Luca, Connecting Ideas &amp; People</p>
+      <p class="house">디지털다락방 · 루카 LUCA</p>
+      <h1 class="hero-title">AI를 가장 쉽게<br /><em>현장에 적용시키는</em> 교육 파트너</h1>
+      <p class="hero-sub">
+        ChatGPT·Claude·Gemini·Canva, 배워도 업무에 못 쓰고 있다면 —<br class="pc-only" />
+        강의부터 자동화 구축까지, 생성형 AI로 업무시간을 줄이는 가장 쉬운 방법을 만듭니다.
+      </p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="mailto:atlia0318@gmail.com?subject=%5B%EA%B0%95%EC%9D%98%C2%B7%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%20%EB%AC%B8%EC%9D%98%5D">지금 상담하기</a>
+        <a class="btn btn-ghost" href="automation/#contact">자동화 무료 진단</a>
+      </div>
+      <p class="hero-note">기업 · 공공기관 · 학교 · 개인 맞춤 교육</p>
+    </header>
 
-      <blockquote class="quote">
-        “AI는 도구가 아니라<br />함께 성장하는 팀원이다.”
-      </blockquote>
+    <!-- ===== 성과 숫자 — 신뢰 지표 =====
+         ⚠️ 수치는 script.js 상단 STATS에서 관리합니다. 반드시 실제 수치로 채우세요.
+         값이 비어 있으면 이 섹션은 자동으로 숨겨집니다. -->
+    <section class="stats" id="stats" aria-label="성과" hidden>
+      <div class="stat"><strong data-stat="lectures"></strong><span>AI 강의</span></div>
+      <div class="stat"><strong data-stat="students"></strong><span>수강생</span></div>
+      <div class="stat"><strong data-stat="projects"></strong><span>프로젝트</span></div>
+      <div class="stat"><strong data-stat="contents"></strong><span>제작 콘텐츠</span></div>
     </section>
 
-    <!-- ===== SNS / 계정 ===== -->
-    <section class="links" aria-label="SNS 계정">
-      <p class="sec-label">Follow</p>
-      <div class="tile-grid">
-        <a class="tile" data-link="twitter" href="#">
-          <span class="tile-glyph">𝕏</span>
-          <span class="tile-name">트위터</span>
-          <span class="tile-sub">X / Twitter</span>
-        </a>
-        <a class="tile" data-link="opensea" href="#">
-          <span class="tile-glyph">◈</span>
-          <span class="tile-name">오픈씨</span>
-          <span class="tile-sub">OpenSea</span>
-        </a>
-        <a class="tile" data-link="instagram" href="#">
-          <span class="tile-glyph">◎</span>
-          <span class="tile-name">인스타그램</span>
-          <span class="tile-sub">Instagram</span>
-        </a>
-        <a class="tile" data-link="tiktok" href="#">
-          <span class="tile-glyph">♪</span>
-          <span class="tile-name">틱톡</span>
-          <span class="tile-sub">TikTok</span>
-        </a>
-        <a class="tile" data-link="blog" href="#">
-          <span class="tile-glyph">✎</span>
-          <span class="tile-name">블로그</span>
-          <span class="tile-sub">Blog</span>
-        </a>
-        <a class="tile" data-link="spatial" href="#">
-          <span class="tile-glyph">⬡</span>
-          <span class="tile-name">힐링 스페이스</span>
-          <span class="tile-sub">Spatial</span>
-        </a>
-        <a class="tile" data-link="youtube" href="#">
-          <span class="tile-glyph">▶</span>
-          <span class="tile-name">유튜브</span>
-          <span class="tile-sub">YouTube</span>
-        </a>
-        <a class="tile" data-link="github" href="#">
-          <span class="tile-glyph">⌥</span>
-          <span class="tile-name">깃허브</span>
-          <span class="tile-sub">GitHub</span>
-        </a>
-        <!-- 새 전자책 출간 시 여기에 E-book 타일 추가 (data-link="kmong") -->
+    <!-- ===== 문제 제기 → 해결 ===== -->
+    <section class="problem" aria-label="왜 필요한가">
+      <p class="sec-label">Problem</p>
+      <h2 class="sec-title">AI 교육, 들을 땐 알겠는데<br />돌아서면 못 쓰는 이유</h2>
+      <div class="problem-grid">
+        <div class="p-card"><span class="p-emoji">🌀</span><strong>도구만 나열하는 강의</strong><p>ChatGPT·Gemini 기능 소개만 듣고 끝. 내 업무에 어떻게 붙이는지는 아무도 안 알려줍니다.</p></div>
+        <div class="p-card"><span class="p-emoji">🧱</span><strong>어려운 용어의 벽</strong><p>프롬프트, 토큰, API… 시작하기도 전에 지칩니다. 쉬운 언어로 배워야 현장에서 씁니다.</p></div>
+        <div class="p-card"><span class="p-emoji">⏰</span><strong>반복 업무는 그대로</strong><p>교육이 끝나도 문의 응대·데이터 정리·알림 발송은 여전히 사람 손. 자동화까지 가야 진짜 변화입니다.</p></div>
       </div>
     </section>
 
-    <!-- ===== 만든 것들 ===== -->
+    <!-- ===== 왜 루카인가 (USP) ===== -->
+    <section class="usp" aria-label="왜 루카인가">
+      <p class="sec-label">Why LUCA</p>
+      <h2 class="sec-title">AI를 <em>캐릭터 세계관</em>으로 가르치는<br />유일한 교육 파트너</h2>
+      <p class="usp-desc">
+        AI 강사도, Canva 강사도, 자동화 전문가도 많습니다.<br />
+        루카는 여기에 <strong>디지털다락방 캐릭터 IP</strong>를 더해 어려운 AI를 이야기처럼 쉽게 전달합니다.<br />
+        교육 · 자동화 · 콘텐츠가 하나의 브랜드 경험으로 이어집니다.
+      </p>
+
+      <!-- 우리의 AI 팀 — 브랜드 세계관 (얼굴은 인라인 SVG) -->
+      <div class="team-grid">
+        <div class="member m-luca">
+          <img class="m-photo" src="profile.jpg" alt="루카" hidden
+               onload="this.hidden=false;this.nextElementSibling.setAttribute('hidden','')" onerror="this.remove()" />
+          <svg class="m-face" viewBox="0 0 64 64" role="img" aria-label="루카 얼굴">
+            <circle cx="32" cy="32" r="26" fill="#f3eeff" stroke="#a78bfa" stroke-width="2"/>
+            <path d="M32 16 L48 30 V45 a2.5 2.5 0 0 1 -2.5 2.5 H18.5 A2.5 2.5 0 0 1 16 45 V30 Z" fill="none" stroke="#7c3aed" stroke-width="3.5" stroke-linejoin="round"/>
+            <circle cx="32" cy="38" r="3.5" fill="#7c3aed"/>
+          </svg>
+          <strong>루카 LUCA</strong><em>운영자 · 창작 디렉터</em><p>사람과 AI를 연결해 아이디어를 실행으로 만드는 탐험가</p>
+        </div>
+        <div class="member m-nova">
+          <img class="m-photo" src="team/nova.png" alt="노바" hidden
+               onload="this.hidden=false;this.nextElementSibling.setAttribute('hidden','')" onerror="this.remove()" />
+          <svg class="m-face" viewBox="0 0 64 64" role="img" aria-label="노바 얼굴">
+            <circle cx="38" cy="10" r="5.5" fill="#3d2a52"/>
+            <ellipse cx="32" cy="32" rx="21" ry="21" fill="#3d2a52"/>
+            <path d="M11 32 Q9 50 15 56 Q19 49 17 40 Z" fill="#3d2a52"/>
+            <path d="M53 32 Q55 50 49 56 Q45 49 47 40 Z" fill="#3d2a52"/>
+            <path d="M50 30 Q53 42 49 50" stroke="#8b5cf6" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <circle cx="32" cy="37" r="15.5" fill="#f7d7bd"/>
+            <path d="M16 33 Q16 17 32 17 Q48 17 48 33 Q42 24 32 24 Q22 24 16 33 Z" fill="#3d2a52"/>
+            <path d="M44 19 l1.3 2.7 2.9.4 -2.1 2 .5 2.9 -2.6-1.4 -2.6 1.4 .5-2.9 -2.1-2 2.9-.4 Z" fill="#f5b91b"/>
+            <circle cx="26" cy="38" r="2.9" fill="#6d28d9"/>
+            <circle cx="38" cy="38" r="2.9" fill="#6d28d9"/>
+            <circle cx="27" cy="37" r="1" fill="#fff"/>
+            <circle cx="39" cy="37" r="1" fill="#fff"/>
+            <path d="M28.5 44.5 q3.5 3 7 0" stroke="#8a4a3a" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <circle cx="20.5" cy="43" r="2.3" fill="#f9a8b8" opacity=".8"/>
+            <circle cx="43.5" cy="43" r="2.3" fill="#f9a8b8" opacity=".8"/>
+            <path d="M18 58 Q32 50 46 58 L46 62 L18 62 Z" fill="#c4b5fd"/>
+          </svg>
+          <strong>노바</strong><em>전략 분석</em><p>데이터를 분석해 전략과 팀의 방향을 설계합니다</p>
+        </div>
+        <div class="member m-ruric">
+          <img class="m-photo" src="team/ruric.png" alt="루릭" hidden
+               onload="this.hidden=false;this.nextElementSibling.setAttribute('hidden','')" onerror="this.remove()" />
+          <svg class="m-face" viewBox="0 0 64 64" role="img" aria-label="루릭 얼굴">
+            <path d="M13 26 L8 7 L28 16 Z" fill="#f2c39d"/>
+            <path d="M51 26 L56 7 L36 16 Z" fill="#f2c39d"/>
+            <path d="M14.5 22.5 L11.5 11 L23.5 16.5 Z" fill="#f2909b"/>
+            <path d="M49.5 22.5 L52.5 11 L40.5 16.5 Z" fill="#f2909b"/>
+            <ellipse cx="32" cy="38" rx="22" ry="18.5" fill="#f2c39d"/>
+            <path d="M20 27 q4 -3 8 0 M36 27 q4 -3 8 0" stroke="#dda37c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="24" cy="37" rx="3.2" ry="3.5" fill="#14b8a6"/>
+            <ellipse cx="40" cy="37" rx="3.2" ry="3.5" fill="#14b8a6"/>
+            <circle cx="25" cy="36" r="1" fill="#fff"/>
+            <circle cx="41" cy="36" r="1" fill="#fff"/>
+            <path d="M29.5 43 h5 l-2.5 3 Z" fill="#e5766f"/>
+            <path d="M32 46 v1.5 M32 47.5 q-2.5 2 -5 .5 M32 47.5 q2.5 2 5 .5" stroke="#b98a68" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            <path d="M8 38 l8 1 M8 44 l8 -1 M56 38 l-8 1 M56 44 l-8 -1" stroke="#d8a67f" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="17" cy="44" r="2.4" fill="#f7a8b0" opacity=".7"/>
+            <circle cx="47" cy="44" r="2.4" fill="#f7a8b0" opacity=".7"/>
+            <path d="M22 54 Q32 49.5 42 54" stroke="#7a4a2f" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="32" cy="54.5" r="2.6" fill="#f0b429"/>
+          </svg>
+          <strong>루릭</strong><em>콘텐츠 기획</em><p>아이디어를 스토리와 디자인으로 완성합니다</p>
+        </div>
+        <div class="member m-pureum">
+          <img class="m-photo" src="team/pureum.png" alt="푸름이" hidden
+               onload="this.hidden=false;this.nextElementSibling.setAttribute('hidden','')" onerror="this.remove()" />
+          <svg class="m-face" viewBox="0 0 64 64" role="img" aria-label="푸름이 얼굴">
+            <path d="M13 26 L9 8 L28 15 Z" fill="#8399ad"/>
+            <path d="M51 26 L55 8 L36 15 Z" fill="#8399ad"/>
+            <path d="M14.5 22.5 L12 11.5 L23.5 15.8 Z" fill="#5c7183"/>
+            <path d="M49.5 22.5 L52 11.5 L40.5 15.8 Z" fill="#5c7183"/>
+            <ellipse cx="32" cy="38" rx="22" ry="18.5" fill="#8399ad"/>
+            <ellipse cx="32" cy="45" rx="10" ry="7" fill="#a6b8c7"/>
+            <ellipse cx="24" cy="36.5" rx="3.2" ry="3.6" fill="#2c9e63"/>
+            <ellipse cx="40" cy="36.5" rx="3.2" ry="3.6" fill="#2c9e63"/>
+            <circle cx="25" cy="35.5" r="1" fill="#fff"/>
+            <circle cx="41" cy="35.5" r="1" fill="#fff"/>
+            <path d="M29.5 42.5 h5 l-2.5 3 Z" fill="#5f6b76"/>
+            <path d="M32 45.5 v1.5 M32 47 q-2.5 2 -5 .5 M32 47 q2.5 2 5 .5" stroke="#5f6b76" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            <path d="M8 38 l8 1 M8 44 l8 -1 M56 38 l-8 1 M56 44 l-8 -1" stroke="#b9c7d3" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="17" cy="44" r="2.4" fill="#f7a8b0" opacity=".6"/>
+            <circle cx="47" cy="44" r="2.4" fill="#f7a8b0" opacity=".6"/>
+          </svg>
+          <strong>푸름이</strong><em>수석 개발</em><p>AI 에이전트와 자동화 시스템을 만드는 기술 리더</p>
+        </div>
+        <div class="member m-jujuya">
+          <img class="m-photo" src="team/jujuya.png" alt="주주야" hidden
+               onload="this.hidden=false;this.nextElementSibling.setAttribute('hidden','')" onerror="this.remove()" />
+          <svg class="m-face" viewBox="0 0 64 64" role="img" aria-label="주주야 얼굴">
+            <path d="M14 24 L10 5 L28 13 Z" fill="#fdfaf5" stroke="#e4dbcd" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M50 24 L54 5 L36 13 Z" fill="#fdfaf5" stroke="#e4dbcd" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M15.5 20 L13 9.5 L23.5 13.5 Z" fill="#f5a8b8"/>
+            <path d="M48.5 20 L51 9.5 L40.5 13.5 Z" fill="#f5a8b8"/>
+            <ellipse cx="32" cy="35" rx="21" ry="18" fill="#fdfaf5" stroke="#e4dbcd" stroke-width="1.5"/>
+            <circle cx="24" cy="33" r="3.4" fill="#5a4632"/>
+            <circle cx="40" cy="33" r="3.4" fill="#5a4632"/>
+            <circle cx="25" cy="32" r="1.1" fill="#fff"/>
+            <circle cx="41" cy="32" r="1.1" fill="#fff"/>
+            <ellipse cx="32" cy="40" rx="3" ry="2.4" fill="#2f2723"/>
+            <path d="M26 44 q6 5 12 0" stroke="#2f2723" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M29.5 45.5 q2.5 3.5 5 0 Z" fill="#f2727f"/>
+            <circle cx="17" cy="41" r="2.4" fill="#f9b8c4" opacity=".8"/>
+            <circle cx="47" cy="41" r="2.4" fill="#f9b8c4" opacity=".8"/>
+            <path d="M16 55 Q32 46 48 55 L48 60 L16 60 Z" fill="#f39cb4"/>
+            <path d="M32 51.5 c-1.5 -2 -4.5 -.5 -3 2 l3 3 3 -3 c1.5 -2.5 -1.5 -4 -3 -2 Z" fill="#e8556d"/>
+          </svg>
+          <strong>주주야</strong><em>총괄 비서</em><p>일정과 업무를 챙기는 든든한 실행 엔진입니다</p>
+        </div>
+        <div class="member m-luna">
+          <img class="m-photo" src="team/luna.png" alt="루나" hidden
+               onload="this.hidden=false;this.nextElementSibling.setAttribute('hidden','')" onerror="this.remove()" />
+          <svg class="m-face" viewBox="0 0 64 64" role="img" aria-label="루나 얼굴">
+            <ellipse cx="32" cy="31" rx="19" ry="18" fill="#332b33"/>
+            <path d="M13 31 Q12 44 17 47 Q20 41 19 35 Z" fill="#332b33"/>
+            <path d="M51 31 Q52 44 47 47 Q44 41 45 35 Z" fill="#332b33"/>
+            <circle cx="32" cy="36" r="14" fill="#ffe9dc"/>
+            <path d="M18 32 Q18 18 32 18 Q46 18 46 32 Q40 25 32 25 Q24 25 18 32 Z" fill="#332b33"/>
+            <path d="M42 20 l1.2 2.5 2.7.4 -2 1.9 .5 2.7 -2.4 -1.3 -2.4 1.3 .5 -2.7 -2 -1.9 2.7 -.4 Z" fill="#7dd3fc"/>
+            <circle cx="26.5" cy="37" r="2.7" fill="#4a3247"/>
+            <circle cx="37.5" cy="37" r="2.7" fill="#4a3247"/>
+            <circle cx="27.5" cy="36" r="1" fill="#fff"/>
+            <circle cx="38.5" cy="36" r="1" fill="#fff"/>
+            <path d="M29.5 43.5 q2.5 2 5 0" stroke="#b06a5f" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <circle cx="21" cy="42" r="2.2" fill="#f9b8c4" opacity=".7"/>
+            <circle cx="43" cy="42" r="2.2" fill="#f9b8c4" opacity=".7"/>
+            <path d="M14 58 Q32 47 50 58 L50 62 L14 62 Z" fill="#bfdcf7"/>
+            <path d="M28 54 v5 M36 54 v5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <strong>루나</strong><em>철학 · 통찰</em><p>깊은 질문과 통찰로 아이디어에 의미를 더합니다</p>
+        </div>
+        <div class="member m-hermi">
+          <img class="m-photo" src="team/hermi.png" alt="헤르미" hidden
+               onload="this.hidden=false;this.nextElementSibling.setAttribute('hidden','')" onerror="this.remove()" />
+          <svg class="m-face" viewBox="0 0 64 64" role="img" aria-label="헤르미 얼굴">
+            <ellipse cx="32" cy="34" rx="21" ry="21" fill="#2a232c"/>
+            <path d="M11 34 Q10 52 16 56 Q20 50 18 42 Z" fill="#2a232c"/>
+            <path d="M53 34 Q54 52 48 56 Q44 50 46 42 Z" fill="#2a232c"/>
+            <circle cx="32" cy="39" r="15.5" fill="#ffe9dc"/>
+            <path d="M15 32 Q15 16 32 16 Q49 16 49 32 Q43 24 32 24 Q21 24 15 32 Z" fill="#2a232c"/>
+            <path d="M15.5 24.5 Q32 10.5 48.5 24.5 L46 27.5 Q32 15.5 18 27.5 Z" fill="#f6f3ee"/>
+            <circle cx="25" cy="39" r="6" fill="rgba(255,255,255,.35)" stroke="#3a343c" stroke-width="1.8"/>
+            <circle cx="39" cy="39" r="6" fill="rgba(255,255,255,.35)" stroke="#3a343c" stroke-width="1.8"/>
+            <line x1="31" y1="39" x2="33" y2="39" stroke="#3a343c" stroke-width="1.8"/>
+            <circle cx="25" cy="39.5" r="2" fill="#3a2f33"/>
+            <circle cx="39" cy="39.5" r="2" fill="#3a2f33"/>
+            <path d="M29.5 48 q2.5 2 5 0" stroke="#c96f6f" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <circle cx="19.5" cy="45" r="2.2" fill="#ffb3a0" opacity=".7"/>
+            <circle cx="44.5" cy="45" r="2.2" fill="#ffb3a0" opacity=".7"/>
+            <circle cx="52" cy="49" r="5.5" fill="rgba(186,222,255,.45)" stroke="#3a343c" stroke-width="2"/>
+            <line x1="56" y1="53.5" x2="61" y2="59" stroke="#3a343c" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <strong>헤르미</strong><em>에이전트</em><p>무엇이든 끝까지 찾아 해결하는 탐정입니다</p>
+        </div>
+        <div class="member m-clo">
+          <img class="m-photo" src="team/clo.png" alt="클로" hidden
+               onload="this.hidden=false;this.nextElementSibling.setAttribute('hidden','')" onerror="this.remove()" />
+          <svg class="m-face" viewBox="0 0 64 64" role="img" aria-label="클로 얼굴">
+            <ellipse cx="12.5" cy="34" rx="8" ry="14" fill="#f2d9ae"/>
+            <ellipse cx="51.5" cy="34" rx="8" ry="14" fill="#f2d9ae"/>
+            <circle cx="32" cy="16" r="9" fill="#f7e7c6"/>
+            <circle cx="23" cy="19" r="7" fill="#f7e7c6"/>
+            <circle cx="41" cy="19" r="7" fill="#f7e7c6"/>
+            <circle cx="32" cy="34" r="17" fill="#faeed8"/>
+            <circle cx="25" cy="34" r="6.5" fill="rgba(255,255,255,.35)" stroke="#4a3628" stroke-width="1.8"/>
+            <circle cx="39" cy="34" r="6.5" fill="rgba(255,255,255,.35)" stroke="#4a3628" stroke-width="1.8"/>
+            <line x1="31.5" y1="33" x2="32.5" y2="33" stroke="#4a3628" stroke-width="1.8"/>
+            <circle cx="25" cy="34.5" r="3" fill="#4a2f1c"/>
+            <circle cx="39" cy="34.5" r="3" fill="#4a2f1c"/>
+            <circle cx="26" cy="33.5" r="1.1" fill="#fff"/>
+            <circle cx="40" cy="33.5" r="1.1" fill="#fff"/>
+            <ellipse cx="32" cy="41.5" rx="2.6" ry="2" fill="#2f2723"/>
+            <path d="M28 45 q4 3 8 0" stroke="#4a3628" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <circle cx="19.5" cy="40" r="2.3" fill="#f5b8a8" opacity=".8"/>
+            <circle cx="44.5" cy="40" r="2.3" fill="#f5b8a8" opacity=".8"/>
+            <path d="M15 57 Q32 47 49 57 L49 62 L15 62 Z" fill="#efe0c3"/>
+            <path d="M28 53.5 v6 M36 53.5 v6" stroke="#d9c39a" stroke-width="1.5" stroke-linecap="round"/>
+            <rect x="40.5" y="56" width="7" height="4.5" rx="1" fill="#fff8ea" stroke="#d9c39a" stroke-width=".8"/>
+          </svg>
+          <strong>클로 Clo</strong><em>코딩 분석</em><p>마음은 다정하게, 분석과 코딩은 냉철하게</p>
+        </div>
+      </div>
+      <p class="team-note">루카가 텔레그램으로 업무를 지시하면, 일곱 멤버가 각자 맡은 일을 알아서 처리합니다 💬</p>
+    </section>
+
+    <!-- ===== 대상별 서비스 — 누구를 위한 사이트인지 분리 ===== -->
+    <section class="audience" aria-label="대상별 서비스">
+      <p class="sec-label">For You</p>
+      <h2 class="sec-title">누구와 함께하나요?</h2>
+      <div class="aud-grid">
+        <a class="aud-card" href="mailto:atlia0318@gmail.com?subject=%5B%EA%B8%B0%EC%97%85%20AI%20%EA%B5%90%EC%9C%A1%20%EB%AC%B8%EC%9D%98%5D">
+          <span class="aud-emoji">🏢</span><strong>기업</strong>
+          <p>AI 업무혁신 워크숍 · 팀 단위 생성형 AI 도입 교육</p>
+          <span class="aud-go">강의 문의 →</span>
+        </a>
+        <a class="aud-card" href="mailto:atlia0318@gmail.com?subject=%5B%EA%B3%B5%EA%B3%B5%EA%B8%B0%EA%B4%80%20AI%20%EA%B5%90%EC%9C%A1%20%EB%AC%B8%EC%9D%98%5D">
+          <span class="aud-emoji">🏛️</span><strong>공공기관</strong>
+          <p>생성형 AI 교육 · 직무 맞춤 실습형 특강</p>
+          <span class="aud-go">강의 문의 →</span>
+        </a>
+        <a class="aud-card" href="mailto:atlia0318@gmail.com?subject=%5B%ED%95%99%EA%B5%90%20AI%20%EA%B5%90%EC%9C%A1%20%EB%AC%B8%EC%9D%98%5D">
+          <span class="aud-emoji">🏫</span><strong>학교</strong>
+          <p>AI 활용 교육 · 교사/학생 대상 디지털 리터러시</p>
+          <span class="aud-go">강의 문의 →</span>
+        </a>
+        <a class="aud-card" href="canva-ai/">
+          <span class="aud-emoji">🎨</span><strong>개인</strong>
+          <p>Canva × AI 클래스 · 혼자서도 만드는 디자인·콘텐츠</p>
+          <span class="aud-go">클래스 보기 →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ===== 서비스 구조 ===== -->
+    <section class="services" aria-label="서비스">
+      <p class="sec-label">Services</p>
+      <h2 class="sec-title">이런 일을 합니다</h2>
+      <div class="svc-grid">
+        <div class="svc"><span class="svc-num">01</span><strong>강의</strong><p>생성형 AI · ChatGPT · Canva 실습형 강의</p></div>
+        <div class="svc"><span class="svc-num">02</span><strong>컨설팅</strong><p>우리 조직에 맞는 AI 도입 로드맵 설계</p></div>
+        <div class="svc"><span class="svc-num">03</span><strong>자동화 구축</strong><p>문의 응대·데이터 정리·알림 발송 자동화</p></div>
+        <div class="svc"><span class="svc-num">04</span><strong>콘텐츠 제작</strong><p>숏폼 · 웹소설 · 브랜드 콘텐츠 기획/제작</p></div>
+        <div class="svc"><span class="svc-num">05</span><strong>전자책</strong><p>AI 활용 노하우를 담은 실전 가이드 (준비 중)</p></div>
+        <div class="svc"><span class="svc-num">06</span><strong>커뮤니티</strong><p>디지털다락방 마을 — 함께 배우고 성장하는 공간</p></div>
+      </div>
+    </section>
+
+    <!-- ===== 대표 사례 / 만든 것들 ===== -->
     <section class="works" aria-label="프로젝트">
       <p class="sec-label">Works</p>
+      <h2 class="sec-title">직접 만들며 증명합니다</h2>
       <div class="row-list">
         <a class="row" href="nyang-village.html">
           <span class="row-body"><strong>디지털 다락방 마을 냥이동 🐱</strong><small>고양이가 되어 전입하는 픽셀 주민증 발급소</small></span>
@@ -163,6 +384,80 @@
           <span class="row-body"><strong>ATELIER</strong><small>작가 포트폴리오</small></span>
           <span class="row-go">→</span>
         </a>
+      </div>
+    </section>
+
+    <!-- ===== 후기 =====
+         실제 수강생/고객 후기가 모이면 주석을 풀고 내용을 교체하세요.
+         (가짜 후기는 신뢰를 깎습니다 — 실명/소속 동의를 받은 후기만!)
+    <section class="reviews" aria-label="후기">
+      <p class="sec-label">Reviews</p>
+      <h2 class="sec-title">함께한 분들의 이야기</h2>
+      <div class="review-grid">
+        <blockquote class="review"><p>"후기 내용"</p><footer>— 이름 · 소속</footer></blockquote>
+        <blockquote class="review"><p>"후기 내용"</p><footer>— 이름 · 소속</footer></blockquote>
+      </div>
+    </section>
+    -->
+
+    <!-- ===== CTA ===== -->
+    <section class="cta" id="contact" aria-label="문의">
+      <h2 class="cta-title">AI, 이제 우리 현장에 붙여볼까요?</h2>
+      <p class="cta-sub">강의 한 번이든, 자동화 하나든 — 가장 쉬운 시작을 함께 설계해 드립니다.</p>
+      <div class="cta-grid">
+        <a class="btn btn-primary btn-lg" href="mailto:atlia0318@gmail.com?subject=%5B%EA%B0%95%EC%9D%98%20%EB%AC%B8%EC%9D%98%5D">📩 강의 문의</a>
+        <a class="btn btn-primary btn-lg" href="mailto:atlia0318@gmail.com?subject=%5B%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%20%EC%9D%98%EB%A2%B0%5D">🤝 프로젝트 의뢰</a>
+        <a class="btn btn-ghost btn-lg" href="automation/#contact">⚙️ 자동화 무료 진단</a>
+        <a class="btn btn-ghost btn-lg" href="nyang-village.html">🐱 커뮤니티 구경하기</a>
+      </div>
+      <p class="cta-mail">이메일 <a href="mailto:atlia0318@gmail.com">atlia0318@gmail.com</a></p>
+    </section>
+
+    <!-- ===== SNS / 계정 ===== -->
+    <section class="links" aria-label="SNS 계정">
+      <p class="sec-label">Follow</p>
+      <div class="tile-grid">
+        <a class="tile" data-link="twitter" href="#">
+          <span class="tile-glyph">𝕏</span>
+          <span class="tile-name">트위터</span>
+          <span class="tile-sub">X / Twitter</span>
+        </a>
+        <a class="tile" data-link="opensea" href="#">
+          <span class="tile-glyph">◈</span>
+          <span class="tile-name">오픈씨</span>
+          <span class="tile-sub">OpenSea</span>
+        </a>
+        <a class="tile" data-link="instagram" href="#">
+          <span class="tile-glyph">◎</span>
+          <span class="tile-name">인스타그램</span>
+          <span class="tile-sub">Instagram</span>
+        </a>
+        <a class="tile" data-link="tiktok" href="#">
+          <span class="tile-glyph">♪</span>
+          <span class="tile-name">틱톡</span>
+          <span class="tile-sub">TikTok</span>
+        </a>
+        <a class="tile" data-link="blog" href="#">
+          <span class="tile-glyph">✎</span>
+          <span class="tile-name">블로그</span>
+          <span class="tile-sub">Blog</span>
+        </a>
+        <a class="tile" data-link="spatial" href="#">
+          <span class="tile-glyph">⬡</span>
+          <span class="tile-name">힐링 스페이스</span>
+          <span class="tile-sub">Spatial</span>
+        </a>
+        <a class="tile" data-link="youtube" href="#">
+          <span class="tile-glyph">▶</span>
+          <span class="tile-name">유튜브</span>
+          <span class="tile-sub">YouTube</span>
+        </a>
+        <a class="tile" data-link="github" href="#">
+          <span class="tile-glyph">⌥</span>
+          <span class="tile-name">깃허브</span>
+          <span class="tile-sub">GitHub</span>
+        </a>
+        <!-- 새 전자책 출간 시 여기에 E-book 타일 추가 (data-link="kmong") -->
       </div>
     </section>
 
