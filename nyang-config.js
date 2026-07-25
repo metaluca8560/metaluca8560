@@ -3,6 +3,6 @@
 // 비워두면 로컬 데모 모드 (이름 해시로 번호 발급, 이 브라우저에만 저장).
 // 설정 방법은 NYANG.md 참고.
 window.NYANG_CONFIG = {
-  supabaseUrl: '',     // 예: 'https://xxxx.supabase.co'
-  supabaseAnonKey: '', // Settings > API 의 anon public 키 (공개돼도 괜찮은 키)
+  supabaseUrl: 'https://ermdkptzpipumxkqaiex.supabase.co',
+  supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVybWRrcHR6cGlwdW14a3FhaWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4Nzc0NTUsImV4cCI6MjEwMDQ1MzQ1NX0.rVlX1qHA18kYa9B7klSofztByhvZqXw-LMDXNPv0i_E',
 };
