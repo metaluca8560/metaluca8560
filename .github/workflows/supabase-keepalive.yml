@@ -1,0 +1,28 @@
+name: Supabase Keep-Alive
+
+# 무료 플랜은 7일간 API 활동이 없으면 프로젝트가 자동 일시정지됨.
+# 주 2회 가볍게 읽기 요청을 보내 클로페이(Clopay) 프로젝트를 깨어 있게 유지한다.
+# anon 키는 공개 가능 키(pay-config.js에도 노출)이며, 데이터는 RLS로 보호된다.
+on:
+  schedule:
+    - cron: "0 0 * * 2,5" # 화·금 00:00 UTC = 오전 9시 KST
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        run: |
+          ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVybWRrcHR6cGlwdW14a3FhaWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ4Nzc0NTUsImV4cCI6MjEwMDQ1MzQ1NX0.rVlX1qHA18kYa9B7klSofztByhvZqXw-LMDXNPv0i_E"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://ermdkptzpipumxkqaiex.supabase.co/rest/v1/wallets?select=user_id&limit=1" \
+            -H "apikey: $ANON_KEY" \
+            -H "Authorization: Bearer $ANON_KEY")
+          echo "Supabase 응답: HTTP $STATUS"
+          # 200(정상)·401/403(RLS로 익명 차단)도 프로젝트가 깨어 있다는 뜻이므로 성공 처리.
+          # 5xx나 응답 없음(000)이면 프로젝트가 잠들었을 가능성 — 실패로 표시해 알림을 받는다.
+          case "$STATUS" in
+            2*|401|403) exit 0 ;;
+            *) echo "프로젝트가 일시정지됐을 수 있어요. 대시보드에서 Restore 하세요: https://supabase.com/dashboard"; exit 1 ;;
+          esac
