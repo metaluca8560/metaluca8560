@@ -166,44 +166,36 @@
   <header>
     <h1>METALUCA <span class="accent">미니앱 워룸</span></h1>
     <p class="brief">
-      2026-07-24 갱신 · 최신 커밋 <span class="commit">7621e10</span> (PR #54~#59 하루 6연속 머지) ·
-      <b>클로페이 풀스택 완성 + 보안 조치 + 푸름이 공유 카드 3종</b> — 테스트 결제·클라우드 지갑 가입까지 검증 끝, 라이브 키만 남음 ·
-      다음 타깃: 랜딩 리드 폼 완성 (1순위) → 숏폼 통합 대시보드 (2순위)
+      2026-08-01 갱신 · 최신 커밋 <span class="commit">953ab9f</span> (PR #61~#67, 9건 반영) ·
+      <b>냥이동 마을 미니앱 신설(클라우드 명부·9종 묘종) + 메인 랜딩 개편</b> — 구 1순위 백로그였던 리드폼·카카오 채널 연결이 랜딩 개편으로 확인·해소 ·
+      다음 타깃: 숏폼 통합 대시보드 (1순위) → 메디컬 앱 + MedInfo MCP 연동 (2순위)
     </p>
   </header>
 
   <section>
     <div class="stats">
-      <div class="tile"><div class="num">118</div><div class="label">누적 커밋</div></div>
+      <div class="tile"><div class="num">190</div><div class="label">누적 커밋</div></div>
       <div class="tile"><div class="num ok">9</div><div class="label">토스 미니앱 (miniapp-*)</div></div>
       <div class="tile"><div class="num gold">12+</div><div class="label">웹 도구 (분석기·계산기)</div></div>
-      <div class="tile"><div class="num mono">#59</div><div class="label">최근 머지 PR</div></div>
+      <div class="tile"><div class="num mono">#67</div><div class="label">최근 머지 PR</div></div>
     </div>
   </section>
 
   <section>
     <h2>최근 작업 흐름 <small>머지 순</small></h2>
     <ul class="timeline">
-      <li class="brand"><span class="t">푸름이 공유 카드 3종</span><span class="hash">#55~59</span>
-        <div class="d">클로페이 OG · 레포 소셜 프리뷰 · 워룸 OG — 카톡 공유 시 빈 카드 해소, 전신 푸름이로 시리즈 통일</div></li>
-      <li class="feat"><span class="t">클라우드 지갑 가입 플로우 완성</span><span class="hash">#54</span>
-        <div class="d">Supabase 인증 URL 설정 + 가입 메일 리다이렉트 수정 — 가입→인증→로그인 검증 완료</div></li>
-      <li class="fix"><span class="t">API 프록시·웹훅 보안 조치</span><span class="hash">#54</span>
-        <div class="d">Netlify 프록시 출처 제한 + 레이트리밋, n8n 웹훅 서버 중계화 — IDEA-TRACES A항 해소</div></li>
-      <li class="feat"><span class="t">클로페이 2단계 완성</span><span class="hash">7/24</span>
-        <div class="d">승인 백엔드(Apps Script) + Supabase 클라우드 지갑 연결 — 테스트 결제 완주 가능</div></li>
-      <li class="brand"><span class="t">콘솔 appName 정합 3연타</span><span class="hash">79d44c4</span>
-        <div class="d">gift → gyeongjosa-note · lunch → lunch-molppang · severance → severance-pay, 브랜딩도 콘솔 앱 이름에 맞춤</div></li>
-      <li class="feat"><span class="t">7·8·9호 킬러 기능</span><span class="hash">d7d80f6</span>
-        <div class="d">퇴사 타이밍 시뮬 / 쏘기 룰렛+스트릭 / 경조사 장부</div></li>
-      <li class="feat"><span class="t">7·8·9호 미니앱 신규</span><span class="hash">1c973a9</span>
-        <div class="d">퇴직금 미리보기 · 오늘 점심 뭐먹지? · 축의금 계산기</div></li>
-      <li class="feat"><span class="t">6호 미니앱</span><span class="hash">42c7139</span>
-        <div class="d">운동복 뭐사지? (workout-gear)</div></li>
-      <li class="brand"><span class="t">OG 배너 3종</span><span class="hash">3aecf62</span>
-        <div class="d">푸름이 등장하는 카톡 공유 미리보기 — 급여·몰빵·숏폼</div></li>
-      <li class="fix"><span class="t">앱인토스 도메인 출처 허용</span><span class="hash">cf999e8</span>
-        <div class="d">*.tossmini.com 출처 허용으로 미니앱 로딩 이슈 해결</div></li>
+      <li class="fix"><span class="t">Supabase 킵얼라이브 워크플로우</span><span class="hash">#67</span>
+        <div class="d">화·금 오전 9시 KST GitHub Actions로 Clopay REST API 핑 — 무료 플랜 7일 무활동 자동 일시정지 방지, 실패 시 알림</div></li>
+      <li class="feat"><span class="t">AI 글쓰기 스킬 세트</span><span class="hash">#66</span>
+        <div class="d">humanizer·red-pen·sound-like-me·writer 4종으로 중복 정리, 한/영 AI 티 패턴 사전 공유 배치</div></li>
+      <li class="fix"><span class="t">나좀봐 TTS 버그 수정</span><span class="hash">f70ac31</span>
+        <div class="d">TTS 재생 중 듣기 일시정지 처리 + 자막 중복 제거</div></li>
+      <li class="feat"><span class="t">나좀봐 미니앱 신규</span><span class="hash">29e7f73</span>
+        <div class="d">청각장애인 대화 도우미 — 실시간 자막 + 내 목소리 TTS, 토스 미니앱으로 배포</div></li>
+      <li class="brand"><span class="t">OG 공유 배너 교체</span><span class="hash">#65</span>
+        <div class="d">브랜드 헤드라인 + AI 팀 8인 라인업으로 교체, 캐시버스터 추가</div></li>
+      <li class="feat"><span class="t">냥이동 클라우드 모드 연결</span><span class="hash">#64</span>
+        <div class="d">Clopay Supabase 명부(nyang_residents) 연결 — 실제 전입 순번 발급 + 인구 집계 활성화</div></li>
     </ul>
   </section>
 
@@ -213,6 +205,8 @@
       <div class="row"><span class="name">배포</span><span class="desc">luca-darakbang.netlify.app · main 푸시 시 자동 배포 (구 metaluca8560.netlify.app은 연결 끊김)</span><span class="pill live">LIVE</span></div>
       <div class="row"><span class="name">클로페이 결제</span><span class="desc">승인 백엔드(Apps Script) 연결 완료 · 테스트 결제 완주 + 구글시트 원장 + 메일 알림 — 남은 건 라이브 전환(사업자·PG 계약)뿐</span><span class="pill live">2/3 단계</span></div>
       <div class="row"><span class="name">클라우드 지갑</span><span class="desc">Supabase 연결 완료 (Seoul) · 이메일 로그인 + 기기 간 잔액 동기화 + 회원 간 송금 활성</span><span class="pill live">LIVE</span></div>
+      <div class="row"><span class="name">냥이동 명부</span><span class="desc">Clopay Supabase 프로젝트에 신규 테이블(nyang_residents) 연결 · 전입 순서대로 주민번호 원자 발급 + 실시간 인구 집계, 미설정 시 로컬 데모로 폴백</span><span class="pill live">LIVE</span></div>
+      <div class="row"><span class="name">Supabase 킵얼라이브</span><span class="desc">GitHub Actions로 주 2회(화·금 9시 KST) REST API 읽기 핑 — 무료 플랜 7일 무활동 자동 일시정지 방지</span><span class="pill live">가동 중</span></div>
       <div class="row"><span class="name">API 프록시 보안</span><span class="desc">7/24 조치 완료 — Netlify 프록시 2종(일반·꿈 스트리밍)에 출처 허용목록 + 분당 10회 제한 + 입력 8천자 상한</span><span class="pill live">조치 완료</span></div>
       <div class="row"><span class="name">n8n 알림</span><span class="desc">웹훅 주소를 HTML에서 제거, 서버 중계(/api/notify)로 이전 — n8n 웹훅 경로 재발급 후 환경변수 등록만 권장</span><span class="pill live">조치 완료</span></div>
     </div>
@@ -222,28 +216,23 @@
     <h2>백로그 <small>우선순 · IDEA-TRACES 기준</small></h2>
     <div class="backlog">
       <div class="item p1">
-        <div class="head">랜딩 리드 폼 + 카카오 챗봇 연결 완성</div>
-        <div class="why">매출 직결 · 설정만 남음 — "이번 주에 끝내기" 판정</div>
+        <div class="head">숏폼 분석기 3종 → 통합 대시보드</div>
+        <div class="why">코드 중복 70~80% 해소 · 탭 전환 단일 앱 + 분석 이력 저장 · n8n 주간 자동 분석으로 확장 — 구 1순위(랜딩 리드폼·카카오)는 메인 랜딩 개편(#63)으로 이미 연결 확인되어 해소</div>
         <span class="tag">1순위</span>
       </div>
       <div class="item p2">
-        <div class="head">숏폼 분석기 3종 → 통합 대시보드</div>
-        <div class="why">코드 중복 70~80% 해소 · 탭 전환 단일 앱 + 분석 이력 저장 · n8n 주간 자동 분석으로 확장</div>
+        <div class="head">메디컬 앱 + MedInfo MCP 연동</div>
+        <div class="why">병원·약국·응급실 실시간 조회로 포트폴리오 대표작 승격</div>
         <span class="tag">2순위</span>
       </div>
       <div class="item">
-        <div class="head">메디컬 앱 + MedInfo MCP 연동</div>
-        <div class="why">병원·약국·응급실 실시간 조회로 포트폴리오 대표작 승격</div>
-        <span class="tag">3순위</span>
-      </div>
-      <div class="item">
         <div class="head">클로페이 테스트 체크리스트 완주</div>
-        <div class="why">백엔드·클라우드 지갑 모두 7/24 연결 완료 ✅ — main 머지 후 PAYMENTS.md 체크리스트 6항목 검증</div>
+        <div class="why">백엔드·클라우드 지갑 연결 완료 ✅ — PAYMENTS.md 체크리스트 6항목 검증, 이후 사업자·PG 계약으로 라이브 전환</div>
         <span class="tag">단기</span>
       </div>
       <div class="item">
         <div class="head">미니 앱 실험 (10호~)</div>
-        <div class="why">아이디어 즉시 프로토타이핑 트랙 — 여가 시간에</div>
+        <div class="why">아이디어 즉시 프로토타이핑 트랙 — 나좀봐(najombwa)·냥이동 마을이 최근 사례 — 여가 시간에</div>
         <span class="tag">상시</span>
       </div>
     </div>
