@@ -43,7 +43,7 @@ const SYSTEM_PROMPT = `당신은 한국어로 답하는 "증상 안내 도우미
 
 [안전 — 무엇보다 우선]
 대화 중 언제든, 아래 위험 신호가 의심되면 질문을 멈추고 즉시 이렇게 안내합니다: "지금은 119에 전화하시거나 바로 응급실로 가세요."
-위험 신호: 의식이 흐림, 갑자기 한쪽 팔다리 힘 빠짐·말 어눌함, 심한 가슴 통증이 팔·턱으로 퍼짐, 숨쉬기 매우 힘듦·입술이 파래짐, 멈추지 않는 출혈·토혈·검은 변, 생애 가장 심한 갑작스러운 두통, 고열과 함께 경련, 임산부의 심한 복통·출혈, 생후 3개월 미만 영아의 38℃ 이상 발열.
+위험 신호: 의식이 흐림, 갑자기 한쪽 팔다리 힘 빠짐·말 어눌함, 심한 가슴 통증이 팔·턱으로 퍼짐, 숨쉬기 매우 힘듦·입술이 파래짐, 멈추지 않는 출혀·토혀·검은 변, 생애 가장 심한 갑작스러운 두통, 고열과 함께 경련, 임산부의 심한 복통·출혀, 생후 3개월 미만 영아의 38℃ 이상 발열.
 
 [금지]
 - 약 이름·용량·구체적 처방을 제시하지 않습니다.
@@ -79,6 +79,9 @@ export default {
       }
       if (url.pathname === "/pharmacies" && request.method === "GET") {
         return await handlePharmacies(url, env, cors);
+      }
+      if (url.pathname === "/hospitals-general" && request.method === "GET") {
+        return await handleGeneralHospitals(url, env, cors);
       }
       return json({ error: "not found" }, 404, cors);
     } catch (err) {
@@ -285,6 +288,51 @@ function parseParmacyItems(xml) {
       address: get("dutyAddr"),
       distance: dist ? `${Number(dist).toFixed(1)}km` : "",
       hours: start && end ? `${fmt(start)}~${fmt(end)}` : "",
+    });
+  }
+  return out;
+}
+
+// ----- 위치기반 일반 병원·의원 목록 (공공데이터 심평원 병원정보서비스) -----
+async function handleGeneralHospitals(url, env, cors) {
+  if (!env.DATA_GO_KR_KEY) return json({ error: "DATA_GO_KR_KEY 미설정", items: [] }, 200, cors);
+  const lat = url.searchParams.get("lat");
+  const lng = url.searchParams.get("lng");
+  if (!lat || !lng) return json({ error: "lat/lng 필요", items: [] }, 400, cors);
+  const dept = url.searchParams.get("dept"); // 진료과목코드(dgsbjtCd), 선택
+
+  // 서비스: 건강보험심사평가원_병원정보서비스(hospInfoServicev2) — 공공데이터포털에서 별도 활용신청 후 사용
+  const api = new URL("https://apis.data.go.kr/B551182/hospInfoServicev2/getHospBasisList");
+  api.searchParams.set("ServiceKey", env.DATA_GO_KR_KEY); // 디코딩된 키 권장
+  api.searchParams.set("xPos", lng);
+  api.searchParams.set("yPos", lat);
+  api.searchParams.set("radius", "3000");
+  api.searchParams.set("pageNo", "1");
+  api.searchParams.set("numOfRows", "10");
+  if (dept) api.searchParams.set("dgsbjtCd", dept);
+
+  const res = await fetch(api.toString());
+  if (!res.ok) return json({ error: "data.go.kr " + res.status, items: [] }, 502, cors);
+  const xml = await res.text();
+  const items = parseHospInfoItems(xml);
+  return json({ items }, 200, cors);
+}
+
+function parseHospInfoItems(xml) {
+  const out = [];
+  const blocks = xml.match(/<item>([\s\S]*?)<\/item>/g) || [];
+  for (const b of blocks) {
+    const get = (tag) => {
+      const m = b.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`));
+      return m ? m[1].replace(/<!\[CDATA\[|\]\]>/g, "").trim() : "";
+    };
+    const dist = get("distance"); // 미터 단위
+    out.push({
+      name: get("yadmNm"),
+      tel: get("telno"),
+      address: get("addr"),
+      distance: dist ? `${(Number(dist) / 1000).toFixed(1)}km` : "",
+      type: get("clCdNm"),
     });
   }
   return out;

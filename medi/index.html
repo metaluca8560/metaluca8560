@@ -60,7 +60,7 @@
       <p class="muted">증상을 자유롭게 적으면 AI가 되묻고, 의심 진료과·응급도를 안내해요. <strong>진단 아님 · 위급 시 119.</strong></p>
       <div id="chatBox" class="chat-box" aria-live="polite"></div>
       <div id="chatChips" class="chat-chips" hidden>
-        <button type="button" class="chip">머리가 지끈거리고 어지러워요</button>
+        <button type="button" class="chip">머리가 지끈거리고 어지럼워요</button>
         <button type="button" class="chip">어제부터 오른쪽 아랫배가 아파요</button>
         <button type="button" class="chip">열이 나고 기침이 나요</button>
       </div>
@@ -93,11 +93,14 @@
       <p class="finder-note" id="finderNote" hidden></p>
 
       <!-- 실시간 목록 (백엔드 연결 시) -->
-      <button class="live-btn" id="liveBtn" type="button">🔄 내 위치로 실시간 병원 목록 보기 <span class="beta">베타</span></button>
-      <div id="liveList" class="live-list"></div>
+      <button class="live-btn" id="genHospBtn" type="button">🏥 내 위치로 실시간 병원·의원 목록 보기 <span class="beta">베타</span></button>
+      <div id="genHospList" class="live-list"></div>
 
       <button class="live-btn" id="pharmacyBtn" type="button">💊 내 위치로 실시간 약국 목록 보기 <span class="beta">베타</span></button>
       <div id="pharmacyList" class="live-list"></div>
+
+      <button class="live-btn" id="liveBtn" type="button">🚑 내 위치로 실시간 응급실 목록 보기 <span class="beta">베타</span></button>
+      <div id="liveList" class="live-list"></div>
 
       <div class="official">
         <h3>공식 서비스 바로가기</h3>

@@ -179,6 +179,7 @@ function renderLiveItems(listEl, items, lat, lng, fallbackName) {
         <strong>${escapeHtml(h.name || fallbackName)}</strong>
         ${h.distance ? `<span class="li-dist">${escapeHtml(h.distance)}</span>` : ""}
       </div>
+      ${h.type ? `<p class="li-type">${escapeHtml(h.type)}</p>` : ""}
       ${h.address ? `<p class="li-addr">${escapeHtml(h.address)}</p>` : ""}
       ${h.hours ? `<p class="li-hours">🕐 ${escapeHtml(h.hours)}</p>` : ""}
       <div class="li-actions">
@@ -219,6 +220,40 @@ async function fetchPharmacies(lat, lng) {
     renderLiveItems(pharmacyList, data.items || [], lat, lng, "약국");
   } catch (err) {
     pharmacyList.innerHTML = `<p class="live-empty">목록을 불러오지 못했어요. 지도 검색을 이용하세요.</p>`;
+  }
+}
+
+// ---------- 실시간 일반 병원 목록 ----------
+const genHospBtn = document.getElementById("genHospBtn");
+const genHospList = document.getElementById("genHospList");
+
+genHospBtn?.addEventListener("click", () => {
+  if (!hasBackend) {
+    genHospList.innerHTML = `<p class="live-empty">실시간 목록은 백엔드 연결 시 표시돼요. 지금은 위의 <strong>🏥 가까운 병원</strong> 버튼으로 지도 검색을 이용하세요.<br><span class="muted">(설정: server/README.md)</span></p>`;
+    return;
+  }
+  genHospList.innerHTML = `<p class="live-empty">위치 확인 중…</p>`;
+  if (!navigator.geolocation) {
+    genHospList.innerHTML = `<p class="live-empty">이 기기에서 위치를 쓸 수 없어요. 지도 검색을 이용하세요.</p>`;
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    (pos) => fetchGeneralHospitals(pos.coords.latitude, pos.coords.longitude),
+    () => { genHospList.innerHTML = `<p class="live-empty">위치 권한이 없어요. 허용 후 다시 눌러주세요.</p>`; },
+    { timeout: 8000 }
+  );
+});
+
+async function fetchGeneralHospitals(lat, lng) {
+  genHospList.innerHTML = `<p class="live-empty">가까운 병원·의원을 불러오는 중…</p>`;
+  try {
+    const url = `${API_BASE}/hospitals-general?lat=${lat}&lng=${lng}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("server " + res.status);
+    const data = await res.json();
+    renderLiveItems(genHospList, data.items || [], lat, lng, "병원");
+  } catch (err) {
+    genHospList.innerHTML = `<p class="live-empty">목록을 불러오지 못했어요. 지도 검색을 이용하세요.</p>`;
   }
 }
 
