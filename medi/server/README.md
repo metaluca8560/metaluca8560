@@ -7,14 +7,17 @@
 |------------|------|
 | `POST /triage` | AI 문진 — Claude Messages API 호출. 레드플래그 가드레일을 시스템 프롬프트로 강제 |
 | `GET /hospitals?lat=&lng=&type=` | 위치기반 응급/병원 목록 — 공공데이터 E-Gen 프록시 |
+| `GET /pharmacies?lat=&lng=` | 위치기반 가까운 약국 목록(거리순) — 공공데이터 국립중앙의료원 약국정보 프록시 |
 
 키는 **서버 환경변수(Secret)** 로만 두고 절대 프론트/깃에 올리지 않습니다.
 
 ## 준비물 (각 1회)
 1. **Cloudflare 계정**(무료) + Node.js 설치
 2. **Anthropic API 키** — [console.anthropic.com](https://console.anthropic.com) → API Keys (`/triage`에 필요)
-3. (선택) **공공데이터포털 서비스키** — [data.go.kr](https://www.data.go.kr)에서
-   "응급의료정보(ErmctInfoInqireService)" 활용신청 → 일반 인증키(Decoding) 발급 (`/hospitals`에 필요)
+3. (선택) **공공데이터포털 서비스키** — [data.go.kr](https://www.data.go.kr) 마이페이지에서 **일반 인증키**를 발급받고,
+   아래 두 서비스를 각각 **활용신청**(둘 다 자동승인)하면 같은 키로 `/hospitals`·`/pharmacies` 모두 동작합니다.
+   - `/hospitals`용: "국립중앙의료원_전국 응급의료기관 정보 조회 서비스" (`ErmctInfoInqireService`)
+   - `/pharmacies`용: "국립중앙의료원_전국 약국 정보 조회 서비스" (`ErmctInsttInfoInqireService`)
 
 ## 배포 (이 폴더에서)
 ```bash

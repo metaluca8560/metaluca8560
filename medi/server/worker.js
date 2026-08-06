@@ -77,6 +77,9 @@ export default {
       if (url.pathname === "/hospitals" && request.method === "GET") {
         return await handleHospitals(url, env, cors);
       }
+      if (url.pathname === "/pharmacies" && request.method === "GET") {
+        return await handlePharmacies(url, env, cors);
+      }
       return json({ error: "not found" }, 404, cors);
     } catch (err) {
       return json({ error: String((err && err.message) || err) }, 500, cors);
@@ -237,6 +240,51 @@ function parseEgenItems(xml) {
       tel: get("dutyTel1"),
       address: get("dutyAddr"),
       distance: dist ? `${Number(dist).toFixed(1)}km` : "",
+    });
+  }
+  return out;
+}
+
+// ----- 위치기반 가까운 약국 목록 (공공데이터 국립중앙의료원 약국정보) -----
+async function handlePharmacies(url, env, cors) {
+  if (!env.DATA_GO_KR_KEY) return json({ error: "DATA_GO_KR_KEY 미설정", items: [] }, 200, cors);
+  const lat = url.searchParams.get("lat");
+  const lng = url.searchParams.get("lng");
+  if (!lat || !lng) return json({ error: "lat/lng 필요", items: [] }, 400, cors);
+
+  // 서비스: ErmctInsttInfoInqireService(국립중앙의료원_전국 약국 정보 조회 서비스) — 공공데이터포털에서 별도 활용신청 후 사용
+  const api = new URL("https://apis.data.go.kr/B552657/ErmctInsttInfoInqireService/getParmacyLcinfoInqire");
+  api.searchParams.set("serviceKey", env.DATA_GO_KR_KEY); // 디코딩된 키 권장
+  api.searchParams.set("WGS84_LON", lng);
+  api.searchParams.set("WGS84_LAT", lat);
+  api.searchParams.set("pageNo", "1");
+  api.searchParams.set("numOfRows", "10");
+
+  const res = await fetch(api.toString());
+  if (!res.ok) return json({ error: "data.go.kr " + res.status, items: [] }, 502, cors);
+  const xml = await res.text();
+  const items = parseParmacyItems(xml);
+  return json({ items }, 200, cors);
+}
+
+function parseParmacyItems(xml) {
+  const out = [];
+  const blocks = xml.match(/<item>([\s\S]*?)<\/item>/g) || [];
+  for (const b of blocks) {
+    const get = (tag) => {
+      const m = b.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`));
+      return m ? m[1].replace(/<!\[CDATA\[|\]\]>/g, "").trim() : "";
+    };
+    const dist = get("distance");
+    const start = get("startTime");
+    const end = get("endTime");
+    const fmt = (t) => (t && t.length === 4 ? `${t.slice(0, 2)}:${t.slice(2)}` : "");
+    out.push({
+      name: get("dutyName"),
+      tel: get("dutyTel1"),
+      address: get("dutyAddr"),
+      distance: dist ? `${Number(dist).toFixed(1)}km` : "",
+      hours: start && end ? `${fmt(start)}~${fmt(end)}` : "",
     });
   }
   return out;
