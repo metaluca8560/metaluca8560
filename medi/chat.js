@@ -162,25 +162,63 @@ async function fetchHospitals(lat, lng) {
     const res = await fetch(url);
     if (!res.ok) throw new Error("server " + res.status);
     const data = await res.json();
-    const items = data.items || [];
-    if (!items.length) {
-      liveList.innerHTML = `<p class="live-empty">주변 결과를 찾지 못했어요. 지도 검색을 이용하거나 119에 문의하세요.</p>`;
-      return;
-    }
-    liveList.innerHTML = items.map((h) => `
-      <div class="live-item">
-        <div class="li-main">
-          <strong>${escapeHtml(h.name || "병원")}</strong>
-          ${h.distance ? `<span class="li-dist">${escapeHtml(h.distance)}</span>` : ""}
-        </div>
-        ${h.address ? `<p class="li-addr">${escapeHtml(h.address)}</p>` : ""}
-        <div class="li-actions">
-          ${h.tel ? `<a class="li-call" href="tel:${escapeHtml(h.tel)}">📞 ${escapeHtml(h.tel)}</a>` : ""}
-          <a class="li-map" href="https://www.google.com/maps/search/${encodeURIComponent(h.name || "병원")}/@${lat},${lng},15z" target="_blank" rel="noopener">🗺 지도</a>
-        </div>
-      </div>`).join("");
+    renderLiveItems(liveList, data.items || [], lat, lng, "병원");
   } catch (err) {
     liveList.innerHTML = `<p class="live-empty">목록을 불러오지 못했어요. 지도 검색을 이용하거나, 위급하면 119에 연락하세요.</p>`;
+  }
+}
+
+function renderLiveItems(listEl, items, lat, lng, fallbackName) {
+  if (!items.length) {
+    listEl.innerHTML = `<p class="live-empty">주변 결과를 찾지 못했어요. 지도 검색을 이용하거나 119에 문의하세요.</p>`;
+    return;
+  }
+  listEl.innerHTML = items.map((h) => `
+    <div class="live-item">
+      <div class="li-main">
+        <strong>${escapeHtml(h.name || fallbackName)}</strong>
+        ${h.distance ? `<span class="li-dist">${escapeHtml(h.distance)}</span>` : ""}
+      </div>
+      ${h.address ? `<p class="li-addr">${escapeHtml(h.address)}</p>` : ""}
+      ${h.hours ? `<p class="li-hours">🕐 ${escapeHtml(h.hours)}</p>` : ""}
+      <div class="li-actions">
+        ${h.tel ? `<a class="li-call" href="tel:${escapeHtml(h.tel)}">📞 ${escapeHtml(h.tel)}</a>` : ""}
+        <a class="li-map" href="https://www.google.com/maps/search/${encodeURIComponent(h.name || fallbackName)}/@${lat},${lng},15z" target="_blank" rel="noopener">🗺 지도</a>
+      </div>
+    </div>`).join("");
+}
+
+// ---------- 실시간 약국 목록 ----------
+const pharmacyBtn = document.getElementById("pharmacyBtn");
+const pharmacyList = document.getElementById("pharmacyList");
+
+pharmacyBtn?.addEventListener("click", () => {
+  if (!hasBackend) {
+    pharmacyList.innerHTML = `<p class="live-empty">실시간 목록은 백엔드 연결 시 표시돼요. 지금은 위의 <strong>💊 가까운 약국</strong> 버튼으로 지도 검색을 이용하세요.<br><span class="muted">(설정: server/README.md)</span></p>`;
+    return;
+  }
+  pharmacyList.innerHTML = `<p class="live-empty">위치 확인 중…</p>`;
+  if (!navigator.geolocation) {
+    pharmacyList.innerHTML = `<p class="live-empty">이 기기에서 위치를 쓸 수 없어요. 지도 검색을 이용하세요.</p>`;
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    (pos) => fetchPharmacies(pos.coords.latitude, pos.coords.longitude),
+    () => { pharmacyList.innerHTML = `<p class="live-empty">위치 권한이 없어요. 허용 후 다시 눌러주세요.</p>`; },
+    { timeout: 8000 }
+  );
+});
+
+async function fetchPharmacies(lat, lng) {
+  pharmacyList.innerHTML = `<p class="live-empty">가까운 약국을 불러오는 중…</p>`;
+  try {
+    const url = `${API_BASE}/pharmacies?lat=${lat}&lng=${lng}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("server " + res.status);
+    const data = await res.json();
+    renderLiveItems(pharmacyList, data.items || [], lat, lng, "약국");
+  } catch (err) {
+    pharmacyList.innerHTML = `<p class="live-empty">목록을 불러오지 못했어요. 지도 검색을 이용하세요.</p>`;
   }
 }
 

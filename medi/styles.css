@@ -182,7 +182,8 @@ body.child .finder-grid .child-only { display: block; }
 .li-main { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
 .li-main strong { font-size: 1.05em; }
 .li-dist { font-size: .85em; color: var(--brand-d); font-weight: 700; flex-shrink: 0; }
-.li-addr { font-size: .88em; color: var(--muted); margin: 4px 0 10px; }
+.li-addr { font-size: .88em; color: var(--muted); margin: 4px 0; }
+.li-hours { font-size: .88em; color: var(--muted); margin: 0 0 10px; }
 .li-actions { display: flex; gap: 8px; }
 .li-call, .li-map { font-size: .9em; font-weight: 700; text-decoration: none; padding: 9px 14px; border-radius: 10px; }
 .li-call { background: #e7f6f7; color: var(--brand-d); }
