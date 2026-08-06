@@ -3,4 +3,4 @@
 //   예: window.FESTIVAL_API_BASE = "https://festival-api.이름.workers.dev";
 //
 // 비워두면( "" ) AI 추천 없이 안내 화면만 뜹니다.
-window.FESTIVAL_API_BASE = "";
+window.FESTIVAL_API_BASE = "https://festival-api.atlia0318.workers.dev";
