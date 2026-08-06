@@ -1,0 +1,80 @@
+:root {
+  --bg: #fff7ed;
+  --surface: #ffffff;
+  --ink: #3a2416;
+  --muted: #8a6f5c;
+  --line: #f0ddc8;
+  --brand: #ea7a3c;       /* 따뜻한 주황(축제) */
+  --brand-d: #d1651f;
+  --accent: #ffb703;
+  --radius: 18px;
+  --shadow: 0 10px 30px rgba(58, 36, 22, .08);
+  --font: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font); color: var(--ink); background: var(--bg);
+  font-size: 17px; line-height: 1.6; word-break: keep-all;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { width: 100%; max-width: 680px; margin: 0 auto; padding: 0 16px; }
+.muted { color: var(--muted); }
+strong { font-weight: 800; }
+
+/* ===== 상단 ===== */
+.topbar { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
+.topbar-in { display: flex; align-items: center; justify-content: center; height: 60px; }
+.logo { text-decoration: none; color: var(--ink); font-weight: 800; font-size: 1.15em; }
+.logo em { color: var(--brand); font-style: normal; }
+
+/* 인트로 */
+.intro-bar { background: #fff1e0; border-bottom: 1px solid var(--line); color: #8a4a10; }
+.intro-bar .wrap { padding: 10px 16px; font-size: .9em; }
+
+.main { padding: 18px 16px 40px; display: flex; flex-direction: column; gap: 18px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; }
+.card h2 { font-size: 1.2em; margin-bottom: 6px; }
+
+/* 지역 선택 칩 */
+.region-grid { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.region-chip {
+  font-family: inherit; font-size: .92em; font-weight: 700; cursor: pointer;
+  background: #fff1e0; color: var(--brand-d); border: 2px solid transparent; border-radius: 999px;
+  padding: 10px 16px; transition: border-color .15s, transform .1s;
+}
+.region-chip:hover { border-color: var(--brand); }
+.region-chip.is-on { background: var(--brand); color: #fff; }
+.region-chip:active { transform: scale(.97); }
+
+/* ===== AI 채팅 ===== */
+.chat-box { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; max-height: 420px; overflow-y: auto; padding: 4px; }
+.msg { max-width: 85%; padding: 12px 15px; border-radius: 16px; font-size: .98em; line-height: 1.55; white-space: pre-wrap; }
+.msg-bot { background: var(--bg); color: var(--ink); border-bottom-left-radius: 4px; align-self: flex-start; }
+.msg-user { background: var(--brand); color: #fff; border-bottom-right-radius: 4px; align-self: flex-end; }
+.chat-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+.chat-chips .chip { font-family: inherit; font-size: .88em; cursor: pointer; background: var(--bg); color: var(--brand-d); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; }
+.chat-chips .chip:hover { border-color: var(--brand); }
+.chat-form { display: flex; gap: 8px; align-items: center; }
+.chat-form input { flex: 1; font-family: inherit; font-size: 1em; padding: 13px 15px; border: 2px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); }
+.chat-form input:focus { outline: none; border-color: var(--brand); }
+.chat-form input:disabled { background: var(--bg); color: var(--muted); }
+.chat-send { flex: 0 0 auto; width: 48px; height: 48px; border-radius: 999px; border: none; background: var(--brand); color: #fff; font-size: 1.3em; font-weight: 800; cursor: pointer; }
+.chat-send:disabled { background: var(--line); color: var(--muted); cursor: not-allowed; }
+.chat-note { margin-top: 12px; font-size: .85em; color: var(--muted); }
+.chat-note code { background: var(--bg); padding: 1px 6px; border-radius: 6px; }
+
+/* ===== 추천 카드 ===== */
+.pick-list { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; align-self: stretch; }
+.pick-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; box-shadow: var(--shadow); }
+.pick-card .pk-title { font-weight: 800; font-size: 1.05em; }
+.pick-card .pk-when { color: var(--brand-d); font-weight: 700; font-size: .9em; margin-top: 4px; }
+.pick-card .pk-where { color: var(--muted); font-size: .9em; margin-top: 2px; }
+.pick-card .pk-why { margin-top: 8px; font-size: .95em; }
+.pick-empty { color: var(--muted); font-size: .95em; padding: 6px 2px; }
+
+/* ===== 푸터 ===== */
+.footer { background: #ffeddc; padding: 26px 0 40px; color: var(--muted); }
+.footer p { margin: 6px 0; font-size: .9em; }
+.footer .fine { font-size: .8em; line-height: 1.6; }
