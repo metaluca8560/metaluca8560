@@ -98,6 +98,7 @@
   }
   .result .r-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .result .r-name { font-size: 1rem; font-weight: 800; }
+  .result .r-alias { font-size: 0.7rem; font-weight: 600; color: var(--muted); margin-left: 4px; }
   .badge {
     flex-shrink: 0; font-size: 0.72rem; font-weight: 800; padding: 5px 11px;
     border-radius: 20px; white-space: nowrap;
@@ -467,7 +468,9 @@
     { n:'전기장판', a:['전기요','온수매트'], v:'big', b:'대형폐기물 / 무상수거', how:'대형폐기물 신고 또는 폐가전 무상방문수거(다른 가전과 함께) 이용.', why:'전열선이 들어 있어 일반 이불처럼 버리면 안 됩니다.' },
     { n:'선풍기', a:['서큘레이터','히터'], v:'special', b:'소형가전 / 대형', how:'주민센터 소형폐가전 수거함(들어가는 크기) 또는 대형폐기물 신고. 무상수거(5개 이상 조건)도 가능.', why:'모터·금속 자원이 회수됩니다.' },
     { n:'매트리스', a:['침대 매트리스','침대'], v:'big', b:'대형폐기물', how:'대형폐기물 신고 후 배출. [대형폐기물] 탭에서 신고 방법을 확인하세요.', why:'스프링·섬유 복합 구조라 전문 해체가 필요합니다.' },
-    { n:'소파', a:['쇼파','책상','옷장','서랍장','가구'], v:'big', b:'대형폐기물', how:'대형폐기물 신고 후 스티커를 붙여 배출. [대형폐기물] 탭 참고.', why:'부피가 커서 종량제 배출이 불가능합니다.' },
+    { n:'소파', a:['쇼파','안락의자','리클라이너'], v:'big', b:'대형폐기물', how:'대형폐기물 신고 후 스티커를 붙여 배출. [대형폐기물] 탭 참고.', why:'부피가 커서 종량제 배출이 불가능합니다.' },
+    { n:'책상', a:['테이블','식탁','밥상','좌식 책상','의자'], v:'big', b:'대형폐기물', how:'대형폐기물 신고 후 스티커를 붙여 배출. 상태 좋으면 나눔·중고 거래 추천.', why:'가구는 크기와 상관없이 대부분 대형폐기물 신고 대상입니다.' },
+    { n:'옷장', a:['장롱','서랍장','책장','수납장','가구'], v:'big', b:'대형폐기물', how:'대형폐기물 신고 후 스티커를 붙여 배출. [대형폐기물] 탭 참고.', why:'부피가 커서 종량제 배출이 불가능합니다.' },
     { n:'카페트', a:['러그','전신 카펫'], v:'big', b:'대형폐기물 / 일반', how:'크면 대형폐기물 신고, 발매트 크기는 종량제 봉투에.', why:'섬유 복합재질이라 재활용이 안 됩니다.' },
     { n:'커튼', a:['블라인드'], v:'general', b:'일반 / 대형', how:'천 커튼은 접어서 종량제(대형 봉투), 블라인드·레일은 대형폐기물 신고.', why:'커튼은 의류수거함 금지 품목인 곳이 많아요.' },
     { n:'자전거', a:['킥보드','유모차'], v:'big', b:'대형폐기물', how:'대형폐기물 신고 후 배출. 탈 만하면 나눔·중고 거래 추천.', why:'금속 재활용은 되지만 크기 때문에 신고 배출이 원칙입니다.' },
@@ -535,7 +538,10 @@
     { n:'유리 조각상', a:['수정 장식품','크리스탈'], v:'general', b:'불연성 마대', how:'불연성 마대에 담아 배출.', why:'가공 유리·크리스탈은 병유리와 재질이 달라요.' },
     { n:'물감', a:['수채화 물감','아크릴 물감','유화 물감','물감 튜브'], v:'general', b:'일반쓰레기 (굳혀서)', how:'남은 물감은 휴지·신문지에 짜서 굳힌 뒤 튜브째 종량제 봉투에. 하수구·개수대에 씻어 버리지 마세요.', why:'물감에는 안료·화학 성분이 있어 하수로 흘리면 수질을 오염시키고, 튜브는 복합재질이라 재활용이 안 됩니다.' },
     { n:'크레파스', a:['크레용','색연필','사인펜','매직'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'왁스·안료 성분과 복합재질이라 재활용 대상이 아닙니다.' },
-    { n:'붓', a:['그림 붓','페인트 붓','롤러'], v:'general', b:'일반쓰레기', how:'물감·페인트를 말린 뒤 종량제 봉투에.', why:'털+금속+나무 복합재질이라 재활용이 안 됩니다.' }
+    { n:'붓', a:['그림 붓','페인트 붓','롤러'], v:'general', b:'일반쓰레기', how:'물감·페인트를 말린 뒤 종량제 봉투에.', why:'털+금속+나무 복합재질이라 재활용이 안 됩니다.' },
+    { n:'항아리', a:['옹기','장독','장독대','뚝배기'], v:'general', b:'불연성 마대 / 대형', how:'작은 것은 불연성 마대(주민센터·마트 판매)에, 큰 항아리·장독은 대형폐기물 신고.', why:'옹기·도자기류는 소각이 안 되어 불연성 폐기물로 처리해야 합니다.' },
+    { n:'꽃바구니', a:['꽃다발','생화','화환','조화'], v:'general', b:'분해해서', how:'꽃(생화)은 말려서 종량제, 바구니·리본·비닐은 재질별로(대부분 종량제), 초록색 스펀지(플로랄폼)는 꼭 종량제로.', why:'생화는 음식물이 아니고, 플로랄폼은 미세플라스틱 덩어리라 반드시 종량제로 버려야 해요.' },
+    { n:'화분 받침', a:['플라스틱 받침'], v:'recycle', b:'재활용 (플라스틱)', how:'흙·물때를 씻어서 플라스틱으로.', why:'단일 재질 플라스틱은 재활용됩니다.' }
   ];
 
   const BADGE_CLASS = { recycle:'b-recycle', general:'b-general', food:'b-food', special:'b-special', big:'b-big', danger:'b-danger' };
@@ -573,17 +579,20 @@
 
     const scored = [];
     for (const item of ITEMS) {
-      const names = [item.n, ...(item.a || [])].map(norm);
-      let best = -1;
-      for (const nm of names) {
-        if (nm === term) best = Math.max(best, 3);
-        else if (nm.startsWith(term) || term.startsWith(nm)) best = Math.max(best, 2);
-        else if (nm.includes(term) || term.includes(nm)) best = Math.max(best, 1);
+      const rawNames = [item.n, ...(item.a || [])];
+      let best = -1, hit = null;
+      for (const raw of rawNames) {
+        const nm = norm(raw);
+        let s = 0;
+        if (nm === term) s = 3;
+        else if (nm.startsWith(term) || term.startsWith(nm)) s = 2;
+        else if (nm.includes(term) || term.includes(nm)) s = 1;
+        if (s > best) { best = s; hit = raw; }
       }
-      if (best > 0) scored.push([best, item]);
+      if (best > 0) scored.push([best, item, hit]);
     }
     scored.sort((a, b) => b[0] - a[0]);
-    const top = scored.slice(0, 8).map(s => s[1]);
+    const top = scored.slice(0, 8);
 
     if (!top.length) {
       resultsEl.innerHTML = '<div class="card no-result">아직 사전에 없는 품목이에요 🥲<br>' +
@@ -595,11 +604,13 @@
     count.className = 'result-count';
     count.textContent = top.length + '개 품목';
     resultsEl.appendChild(count);
-    for (const item of top) {
+    for (const [, item, hit] of top) {
       const d = document.createElement('div');
       d.className = 'result';
+      const aliasHint = hit && hit !== item.n
+        ? ' <span class="r-alias">‘' + hit + '’ 매칭</span>' : '';
       d.innerHTML =
-        '<div class="r-head"><span class="r-name">' + item.n + '</span>' +
+        '<div class="r-head"><span class="r-name">' + item.n + aliasHint + '</span>' +
         '<span class="badge ' + BADGE_CLASS[item.v] + '">' + item.b + '</span></div>' +
         '<div class="r-how">' + item.how + '</div>' +
         '<div class="r-why">💡 ' + item.why + '</div>';
