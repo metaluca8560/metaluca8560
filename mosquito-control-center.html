@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>🦟 모기 방역 관제센터 — M-DOCS Enterprise</title>
+<meta name="description" content="가정용 초음파 모기 퇴치기에 진심인 관제 시스템. 실시간 대시보드, 시스템 로그 콘솔, 스펙트럼 분석기까지 — 쓸데없이 정교합니다.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="🦟 모기 방역 관제센터 — M-DOCS Enterprise">
+<meta property="og:description" content="버튼 하나로 켜지는 초음파 발생기에 관제센터급 연출을 씌운, 하찮지만 정교한 앱.">
+<meta property="og:url" content="https://metaluca8560.github.io/metaluca8560/mosquito-control-center.html">
+<meta property="og:image" content="https://metaluca8560.github.io/metaluca8560/og-mosquito.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="🦟 모기 방역 관제센터 — M-DOCS Enterprise">
+<meta name="twitter:description" content="버튼 하나로 켜지는 초음파 발생기에 관제센터급 연출을 씌운, 하찮지만 정교한 앱.">
+<meta name="twitter:image" content="https://metaluca8560.github.io/metaluca8560/og-mosquito.png">
+<link rel="icon" type="image/svg+xml" href="mosquito-icon.svg">
+<style>
+  :root {
+    --bg: #070b14;
+    --card: #0e1526;
+    --card2: #141d33;
+    --accent: #4ade80;
+    --accent-dim: rgba(74, 222, 128, 0.15);
+    --cyan: #38bdf8;
+    --cyan-dim: rgba(56, 189, 248, 0.15);
+    --amber: #fbbf24;
+    --danger: #f87171;
+    --text: #e2e8f0;
+    --muted: #8291a8;
+    --border: rgba(148, 163, 184, 0.14);
+    --mono: "SFMono-Regular", "Menlo", "Consolas", monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", "Noto Sans KR", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 20px;
+    background-image:
+      linear-gradient(rgba(56,189,248,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56,189,248,0.035) 1px, transparent 1px),
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(74, 222, 128, 0.07), transparent);
+    background-size: 28px 28px, 28px 28px, auto;
+  }
+  .app { width: 100%; max-width: 460px; margin: 0 auto; }
+
+  /* 부팅 오버레이 */
+  #boot {
+    position: fixed; inset: 0; z-index: 50;
+    background: #05070d;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    font-family: var(--mono);
+  }
+  #boot .logo { font-size: 2.4rem; margin-bottom: 18px; filter: drop-shadow(0 0 12px rgba(74,222,128,0.5)); }
+  #bootLog {
+    width: 100%; max-width: 380px;
+    font-size: 0.74rem; line-height: 1.9;
+    color: var(--accent);
+    min-height: 190px;
+  }
+  #bootLog div { opacity: 0; animation: bootIn 0.25s forwards; }
+  @keyframes bootIn { to { opacity: 1; } }
+  #bootLog .warn { color: var(--amber); }
+  #bootLog .muted { color: var(--muted); }
+  #bootBar {
+    width: 100%; max-width: 380px; height: 3px;
+    background: var(--card2); border-radius: 2px; margin-top: 16px; overflow: hidden;
+  }
+  #bootBar span { display: block; height: 100%; width: 0%; background: var(--accent); transition: width 0.2s linear; }
+  #bootSkip {
+    margin-top: 18px; background: none; border: 1px solid var(--border); color: var(--muted);
+    font-size: 0.72rem; padding: 6px 14px; border-radius: 20px; cursor: pointer; opacity: 0;
+    transition: opacity 0.3s; font-family: inherit;
+  }
+  #bootSkip.show { opacity: 1; }
+  #boot.hide { animation: bootOut 0.4s forwards; }
+  @keyframes bootOut { to { opacity: 0; visibility: hidden; } }
+
+  header { text-align: center; margin-bottom: 18px; }
+  .badge-top {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 0.68rem; color: var(--cyan);
+    background: var(--cyan-dim); border: 1px solid rgba(56,189,248,0.3);
+    padding: 3px 10px; border-radius: 20px; margin-bottom: 10px;
+  }
+  .badge-top .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); }
+  header h1 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; }
+  header p { color: var(--muted); font-size: 0.8rem; margin-top: 5px; font-family: var(--mono); }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: 0.72rem; font-weight: 700; color: var(--muted);
+    margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.08em;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .section-title .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+  .section-title .live-dot.on { background: var(--accent); animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0.25; } }
+
+  /* 대시보드 게이지 */
+  .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .gauge {
+    background: var(--card2); border: 1px solid var(--border); border-radius: 14px;
+    padding: 12px; text-align: center;
+  }
+  .gauge .g-label { font-size: 0.68rem; color: var(--muted); margin-bottom: 6px; }
+  .gauge .g-value { font-size: 1.25rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .gauge .g-value.warn { color: var(--amber); }
+  .gauge .g-value.ok { color: var(--accent); }
+  .gauge .g-value.info { color: var(--cyan); }
+  .gauge .g-sub { font-size: 0.63rem; color: var(--muted); margin-top: 3px; }
+
+  /* 메인 파워 버튼 */
+  .power-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 4px 0 14px; }
+  .power-btn {
+    position: relative; width: 152px; height: 152px; border-radius: 50%;
+    border: 2px solid var(--border); background: var(--card2); cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent; user-select: none;
+  }
+  .power-btn:active { transform: scale(0.97); }
+  .power-btn .icon { font-size: 2.8rem; line-height: 1; }
+  .power-btn .label { font-size: 0.8rem; color: var(--muted); font-weight: 600; font-family: var(--mono); }
+  .power-btn.on {
+    border-color: var(--accent); background: linear-gradient(145deg, #22c55e, #15803d);
+    box-shadow: 0 0 0 8px var(--accent-dim), 0 0 60px rgba(74, 222, 128, 0.5);
+    animation: glow-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 0 8px var(--accent-dim), 0 0 40px rgba(74, 222, 128, 0.4); }
+    50%      { box-shadow: 0 0 0 14px rgba(74, 222, 128, 0.25), 0 0 80px rgba(74, 222, 128, 0.7); }
+  }
+  .power-btn.on .label { color: #dcfce7; }
+  .power-btn.on .icon { animation: buzz 0.15s infinite alternate; }
+  @keyframes buzz {
+    from { transform: translate(-1.5px, 1px) rotate(-3deg); }
+    to   { transform: translate(1.5px, -1px) rotate(3deg); }
+  }
+  .ring { position: absolute; inset: -2px; border-radius: 50%; border: 2px solid var(--accent); opacity: 0; pointer-events: none; }
+  .power-btn.on .ring { animation: ripple 2s ease-out infinite; }
+  .power-btn.on .ring:nth-child(2) { animation-delay: 0.66s; }
+  .power-btn.on .ring:nth-child(3) { animation-delay: 1.33s; }
+  @keyframes ripple { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(1.7); opacity: 0; } }
+
+  .freq-display { text-align: center; font-variant-numeric: tabular-nums; }
+  .freq-display .value { font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; font-family: var(--mono); }
+  .freq-display .value span { font-size: 1rem; color: var(--muted); font-weight: 600; margin-left: 4px; }
+  .freq-display .hint { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+  #scope { width: 100%; height: 60px; display: block; background: var(--card2); border: 1px solid var(--border); border-radius: 12px; }
+
+  .slider-row { margin-top: 18px; }
+  .slider-row label { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); margin-bottom: 10px; font-weight: 600; }
+  input[type="range"] {
+    width: 100%; -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px;
+    background: var(--card2); outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent); border: 4px solid var(--bg); box-shadow: 0 0 0 1px var(--border); cursor: pointer;
+  }
+  input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 4px solid var(--bg); cursor: pointer; }
+
+  .profiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 18px; }
+  .profile {
+    background: var(--card2); border: 1px solid var(--border); border-radius: 14px; padding: 11px 10px;
+    cursor: pointer; text-align: left; color: var(--text); transition: border-color 0.2s, background 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .profile:active { background: var(--accent-dim); }
+  .profile.active { border-color: var(--accent); background: var(--accent-dim); }
+  .profile .name { font-size: 0.66rem; font-family: var(--mono); color: var(--cyan); letter-spacing: 0.03em; }
+  .profile .desc { font-size: 0.78rem; font-weight: 700; margin-top: 2px; }
+  .profile .sub { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+
+  .timer-row { display: flex; gap: 8px; }
+  .timer-btn {
+    flex: 1; background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 10px 0;
+    color: var(--text); font-size: 0.8rem; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .timer-btn.active { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+  .timer-remain { text-align: center; font-size: 0.78rem; color: var(--accent); margin-top: 10px; min-height: 1.2em; font-variant-numeric: tabular-nums; font-family: var(--mono); }
+
+  .test-btn {
+    width: 100%; margin-top: 14px; background: var(--card2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 0; color: var(--text); font-size: 0.82rem; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .test-btn:active { background: var(--accent-dim); }
+
+  /* 시스템 로그 콘솔 */
+  #console {
+    font-family: var(--mono); font-size: 0.68rem; line-height: 1.7;
+    background: #05070d; border: 1px solid var(--border); border-radius: 12px;
+    padding: 10px 12px; height: 150px; overflow-y: auto; color: #7dd3a0;
+  }
+  #console .log-line { white-space: pre-wrap; word-break: break-all; opacity: 0; animation: bootIn 0.2s forwards; }
+  #console .lvl-warn { color: var(--amber); }
+  #console .lvl-joke { color: var(--muted); font-style: italic; }
+  #console::-webkit-scrollbar { width: 5px; }
+  #console::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  #consoleEmpty { color: var(--muted); }
+
+  /* 인증 배지 */
+  .cert-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cert-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--card2); border: 1px solid var(--border); border-radius: 20px;
+    padding: 6px 12px; font-size: 0.72rem; color: var(--muted);
+  }
+
+  /* 스펙 시트 */
+  .spec-table { width: 100%; border-collapse: collapse; font-size: 0.76rem; }
+  .spec-table tr { border-bottom: 1px solid var(--border); }
+  .spec-table tr:last-child { border-bottom: none; }
+  .spec-table td { padding: 8px 2px; }
+  .spec-table td:first-child { color: var(--muted); width: 42%; }
+  .spec-table td:last-child { text-align: right; font-weight: 600; }
+
+  .notice {
+    background: rgba(248, 113, 113, 0.07); border: 1px solid rgba(248, 113, 113, 0.22);
+    border-radius: 16px; padding: 16px; font-size: 0.77rem; line-height: 1.65; color: var(--muted);
+  }
+  .notice strong { color: var(--danger); }
+  .notice ul { margin: 8px 0 0 18px; }
+  .appendix-tag { font-family: var(--mono); font-size: 0.66rem; color: var(--danger); margin-bottom: 6px; display: block; }
+
+  footer { text-align: center; font-size: 0.7rem; color: var(--muted); opacity: 0.55; margin-top: 6px; padding-bottom: 20px; font-family: var(--mono); }
+</style>
+</head>
+<body>
+
+<div id="boot">
+  <div class="logo">🦟</div>
+  <div id="bootLog"></div>
+  <div id="bootBar"><span id="bootBarFill"></span></div>
+  <button id="bootSkip">건너뛰기 →</button>
+</div>
+
+<div class="app">
+  <header>
+    <div class="badge-top"><span class="dot"></span>M-DOCS v4.2.1 · Enterprise Edition</div>
+    <h1>🦟 모기 방역 관제센터</h1>
+    <p>Mosquito Defense Operations Console</p>
+  </header>
+
+  <div class="card">
+    <div class="section-title"><span class="live-dot" id="dashDot"></span>실시간 관제 대시보드</div>
+    <div class="dash-grid">
+      <div class="gauge">
+        <div class="g-label">위협 수준</div>
+        <div class="g-value ok" id="gThreat">대기</div>
+        <div class="g-sub">센서 없음 · 추정치</div>
+      </div>
+      <div class="gauge">
+        <div class="g-label">방역 효율 (추정)</div>
+        <div class="g-value info" id="gEff">0%</div>
+        <div class="g-sub">근거 없음</div>
+      </div>
+      <div class="gauge">
+        <div class="g-label">시스템 가동률</div>
+        <div class="g-value ok">99.97%</div>
+        <div class="g-sub">늘 이 숫자예요</div>
+      </div>
+      <div class="gauge">
+        <div class="g-label">가동 시간</div>
+        <div class="g-value" id="gUptime">00:00:00</div>
+        <div class="g-sub">이건 진짜예요</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="power-wrap">
+      <button class="power-btn" id="powerBtn" aria-pressed="false">
+        <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+        <div class="icon" id="powerIcon">🦟</div>
+        <div class="label" id="powerLabel">방역 시스템 기동</div>
+      </button>
+      <div class="freq-display">
+        <div class="value"><span id="freqValue">17.5</span><span>kHz</span></div>
+        <div class="hint" id="freqHint"></div>
+      </div>
+    </div>
+
+    <canvas id="scope"></canvas>
+
+    <div class="slider-row">
+      <label><span>주파수 조절</span><span>8 kHz ~ 22 kHz</span></label>
+      <input type="range" id="freqSlider" min="8000" max="22000" step="100" value="17500">
+    </div>
+    <div class="slider-row">
+      <label><span>출력 볼륨</span><span id="volLabel">70%</span></label>
+      <input type="range" id="volSlider" min="0" max="100" step="1" value="70">
+    </div>
+
+    <button class="test-btn" id="testBtn">🔊 스피커 무결성 테스트 — 들리는 "삐" 재생</button>
+
+    <div class="profiles" id="profiles">
+      <button class="profile active" data-freq="14000">
+        <div class="name">PROFILE-A</div>
+        <div class="desc">🦟 일반 방역</div>
+        <div class="sub">14 kHz · 대부분 들림</div>
+      </button>
+      <button class="profile" data-freq="17500">
+        <div class="name">PROFILE-S</div>
+        <div class="desc">🌙 수면 최적화</div>
+        <div class="sub">17.5 kHz · 성인 귀엔 거의 무음</div>
+      </button>
+      <button class="profile" data-freq="20000">
+        <div class="name">PROFILE-Z</div>
+        <div class="desc">🔇 무음 잠행</div>
+        <div class="sub">20 kHz · 사람은 못 들음</div>
+      </button>
+      <button class="profile" data-freq="16000">
+        <div class="name">PROFILE-SWEEP</div>
+        <div class="desc">⚡ 적응 방지</div>
+        <div class="sub">14~20 kHz 왕복</div>
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">⏰ 자동 종료 스케줄러</div>
+    <div class="timer-row">
+      <button class="timer-btn active" data-min="0">계속</button>
+      <button class="timer-btn" data-min="30">30분</button>
+      <button class="timer-btn" data-min="60">1시간</button>
+      <button class="timer-btn" data-min="480">8시간</button>
+    </div>
+    <div class="timer-remain" id="timerRemain"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title"><span class="live-dot" id="consoleDot"></span>시스템 로그 콘솔</div>
+    <div id="console"><div id="consoleEmpty">방역 시스템을 기동하면 로그가 출력됩니다.</div></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">🏆 인증 및 준수 현황</div>
+    <div class="cert-grid">
+      <span class="cert-chip">🏆 2026 하찮은 앱 챌린지 출품작</span>
+      <span class="cert-chip">📜 특허 출원번호: 미출원</span>
+      <span class="cert-chip">✅ ISO-9001 (자체 인증, 무효)</span>
+      <span class="cert-chip">🔬 임상 시험 0회</span>
+      <span class="cert-chip">🛡️ KC 인증 검토 안 함</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">📋 시스템 사양</div>
+    <table class="spec-table">
+      <tr><td>코어 아키텍처</td><td>Web Audio API 1.0</td></tr>
+      <tr><td>발진기 정밀도</td><td>±0.00Hz (수학적으로만)</td></tr>
+      <tr><td>모기 인식 센서</td><td>탑재 안 됨</td></tr>
+      <tr><td>AI 탑재 여부</td><td>아니오 (쓰고 싶었지만 참음)</td></tr>
+      <tr><td>실효성 등급</td><td>플라시보 A+</td></tr>
+      <tr><td>서버 인프라</td><td>없음 (브라우저가 전부)</td></tr>
+    </table>
+  </div>
+
+  <div class="notice">
+    <span class="appendix-tag">부록 F · 법적 고지 및 정직한 안내</span>
+    <strong>⚠️ 솔직한 안내</strong><br>
+    위 대시보드의 화려한 수치들과 별개로, 여러 과학 연구에 따르면 초음파 앱의 모기 퇴치 효과는 <strong>입증되지 않았습니다</strong>. 재미로 사용해 주시고, 실제 모기 예방은 아래 방법이 확실해요:
+    <ul>
+      <li>DEET·이카리딘 성분 기피제 사용</li>
+      <li>모기장 · 방충망 점검</li>
+      <li>고인 물 제거 (화분 받침 등)</li>
+      <li>취침 시 선풍기 바람 (모기 비행 방해)</li>
+    </ul>
+  </div>
+
+  <footer>M-DOCS Enterprise · 스마트폰 스피커는 대부분 20kHz 부근까지 재생 가능합니다</footer>
+</div>
+
+<script>
+(function () {
+  /* ---------- 부팅 시퀀스 ---------- */
+  const bootLines = [
+    ['[BOOT] M-DOCS Kernel v4.2.1 초기화...', ''],
+    ['[OK] 오디오 컨텍스트 드라이버 로드', ''],
+    ['[OK] 초음파 발진 모듈 캘리브레이션 100%', ''],
+    ['[OK] 주파수 대역 무결성 검사 통과 (8~22kHz)', ''],
+    ['[WARN] 모기 위협 데이터베이스 연결 실패 — 로컬 추정치로 대체', 'warn'],
+    ['[OK] 관제 대시보드 렌더링 완료', ''],
+    ['[READY] 시스템 준비 완료. 방역 태세: 대기', 'muted'],
+  ];
+  const bootLog = document.getElementById('bootLog');
+  const bootBarFill = document.getElementById('bootBarFill');
+  const bootSkip = document.getElementById('bootSkip');
+  const bootEl = document.getElementById('boot');
+  let bootTimers = [];
+
+  function finishBoot() {
+    bootTimers.forEach(clearTimeout);
+    bootEl.classList.add('hide');
+    setTimeout(() => bootEl.remove(), 450);
+  }
+
+  bootLines.forEach((line, i) => {
+    const t = setTimeout(() => {
+      const d = document.createElement('div');
+      if (line[1]) d.className = line[1];
+      d.textContent = line[0];
+      bootLog.appendChild(d);
+      bootBarFill.style.width = Math.round(((i + 1) / bootLines.length) * 100) + '%';
+      if (i === bootLines.length - 1) {
+        setTimeout(finishBoot, 500);
+      }
+    }, i * 260);
+    bootTimers.push(t);
+  });
+  setTimeout(() => bootSkip.classList.add('show'), 700);
+  bootSkip.addEventListener('click', finishBoot);
+
+  /* ---------- 오디오 엔진 (기존 로직 유지) ---------- */
+  let audioCtx = null, osc = null, gainNode = null, running = false;
+  let sweepRAF = null, sweepMode = false;
+  let timerEnd = null, timerTick = null, wakeLock = null;
+  let uptimeStart = null, uptimeTick = null;
+  let dashTick = null, logTick = null;
+
+  const powerBtn = document.getElementById('powerBtn');
+  const powerIcon = document.getElementById('powerIcon');
+  const powerLabel = document.getElementById('powerLabel');
+  const freqSlider = document.getElementById('freqSlider');
+  const freqValue = document.getElementById('freqValue');
+  const freqHint = document.getElementById('freqHint');
+  const volSlider = document.getElementById('volSlider');
+  const volLabel = document.getElementById('volLabel');
+  const timerRemain = document.getElementById('timerRemain');
+  const scope = document.getElementById('scope');
+  const testBtn = document.getElementById('testBtn');
+  const dashDot = document.getElementById('dashDot');
+  const consoleDot = document.getElementById('consoleDot');
+  const consoleEl = document.getElementById('console');
+  const gThreat = document.getElementById('gThreat');
+  const gEff = document.getElementById('gEff');
+  const gUptime = document.getElementById('gUptime');
+
+  let analyser = null, scopeRAF = null;
+  const scopeCtx = scope.getContext('2d');
+
+  function drawScope() {
+    if (!analyser) return;
+    const dpr = window.devicePixelRatio || 1;
+    const w = scope.clientWidth, h = scope.clientHeight;
+    if (scope.width !== w * dpr) { scope.width = w * dpr; scope.height = h * dpr; }
+    const data = new Float32Array(analyser.fftSize);
+    analyser.getFloatTimeDomainData(data);
+    scopeCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    scopeCtx.clearRect(0, 0, w, h);
+    scopeCtx.beginPath();
+    scopeCtx.strokeStyle = '#4ade80';
+    scopeCtx.lineWidth = 1.5;
+    const n = Math.min(data.length, 512);
+    for (let i = 0; i < n; i++) {
+      const x = (i / (n - 1)) * w;
+      const y = h / 2 - data[i] * (h / 2 - 4);
+      i === 0 ? scopeCtx.moveTo(x, y) : scopeCtx.lineTo(x, y);
+    }
+    scopeCtx.stroke();
+    if (running) scopeRAF = requestAnimationFrame(drawScope);
+  }
+  function stopScope() {
+    if (scopeRAF) { cancelAnimationFrame(scopeRAF); scopeRAF = null; }
+    scopeCtx.setTransform(1, 0, 0, 1, 0, 0);
+    scopeCtx.clearRect(0, 0, scope.width, scope.height);
+  }
+
+  function currentFreq() { return Number(freqSlider.value); }
+  function currentGain() { return Math.pow(Number(volSlider.value) / 100, 2) * 0.5; }
+
+  function updateDisplay() {
+    const f = currentFreq();
+    freqValue.textContent = (f / 1000).toFixed(1);
+    if (sweepMode) freqHint.textContent = '⚡ 14~20 kHz 자동 왕복 중';
+    else if (f >= 19000) freqHint.textContent = '사람 귀에는 들리지 않는 영역';
+    else if (f >= 17000) freqHint.textContent = '어린이·청소년만 들을 수 있는 영역';
+    else freqHint.textContent = '대부분의 사람이 들을 수 있는 영역';
+  }
+
+  function startSweep() {
+    const lo = 14000, hi = 20000, period = 6000;
+    const t0 = performance.now();
+    function step(now) {
+      if (!running || !osc) return;
+      const phase = ((now - t0) % period) / period;
+      const tri = phase < 0.5 ? phase * 2 : 2 - phase * 2;
+      const f = lo + (hi - lo) * tri;
+      osc.frequency.setTargetAtTime(f, audioCtx.currentTime, 0.02);
+      freqValue.textContent = (f / 1000).toFixed(1);
+      sweepRAF = requestAnimationFrame(step);
+    }
+    sweepRAF = requestAnimationFrame(step);
+  }
+  function stopSweep() { if (sweepRAF) { cancelAnimationFrame(sweepRAF); sweepRAF = null; } }
+
+  /* ---------- 대시보드 게이지 (연출용) ---------- */
+  const threatLevels = [['낮음', 'ok'], ['보통', 'info'], ['다소 높음', 'warn']];
+  function tickDash() {
+    const [label, cls] = threatLevels[Math.floor(Math.random() * threatLevels.length)];
+    gThreat.className = 'g-value ' + cls;
+    gThreat.textContent = label;
+    const eff = 58 + Math.floor(Math.random() * 32);
+    gEff.textContent = eff + '%';
+  }
+  function tickUptime() {
+    const sec = Math.floor((Date.now() - uptimeStart) / 1000);
+    const h = String(Math.floor(sec / 3600)).padStart(2, '0');
+    const m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
+    const s = String(sec % 60).padStart(2, '0');
+    gUptime.textContent = h + ':' + m + ':' + s;
+  }
+
+  /* ---------- 시스템 로그 콘솔 (연출용) ---------- */
+  const logPool = [
+    () => `oscillator.freq = ${currentFreq().toFixed(2)} Hz (안정)`,
+    () => `gain envelope 안정 · target=${currentGain().toFixed(3)}`,
+    () => `개체 접근 이벤트 없음 (신뢰도 0%, 센서 미탑재)`,
+    () => `모기가 코웃음치는 소리가 감지되었습니다 (비공식)`,
+    () => `주파수 드리프트 검사 통과`,
+    () => `방역 효율 추정치 재계산 완료`,
+    () => `이웃집 모기는 영향권 밖입니다`,
+    () => `wakeLock 상태: ${wakeLock ? '활성' : '비활성'}`,
+  ];
+  const jokeIdx = [3, 6];
+  function pushLog() {
+    const i = Math.floor(Math.random() * logPool.length);
+    const now = new Date();
+    const ts = now.toTimeString().slice(0, 8) + '.' + String(now.getMilliseconds()).padStart(3, '0');
+    const line = document.createElement('div');
+    line.className = 'log-line' + (jokeIdx.includes(i) ? ' lvl-joke' : '');
+    line.textContent = `[${ts}] ${jokeIdx.includes(i) ? 'INFO' : 'DEBUG'}  ${logPool[i]()}`;
+    const empty = document.getElementById('consoleEmpty');
+    if (empty) empty.remove();
+    consoleEl.appendChild(line);
+    consoleEl.scrollTop = consoleEl.scrollHeight;
+    while (consoleEl.children.length > 60) consoleEl.removeChild(consoleEl.firstChild);
+  }
+
+  async function start() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+
+    osc = audioCtx.createOscillator();
+    gainNode = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = currentFreq();
+    gainNode.gain.value = 0;
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 2048;
+    osc.connect(gainNode);
+    gainNode.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    osc.start();
+    gainNode.gain.setTargetAtTime(currentGain(), audioCtx.currentTime, 0.05);
+
+    running = true;
+    powerBtn.classList.add('on');
+    powerBtn.setAttribute('aria-pressed', 'true');
+    powerLabel.textContent = '가동 중 · 눌러서 종료';
+    powerIcon.textContent = '🚫';
+    dashDot.classList.add('on');
+    consoleDot.classList.add('on');
+
+    if (scopeRAF) cancelAnimationFrame(scopeRAF);
+    scopeRAF = requestAnimationFrame(drawScope);
+    if (sweepMode) startSweep();
+
+    uptimeStart = Date.now();
+    tickUptime();
+    uptimeTick = setInterval(tickUptime, 1000);
+    tickDash();
+    dashTick = setInterval(tickDash, 3500);
+    pushLog();
+    logTick = setInterval(pushLog, 1600);
+
+    try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+  }
+
+  function stop() {
+    running = false;
+    stopSweep();
+    stopScope();
+    analyser = null;
+    if (gainNode && audioCtx) {
+      gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.05);
+      const o = osc;
+      setTimeout(() => { try { o.stop(); o.disconnect(); } catch (e) {} }, 300);
+    }
+    osc = null;
+    powerBtn.classList.remove('on');
+    powerBtn.setAttribute('aria-pressed', 'false');
+    powerLabel.textContent = '방역 시스템 기동';
+    powerIcon.textContent = '🦟';
+    dashDot.classList.remove('on');
+    consoleDot.classList.remove('on');
+    if (uptimeTick) { clearInterval(uptimeTick); uptimeTick = null; }
+    if (dashTick) { clearInterval(dashTick); dashTick = null; }
+    if (logTick) { clearInterval(logTick); logTick = null; }
+    gThreat.className = 'g-value ok'; gThreat.textContent = '대기';
+    gEff.textContent = '0%';
+    clearTimer();
+    updateDisplay();
+    if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+  }
+
+  powerBtn.addEventListener('click', () => running ? stop() : start());
+
+  testBtn.addEventListener('click', async () => {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+    const t0 = audioCtx.currentTime;
+    for (let i = 0; i < 3; i++) {
+      const beepOsc = audioCtx.createOscillator();
+      const beepGain = audioCtx.createGain();
+      beepOsc.type = 'sine';
+      beepOsc.frequency.value = 880;
+      const on = t0 + i * 0.35, off = on + 0.18;
+      beepGain.gain.setValueAtTime(0, on);
+      beepGain.gain.linearRampToValueAtTime(0.25, on + 0.02);
+      beepGain.gain.linearRampToValueAtTime(0, off);
+      beepOsc.connect(beepGain).connect(audioCtx.destination);
+      beepOsc.start(on);
+      beepOsc.stop(off + 0.05);
+    }
+    testBtn.textContent = '🔊 삐- 소리가 들리면 스피커 정상!';
+    setTimeout(() => { testBtn.textContent = '🔊 스피커 무결성 테스트 — 들리는 "삐" 재생'; }, 2500);
+  });
+
+  freqSlider.addEventListener('input', () => {
+    setSweep(false);
+    document.querySelectorAll('.profile').forEach(p => p.classList.remove('active'));
+    if (osc) osc.frequency.setTargetAtTime(currentFreq(), audioCtx.currentTime, 0.02);
+    updateDisplay();
+  });
+
+  volSlider.addEventListener('input', () => {
+    volLabel.textContent = volSlider.value + '%';
+    if (gainNode) gainNode.gain.setTargetAtTime(currentGain(), audioCtx.currentTime, 0.05);
+  });
+
+  function setSweep(on) {
+    sweepMode = on;
+    stopSweep();
+    if (on && running) startSweep();
+    if (!on) updateDisplay();
+  }
+
+  document.querySelectorAll('.profile').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.profile').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const isSweep = btn.querySelector('.desc').textContent.includes('적응 방지');
+      if (isSweep) { setSweep(true); updateDisplay(); }
+      else {
+        setSweep(false);
+        freqSlider.value = btn.dataset.freq;
+        if (osc) osc.frequency.setTargetAtTime(currentFreq(), audioCtx.currentTime, 0.02);
+        updateDisplay();
+      }
+      if (!running) start();
+    });
+  });
+
+  function clearTimer() {
+    timerEnd = null;
+    if (timerTick) { clearInterval(timerTick); timerTick = null; }
+    timerRemain.textContent = '';
+    document.querySelectorAll('.timer-btn').forEach(b => b.classList.toggle('active', b.dataset.min === '0'));
+  }
+
+  document.querySelectorAll('.timer-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.timer-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const min = Number(btn.dataset.min);
+      if (timerTick) { clearInterval(timerTick); timerTick = null; }
+      if (min === 0) { timerEnd = null; timerRemain.textContent = ''; return; }
+      timerEnd = Date.now() + min * 60 * 1000;
+      timerTick = setInterval(() => {
+        const left = timerEnd - Date.now();
+        if (left <= 0) { stop(); return; }
+        const h = Math.floor(left / 3600000);
+        const m = Math.floor((left % 3600000) / 60000);
+        const s = Math.floor((left % 60000) / 1000);
+        timerRemain.textContent = '남은 시간 ' + (h > 0 ? h + ':' : '') + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      }, 500);
+      if (!running) start();
+    });
+  });
+
+  document.addEventListener('visibilitychange', async () => {
+    if (running && document.visibilityState === 'visible' && 'wakeLock' in navigator && !wakeLock) {
+      try { wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+    }
+  });
+
+  updateDisplay();
+})();
+</script>
+</body>
+</html>
