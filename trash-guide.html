@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>🗑️ 버릴까말까 — 분리배출 가이드</title>
+<meta name="description" content="즉석밥 용기, 깨진 유리, 다 쓴 약… 버리는 게 고민될 때 여는 앱. 분리배출 사전 · 폐의약품 · 폐건전지·형광등 · 대형폐기물 가이드.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="🗑️ 버릴까말까 — 분리배출 가이드">
+<meta property="og:description" content="버리는 게 고민될 때 여는 앱. 헷갈리는 품목 검색부터 폐의약품·폐건전지·대형폐기물까지.">
+<meta property="og:url" content="https://metaluca8560.github.io/metaluca8560/trash-guide.html">
+<meta property="og:image" content="https://metaluca8560.github.io/metaluca8560/trash-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="🗑️ 버릴까말까 — 분리배출 가이드">
+<meta name="twitter:description" content="버리는 게 고민될 때 여는 앱. 헷갈리는 품목 검색부터 폐의약품·폐건전지·대형폐기물까지.">
+<link rel="icon" type="image/svg+xml" href="trash-guide-icon.svg">
+<style>
+  :root {
+    --bg: #0e1420;
+    --card: #161e2e;
+    --card2: #1d2739;
+    --accent: #34d399;
+    --accent-dim: rgba(52, 211, 153, 0.14);
+    --blue: #60a5fa;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --violet: #a78bfa;
+    --text: #e5eaf2;
+    --muted: #8b98ac;
+    --border: rgba(148, 163, 184, 0.14);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", "Noto Sans KR", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image: radial-gradient(ellipse 80% 40% at 50% -5%, rgba(52, 211, 153, 0.08), transparent);
+  }
+  .app { width: 100%; max-width: 480px; margin: 0 auto; padding: 24px 16px 40px; }
+  header { text-align: center; margin-bottom: 18px; }
+  header h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+  header p { color: var(--muted); font-size: 0.85rem; margin-top: 6px; }
+
+  /* 탭 */
+  .tabs {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+    position: sticky; top: 8px; z-index: 10;
+    background: var(--bg); padding: 6px 0; margin-bottom: 14px;
+  }
+  .tab {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 10px 4px; text-align: center; cursor: pointer; color: var(--muted);
+    font-size: 0.78rem; font-weight: 700; -webkit-tap-highlight-color: transparent;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+  .tab .ico { display: block; font-size: 1.2rem; margin-bottom: 3px; }
+  .tab.active { border-color: var(--accent); background: var(--accent-dim); color: var(--text); }
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.25s; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; } }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 20px; margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: 0.78rem; font-weight: 800; color: var(--muted);
+    margin-bottom: 12px; letter-spacing: 0.05em;
+  }
+
+  /* 검색 */
+  .search-box { position: relative; }
+  .search-box input {
+    width: 100%; background: var(--card2); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 15px 44px 15px 16px; color: var(--text);
+    font-size: 1rem; outline: none; transition: border-color 0.2s;
+  }
+  .search-box input:focus { border-color: var(--accent); }
+  .search-box input::placeholder { color: var(--muted); opacity: 0.7; }
+  .search-box .mag { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); font-size: 1.1rem; opacity: 0.6; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .chip {
+    background: var(--card2); border: 1px solid var(--border); border-radius: 20px;
+    padding: 7px 13px; font-size: 0.8rem; color: var(--muted); cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .chip:active { background: var(--accent-dim); color: var(--text); }
+
+  /* 검색 결과 */
+  .results { margin-top: 4px; }
+  .result {
+    background: var(--card2); border: 1px solid var(--border); border-radius: 14px;
+    padding: 14px 16px; margin-bottom: 10px;
+  }
+  .result .r-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .result .r-name { font-size: 1rem; font-weight: 800; }
+  .badge {
+    flex-shrink: 0; font-size: 0.72rem; font-weight: 800; padding: 5px 11px;
+    border-radius: 20px; white-space: nowrap;
+  }
+  .b-recycle { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+  .b-general { background: rgba(148, 163, 184, 0.15); color: #aab6c8; }
+  .b-food    { background: rgba(251, 191, 36, 0.14); color: #fbbf24; }
+  .b-special { background: rgba(167, 139, 250, 0.15); color: #a78bfa; }
+  .b-big     { background: rgba(96, 165, 250, 0.15); color: #60a5fa; }
+  .b-danger  { background: rgba(248, 113, 113, 0.15); color: #f87171; }
+  .result .r-how { font-size: 0.85rem; margin-top: 8px; line-height: 1.55; }
+  .result .r-why { font-size: 0.78rem; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+  .no-result {
+    text-align: center; color: var(--muted); font-size: 0.85rem;
+    padding: 22px 10px; line-height: 1.7;
+  }
+  .result-count { font-size: 0.75rem; color: var(--muted); margin: 2px 2px 10px; }
+
+  /* 원칙 카드 */
+  .rules4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .rule4 {
+    background: var(--card2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 6px; text-align: center;
+  }
+  .rule4 .ico { font-size: 1.3rem; }
+  .rule4 .t { font-size: 0.78rem; font-weight: 800; margin-top: 6px; }
+  .rule4 .d { font-size: 0.65rem; color: var(--muted); margin-top: 3px; }
+
+  /* 안내 리스트 공통 */
+  .steps { counter-reset: step; }
+  .step { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .step:last-child { border-bottom: none; padding-bottom: 2px; }
+  .step .num {
+    counter-increment: step; flex-shrink: 0;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--accent-dim); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 800;
+  }
+  .step .num::before { content: counter(step); }
+  .step .s-body { flex: 1; }
+  .step .s-title { font-size: 0.9rem; font-weight: 800; }
+  .step .s-desc { font-size: 0.8rem; color: var(--muted); margin-top: 4px; line-height: 1.6; }
+  .step .s-desc strong { color: var(--text); }
+
+  .place { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .place:last-child { border-bottom: none; padding-bottom: 2px; }
+  .place .p-ico { font-size: 1.4rem; flex-shrink: 0; width: 32px; text-align: center; }
+  .place .p-title { font-size: 0.9rem; font-weight: 800; }
+  .place .p-title .tag {
+    font-size: 0.65rem; font-weight: 800; color: var(--accent);
+    background: var(--accent-dim); border-radius: 10px; padding: 2px 8px; margin-left: 6px;
+    vertical-align: 1px;
+  }
+  .place .p-desc { font-size: 0.8rem; color: var(--muted); margin-top: 4px; line-height: 1.6; }
+  .place .p-desc strong { color: var(--text); }
+
+  .tip {
+    background: rgba(96, 165, 250, 0.08); border: 1px solid rgba(96, 165, 250, 0.25);
+    border-radius: 14px; padding: 14px 16px; font-size: 0.8rem; line-height: 1.65; color: var(--muted);
+  }
+  .tip strong { color: var(--blue); }
+  .warn {
+    background: rgba(248, 113, 113, 0.07); border: 1px solid rgba(248, 113, 113, 0.22);
+    border-radius: 14px; padding: 14px 16px; font-size: 0.8rem; line-height: 1.65; color: var(--muted);
+  }
+  .warn strong { color: var(--red); }
+
+  /* 지역 검색 (대형폐기물) */
+  .region-box { display: flex; gap: 8px; margin-top: 4px; }
+  .region-box input {
+    flex: 1; background: var(--card2); border: 1.5px solid var(--border); border-radius: 12px;
+    padding: 12px 14px; color: var(--text); font-size: 0.9rem; outline: none;
+  }
+  .region-box input:focus { border-color: var(--accent); }
+  .region-box button {
+    background: var(--accent); border: none; border-radius: 12px; padding: 0 18px;
+    color: #0b2b1f; font-size: 0.85rem; font-weight: 800; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #regionResult { margin-top: 12px; font-size: 0.82rem; line-height: 1.7; color: var(--muted); }
+  #regionResult a { color: var(--blue); font-weight: 700; text-decoration: none; }
+  #regionResult .r-card {
+    background: var(--card2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 14px; margin-top: 8px;
+  }
+
+  .free-call {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--card2); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px;
+    margin-top: 10px;
+  }
+  .free-call .fc-ico { font-size: 1.6rem; }
+  .free-call .fc-title { font-size: 0.9rem; font-weight: 800; }
+  .free-call .fc-desc { font-size: 0.78rem; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+  .free-call .fc-desc strong { color: var(--accent); }
+
+  footer { text-align: center; font-size: 0.72rem; color: var(--muted); opacity: 0.65; line-height: 1.7; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>🗑️ 버릴까말까</h1>
+    <p>버리는 게 고민될 때 여는 앱</p>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-panel="dict"><span class="ico">🔍</span>사전</button>
+    <button class="tab" data-panel="med"><span class="ico">💊</span>폐의약품</button>
+    <button class="tab" data-panel="batt"><span class="ico">🔋</span>건전지·등</button>
+    <button class="tab" data-panel="big"><span class="ico">🛋️</span>대형폐기물</button>
+  </nav>
+
+  <!-- ① 분리배출 사전 -->
+  <section class="panel active" id="panel-dict">
+    <div class="card">
+      <div class="search-box">
+        <input type="search" id="q" placeholder="예: 즉석밥 용기, 깨진 유리, 우산…" autocomplete="off">
+        <span class="mag">🔍</span>
+      </div>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="results" id="results"></div>
+    <div class="card">
+      <div class="section-title">분리배출 4원칙</div>
+      <div class="rules4">
+        <div class="rule4"><div class="ico">🫗</div><div class="t">비운다</div><div class="d">내용물 싹</div></div>
+        <div class="rule4"><div class="ico">🚿</div><div class="t">헹군다</div><div class="d">이물질 제거</div></div>
+        <div class="rule4"><div class="ico">✂️</div><div class="t">분리한다</div><div class="d">라벨·뚜껑</div></div>
+        <div class="rule4"><div class="ico">🧺</div><div class="t">안 섞는다</div><div class="d">재질별로</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② 폐의약품 -->
+  <section class="panel" id="panel-med">
+    <div class="card">
+      <div class="section-title">💊 다 쓴 약, 쓰레기통·변기에 버리면 안 돼요</div>
+      <div class="warn">
+        <strong>왜 안 되나요?</strong> 약 성분이 하천으로 흘러가면 생태계를 교란하고,
+        항생제 내성균(슈퍼박테리아)의 원인이 됩니다. 반드시 전용 수거함으로!
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">약 종류별 준비 방법</div>
+      <div class="steps">
+        <div class="step"><div class="num"></div><div class="s-body">
+          <div class="s-title">알약 (정제)</div>
+          <div class="s-desc">겉 포장(종이 상자·비닐)만 제거하고, <strong>알루미늄 포장(PTP)째</strong> 배출해도 됩니다. 낱알만 모아도 OK.</div>
+        </div></div>
+        <div class="step"><div class="num"></div><div class="s-body">
+          <div class="s-title">가루약</div>
+          <div class="s-desc">가루가 날리지 않게 <strong>포장지째 그대로</strong> 배출하세요.</div>
+        </div></div>
+        <div class="step"><div class="num"></div><div class="s-body">
+          <div class="s-title">물약 · 시럽</div>
+          <div class="s-desc">한 병에 모아서 <strong>새지 않게 뚜껑을 꼭 닫고 병째</strong> 배출하세요. 하수구에 붓지 마세요.</div>
+        </div></div>
+        <div class="step"><div class="num"></div><div class="s-body">
+          <div class="s-title">연고 · 안약 · 스프레이</div>
+          <div class="s-desc"><strong>용기째</strong> 배출하세요. 특수 용기라서 짜내지 않아도 됩니다.</div>
+        </div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">어디에 버리나요?</div>
+      <div class="place"><div class="p-ico">💊</div><div>
+        <div class="p-title">약국 <span class="tag">가장 확실</span></div>
+        <div class="p-desc">대부분의 약국이 폐의약품을 받아줍니다. 처방받은 약국이 아니어도 괜찮아요.</div>
+      </div></div>
+      <div class="place"><div class="p-ico">🏥</div><div>
+        <div class="p-title">보건소 · 보건지소</div>
+        <div class="p-desc">입구에 폐의약품 수거함이 비치되어 있습니다.</div>
+      </div></div>
+      <div class="place"><div class="p-ico">🏢</div><div>
+        <div class="p-title">주민센터 (행정복지센터)</div>
+        <div class="p-desc">많은 지자체가 주민센터에 수거함을 운영합니다. 방문 전 전화 확인 추천.</div>
+      </div></div>
+      <div class="place"><div class="p-ico">📮</div><div>
+        <div class="p-title">우체통 <span class="tag">서울 등 일부 지역</span></div>
+        <div class="p-desc">서울시 등에서는 <strong>물약을 제외한</strong> 폐의약품을 전용 회수봉투 또는 일반 봉투에 <strong>"폐의약품"이라고 쓰고 밀봉</strong>하면 우체통에 넣을 수 있어요.</div>
+      </div></div>
+    </div>
+    <div class="card">
+      <div class="tip"><strong>수거함 위치 찾는 팁</strong> — 지도 앱(카카오맵·네이버지도)에서 <strong>"폐의약품 수거함"</strong>을 검색하면 가까운 위치가 나옵니다. 또는 "우리 동네 이름 + 폐의약품"으로 검색해 보세요.</div>
+    </div>
+  </section>
+
+  <!-- ③ 폐건전지·형광등 -->
+  <section class="panel" id="panel-batt">
+    <div class="card">
+      <div class="section-title">🔋 건전지 · 배터리</div>
+      <div class="place"><div class="p-ico">🏢</div><div>
+        <div class="p-title">주민센터 앞 전용 수거함 <span class="tag">기본</span></div>
+        <div class="p-desc">대부분의 주민센터 입구에 폐건전지 수거함이 있습니다. 아파트는 동별 수거함을 확인하세요.</div>
+      </div></div>
+      <div class="place"><div class="p-ico">🔄</div><div>
+        <div class="p-title">새 건전지로 교환</div>
+        <div class="p-desc">일부 지자체는 폐건전지 10~20개를 새 건전지로 교환해 줍니다. 주민센터에 문의해 보세요.</div>
+      </div></div>
+      <div class="place"><div class="p-ico">⚠️</div><div>
+        <div class="p-title">보조배터리 · 리튬 배터리 <span class="tag">화재 위험</span></div>
+        <div class="p-desc">종량제 봉투에 <strong>절대 넣지 마세요</strong> — 수거 차량·처리장 화재의 주요 원인입니다. 전용 수거함 또는 판매처(휴대폰 매장 등)에 배출하세요.</div>
+      </div></div>
+    </div>
+    <div class="card">
+      <div class="section-title">💡 형광등 · 전구</div>
+      <div class="place"><div class="p-ico">💡</div><div>
+        <div class="p-title">형광등 → 전용 수거함</div>
+        <div class="p-desc">수은이 들어 있어요. <strong>깨지지 않게</strong> 주민센터·아파트의 폐형광등 수거함에 배출하세요.</div>
+      </div></div>
+      <div class="place"><div class="p-ico">🥲</div><div>
+        <div class="p-title">깨진 형광등</div>
+        <div class="p-desc">신문지에 싸서 <strong>종량제 봉투(또는 불연성 마대)</strong>로 배출하세요. 수거함에 깨진 채로 넣으면 위험해요.</div>
+      </div></div>
+      <div class="place"><div class="p-ico">🔆</div><div>
+        <div class="p-title">LED 전구 · 백열전구</div>
+        <div class="p-desc">수은이 없어 형광등 수거함 대상이 아닙니다. 기본은 <strong>종량제 봉투</strong>, LED 수거함을 운영하는 지자체도 있어요.</div>
+      </div></div>
+    </div>
+    <div class="card">
+      <div class="tip"><strong>소형 폐가전 팁</strong> — 드라이기·선풍기·전기밥솥 같은 소형 가전은 주민센터의 소형폐가전 수거함, 또는 대형가전 무상수거 신청 시 함께 배출(5개 이상)할 수 있어요. 자세한 건 '대형폐기물' 탭 참고!</div>
+    </div>
+  </section>
+
+  <!-- ④ 대형폐기물 -->
+  <section class="panel" id="panel-big">
+    <div class="card">
+      <div class="section-title">🛋️ 대형폐기물 버리는 순서</div>
+      <div class="steps">
+        <div class="step"><div class="num"></div><div class="s-body">
+          <div class="s-title">지자체에 신고</div>
+          <div class="s-desc">구청·시청 홈페이지의 대형폐기물 신고 페이지 또는 주민센터 방문 신고. 아래에서 우리 동네 신고 페이지를 찾아보세요.</div>
+        </div></div>
+        <div class="step"><div class="num"></div><div class="s-body">
+          <div class="s-title">수수료 납부 → 스티커(필증) 발급</div>
+          <div class="s-desc">품목별로 2천~2만원 수준. 온라인 신고 시 출력하거나 접수번호를 기재하면 됩니다.</div>
+        </div></div>
+        <div class="step"><div class="num"></div><div class="s-body">
+          <div class="s-title">지정 장소에 배출</div>
+          <div class="s-desc">신고한 날짜에 필증을 붙여 집 앞 등 지정된 장소에 내놓으면 수거해 갑니다.</div>
+        </div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">우리 동네 신고 페이지 찾기</div>
+      <div class="region-box">
+        <input type="text" id="region" placeholder="예: 강남구, 수원시, 창원시" autocomplete="off">
+        <button id="regionBtn">찾기</button>
+      </div>
+      <div id="regionResult"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">💸 돈 안 내는 방법도 있어요</div>
+      <div class="free-call">
+        <div class="fc-ico">📞</div>
+        <div>
+          <div class="fc-title">폐가전 무상 방문수거 (1599-0903)</div>
+          <div class="fc-desc">냉장고·세탁기·TV·에어컨 등 대형 <strong>가전제품은 무료로 방문 수거</strong>합니다. 소형 가전도 5개 이상이면 가능. 인터넷 신청: 15990903.or.kr</div>
+        </div>
+      </div>
+      <div class="free-call">
+        <div class="fc-ico">🥕</div>
+        <div>
+          <div class="fc-title">쓸만하면 나눔·중고 거래</div>
+          <div class="fc-desc">상태가 괜찮으면 중고 거래나 무료 나눔이 수수료도 아끼고 환경에도 좋아요.</div>
+        </div>
+      </div>
+      <div class="free-call">
+        <div class="fc-ico">📱</div>
+        <div>
+          <div class="fc-title">배출 대행 앱</div>
+          <div class="fc-desc">'빼기', '여기로' 같은 앱으로 신고·결제를 한 번에 처리할 수 있는 지역도 있어요.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    환경부 분리배출 가이드라인 기준으로 정리했어요.<br>
+    지역(지자체)에 따라 세부 규정이 다를 수 있으니, 최종 기준은 우리 동네 규정을 확인해 주세요.
+  </footer>
+</div>
+
+<script>
+(function () {
+  /* ---------- 분리배출 사전 데이터 ---------- */
+  // v: recycle(재활용) / general(종량제) / food(음식물) / special(전용수거·특수) / big(대형) / danger(위험·주의)
+  const ITEMS = [
+    { n:'즉석밥 용기', a:['햇반 용기','햇반','즉석밥'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'여러 재질이 섞인 복합재질(OTHER)이라 재활용이 안 됩니다.' },
+    { n:'컵라면 용기', a:['컵라면','라면 용기','사발면'], v:'recycle', b:'재활용 (스티로폼)', how:'국물 자국을 헹궈서 스티로폼으로 배출. 착색·오염이 심하면 종량제 봉투로.', why:'깨끗한 발포스티렌만 재활용됩니다.' },
+    { n:'피자 박스', a:['피자박스','피자 상자'], v:'recycle', b:'재활용 (종이)', how:'기름·치즈가 묻은 부분은 뜯어서 종량제 봉투에, 깨끗한 부분만 종이로 배출.', why:'기름 묻은 종이는 재활용 공정을 오염시켜요.' },
+    { n:'치킨 박스', a:['치킨박스','치킨 상자'], v:'general', b:'일반쓰레기', how:'기름이 배었으면 통째로 종량제 봉투에. 깨끗한 부분만 종이로.', why:'기름 묻은 종이는 재활용이 안 됩니다.' },
+    { n:'깨진 유리', a:['유리조각','깨진 컵','깨진 병','유리 파편'], v:'danger', b:'불연성 마대 / 일반', how:'신문지·수건으로 싸서 불연성 마대(특수마대) 또는 종량제 봉투에. "깨진 유리" 표기 추천.', why:'유리병 수거함에 넣으면 작업자가 다칠 수 있어요. 깨진 유리는 재활용도 안 됩니다.' },
+    { n:'거울', a:['손거울','전신거울'], v:'general', b:'불연성 마대 / 대형', how:'작은 건 신문지에 싸서 불연성 마대·종량제로, 큰 전신거울은 대형폐기물 신고.', why:'거울은 코팅 처리되어 유리 재활용이 안 됩니다.' },
+    { n:'도자기 그릇', a:['도자기','사기그릇','머그컵 깨짐','접시'], v:'general', b:'불연성 마대', how:'불연성 마대(주민센터·마트에서 판매)에 담아 배출.', why:'도자기는 유리가 아니라서 유리 수거함에 넣으면 안 돼요.' },
+    { n:'내열유리 용기', a:['내열유리','유리 밀폐용기','오븐용기'], v:'general', b:'일반 / 불연성 마대', how:'종량제 봉투(작은 것) 또는 불연성 마대로 배출.', why:'내열유리는 일반 유리와 녹는점이 달라 함께 재활용할 수 없어요.' },
+    { n:'우산', a:['고장난 우산','우산대'], v:'general', b:'분해 후 분리', how:'천은 종량제 봉투, 금속 뼈대는 고철로. 분해가 어려우면 통째로 종량제(대형 지자체도 있음).', why:'재질이 섞여 있어 분해해야 재활용됩니다.' },
+    { n:'칫솔', a:['다 쓴 칫솔'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'플라스틱+고무+나일론 복합재질이라 재활용이 안 됩니다.' },
+    { n:'볼펜', a:['펜','샤프','필기구'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'여러 재질이 섞인 소형 복합재질입니다.' },
+    { n:'빨대', a:['플라스틱 빨대'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'너무 작고 가벼워서 선별장에서 걸러지지 않아요.' },
+    { n:'영수증', a:['감열지'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'감열지는 코팅 성분 때문에 종이 재활용이 안 됩니다.' },
+    { n:'종이컵', a:['일회용 컵','테이크아웃 컵'], v:'recycle', b:'재활용 (헹궈서)', how:'내용물을 비우고 헹궈서 종이컵 전용 수거함이 있으면 거기에, 없으면 일반 종이류와 구분 배출. 오염됐으면 종량제.', why:'방수 코팅 때문에 일반 종이와 섞으면 안 되고, 깨끗해야 재활용됩니다.' },
+    { n:'우유팩', a:['우유곽','종이팩'], v:'recycle', b:'재활용 (종이팩)', how:'헹궈서 펼쳐 말린 뒤 종이팩 전용 수거함으로. 주민센터에서 화장지로 교환해 주는 곳도 있어요.', why:'종이팩은 일반 폐지와 재활용 공정이 달라 꼭 따로 배출해야 해요.' },
+    { n:'멸균팩', a:['두유팩','주스팩'], v:'recycle', b:'재활용 (종이팩)', how:'헹궈서 펼쳐 말린 뒤 종이팩(멸균팩) 수거함으로.', why:'안쪽 알루미늄 코팅 때문에 일반 종이와 섞으면 안 됩니다.' },
+    { n:'페트병', a:['생수병','음료수병','투명 페트'], v:'recycle', b:'재활용 (투명페트 별도)', how:'라벨 떼고, 찌그러뜨려 뚜껑 닫아 투명페트 전용 수거함으로. 유색 페트는 플라스틱으로.', why:'투명 페트병은 고품질 재활용이 가능해 2020년부터 별도 분리배출 대상입니다.' },
+    { n:'병뚜껑', a:['페트 뚜껑','플라스틱 뚜껑'], v:'recycle', b:'재활용', how:'페트병에 닫아서 함께 배출하거나 플라스틱으로 배출.', why:'낱개로 버리면 너무 작아 선별이 안 되니 병에 닫아서 내는 게 좋아요.' },
+    { n:'라벨 비닐', a:['페트 라벨','상표 비닐'], v:'recycle', b:'재활용 (비닐)', how:'비닐류로 배출하세요.', why:'라벨은 비닐 재질이라 비닐류로 재활용됩니다.' },
+    { n:'요거트 용기', a:['요구르트병','야쿠르트','떠먹는 요거트'], v:'recycle', b:'재활용 (플라스틱)', how:'헹구고 뚜껑(알루미늄)은 떼어내서 각각 배출.', why:'깨끗한 단일 플라스틱은 재활용이 잘 됩니다.' },
+    { n:'배달 용기', a:['배달음식 용기','플라스틱 배달용기'], v:'recycle', b:'재활용 (헹궈서)', how:'음식물을 비우고 헹궈서 플라스틱으로. 고추기름 등이 안 지워지면 종량제로.', why:'오염된 플라스틱은 다른 재활용품까지 오염시켜요.' },
+    { n:'과일망', a:['과일 포장망','스티로폼 망'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'발포 PE 재질은 스티로폼과 달라 재활용이 안 됩니다.' },
+    { n:'아이스팩', a:['젤 아이스팩','보냉팩'], v:'general', b:'일반 / 전용수거함', how:'젤 타입은 뜯지 말고 통째로 종량제 봉투에. 지자체 아이스팩 수거함이 있으면 재사용 배출. 물 타입은 물만 버리고 포장은 비닐로.', why:'젤(고흡수성수지)은 하수구에 버리면 막힘·오염의 원인이 됩니다.' },
+    { n:'뽁뽁이', a:['에어캡','완충재'], v:'recycle', b:'재활용 (비닐)', how:'테이프·송장 스티커를 떼고 비닐류로 배출.', why:'PE 재질이라 비닐로 재활용됩니다.' },
+    { n:'택배 상자', a:['택배박스','골판지'], v:'recycle', b:'재활용 (종이)', how:'테이프·송장·철핀을 제거하고 접어서 종이류로.', why:'테이프가 붙은 채로 배출하면 재활용 품질이 떨어져요.' },
+    { n:'마스크', a:['일회용 마스크','KF94'], v:'general', b:'일반쓰레기', how:'끈을 잘라 종량제 봉투에 버리세요.', why:'복합재질 + 위생 문제로 재활용이 안 됩니다. 끈은 동물이 걸릴 수 있어 잘라주는 게 좋아요.' },
+    { n:'기저귀', a:['아기 기저귀','성인 기저귀'], v:'general', b:'일반쓰레기', how:'오물을 변기에 버리고 말아서 종량제 봉투에.', why:'위생용품은 재활용 대상이 아닙니다.' },
+    { n:'고무장갑', a:['설거지 장갑'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'고무는 재활용 대상이 아닙니다.' },
+    { n:'슬리퍼', a:['실내화','쓰레빠'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'복합재질이라 재활용이 안 되고, 의류수거함에도 넣으면 안 돼요.' },
+    { n:'운동화', a:['신발','구두'], v:'general', b:'일반 / 의류수거함(지역별)', how:'상태가 좋으면 의류수거함 가능(지자체 확인), 낡았으면 종량제 봉투에.', why:'의류수거함 신발 허용 여부는 지자체·수거업체마다 다릅니다.' },
+    { n:'옷', a:['헌옷','의류','티셔츠','바지'], v:'special', b:'의류수거함', how:'세탁 후 의류수거함에. 속옷·양말도 깨끗하면 가능(업체별 상이).', why:'헌옷은 수출·재사용됩니다. 오염·훼손이 심하면 종량제로.' },
+    { n:'이불', a:['솜이불','담요','베개'], v:'big', b:'대형폐기물 / 일반', how:'솜이불·베개는 의류수거함에 넣으면 안 돼요. 부피가 크면 대형폐기물 신고, 작으면 종량제 봉투에.', why:'솜은 재활용이 안 되어 의류수거함 금지 품목입니다. (얇은 담요는 허용하는 업체도 있어요)' },
+    { n:'인형', a:['봉제인형','장난감 인형'], v:'general', b:'일반 / 대형', how:'작으면 종량제 봉투, 크면 대형폐기물 신고. 상태 좋으면 나눔 추천.', why:'봉제인형은 복합재질이라 재활용이 안 됩니다. 의류수거함 가능 여부는 업체별로 달라요.' },
+    { n:'장난감', a:['플라스틱 장난감','블록'], v:'general', b:'일반 / 대형', how:'전지·금속을 분리한 뒤 종량제로, 크면 대형폐기물. 상태 좋으면 기부·나눔.', why:'여러 재질 복합 + 부품 때문에 통째로는 재활용이 안 됩니다.' },
+    { n:'CD', a:['DVD','시디'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'폴리카보네이트+코팅 복합재질로 일반 재활용 대상이 아닙니다.' },
+    { n:'휴대폰', a:['스마트폰','핸드폰','폐휴대폰'], v:'special', b:'소형가전 수거함', how:'주민센터 소형폐가전 수거함, 통신사 매장, 우체국 폐휴대폰 수거 서비스 이용. 개인정보는 초기화!', why:'금·은 등 귀금속이 회수되는 대표적인 도시광산 자원입니다.' },
+    { n:'노트북', a:['컴퓨터','데스크탑','모니터'], v:'special', b:'소형가전 / 무상수거', how:'주민센터 소형폐가전 수거함 또는 폐가전 무상방문수거(1599-0903, 5개 이상·대형과 함께). 데이터 삭제 필수.', why:'전자제품은 유해물질과 자원이 함께 있어 전문 처리가 필요합니다.' },
+    { n:'전선', a:['충전 케이블','케이블','멀티탭'], v:'special', b:'소형가전 수거함 / 고철', how:'주민센터 소형폐가전 수거함에. 없으면 고철로 배출.', why:'구리 자원이 회수됩니다.' },
+    { n:'보조배터리', a:['리튬배터리','충전 배터리'], v:'danger', b:'전용수거함 (화재위험!)', how:'종량제 봉투 절대 금지! 주민센터 폐건전지 수거함 또는 판매처에.', why:'리튬 배터리는 수거 차량·선별장 화재의 주범입니다.' },
+    { n:'건전지', a:['배터리','AA건전지','폐건전지'], v:'special', b:'전용수거함', how:'주민센터·아파트의 폐건전지 수거함에. 자세한 건 [건전지·등] 탭 참고.', why:'중금속이 들어 있어 매립·소각되면 토양을 오염시켜요.' },
+    { n:'전자담배', a:['액상 전자담배','궐련형 전자담배 기기'], v:'danger', b:'전용수거함', how:'기기는 배터리가 들어 있어 폐건전지·소형가전 수거함으로. 액상 용기는 남은 액을 밀봉해 종량제로.', why:'배터리 내장 기기는 종량제에 넣으면 화재 위험이 있습니다.' },
+    { n:'형광등', a:['폐형광등','전구','LED전구'], v:'special', b:'전용수거함', how:'형광등은 깨지지 않게 전용 수거함에. LED·백열전구는 종량제. 자세한 건 [건전지·등] 탭 참고.', why:'형광등에는 수은이 들어 있어요.' },
+    { n:'체온계', a:['수은 체온계','온도계'], v:'danger', b:'전문처리 (수은)', how:'수은 체온계는 보건소에 문의해 배출하세요. 전자식은 폐건전지 분리 후 소형가전으로.', why:'수은은 극소량도 유해한 중금속입니다.' },
+    { n:'약', a:['폐의약품','알약','상비약','유통기한 지난 약'], v:'special', b:'폐의약품 수거함', how:'약국·보건소·주민센터 수거함에. 자세한 방법은 [폐의약품] 탭을 확인하세요!', why:'약 성분이 하천에 흘러가면 생태계 교란과 항생제 내성균의 원인이 됩니다.' },
+    { n:'파스', a:['붕대','거즈','밴드'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요. (폐의약품 수거함 대상이 아니에요)', why:'파스·붕대·밴드는 의약외품 성격의 위생용품이라 폐의약품 수거 대상이 아닙니다.' },
+    { n:'안약', a:['인공눈물','점안액'], v:'special', b:'폐의약품 수거함', how:'용기째 폐의약품 수거함(약국·보건소 등)에 배출하세요.', why:'남은 약액이 하수로 흘러가면 수질을 오염시킵니다.' },
+    { n:'화장품 용기', a:['화장품병','스킨 용기','크림 통'], v:'general', b:'일반 (대부분)', how:'내용물을 비우고, 유리병·단일 플라스틱만 재질별 배출. 펌프·복합재질 용기는 종량제로.', why:'화장품 용기의 90% 이상이 복합재질이라 사실상 재활용이 어렵습니다.' },
+    { n:'매니큐어', a:['네일 리무버'], v:'general', b:'일반쓰레기 (내용물 포함)', how:'내용물이 남았으면 굳혀서 용기째 종량제 봉투에.', why:'유기용제가 들어 있어 하수·재활용에 부적합합니다.' },
+    { n:'향수병', a:['향수 용기'], v:'general', b:'일반 / 유리(비운 것)', how:'내용물을 완전히 비웠으면 유리로, 남았거나 분사기가 분리 안 되면 종량제로.', why:'잔여 액체와 금속 분사기가 재활용을 방해합니다.' },
+    { n:'스프레이 캔', a:['에어로졸','헤어스프레이','살충제 캔'], v:'recycle', b:'재활용 (캔·완전히 비워서)', how:'내용물을 완전히 사용한 뒤 캔류로 배출. 구멍은 뚫지 않아도 됩니다(환경부 기준).', why:'가스가 남으면 압축 과정에서 폭발 위험이 있어 꼭 다 쓰고 버려야 해요.' },
+    { n:'부탄가스', a:['부탄캔','휴대용 가스'], v:'recycle', b:'재활용 (캔·완전히 비워서)', how:'야외 등 통풍되는 곳에서 완전히 비운 뒤 캔류로 배출.', why:'가스가 남은 채 버리면 수거·압축 중 폭발할 수 있습니다.' },
+    { n:'라이터', a:['일회용 라이터'], v:'general', b:'일반쓰레기 (다 쓰고)', how:'가스를 완전히 뺀 뒤 종량제 봉투에.', why:'복합재질 + 잔여 가스 위험 때문에 재활용이 안 됩니다.' },
+    { n:'페인트', a:['페인트통','락카'], v:'danger', b:'전문처리', how:'내용물이 남은 페인트는 지정폐기물이라 함부로 버리면 안 돼요. 굳힌 소량은 종량제, 대량은 지자체·전문업체 문의.', why:'유해 화학물질이라 하수·토양 오염 위험이 큽니다.' },
+    { n:'폐식용유', a:['식용유','튀김기름'], v:'special', b:'전용수거함', how:'식힌 기름을 페트병에 담아 폐식용유 수거함(주민센터·아파트)에. 소량은 키친타월에 흡수시켜 종량제로.', why:'하수구에 버리면 배관이 막히고 수질이 크게 오염됩니다. 모인 기름은 바이오디젤이 돼요.' },
+    { n:'라면 국물', a:['국물','찌개 국물'], v:'general', b:'하수구 X', how:'건더기는 음식물쓰레기로, 국물은 키친타월·응고제로 처리해 종량제로. 변기·하수구에 붓지 마세요.', why:'염분과 기름기가 많은 국물은 수질 오염 부하가 큽니다.' },
+    { n:'소주병', a:['맥주병','빈병','공병'], v:'recycle', b:'보증금 반환 (100~130원)', how:'마트·편의점에 가져가면 병당 보증금(소주 100원, 맥주 130원)을 돌려받아요. 귀찮으면 유리류 배출.', why:'빈용기보증금 대상 병은 세척 후 그대로 재사용됩니다.' },
+    { n:'와인병', a:['양주병','유리 음료병'], v:'recycle', b:'재활용 (유리)', how:'코르크·뚜껑을 제거하고 헹궈서 유리류로.', why:'보증금 대상은 아니지만 유리로 재활용됩니다.' },
+    { n:'깨지지 않은 유리컵', a:['유리컵','물컵'], v:'general', b:'일반쓰레기', how:'멀쩡해도 유리병 수거함이 아닌 종량제 봉투(신문지에 싸서)로. 여러 개면 불연성 마대.', why:'유리컵은 강화·가공 유리라 병유리와 재활용 공정이 달라요.' },
+    { n:'프라이팬', a:['후라이팬','냄비','웍'], v:'special', b:'고철 (지자체 확인)', how:'손잡이(플라스틱)를 분리할 수 있으면 분리 후 고철로. 코팅팬 통째는 고철 or 불연 — 지자체별로 다르니 확인.', why:'금속 부분은 고철로 재활용 가치가 높습니다.' },
+    { n:'칼', a:['부엌칼','식칼','가위'], v:'danger', b:'고철 (싸서)', how:'날을 종이·수건으로 감싸고 테이프로 고정해 "칼"이라고 써서 고철 또는 종량제로.', why:'그냥 버리면 수거 작업자가 다칠 수 있어요.' },
+    { n:'화분', a:['플라스틱 화분','도자기 화분'], v:'general', b:'재질별로', how:'플라스틱 화분은 흙을 비우고 플라스틱으로, 도자기 화분은 불연성 마대로. 흙은 종량제 금지 — 소량은 화단, 대량은 지자체 문의.', why:'흙은 생활폐기물로 소각할 수 없어 종량제 봉투 배출 금지입니다.' },
+    { n:'나무젓가락', a:['젓가락','이쑤시개'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요. (음식물 아님!)', why:'나무는 음식물쓰레기로 배출하면 안 되고, 소형 목재는 재활용도 안 됩니다.' },
+    { n:'조개껍데기', a:['조개껍질','굴껍질','소라'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요. (음식물 아님!)', why:'딱딱한 껍데기는 동물 사료화가 안 되어 음식물쓰레기 금지 품목입니다.' },
+    { n:'닭뼈', a:['치킨 뼈','갈비뼈','생선뼈'], v:'general', b:'일반쓰레기', how:'살을 발라내고 뼈는 종량제 봉투에.', why:'뼈는 사료화가 안 되어 음식물쓰레기가 아닙니다.' },
+    { n:'계란 껍질', a:['달걀 껍질','계란껍데기'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'계란·메추리알 껍데기는 음식물쓰레기 금지 품목입니다.' },
+    { n:'과일 씨', a:['복숭아씨','아보카도씨','감씨'], v:'general', b:'일반쓰레기 (딱딱한 씨)', how:'복숭아·아보카도처럼 크고 딱딱한 씨는 종량제로. 과육·부드러운 껍질은 음식물로.', why:'딱딱한 씨앗은 분쇄가 안 되어 사료화 설비를 고장 냅니다.' },
+    { n:'수박 껍질', a:['멜론 껍질','참외 껍질'], v:'food', b:'음식물쓰레기', how:'잘게 잘라 물기를 빼고 음식물쓰레기로.', why:'수분이 많지만 부드러운 껍질은 사료화가 가능합니다.' },
+    { n:'양파 껍질', a:['마늘 껍질','옥수수 껍질','파뿌리'], v:'general', b:'일반쓰레기', how:'마른 겉껍질·뿌리·대는 종량제 봉투로. 속살은 음식물로.', why:'마른 껍질과 질긴 줄기는 사료 가치가 없어 음식물 금지 품목입니다.' },
+    { n:'커피 찌꺼기', a:['원두 찌꺼기','커피박'], v:'general', b:'일반쓰레기', how:'종량제 봉투에. 말려서 탈취제로 재사용해도 좋아요.', why:'대부분 지자체에서 커피박은 음식물쓰레기가 아닙니다(사료 부적합).' },
+    { n:'티백', a:['녹차 티백','차 찌꺼기'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'티백 자체가 복합재질이고, 찻잎도 사료화 대상이 아닙니다.' },
+    { n:'김치', a:['먹다 남은 김치','장아찌'], v:'food', b:'음식물 (양념 헹궈서)', how:'국물을 꼭 짜고 가능하면 헹궈서 음식물쓰레기로.', why:'염분이 강하면 사료·퇴비 품질이 떨어져요.' },
+    { n:'된장', a:['고추장','쌈장','장류'], v:'general', b:'일반쓰레기 (지자체 확인)', how:'많은 지자체에서 장류는 염분 때문에 종량제 배출을 권합니다. 소량은 음식물 가능한 곳도 있으니 확인.', why:'고염분 식품은 사료화에 부적합합니다.' },
+    { n:'껌', a:['씹던 껌'], v:'general', b:'일반쓰레기', how:'종이에 싸서 종량제 봉투에.', why:'껌 베이스는 합성수지라 음식물이 아닙니다.' },
+    { n:'담배꽁초', a:['꽁초'], v:'general', b:'일반쓰레기', how:'불씨를 완전히 끄고 종량제 봉투에. 길에 버리면 하수구→바다로 흘러갑니다.', why:'꽁초 필터는 플라스틱(아세테이트)이라 미세플라스틱의 원인이 돼요.' },
+    { n:'휴지', a:['화장지','물티슈','키친타월'], v:'general', b:'일반쓰레기', how:'사용한 휴지·물티슈는 종량제 봉투에. 물티슈는 변기에 절대 금지!', why:'물티슈는 플라스틱 부직포라 물에 녹지 않고 하수관을 막습니다.' },
+    { n:'머리카락', a:['먼지','손톱'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'재활용·음식물 대상이 아닙니다.' },
+    { n:'전기장판', a:['전기요','온수매트'], v:'big', b:'대형폐기물 / 무상수거', how:'대형폐기물 신고 또는 폐가전 무상방문수거(다른 가전과 함께) 이용.', why:'전열선이 들어 있어 일반 이불처럼 버리면 안 됩니다.' },
+    { n:'선풍기', a:['서큘레이터','히터'], v:'special', b:'소형가전 / 대형', how:'주민센터 소형폐가전 수거함(들어가는 크기) 또는 대형폐기물 신고. 무상수거(5개 이상 조건)도 가능.', why:'모터·금속 자원이 회수됩니다.' },
+    { n:'매트리스', a:['침대 매트리스','침대'], v:'big', b:'대형폐기물', how:'대형폐기물 신고 후 배출. [대형폐기물] 탭에서 신고 방법을 확인하세요.', why:'스프링·섬유 복합 구조라 전문 해체가 필요합니다.' },
+    { n:'소파', a:['쇼파','책상','옷장','서랍장','가구'], v:'big', b:'대형폐기물', how:'대형폐기물 신고 후 스티커를 붙여 배출. [대형폐기물] 탭 참고.', why:'부피가 커서 종량제 배출이 불가능합니다.' },
+    { n:'카페트', a:['러그','전신 카펫'], v:'big', b:'대형폐기물 / 일반', how:'크면 대형폐기물 신고, 발매트 크기는 종량제 봉투에.', why:'섬유 복합재질이라 재활용이 안 됩니다.' },
+    { n:'커튼', a:['블라인드'], v:'general', b:'일반 / 대형', how:'천 커튼은 접어서 종량제(대형 봉투), 블라인드·레일은 대형폐기물 신고.', why:'커튼은 의류수거함 금지 품목인 곳이 많아요.' },
+    { n:'자전거', a:['킥보드','유모차'], v:'big', b:'대형폐기물', how:'대형폐기물 신고 후 배출. 탈 만하면 나눔·중고 거래 추천.', why:'금속 재활용은 되지만 크기 때문에 신고 배출이 원칙입니다.' },
+    { n:'스티로폼 박스', a:['아이스박스','스티로폼'], v:'recycle', b:'재활용 (스티로폼)', how:'테이프·송장을 떼고 이물질 없이 스티로폼 전용 수거함으로. 오염됐으면 잘게 잘라 종량제.', why:'깨끗한 스티로폼은 재생 원료로 가치가 높습니다.' },
+    { n:'은박지', a:['알루미늄 호일','호일'], v:'general', b:'일반쓰레기', how:'음식물이 묻은 호일은 종량제로. 깨끗한 큰 조각은 캔류 가능.', why:'오염된 호일은 재활용이 안 됩니다.' },
+    { n:'멀티비타민 통', a:['영양제 통','약통'], v:'recycle', b:'재활용 (플라스틱)', how:'내용물(남은 약은 폐의약품 수거함!)을 비우고 라벨 제거 후 플라스틱으로.', why:'통은 단일 재질 플라스틱이라 재활용됩니다. 남은 알약은 [폐의약품] 탭 참고.' },
+    { n:'유통기한 지난 화장품', a:['선크림','썬크림','로션'], v:'general', b:'일반 (내용물 비우고)', how:'내용물은 휴지에 짜서 종량제로, 용기는 재질에 따라(대부분 종량제).', why:'화장품 내용물을 하수구에 버리면 수질 오염이 됩니다.' },
+    { n:'가위', a:['커터칼','칼날'], v:'danger', b:'고철 (싸서)', how:'날을 감싸 테이프로 고정 후 고철 또는 종량제로.', why:'수거 작업자 안전을 위해 꼭 감싸서 버려주세요.' },
+    { n:'책', a:['헌책','교과서','잡지'], v:'recycle', b:'재활용 (종이)', how:'비닐 코팅 표지·스프링을 제거하고 종이류로 묶어서. 상태 좋으면 기부(아름다운가게 등).', why:'책은 대표적인 고품질 폐지입니다.' },
+    { n:'노트', a:['공책','스프링노트'], v:'recycle', b:'재활용 (종이)', how:'스프링(금속·플라스틱)을 분리해 종이류로.', why:'스프링이 섞이면 제지 공정에 문제가 생겨요.' },
+    { n:'달력', a:['벽걸이 달력','다이어리'], v:'recycle', b:'재활용 (종이)', how:'스프링·금속 링을 제거하고 종이류로. 코팅 표지는 종량제.', why:'코팅지·금속이 섞이면 재활용이 안 됩니다.' },
+    { n:'전단지', a:['광고지','포스터'], v:'recycle', b:'재활용 (종이)', how:'코팅 안 된 전단지는 종이류로, 비닐 코팅(반들반들한 것)은 종량제로.', why:'비닐 코팅지는 물에 풀리지 않아 재활용이 안 됩니다.' },
+    { n:'사진', a:['인화 사진','폴라로이드'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'인화지는 화학 코팅 처리되어 종이 재활용이 안 됩니다.' },
+    { n:'벽지', a:['도배지','장판'], v:'general', b:'일반 / 대형', how:'소량은 종량제, 이사·공사 수준 대량은 대형폐기물이나 건축폐기물로 지자체 문의.', why:'벽지는 코팅·접착제 때문에 종이 재활용이 안 됩니다.' },
+    { n:'유리 밀폐용기 뚜껑', a:['밀폐용기 뚜껑','실리콘 패킹'], v:'general', b:'분해해서', how:'플라스틱 뚜껑은 플라스틱, 실리콘 패킹은 종량제로 분리.', why:'실리콘은 재활용 대상이 아닙니다.' },
+    { n:'세제 통', a:['샴푸통','세제용기','펌프'], v:'recycle', b:'재활용 (펌프는 분리)', how:'헹궈서 플라스틱으로, 펌프 헤드는 스프링(금속) 때문에 종량제로.', why:'펌프에 들어 있는 금속 스프링이 재활용을 방해합니다.' },
+    { n:'치약 튜브', a:['치약'], v:'general', b:'일반쓰레기', how:'다 짜서 종량제 봉투에.', why:'알루미늄+플라스틱 복합재질이라 재활용이 안 됩니다.' },
+    { n:'즉석죽 파우치', a:['레토르트 파우치','카레 파우치'], v:'general', b:'일반쓰레기', how:'내용물을 비우고 헹궈도 종량제로.', why:'알루미늄 증착 복합필름이라 재활용이 안 됩니다.' },
+    { n:'멸치 다시팩', a:['육수팩','다시백'], v:'general', b:'일반쓰레기', how:'내용물은 음식물 또는 종량제(뼈 포함 시), 팩은 종량제로.', why:'부직포 팩은 플라스틱 재질입니다.' },
+    { n:'유리병', a:['잼병','유리 조미료병'], v:'recycle', b:'재활용 (유리)', how:'헹구고 금속 뚜껑은 캔류로, 병은 유리류로.', why:'깨끗한 병유리는 유리 재활용의 기본입니다.' },
+    { n:'캔', a:['음료수 캔','참치캔','통조림'], v:'recycle', b:'재활용 (캔)', how:'헹구고 눌러서 캔류로. 참치캔 기름은 키친타월로 닦아내고.', why:'알루미늄·철캔은 재활용 가치가 가장 높은 품목입니다.' },
+    { n:'비닐봉지', a:['비닐','포장 비닐','지퍼백'], v:'recycle', b:'재활용 (비닐)', how:'이물질 없이 깨끗하면 비닐류로, 음식물 묻었으면 종량제로.', why:'깨끗한 비닐은 고형연료 등으로 재활용됩니다.' },
+    { n:'과자 봉지', a:['라면 봉지','스낵 봉지'], v:'recycle', b:'재활용 (비닐)', how:'부스러기를 털어내고 비닐류로.', why:'겉면이 반짝여도 비닐류로 배출하는 게 원칙입니다.' },
+    { n:'박카스병', a:['드링크병','자양강장제 병'], v:'recycle', b:'재활용 (유리)', how:'뚜껑(금속)은 캔류, 병은 유리류로.', why:'갈색 약병도 병유리로 재활용됩니다.' },
+    { n:'계란판', a:['계란 트레이'], v:'recycle', b:'재질 따라', how:'종이 계란판은 종이류, 플라스틱(투명)은 플라스틱으로.', why:'재질만 확인하면 둘 다 재활용 가능합니다.' },
+    { n:'키보드', a:['마우스','공유기','리모컨'], v:'special', b:'소형가전 수거함', how:'주민센터 소형폐가전 수거함에. 리모컨은 건전지 분리 먼저.', why:'소형 전자기기는 전용 수거로 자원 회수가 됩니다.' },
+    { n:'다리미', a:['드라이기','고데기','전기포트'], v:'special', b:'소형가전 수거함', how:'주민센터 소형폐가전 수거함 또는 무상방문수거(5개 이상) 이용.', why:'전열 기구는 금속 자원 회수가 가능합니다.' },
+    { n:'가방', a:['백팩','핸드백','캐리어'], v:'general', b:'일반 / 대형', how:'가방은 종량제(의류수거함 업체별 상이), 캐리어는 대형폐기물 신고.', why:'금속·가죽·천 복합재질이라 재활용이 안 됩니다.' },
+    { n:'벨트', a:['혁대','지갑'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'가죽 제품은 재활용 대상이 아닙니다.' },
+    { n:'모자', a:['캡모자','비니'], v:'special', b:'의류수거함 (깨끗하면)', how:'깨끗하면 의류수거함, 낡았으면 종량제로.', why:'모자는 대부분 의류수거함 허용 품목입니다.' },
+    { n:'수건', a:['타월'], v:'special', b:'의류수거함 (깨끗하면)', how:'깨끗하면 의류수거함, 걸레 수준이면 종량제로.', why:'수건은 재사용·산업용 걸레로 활용됩니다.' },
+    { n:'안경', a:['선글라스','돋보기'], v:'general', b:'일반쓰레기', how:'종량제 봉투에. 상태 좋으면 안경점 기부 캠페인도 찾아보세요.', why:'렌즈+금속+플라스틱 복합재질입니다.' },
+    { n:'콘택트렌즈', a:['렌즈','일회용 렌즈'], v:'general', b:'일반쓰레기', how:'변기·하수구 금지! 종량제 봉투에.', why:'하수로 버려진 렌즈는 미세플라스틱이 됩니다.' },
+    { n:'세탁소 옷걸이', a:['철제 옷걸이','옷걸이'], v:'recycle', b:'재활용 (고철)', how:'철사 옷걸이는 고철로, 플라스틱 옷걸이는 종량제로(복합재질).', why:'철사 옷걸이는 고철 재활용이 됩니다. 세탁소에 돌려줘도 좋아요.' },
+    { n:'우유병 (유리)', a:['유리 우유병'], v:'recycle', b:'재활용 (유리)', how:'헹궈서 유리류로.', why:'병유리로 재활용됩니다.' },
+    { n:'빨래 건조대', a:['건조대','행거'], v:'big', b:'대형폐기물 / 고철', how:'접이식 소형은 고철, 대형 행거는 대형폐기물 신고. 지자체별로 다르니 확인.', why:'금속이지만 크기 때문에 신고 대상인 경우가 많아요.' },
+    { n:'냉장고', a:['세탁기','에어컨','TV','텔레비전'], v:'big', b:'무상 방문수거!', how:'폐가전 무상방문수거(1599-0903)에 신청하면 무료로 가져갑니다. 대형폐기물 수수료 낼 필요 없어요!', why:'대형 가전은 생산자 재활용 책임 제도로 무상 수거됩니다.' },
+    { n:'물티슈 캡', a:['플라스틱 캡'], v:'general', b:'일반쓰레기', how:'너무 작아서 종량제로. 모아서 업사이클 캠페인에 기부하는 방법도 있어요.', why:'소형 플라스틱은 선별장에서 걸러지지 않습니다.' },
+    { n:'유아 카시트', a:['카시트'], v:'big', b:'대형폐기물', how:'대형폐기물 신고 후 배출.', why:'복합재질 + 부피 때문에 신고 배출 대상입니다.' },
+    { n:'전자레인지', a:['전기밥솥','밥솥','청소기'], v:'special', b:'소형가전 / 무상수거', how:'주민센터 소형폐가전 수거함(들어가면) 또는 무상방문수거(5개 이상, 대형과 함께면 1개도 OK).', why:'전자제품은 전용 수거로 자원 회수 + 유해물질 처리가 됩니다.' },
+    { n:'골프채', a:['테니스 라켓','야구배트'], v:'big', b:'대형폐기물 / 일반', how:'지자체별로 대형폐기물 또는 종량제. 신고 페이지에서 품목 확인.', why:'길이가 길어 종량제 봉투에 안 들어가면 신고 대상입니다.' },
+    { n:'스키', a:['보드','스노보드','텐트'], v:'big', b:'대형폐기물', how:'대형폐기물 신고 후 배출.', why:'대형 레저용품은 신고 배출 대상입니다.' },
+    { n:'어항', a:['수족관'], v:'general', b:'불연성 마대 / 대형', how:'작은 어항은 불연성 마대, 큰 수조는 대형폐기물 신고.', why:'두꺼운 가공유리라 유리 재활용이 안 됩니다.' },
+    { n:'백열전구', a:['꼬마전구'], v:'general', b:'일반쓰레기', how:'신문지에 싸서 종량제 봉투에. (형광등 수거함 아님!)', why:'백열전구는 수은이 없어 형광등 수거 대상이 아닙니다.' },
+    { n:'보온병', a:['텀블러','스텐 물통'], v:'recycle', b:'재활용 (고철)', how:'뚜껑(플라스틱)을 분리하고 몸통은 고철로.', why:'스테인리스는 고철로 재활용 가치가 높습니다.' },
+    { n:'유선 이어폰', a:['이어폰','헤드폰','에어팟'], v:'special', b:'소형가전 수거함', how:'주민센터 소형폐가전 수거함에. 무선 이어폰은 배터리가 있어 더더욱 종량제 금지.', why:'배터리 내장 기기는 화재 위험이 있습니다.' },
+    { n:'담요', a:['무릎담요'], v:'special', b:'의류수거함 (얇은 것)', how:'얇은 담요는 의류수거함 가능(업체별 상이), 두꺼운 극세사·솜이불은 종량제나 대형으로.', why:'솜류는 재활용이 안 되어 수거함 금지 품목입니다.' },
+    { n:'양초', a:['향초','캔들'], v:'general', b:'일반쓰레기', how:'남은 왁스는 종량제로, 유리 용기는 왁스를 제거했으면 유리류로.', why:'왁스는 재활용 대상이 아닙니다.' },
+    { n:'만년필 잉크', a:['잉크 카트리지','프린터 잉크'], v:'special', b:'전용수거 (프린터 잉크)', how:'프린터 잉크·토너는 제조사 회수 프로그램이나 소형가전 수거함으로. 만년필 잉크병은 씻어서 유리로.', why:'토너 분말은 유해 물질이라 전문 처리가 필요합니다.' },
+    { n:'낚싯대', a:['낚시대'], v:'big', b:'대형폐기물 / 일반', how:'접어서 종량제에 들어가면 종량제, 길면 대형폐기물 신고.', why:'카본·유리섬유 재질은 재활용이 안 됩니다.' },
+    { n:'석유난로', a:['난로','히터 (석유)'], v:'big', b:'대형폐기물 (기름 비우고)', how:'남은 기름을 완전히 비우고 대형폐기물 신고.', why:'잔여 연료가 있으면 수거가 거부될 수 있어요.' },
+    { n:'블록 장난감', a:['레고'], v:'general', b:'일반쓰레기', how:'종량제로. 상태 좋으면 기부·중고 판매가 훨씬 좋아요.', why:'ABS 재질이지만 소형이라 선별이 안 됩니다.' },
+    { n:'쿠션', a:['방석'], v:'general', b:'일반 / 대형', how:'솜 쿠션은 종량제(큰 봉투), 아주 크면 대형폐기물.', why:'솜은 의류수거함 금지 품목입니다.' },
+    { n:'전동킥보드', a:['전기자전거'], v:'big', b:'대형폐기물 (배터리 분리)', how:'배터리를 분리(전용수거)하고 본체는 대형폐기물 신고.', why:'리튬 배터리가 달린 채 버리면 화재 위험이 큽니다.' },
+    { n:'컵', a:['머그컵','머그잔'], v:'general', b:'불연성 마대 / 일반', how:'도자기 머그컵은 불연성 마대 또는 신문지에 싸서 종량제로.', why:'도자기·강화유리 컵은 재활용이 안 됩니다.' },
+    { n:'화장지 심', a:['휴지심','키친타월 심'], v:'recycle', b:'재활용 (종이)', how:'종이류로 배출하세요.', why:'골판지와 같은 재질이라 재활용됩니다.' },
+    { n:'테이프', a:['박스테이프','스카치테이프'], v:'general', b:'일반쓰레기', how:'종량제 봉투에. 박스에서 뗀 테이프도 마찬가지.', why:'접착제 성분 때문에 재활용이 안 됩니다.' },
+    { n:'명함', a:['카드','포인트 카드'], v:'general', b:'재질 따라', how:'종이 명함은 종이류, 코팅 명함·플라스틱 카드는 종량제로. 신용카드는 잘라서!', why:'플라스틱 카드는 IC칩 등 복합재질입니다.' },
+    { n:'앨범', a:['포토앨범'], v:'general', b:'일반쓰레기', how:'사진과 비닐 속지를 분리해도 대부분 종량제 대상입니다.', why:'코팅지+비닐+접착제 복합재질입니다.' },
+    { n:'전화기', a:['유선전화기','팩스'], v:'special', b:'소형가전 수거함', how:'주민센터 소형폐가전 수거함에.', why:'전자제품 자원 회수 대상입니다.' },
+    { n:'시계', a:['손목시계','벽시계'], v:'general', b:'분해해서', how:'건전지는 폐건전지 수거함에, 본체는 종량제(벽시계 대형이면 소형가전)로.', why:'건전지를 분리하지 않으면 오염·화재 위험이 있어요.' },
+    { n:'쌀포대', a:['마대','포대자루'], v:'general', b:'일반 (지자체 확인)', how:'PP 마대는 종량제 또는 지자체 별도 수거 — 우리 동네 규정 확인.', why:'PP 직조 재질은 비닐류와 공정이 다릅니다.' },
+    { n:'스펀지', a:['수세미','설거지 스펀지'], v:'general', b:'일반쓰레기', how:'종량제 봉투에 버리세요.', why:'다 쓴 스펀지·수세미는 재활용이 안 됩니다.' },
+    { n:'디퓨저', a:['디퓨저 용기','방향제'], v:'general', b:'일반 (액 비우고)', how:'남은 액은 휴지에 흡수시켜 종량제로, 유리 용기는 씻어서 유리류로, 스틱은 종량제로.', why:'향료 액체를 하수구에 버리면 안 됩니다.' },
+    { n:'유리 조각상', a:['수정 장식품','크리스탈'], v:'general', b:'불연성 마대', how:'불연성 마대에 담아 배출.', why:'가공 유리·크리스탈은 병유리와 재질이 달라요.' }
+  ];
+
+  const BADGE_CLASS = { recycle:'b-recycle', general:'b-general', food:'b-food', special:'b-special', big:'b-big', danger:'b-danger' };
+  const POPULAR = ['즉석밥 용기','깨진 유리','피자 박스','우산','아이스팩','보조배터리','약','칫솔','조개껍데기','닭뼈','소주병','냉장고'];
+
+  /* ---------- 탭 ---------- */
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + t.dataset.panel).classList.add('active');
+    window.scrollTo({ top: 0 });
+  }));
+
+  /* ---------- 검색 ---------- */
+  const q = document.getElementById('q');
+  const resultsEl = document.getElementById('results');
+  const chipsEl = document.getElementById('chips');
+
+  POPULAR.forEach(name => {
+    const c = document.createElement('button');
+    c.className = 'chip';
+    c.textContent = name;
+    c.addEventListener('click', () => { q.value = name; search(name); q.focus(); });
+    chipsEl.appendChild(c);
+  });
+
+  const norm = s => s.replace(/\s+/g, '').toLowerCase();
+
+  function search(raw) {
+    const term = norm(raw || '');
+    resultsEl.innerHTML = '';
+    if (!term) return;
+
+    const scored = [];
+    for (const item of ITEMS) {
+      const names = [item.n, ...(item.a || [])].map(norm);
+      let best = -1;
+      for (const nm of names) {
+        if (nm === term) best = Math.max(best, 3);
+        else if (nm.startsWith(term) || term.startsWith(nm)) best = Math.max(best, 2);
+        else if (nm.includes(term) || term.includes(nm)) best = Math.max(best, 1);
+      }
+      if (best > 0) scored.push([best, item]);
+    }
+    scored.sort((a, b) => b[0] - a[0]);
+    const top = scored.slice(0, 8).map(s => s[1]);
+
+    if (!top.length) {
+      resultsEl.innerHTML = '<div class="card no-result">아직 사전에 없는 품목이에요 🥲<br>' +
+        '기본 원칙: <b>여러 재질이 섞였거나 오염됐으면 종량제</b>,<br>단일 재질이고 깨끗하면 재질별 분리배출!<br>' +
+        '정확한 기준은 우리 동네(지자체) 홈페이지를 확인해 주세요.</div>';
+      return;
+    }
+    const count = document.createElement('div');
+    count.className = 'result-count';
+    count.textContent = top.length + '개 품목';
+    resultsEl.appendChild(count);
+    for (const item of top) {
+      const d = document.createElement('div');
+      d.className = 'result';
+      d.innerHTML =
+        '<div class="r-head"><span class="r-name">' + item.n + '</span>' +
+        '<span class="badge ' + BADGE_CLASS[item.v] + '">' + item.b + '</span></div>' +
+        '<div class="r-how">' + item.how + '</div>' +
+        '<div class="r-why">💡 ' + item.why + '</div>';
+      resultsEl.appendChild(d);
+    }
+  }
+
+  let debounce = null;
+  q.addEventListener('input', () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(() => search(q.value), 150);
+  });
+
+  /* ---------- 대형폐기물 지역 찾기 ---------- */
+  const regionInput = document.getElementById('region');
+  const regionBtn = document.getElementById('regionBtn');
+  const regionResult = document.getElementById('regionResult');
+
+  function findRegion() {
+    const r = regionInput.value.trim();
+    if (!r) { regionResult.innerHTML = ''; return; }
+    const query = encodeURIComponent(r + ' 대형폐기물 인터넷 신고');
+    regionResult.innerHTML =
+      '<div class="r-card"><b>' + r + '</b> 대형폐기물 신고 페이지는 보통 구청·시청 홈페이지에 있어요.<br>' +
+      '아래 검색 결과 맨 위의 <b>공식 사이트(go.kr)</b>로 들어가면 됩니다.<br>' +
+      '<a href="https://search.naver.com/search.naver?query=' + query + '" target="_blank" rel="noopener">🔍 "' + r + ' 대형폐기물 신고" 검색 결과 열기 →</a></div>' +
+      '<div class="r-card">전화가 편하면 <b>' + r + ' 주민센터</b>에 전화해서 "대형폐기물 버리려고 하는데요"라고 하면 안내해 줍니다.</div>';
+  }
+  regionBtn.addEventListener('click', findRegion);
+  regionInput.addEventListener('keydown', e => { if (e.key === 'Enter') findRegion(); });
+})();
+</script>
+</body>
+</html>
