@@ -18,3 +18,10 @@
   from = "/api/notify"
   to = "/.netlify/functions/notify"
   status = 200
+
+# auto-trader.html 실제 자동매매(Alpaca 페이퍼) 브로커 프록시
+# API 키를 클라이언트에 노출하지 않기 위한 중계. 환경변수 ALPACA_KEY_ID / ALPACA_SECRET_KEY 필요.
+[[redirects]]
+  from = "/api/broker"
+  to = "/.netlify/functions/broker"
+  status = 200
