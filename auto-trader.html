@@ -490,8 +490,16 @@ const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim
 const now=()=>Date.now();
 const nowT=()=>new Date().toISOString().substr(11,8);
 const DPR=Math.min(2,window.devicePixelRatio||1);
-function fit(cv){const r=cv.getBoundingClientRect();cv.width=Math.max(1,r.width*DPR);cv.height=cv.height*DPR;
-  const c=cv.getContext('2d');c.setTransform(DPR,0,0,DPR,0,0);return {c,w:r.width,h:cv.height/DPR};}
+function fit(cv){
+  // 의도한 CSS 높이를 최초 1회만 캐시 (매 프레임 곱해 폭증하던 버그 수정)
+  if(cv._cssH==null)cv._cssH=+(cv.getAttribute('height'))||Math.round(cv.getBoundingClientRect().height)||150;
+  const cssH=cv._cssH;
+  cv.style.height=cssH+'px';
+  const w=Math.max(1,Math.round(cv.getBoundingClientRect().width||cv.clientWidth||300));
+  cv.width=Math.max(1,Math.round(w*DPR));
+  cv.height=Math.max(1,Math.round(cssH*DPR));
+  const c=cv.getContext('2d');c.setTransform(DPR,0,0,DPR,0,0);
+  return {c,w,h:cssH};}
 function hexA(hex,a){hex=(hex||'#888').replace('#','');if(hex.length===3)hex=hex.split('').map(x=>x+x).join('');
   const r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
   return `rgba(${r},${g},${b},${a})`;}
