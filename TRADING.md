@@ -122,6 +122,27 @@ Netlify → Site configuration → **Environment variables** 에 추가:
 - 매수: 시장가 `price`(원화 금액) / 청산: 보유 수량 전량 시장가 매도
 - 24시간 체결됩니다. **진짜 돈이 나가므로** 처음엔 최소금액(5,000원)로 몇 번만 돌려보세요.
 
+## ③-D 코인 실매매 — 빗썸(Bithumb)
+
+업비트가 **API 키를 IP에 고정**해서 서버리스(Netlify는 고정 IP 없음)에서 안 되는 반면, **빗썸은 IP 화이트리스트가 필수가 아니라 서버리스에서 바로 작동**합니다. 빗썸 API 2.0가 업비트와 호환(JWT)이라 프록시(`netlify/functions/bithumb.js`, `/api/bithumb`)도 거의 동일합니다.
+
+> 🚨 빗썸도 **모의투자 없음 — 진짜 원화로 체결**됩니다. 소액으로 시작하고 `BITHUMB_MAX_KRW`를 낮게 거세요.
+
+### 1. 빗썸 API 2.0 키 발급
+- 빗썸 → **마이페이지 → API 관리(Open API)** → **API 2.0** 키 발급
+- 권한: **자산조회 + 주문** (출금 ✗). IP 등록은 선택(비워도 됨)
+- **Access Key / Secret Key** 확보
+
+### 2. Netlify 환경변수
+| 변수 | 값 | 필수 |
+|---|---|---|
+| `BITHUMB_ACCESS_KEY` | 빗썸 Access Key | ✅ |
+| `BITHUMB_SECRET_KEY` | 빗썸 Secret Key | ✅ |
+| `BITHUMB_MAX_KRW` | 1건 최대 매수금액(원). 기본 `10000` | 권장(낮게) |
+
+### 3. 터미널
+`⚙ SETUP` → 트레이딩 엔진 **`BITHUMB · 실매매`** → 마켓(`KRW-BTC`)·1건 금액 → **🔌 연결 테스트** → ARM. 24시간 체결.
+
 ## 로컬 테스트
 `file://` 로 열면 시뮬레이션·실시간 시세(②)는 되지만 브로커 프록시(③)는 안 됩니다. `③`을 테스트하려면 Netlify로 배포(또는 `netlify dev`)하세요.
 
