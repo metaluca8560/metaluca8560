@@ -408,8 +408,17 @@ input.inp,select.inp{width:100%;background:var(--panel);border:1px solid var(--p
       <label>2 · 트레이딩 엔진</label>
       <div class="seg" id="segTrade">
         <button data-v="sim">SIM · 가상 체결</button>
-        <button data-v="paper">PAPER · Alpaca 모의투자</button>
+        <button data-v="paper">PAPER · Alpaca</button>
+        <button data-v="kis">KIS · 한투 모의</button>
       </div>
+    </div>
+
+    <div id="kisCfg" style="display:none">
+      <div class="row2">
+        <div class="fld"><label>종목코드 (6자리, 예: 005930 삼성전자)</label><input class="inp" id="kisCode" value="005930"></div>
+        <div class="fld"><label>주문 수량 (주) · 서버 상한 적용</label><input class="inp" id="kisQty" type="number" min="1" value="1"></div>
+      </div>
+      <div class="hint" style="margin:0 0 4px">모의투자용. 실시간가는 KIS 시세로 자동 갱신됩니다(데이터 소스=SIM일 때). 국내장 개장시간에만 체결됩니다.</div>
     </div>
 
     <div id="paperCfg" style="display:none">
@@ -423,6 +432,9 @@ input.inp,select.inp{width:100%;background:var(--panel);border:1px solid var(--p
           <input class="inp" id="notional" type="number" min="1" value="10">
         </div>
       </div>
+    </div>
+
+    <div id="realCfg" style="display:none">
       <div class="row2">
         <div class="fld"><label>진입 임계 %(모멘텀)</label><input class="inp" id="entryPct" type="number" step="0.01" value="0.12"></div>
         <div class="fld"><label>익절 %</label><input class="inp" id="exitPct" type="number" step="0.01" value="0.25"></div>
@@ -433,7 +445,7 @@ input.inp,select.inp{width:100%;background:var(--panel);border:1px solid var(--p
           <div class="lbl" id="armLbl">DRY-RUN · 주문 전송 안 함 (전략만 시각화)</div>
           <div class="sw" id="armSw"></div>
         </div>
-        <div class="warn g" id="armWarn">스위치를 켜면 <b>실제 Alpaca 페이퍼(모의투자) 계좌로 주문이 전송</b>됩니다. 모의 자금이지만 실제 API 호출입니다. 서버에 <b>ALPACA_KEY_ID / ALPACA_SECRET_KEY</b> 환경변수가 설정돼 있어야 합니다.</div>
+        <div class="warn g" id="armWarn">스위치를 켜면 <b>실제 모의투자 계좌로 주문이 전송</b>됩니다. 모의 자금이지만 실제 API 호출입니다. 서버 환경변수(API 키)가 설정돼 있어야 합니다.</div>
       </div>
       <button class="tbtn" id="testBtn" style="margin-top:10px;width:100%">🔌 브로커 연결 테스트 (계좌 조회)</button>
       <div class="test" id="testOut"></div>
@@ -466,6 +478,10 @@ const money=n=>{const s=n<0?'-':'';n=Math.abs(n);
   if(n>=1e3)return s+'$'+(n/1e3).toFixed(n>=1e5?0:1)+'K';
   return s+'$'+n.toFixed(0);};
 const usd=n=>'$'+n.toLocaleString('en-US',{maximumFractionDigits:2,minimumFractionDigits:2});
+let TCUR='$'; // trade-engine currency for wallet/pnl (₩ for KIS)
+function fmtMoney(n){const s=n<0?'-':'';n=Math.abs(n);const u=TCUR;
+  if(u==='₩'){if(n>=1e8)return s+u+(n/1e8).toFixed(2)+'억';if(n>=1e4)return s+u+Math.round(n/1e4).toLocaleString()+'만';return s+u+n.toFixed(0);}
+  if(n>=1e6)return s+u+(n/1e6).toFixed(2)+'M';if(n>=1e3)return s+u+(n/1e3).toFixed(n>=1e5?0:1)+'K';return s+u+n.toFixed(0);}
 const fnum=n=>{n=+n; if(!isFinite(n))return '—';
   if(Math.abs(n)>=1000)return n.toLocaleString('en-US',{maximumFractionDigits:0});
   if(Math.abs(n)>=1)return n.toLocaleString('en-US',{maximumFractionDigits:2});
@@ -482,7 +498,7 @@ function hexA(hex,a){hex=(hex||'#888').replace('#','');if(hex.length===3)hex=hex
 
 /* ---------- CONFIG (persisted) ---------- */
 const DEF={data:'sim',symUpbit:'KRW-BTC',symBinance:'BTCUSDT',
-  trade:'sim',alpacaSym:'BTC/USD',notional:10,armed:false,
+  trade:'sim',alpacaSym:'BTC/USD',notional:10,kisCode:'005930',kisQty:1,armed:false,
   strat:{entryPct:0.12,exitPct:0.25,stopPct:0.30,lookback:6,cooldown:12,holdMax:90}};
 let CFG=load();
 function load(){try{const s=JSON.parse(localStorage.getItem('nexa-cfg'));return Object.assign({},DEF,s,{strat:Object.assign({},DEF.strat,s&&s.strat)});}catch(e){return JSON.parse(JSON.stringify(DEF));}}
@@ -615,7 +631,7 @@ const recent=[];const logs=[];
 function renderRecent(){
   $('recent').innerHTML=recent.map(r=>{
     const cls=r.pnl>=0?'pos':'neg';
-    const st=r.open?'<span class="st open">OPEN</span>':`<span class="pnlc ${cls}">${r.pnl>=0?'+':'-'}$${Math.abs(r.pnl).toFixed(0)}</span>`;
+    const st=r.open?'<span class="st open">OPEN</span>':`<span class="pnlc ${cls}">${r.pnl>=0?'+':'-'}${TCUR}${Math.abs(r.pnl).toFixed(0)}</span>`;
     return `<tr><td><span class="side ${r.up?'up':'dn'}">${r.up?'UP':'DOWN'}</span></td>
       <td>${fnum(r.px)}</td><td>${r.pct.toFixed(1)}%</td><td style="text-align:right">${st}</td></tr>`;}).join('');
 }
@@ -623,7 +639,7 @@ function pushLog(o){logs.unshift(o);if(logs.length>9)logs.pop();
   $('log').innerHTML=logs.map(l=>{
     if(l.sys)return `<div class="ln"><span class="tm">${l.t}</span> <span class="sys">SYS</span> ${l.sys}</div>`;
     const res=l.dry?`<span class="dryt">DRY</span>`:(l.win?`<span class="win">WIN</span>`:`<span class="lose">LOSS</span>`);
-    const pnl=l.pnl==null?'':(l.pnl>=0?`<span class="win">+$${l.pnl.toFixed(0)}</span>`:`<span class="lose">-$${Math.abs(l.pnl).toFixed(0)}</span>`);
+    const pnl=l.pnl==null?'':(l.pnl>=0?`<span class="win">+${TCUR}${l.pnl.toFixed(0)}</span>`:`<span class="lose">-${TCUR}${Math.abs(l.pnl).toFixed(0)}</span>`);
     return `<div class="ln"><span class="tm">${l.t}</span> ${res} <span class="id">${l.id||''}</span> ${l.dir||''} @ ${l.px||''}
       · ${l.cat||''} ${l.ms?('· '+l.ms+'ms '):''}${pnl}</div>`;}).join('');
 }
@@ -661,22 +677,31 @@ function simTrade(){
 
 /* ================= PAPER TRADE ENGINE (Alpaca via /api/broker) ================= */
 const P={pos:null,startEq:null,eq:null,trades:0,wins:0,tot:0,cooldownUntil:0,busy:false,connected:false};
-async function broker(action,body){
-  const res=await fetch('/api/broker',{method:'POST',headers:{'Content-Type':'application/json'},
+function isRealTrade(){return CFG.trade==='paper'||CFG.trade==='kis';}
+function tradeEndpoint(engine){return (engine||CFG.trade)==='kis'?'/api/kis':'/api/broker';}
+async function callBroker(ep,action,body){
+  const res=await fetch(ep,{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify(Object.assign({action},body))});
   const data=await res.json().catch(()=>({error:'bad json'}));
   if(!res.ok)throw new Error(data.error||('HTTP '+res.status));
   return data;
 }
 async function paperSyncAccount(){
-  if(CFG.trade!=='paper')return;
+  if(!isRealTrade())return;
   try{
-    const d=await broker('account');
+    const d=await callBroker(tradeEndpoint(),'account');
     P.connected=true;
     const eq=Number(d.account&&d.account.equity);
-    if(isFinite(eq)){if(P.startEq==null)P.startEq=eq;P.eq=eq;}
+    if(isFinite(eq)&&eq>0){if(P.startEq==null)P.startEq=eq;P.eq=eq;}
     setTradePill();
   }catch(e){P.connected=false;setTradePill();}
+}
+// KIS 실시간가: 데이터 소스=SIM일 때 KIS 시세로 가격/캔들 갱신 (전략 입력값)
+async function kisPricePoll(){
+  if(CFG.trade!=='kis'||CFG.data!=='sim')return;
+  try{const d=await callBroker('/api/kis','price',{code:CFG.kisCode});
+    const p=Number(d.price);if(isFinite(p)&&p>0){S.price=p;rollCandle(p);}
+  }catch(e){}
 }
 function momentum(){
   const cs=S.candles;const lb=clamp(CFG.strat.lookback|0,2,40);
@@ -684,7 +709,7 @@ function momentum(){
   const a=cs[cs.length-1-lb].c,b=cs[cs.length-1].c;return (b-a)/a*100;
 }
 async function paperStrategy(){
-  if(CFG.trade!=='paper'||P.busy)return;
+  if(!isRealTrade()||P.busy)return;
   const t=now();const m=momentum();const armed=!!CFG.armed;
   if(!P.pos){
     if(t<P.cooldownUntil)return;
@@ -700,15 +725,19 @@ async function paperStrategy(){
 }
 async function paperEnter(m,armed){
   P.busy=true;
-  const entryPx=S.price;const notional=Number(CFG.notional)||10;
+  const kis=CFG.trade==='kis';const entryPx=S.price;
+  const notional=kis?entryPx*(Number(CFG.kisQty)||1):(Number(CFG.notional)||10);
+  const sizeLbl=kis?`${CFG.kisQty}주 ${CFG.kisCode}`:`${CFG.alpacaSym} ${usd(Number(CFG.notional)||10)}`;
   try{
     if(armed){
-      const d=await broker('order',{symbol:CFG.alpacaSym,notional,side:'buy',type:'market'});
+      const d=kis
+        ? await callBroker('/api/kis','order',{side:'buy',code:CFG.kisCode,qty:Number(CFG.kisQty)})
+        : await callBroker('/api/broker','order',{symbol:CFG.alpacaSym,notional,side:'buy',type:'market'});
       const fp=Number(d.order&&d.order.filled_avg_price);
-      P.pos={side:'buy',entryPx:isFinite(fp)&&fp>0?fp:entryPx,notional,ts:now(),id:d.order&&d.order.id};
-      pushLog({sys:`BUY ${CFG.alpacaSym} ${usd(notional)} → ${d.order?d.order.status:'sent'} (mom ${m.toFixed(2)}%)`,t:nowT()});
+      P.pos={entryPx:isFinite(fp)&&fp>0?fp:entryPx,notional,ts:now()};
+      pushLog({sys:`BUY ${sizeLbl} → ${d.order?d.order.status:'sent'} (mom ${m.toFixed(2)}%)`,t:nowT()});
     }else{
-      P.pos={side:'buy',entryPx,notional,ts:now(),dry:true};
+      P.pos={entryPx,notional,ts:now(),dry:true};
       pushLog({t:nowT(),dry:true,id:'#'+(1000+P.trades+1),dir:'UP',px:fnum(entryPx),cat:`DRY BUY · mom ${m.toFixed(2)}%`});
     }
   }catch(e){pushLog({sys:'ORDER FAIL · '+e.message,t:nowT()});P.cooldownUntil=now()+8000;}
@@ -716,13 +745,16 @@ async function paperEnter(m,armed){
 }
 async function paperExit(chg,armed){
   P.busy=true;
-  const pos=P.pos;const exitPx=S.price;
-  const pnl=(exitPx-pos.entryPx)/pos.entryPx*pos.notional; // 대략적 손익(달러)
+  const kis=CFG.trade==='kis';const pos=P.pos;const exitPx=S.price;
+  const pnl=(exitPx-pos.entryPx)/pos.entryPx*pos.notional; // 대략적 손익
   const win=pnl>=0;
   try{
     if(armed&&!pos.dry){
-      const d=await broker('close',{symbol:CFG.alpacaSym});
-      pushLog({t:nowT(),win,id:'#'+(1000+P.trades+1),dir:win?'UP':'DOWN',px:fnum(exitPx),cat:'CLOSE · '+(d.closed&&d.closed.status||'sent'),pnl});
+      const d=kis
+        ? await callBroker('/api/kis','order',{side:'sell',code:CFG.kisCode,qty:Number(CFG.kisQty)})
+        : await callBroker('/api/broker','close',{symbol:CFG.alpacaSym});
+      const stat=(d.order&&d.order.status)||(d.closed&&d.closed.status)||'sent';
+      pushLog({t:nowT(),win,id:'#'+(1000+P.trades+1),dir:win?'UP':'DOWN',px:fnum(exitPx),cat:'CLOSE · '+stat,pnl});
     }else{
       pushLog({t:nowT(),win,dry:true,id:'#'+(1000+P.trades+1),dir:win?'UP':'DOWN',px:fnum(exitPx),cat:`DRY CLOSE ${chg.toFixed(2)}%`,pnl});
     }
@@ -746,10 +778,10 @@ function paintWallet(trades,wins,pnlShown,tot){
   $('wTrades').textContent=trades.toLocaleString();
   $('wWin').textContent=wr.toFixed(1)+'%';
   $('wRR').textContent=(2.1+Math.sin(trades*.1)*0.4).toFixed(2);
-  $('pnl30').textContent=(pnlShown>=0?'':'-')+money(Math.abs(pnlShown)).replace('-','');
+  $('pnl30').textContent=fmtMoney(pnlShown);
   $('pnl30').className='big '+(pnlShown>=0?'up':'');
   $('pnlSub').textContent='▲ '+trades.toLocaleString()+' TRADES';
-  $('pnlTot').textContent=(tot>=0?'+':'-')+money(Math.abs(tot)).replace('-','');
+  $('pnlTot').textContent=(tot>=0?'+':'')+fmtMoney(tot);
   $('rtCount').textContent=trades+' / '+(trades+irnd(2,9))+' TODAY';
 }
 
@@ -836,11 +868,14 @@ function scheduleReconnect(){ if(CFG.data==='sim')return; if(recon)return;
 
 /* ---------- labels + pills ---------- */
 function applyLabels(){
-  if(CFG.data==='sim'){SYMBOL='NEXA';CURR='';}
+  if(CFG.data==='sim'){
+    if(CFG.trade==='kis'){SYMBOL=CFG.kisCode;CURR='₩';}
+    else{SYMBOL='NEXA';CURR='';}
+  }
   $('brandSym').textContent=SYMBOL;$('chSym').textContent=SYMBOL;$('obSym').textContent=SYMBOL;
   $('logo').textContent=SYMBOL[0]||'N';$('lblSym').textContent=SYMBOL;
-  const dsrc={sim:'SIM · SYNTHETIC FEED',upbit:'UPBIT · '+CFG.symUpbit,binance:'BINANCE · '+CFG.symBinance}[CFG.data];
-  const tsrc=CFG.trade==='paper'?(' · PAPER '+(CFG.armed?'ARMED':'DRY-RUN')):' · SIM FILLS';
+  const dsrc={sim:(CFG.trade==='kis'?'KIS 시세 · '+CFG.kisCode:'SIM · SYNTHETIC FEED'),upbit:'UPBIT · '+CFG.symUpbit,binance:'BINANCE · '+CFG.symBinance}[CFG.data];
+  const tsrc={sim:' · SIM FILLS',paper:' · PAPER '+(CFG.armed?'ARMED':'DRY-RUN'),kis:' · KIS '+(CFG.armed?'ARMED':'DRY-RUN')}[CFG.trade];
   $('subtitle').textContent=dsrc+tsrc;
 }
 function setDataPill(){
@@ -851,25 +886,29 @@ function setDataPill(){
 }
 function setTradePill(){
   const p=$('tradePill'),dot=p.querySelector('.dot');p.classList.remove('armed','dry');
-  if(CFG.trade==='sim'){$('tradeMode').textContent='SIM';dot.className='dot off';}
-  else if(CFG.armed){$('tradeMode').textContent=P.connected?'PAPER●ARMED':'PAPER…';p.classList.add('armed');dot.className='dot '+(P.connected?'':'warn');}
-  else{$('tradeMode').textContent='PAPER·DRY';p.classList.add('dry');dot.className='dot warn';}
-  $('wLive').textContent=CFG.trade==='paper'?(CFG.armed?'ARMED':'DRY'):'SIM';
-  $('simtag').textContent=CFG.trade==='paper'?(CFG.armed?'◈ PAPER · LIVE ORDERS (모의자금)':'◈ PAPER · DRY-RUN'):'◈ SIM · NO REAL ORDERS';
-  $('pnlLbl').textContent=CFG.trade==='paper'?'ACCOUNT PNL (PAPER)':'SESSION PNL';
-  $('wName').textContent=CFG.trade==='paper'?'Alpaca Paper':'Momentum Bot';
-  $('wAddr').textContent=CFG.trade==='paper'?'alpaca · paper-api':'local · synthetic';
+  const real=isRealTrade();const nm=CFG.trade==='kis'?'KIS':'PAPER';
+  if(!real){$('tradeMode').textContent='SIM';dot.className='dot off';}
+  else if(CFG.armed){$('tradeMode').textContent=P.connected?nm+'●ARMED':nm+'…';p.classList.add('armed');dot.className='dot '+(P.connected?'':'warn');}
+  else{$('tradeMode').textContent=nm+'·DRY';p.classList.add('dry');dot.className='dot warn';}
+  $('wLive').textContent=real?(CFG.armed?'ARMED':'DRY'):'SIM';
+  $('simtag').textContent=real?(CFG.armed?`◈ ${nm} · LIVE ORDERS (모의자금)`:`◈ ${nm} · DRY-RUN`):'◈ SIM · NO REAL ORDERS';
+  $('pnlLbl').textContent=real?`ACCOUNT PNL (${nm})`:'SESSION PNL';
+  $('wName').textContent=CFG.trade==='kis'?'KIS 모의투자':(CFG.trade==='paper'?'Alpaca Paper':'Momentum Bot');
+  $('wAddr').textContent=CFG.trade==='kis'?'koreainvestment · vts':(CFG.trade==='paper'?'alpaca · paper-api':'local · synthetic');
+  TCUR=CFG.trade==='kis'?'₩':'$';
 }
 
 /* ================= MASTER LOOP ================= */
 function marketTick(){
   if(CFG.data==='sim'){
-    const cs=S.candles;const last=cs[cs.length-1];
-    last.c=clamp(last.c+rnd(-1.4,1.5),last.c-6,last.c+6);
-    last.h=Math.max(last.h,last.c);last.l=Math.min(last.l,last.c);last.v=clamp(last.v+rnd(-.05,.06),.15,1);
-    S.price=last.c;
-    if(Math.random()<0.16){const o=last.c,ch=rnd(-2.4,2.7);const c2=o+ch;
-      cs.push({o,h:Math.max(o,c2)+rnd(0,1.5),l:Math.min(o,c2)-rnd(0,1.5),c:c2,v:rnd(.3,1)});if(cs.length>70)cs.shift();}
+    if(CFG.trade!=='kis'){ // KIS 모드는 kisPricePoll이 실제 시세로 가격을 구동
+      const cs=S.candles;const last=cs[cs.length-1];
+      last.c=clamp(last.c+rnd(-1.4,1.5),last.c-6,last.c+6);
+      last.h=Math.max(last.h,last.c);last.l=Math.min(last.l,last.c);last.v=clamp(last.v+rnd(-.05,.06),.15,1);
+      S.price=last.c;
+      if(Math.random()<0.16){const o=last.c,ch=rnd(-2.4,2.7);const c2=o+ch;
+        cs.push({o,h:Math.max(o,c2)+rnd(0,1.5),l:Math.min(o,c2)-rnd(0,1.5),c:c2,v:rnd(.3,1)});if(cs.length>70)cs.shift();}
+    }
     synthBook();
   }
   drawChart();drawBook();
@@ -879,6 +918,7 @@ setInterval(()=>{ S.sentiment=clamp(S.sentiment+rnd(-.08,.08),-.9,.9); updateGra
 setInterval(simTrade,2600);
 setInterval(paperStrategy,1500);
 setInterval(paperSyncAccount,6000);
+setInterval(kisPricePoll,3000);
 setInterval(()=>{S.nextTrade--;if(S.nextTrade<=0)S.nextTrade=irnd(2,6);$('ovNext').textContent=S.nextTrade+'S';},1000);
 function loop(t){drawGraph(t);drawAnalytics(t);requestAnimationFrame(loop);}
 requestAnimationFrame(loop);
@@ -898,6 +938,7 @@ function openModal(){
   segSet('segData',CFG.data);segSet('segTrade',CFG.trade);
   $('symUpbit').value=CFG.symUpbit;$('symBinance').value=CFG.symBinance;
   $('alpacaSym').value=CFG.alpacaSym;$('notional').value=CFG.notional;
+  $('kisCode').value=CFG.kisCode;$('kisQty').value=CFG.kisQty;
   $('entryPct').value=CFG.strat.entryPct;$('exitPct').value=CFG.strat.exitPct;$('stopPct').value=CFG.strat.stopPct;
   setArm(CFG.armed);syncModalVis();$('testOut').textContent='';$('testOut').className='test';
   modal.classList.add('on');
@@ -912,6 +953,11 @@ function syncModalVis(){
   $('fldUpbit').style.display=d==='upbit'?'':'none';
   $('fldBinance').style.display=d==='binance'?'':'none';
   $('paperCfg').style.display=tr==='paper'?'':'none';
+  $('kisCfg').style.display=tr==='kis'?'':'none';
+  $('realCfg').style.display=(tr==='paper'||tr==='kis')?'':'none';
+  $('armWarn').innerHTML=tr==='kis'
+    ? '스위치를 켜면 <b>한국투자증권 모의투자 계좌로 실제 주문이 전송</b>됩니다. 서버에 <b>KIS_APP_KEY / KIS_APP_SECRET / KIS_ACCOUNT</b> 환경변수가 설정돼 있어야 하고, 국내 장중에만 체결됩니다.'
+    : '스위치를 켜면 <b>실제 Alpaca 페이퍼(모의투자) 계좌로 주문이 전송</b>됩니다. 모의 자금이지만 실제 API 호출입니다. 서버에 <b>ALPACA_KEY_ID / ALPACA_SECRET_KEY</b> 환경변수가 설정돼 있어야 합니다.';
 }
 let armState=false;
 function setArm(v){armState=!!v;$('armSw').classList.toggle('on',armState);
@@ -920,28 +966,33 @@ function setArm(v){armState=!!v;$('armSw').classList.toggle('on',armState);
 $('armSw').onclick=()=>setArm(!armState);
 $('testBtn').onclick=async()=>{
   const out=$('testOut');out.className='test';out.textContent='조회 중…';
-  try{const d=await broker('account');
+  const eng=segGet('segTrade');const ep=tradeEndpoint(eng);const cur=eng==='kis'?'₩':'$';
+  const envHint=eng==='kis'?'KIS_APP_KEY/SECRET/ACCOUNT':'ALPACA_KEY_ID/SECRET';
+  try{const d=await callBroker(ep,'account');
     if(d.account&&d.account.equity!=null){out.className='test ok';
-      out.textContent=`✅ 연결 성공 [${d.mode}]  equity=$${(+d.account.equity).toLocaleString()}  cash=$${(+d.account.cash).toLocaleString()}  status=${d.account.status}`;}
+      out.textContent=`✅ 연결 성공 [${d.mode}]  equity=${cur}${(+d.account.equity).toLocaleString()}  cash=${cur}${(+d.account.cash).toLocaleString()}  status=${d.account.status}`;}
     else{out.className='test err';out.textContent='⚠ 응답: '+JSON.stringify(d);}
-  }catch(e){out.className='test err';out.textContent='❌ '+e.message+'\n(배포 후 Netlify 환경변수 ALPACA_KEY_ID/SECRET 필요. 로컬 file://에서는 /api/broker 호출 불가)';}
+  }catch(e){out.className='test err';out.textContent=`❌ ${e.message}\n(배포 후 Netlify 환경변수 ${envHint} 필요. 로컬 file://에서는 ${ep} 호출 불가)`;}
 };
 $('saveBtn').onclick=()=>{
   CFG.data=segGet('segData');CFG.trade=segGet('segTrade');
   CFG.symUpbit=$('symUpbit').value;CFG.symBinance=$('symBinance').value;
   CFG.alpacaSym=$('alpacaSym').value.trim()||'BTC/USD';
   CFG.notional=clamp(Number($('notional').value)||10,1,100000);
+  CFG.kisCode=($('kisCode').value.replace(/\D/g,'')||'005930').padStart(6,'0').slice(-6);
+  CFG.kisQty=clamp(Math.floor(Number($('kisQty').value)||1),1,100000);
   CFG.strat.entryPct=Number($('entryPct').value)||0.12;
   CFG.strat.exitPct=Number($('exitPct').value)||0.25;
   CFG.strat.stopPct=Number($('stopPct').value)||0.30;
   CFG.armed=armState;save();
-  // reset paper session baselines on config change
-  P.pos=null;P.startEq=null;P.eq=null;P.trades=0;P.wins=0;P.tot=0;P.cooldownUntil=0;
-  if(CFG.trade==='paper'&&CFG.data==='sim'){pushLog({sys:'PAPER 모드는 실시간 데이터 소스와 함께 쓰는 걸 권장합니다.',t:nowT()});}
+  // reset trade session baselines on config change
+  P.pos=null;P.startEq=null;P.eq=null;P.trades=0;P.wins=0;P.tot=0;P.cooldownUntil=0;P.connected=false;
+  if(CFG.trade==='paper'&&CFG.data==='sim'){pushLog({sys:'PAPER 모드는 실시간 데이터 소스(업비트/바이낸스)와 함께 쓰는 걸 권장합니다.',t:nowT()});}
+  if(CFG.trade==='kis'&&CFG.data==='sim'){seedSynthetic();pushLog({sys:'KIS 모드 · 종목 '+CFG.kisCode+' 시세를 실시간 조회합니다.',t:nowT()});}
   closeModal();
   applyLabels();setDataPill();setTradePill();
   if(CFG.data==='sim')stopFeed(),seedSynthetic(); else startFeed();
-  if(CFG.trade==='paper')paintWallet(0,0,0,0),paperSyncAccount();
+  if(isRealTrade()){paintWallet(0,0,0,0);paperSyncAccount();}
 };
 $('cancelBtn').onclick=closeModal;
 $('cfgBtn').onclick=openModal;$('dataPill').onclick=openModal;$('tradePill').onclick=openModal;

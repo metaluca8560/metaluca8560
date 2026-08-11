@@ -6,7 +6,8 @@
 |---|---|---|---|
 | **① 시뮬레이션 (기본)** | 합성 데이터로 전체 화면 애니메이션 | ❌ | 브라우저만 |
 | **② 실시간 시세** | Upbit / Binance 공개 WebSocket으로 진짜 캔들·호가·가격 | ❌ | 브라우저 → 거래소 |
-| **③ 실제 자동매매 (페이퍼)** | Alpaca 모의투자 계좌로 진짜 주문 전송 | ✅ | 브라우저 → Netlify Function → Alpaca |
+| **③-A 실제 자동매매 · Alpaca** | Alpaca 모의투자 계좌로 진짜 주문 전송 (미국주식·코인) | ✅ | 브라우저 → Netlify Function → Alpaca |
+| **③-B 실제 자동매매 · KIS** | 한국투자증권 모의투자로 진짜 주문 전송 (국내주식) | ✅ | 브라우저 → Netlify Function → KIS |
 
 > ⚠️ **투자 유의**: 이 화면은 데모/도구입니다. 어떤 매매 신호도 투자 조언이 아니며, 손실 책임은 사용자에게 있습니다. 기본값은 **페이퍼(모의자금)** 이고, 실계좌(실제 돈)는 아래 `ALPACA_LIVE=true` 없이는 코드에서 아예 막혀 있습니다.
 
@@ -65,8 +66,37 @@ Netlify → Site configuration → **Environment variables** 에 추가:
 
 ---
 
+## ③-B 국내주식 자동매매 — 한국투자증권(KIS) 모의투자
+
+국내 주식(예: 삼성전자 `005930`)을 자동매매하려면 KIS 엔진을 씁니다. 구조는 Alpaca와 동일하게 **서버리스 프록시**(`netlify/functions/kis.js`, `/api/kis`)가 키를 숨기고 대신 호출합니다.
+
+### 1. KIS Open API 신청
+- <https://apiportal.koreainvestment.com> 에서 앱 등록 → **APP Key / APP Secret** 발급
+- **모의투자 계좌**를 개설하고 모의투자용 앱키를 사용하세요 (실전과 키가 다릅니다).
+
+### 2. Netlify 환경변수
+| 변수 | 값 | 필수 |
+|---|---|---|
+| `KIS_APP_KEY` | KIS 앱키 | ✅ |
+| `KIS_APP_SECRET` | KIS 앱시크릿 | ✅ |
+| `KIS_ACCOUNT` | 계좌 `종합8자리-상품2자리` (예: `50123456-01`) | ✅ |
+| `KIS_ENV` | `vts`(모의, 기본) / `real`(실전, 실제 돈) | ⚠️ 선택 |
+| `KIS_MAX_QTY` | 1건당 최대 주문 수량(주). 기본 `10` | 선택 |
+
+저장 후 **재배포**.
+
+### 3. 터미널에서 켜기
+1. **⚙ SETUP → 트레이딩 엔진** 을 `KIS · 한투 모의` 로
+2. **종목코드**(6자리)와 **주문 수량(주)** 입력
+3. **🔌 브로커 연결 테스트** 로 잔고 조회 확인
+4. **ARM** 켜면 실제 모의투자 주문 전송 (끄면 DRY-RUN)
+
+- 데이터 소스를 `SIM` 으로 두면 KIS 시세 API로 해당 종목의 **실시간 현재가**를 폴링해 차트·전략에 반영합니다.
+- 시장가(`ORD_DVSN=01`)로 체결하며 **국내장 개장시간(평일 09:00~15:30 KST)** 에만 실제 체결됩니다.
+- 액세스 토큰은 서버에서 캐시(24h)합니다. 주문 수량은 `KIS_MAX_QTY` 상한으로 제한됩니다.
+
 ## 로컬 테스트
 `file://` 로 열면 시뮬레이션·실시간 시세(②)는 되지만 브로커 프록시(③)는 안 됩니다. `③`을 테스트하려면 Netlify로 배포(또는 `netlify dev`)하세요.
 
-## 다른 브로커로 확장하기
-`netlify/functions/broker.js` 의 `alpaca()` 자리를 교체하면 됩니다. 예: **한국투자증권 KIS Open API**(appkey/appsecret로 토큰 발급 → 주문), **Alpaca 주식/암호화폐**, **바이낸스 스팟** 등. 프런트엔드는 `/api/broker` 로 `{action, side, symbol, notional}` 만 보내므로 서버 쪽만 바꾸면 됩니다.
+## 브로커 확장
+프런트엔드는 `/api/broker`(Alpaca) 또는 `/api/kis`(KIS)로 `{action, side, symbol/code, notional/qty}` 만 보냅니다. 다른 브로커(바이낸스 스팟 등)를 붙이려면 같은 응답 형태(`account.equity`, `order.status`)로 함수 하나만 추가하면 됩니다.
