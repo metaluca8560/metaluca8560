@@ -32,3 +32,10 @@
   from = "/api/kis"
   to = "/.netlify/functions/kis"
   status = 200
+
+# auto-trader.html 업비트 코인 실매매 프록시 (⚠️ 실제 원화)
+# 환경변수 UPBIT_ACCESS_KEY / UPBIT_SECRET_KEY 필요.
+[[redirects]]
+  from = "/api/upbit"
+  to = "/.netlify/functions/upbit"
+  status = 200
