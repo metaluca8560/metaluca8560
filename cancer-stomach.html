@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>위암, 왜 내시경일까?</title>
+<meta name="description" content="위암은 조용히 시작합니다. 그래서 속이 편한 사람도 2년마다 들여다봅니다." />
+<link rel="canonical" href="https://luca-darakbang.netlify.app/cancer-stomach.html" />
+
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="디지털다락방" />
+<meta property="og:title" content="위암, 왜 내시경일까?" />
+<meta property="og:description" content="위암은 조용히 시작합니다. 그래서 속이 편한 사람도 2년마다 들여다봅니다." />
+<meta property="og:url" content="https://luca-darakbang.netlify.app/cancer-stomach.html" />
+<meta property="og:image" content="https://luca-darakbang.netlify.app/cancer-stomach-og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="ko_KR" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="위암, 왜 내시경일까?" />
+<meta name="twitter:description" content="위암은 조용히 시작합니다. 그래서 속이 편한 사람도 2년마다 들여다봅니다." />
+<meta name="twitter:image" content="https://luca-darakbang.netlify.app/cancer-stomach-og.png" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%23B84200'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23D0356A'/%3E%3C/svg%3E" />
+<style>
+:root {
+  --acc:#B84200; --acc-soft:#ffe7de;
+  --ground:#FAFAF9; --card:#FFF; --card-2:#F1F0EE;
+  --ink:#1F2320; --ink-mid:#4F554F; --ink-soft:#82887F;
+  --line:#E3E4E0; --line-firm:#CFD1CB;
+  --eosin:#D0356A; --eosin-soft:#FCE7EF; --eosin-ink:#A81D50;
+  --amber:#B5760A; --amber-soft:#FBF0DC;
+  --on-acc:#FFF;
+  --shadow:0 1px 2px rgba(31,35,32,.05),0 8px 24px -12px rgba(31,35,32,.18);
+  --sans:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --w:34rem; --pad:1.25rem;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --acc:#B33700; --acc-soft:#38180c;
+  --ground:#111310; --card:#191C18; --card-2:#212520;
+  --ink:#ECEFEA; --ink-mid:#BCC1BA; --ink-soft:#878E85;
+  --line:#2C302B; --line-firm:#3A3F38;
+  --eosin:#FF7DA8; --eosin-soft:#3B1B2B; --eosin-ink:#FFA0C0;
+  --amber:#E0A94E; --amber-soft:#33260F;
+  --on-acc:#0D0F0C;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6);
+}}
+:root[data-theme="dark"]{
+  --acc:#B33700; --acc-soft:#38180c;
+  --ground:#111310; --card:#191C18; --card-2:#212520;
+  --ink:#ECEFEA; --ink-mid:#BCC1BA; --ink-soft:#878E85;
+  --line:#2C302B; --line-firm:#3A3F38;
+  --eosin:#FF7DA8; --eosin-soft:#3B1B2B; --eosin-ink:#FFA0C0;
+  --amber:#E0A94E; --amber-soft:#33260F;
+  --on-acc:#0D0F0C;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;
+  line-height:1.8;word-break:keep-all;overflow-wrap:break-word;-webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom)}
+#progress{position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,var(--acc),var(--eosin));z-index:90;transition:width .12s linear}
+
+.hero{position:relative;min-height:64vh;min-height:64svh;display:flex;flex-direction:column;
+  justify-content:flex-end;overflow:hidden;background:var(--card-2);padding:0 var(--pad) 3.4rem}
+#field{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-veil{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to bottom,color-mix(in srgb,var(--card-2) 15%,transparent) 0%,
+  color-mix(in srgb,var(--card-2) 60%,transparent) 48%,
+  color-mix(in srgb,var(--card-2) 95%,transparent) 80%,var(--card-2) 100%)}
+.hero-inner{position:relative;max-width:var(--w);width:100%;margin:0 auto;display:flex;flex-direction:column;gap:.7rem}
+.hero h1{font-size:clamp(2.1rem,9.5vw,3.1rem);font-weight:800;letter-spacing:-.045em;line-height:1.13;margin:.2rem 0 0;text-wrap:balance}
+.hero p{margin:0;color:var(--ink-mid);font-size:1.02rem;max-width:27ch}
+.hero p em{font-style:normal;font-weight:700;color:var(--acc)}
+.hero .meta{margin-top:.5rem;font-size:.78rem;color:var(--ink-soft);letter-spacing:.04em}
+.scroll-cue{margin-top:1.4rem;color:var(--ink-soft);display:flex;animation:nudge 2.1s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(5px);opacity:1}}
+
+main{max-width:var(--w);margin:0 auto;padding:0 var(--pad) 3rem}
+section{padding:3rem 0 0;display:flex;flex-direction:column;gap:1rem;scroll-margin-top:1rem}
+.step{display:flex;align-items:center;gap:.55rem;font-size:.72rem;font-weight:700;letter-spacing:.14em;color:var(--acc);margin:0}
+.step b{font-variant-numeric:tabular-nums;background:var(--acc-soft);color:var(--acc);border-radius:100px;padding:.1rem .55rem;letter-spacing:.05em}
+h2{font-size:clamp(1.5rem,6.5vw,1.95rem);font-weight:800;letter-spacing:-.035em;line-height:1.32;margin:0;text-wrap:balance}
+h3{font-size:1.05rem;font-weight:700;letter-spacing:-.02em;margin:0}
+p{margin:0}
+section>p{color:var(--ink-mid)}
+strong{font-weight:700;color:var(--ink)}
+.pull{font-size:1.2rem;font-weight:700;line-height:1.55;letter-spacing:-.03em;color:var(--ink);
+  border-left:3px solid var(--acc);padding-left:1rem;margin:.4rem 0;text-wrap:balance}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.25rem;
+  box-shadow:var(--shadow);display:flex;flex-direction:column;gap:.8rem}
+.note{background:var(--card-2);border-radius:12px;padding:1rem 1.1rem;font-size:.95rem;color:var(--ink-mid);border-left:3px solid var(--acc)}
+.note.warm{background:var(--eosin-soft);border-left-color:var(--eosin)}
+.note.cool{background:var(--acc-soft);border-left-color:var(--acc)}
+.note.amber{background:var(--amber-soft);border-left-color:var(--amber)}
+.note b{color:var(--ink)}
+.caveat{position:relative;background:var(--amber-soft);border-radius:10px;padding:.8rem .95rem .8rem 2.5rem;
+  font-size:.84rem;line-height:1.6;color:var(--ink-mid)}
+.caveat::before{content:"!";position:absolute;left:.95rem;top:.95rem;display:grid;place-items:center;
+  width:1.1rem;height:1.1rem;border-radius:50%;background:var(--amber);color:var(--ground);font-size:.72rem;font-weight:800;line-height:1}
+.caveat b{color:var(--ink)}
+
+.glance{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.gl{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:.95rem 1rem;display:flex;flex-direction:column;gap:.1rem}
+.gl .v{font-size:1.45rem;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:var(--acc);line-height:1.25}
+.gl .l{font-size:.8rem;color:var(--ink-soft);line-height:1.45}
+.gl.wide{grid-column:1/-1}
+
+.path{display:flex;flex-direction:column;gap:.4rem}
+.pth{display:grid;grid-template-columns:1.6rem 1fr;gap:.1rem .7rem;background:var(--card);
+  border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:10px;padding:.8rem 1rem}
+.pth .n{grid-row:1/span 2;font-weight:800;color:var(--acc);font-variant-numeric:tabular-nums}
+.pth b{font-size:.97rem}
+.pth span:not(.n){font-size:.86rem;color:var(--ink-mid);line-height:1.6}
+
+.risks{display:flex;flex-direction:column;gap:.4rem}
+.risk{display:flex;align-items:flex-start;gap:.6rem;background:var(--card);border:1px solid var(--line);
+  border-radius:10px;padding:.7rem .85rem;cursor:pointer;font-size:.9rem;line-height:1.5;color:var(--ink-mid)}
+.risk input{margin-top:.3rem;accent-color:var(--acc);width:1rem;height:1rem;flex:none}
+.risk .txt b{color:var(--ink);font-weight:700}
+.risk .kind{font-size:.68rem;font-weight:800;letter-spacing:.06em;border-radius:99px;padding:.08rem .45rem;margin-left:.35rem;white-space:nowrap}
+.risk .kind.mod{background:var(--acc-soft);color:var(--acc)}
+.risk .kind.fix{background:var(--card-2);color:var(--ink-soft)}
+.risk-out{background:var(--acc-soft);border-radius:10px;padding:.9rem 1rem;font-size:.9rem;color:var(--ink-mid);line-height:1.65}
+.risk-out b{color:var(--ink)}
+
+.symptoms{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.sym{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.8rem .85rem;display:flex;flex-direction:column;gap:.2rem}
+.sym b{font-size:.93rem}
+.sym span{font-size:.8rem;color:var(--ink-soft);line-height:1.5}
+
+.field{display:flex;flex-direction:column;gap:.4rem}
+.field label{font-size:.85rem;font-weight:700;color:var(--ink)}
+.seg{display:flex;gap:.4rem}
+.seg button{flex:1;font-family:inherit;font-size:.9rem;font-weight:600;padding:.6rem;border-radius:10px;
+  border:1px solid var(--line-firm);background:var(--card);color:var(--ink-mid);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+input[type=number]{font-family:inherit;font-size:1rem;padding:.65rem .8rem;border-radius:10px;
+  border:1px solid var(--line-firm);background:var(--card);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
+.elig{border-radius:10px;padding:.9rem 1rem;font-size:.92rem;line-height:1.6}
+.elig.yes{background:var(--acc-soft);color:var(--ink-mid);border-left:3px solid var(--acc)}
+.elig.not{background:var(--card-2);color:var(--ink-mid);border-left:3px solid var(--ink-soft)}
+.elig b{color:var(--ink)}
+
+.stages{display:flex;flex-direction:column;gap:.55rem}
+.stg{display:grid;grid-template-columns:4.6rem 1fr 3.2rem;gap:.55rem;align-items:center;font-size:.85rem}
+.stg .nm{font-weight:700;color:var(--ink)}
+.stg .tr{background:var(--card-2);border-radius:99px;height:.7rem;overflow:hidden}
+.stg .tr i{display:block;height:100%;border-radius:99px;background:var(--acc)}
+.stg .pc{text-align:right;font-weight:800;font-variant-numeric:tabular-nums;color:var(--acc)}
+.stg.low .tr i{background:var(--eosin)}
+.stg.low .pc{color:var(--eosin)}
+.stg .desc{grid-column:1/-1;font-size:.8rem;color:var(--ink-soft);margin-top:-.3rem}
+
+.tx{display:flex;flex-direction:column;gap:.5rem}
+.txc{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--acc);border-radius:12px;
+  padding:.95rem 1rem;display:flex;flex-direction:column;gap:.25rem}
+.txc h3{color:var(--acc)}
+.txc p{font-size:.89rem;color:var(--ink-mid)}
+.txc .when{font-size:.78rem;font-weight:700;color:var(--ink-soft);letter-spacing:.03em}
+
+.myths{display:flex;flex-direction:column;gap:.5rem}
+.myth{width:100%;text-align:left;font-family:inherit;background:var(--eosin-soft);border:1px solid var(--eosin);
+  border-radius:12px;padding:.9rem 1rem;cursor:pointer;display:flex;flex-direction:column;gap:.45rem;color:var(--ink)}
+.myth .badge{align-self:flex-start;font-size:.68rem;font-weight:800;letter-spacing:.1em;
+  background:var(--eosin);color:var(--ground);border-radius:100px;padding:.12rem .55rem}
+.myth .claim{font-size:1rem;font-weight:700;line-height:1.5}
+.myth .tap{font-size:.78rem;color:var(--eosin-ink);font-weight:700}
+.myth .fact{display:none;font-size:.89rem;color:var(--ink-mid);line-height:1.65}
+.myth[aria-expanded="true"]{background:var(--acc-soft);border-color:var(--acc)}
+.myth[aria-expanded="true"] .badge{background:var(--acc);color:var(--on-acc)}
+.myth[aria-expanded="true"] .claim{text-decoration:line-through;color:var(--ink-soft);font-weight:600}
+.myth[aria-expanded="true"] .tap{display:none}
+.myth[aria-expanded="true"] .fact{display:block}
+
+.wrap-up{margin-top:3rem;background:var(--ink);color:var(--ground);border-radius:16px;padding:1.75rem 1.4rem;
+  display:flex;flex-direction:column;gap:1.1rem}
+.wrap-up h2{color:var(--ground);font-size:1.4rem}
+.wrap-up ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.85rem;counter-reset:w}
+.wrap-up li{counter-increment:w;position:relative;padding-left:2.1rem;font-size:.95rem;line-height:1.65;
+  color:color-mix(in srgb,var(--ground) 78%,transparent)}
+.wrap-up li::before{content:counter(w,decimal-leading-zero);position:absolute;left:0;top:0;
+  font-weight:800;font-variant-numeric:tabular-nums;color:var(--eosin)}
+.wrap-up li b{color:var(--ground)}
+.share{margin-top:1.25rem;width:100%;font-family:inherit;font-size:1rem;font-weight:700;padding:.95rem;
+  border-radius:12px;border:0;background:var(--acc);color:var(--on-acc);cursor:pointer}
+.share:active{transform:translateY(1px)}
+
+footer{max-width:var(--w);margin:0 auto;padding:2.25rem var(--pad) 3.5rem;border-top:1px solid var(--line);
+  display:flex;flex-direction:column;gap:.8rem;font-size:.8rem;color:var(--ink-soft);line-height:1.7}
+footer h4{margin:0;font-size:.72rem;letter-spacing:.16em;color:var(--ink-mid)}
+footer ul{margin:0;padding-left:1.1rem;display:flex;flex-direction:column;gap:.3rem}
+footer .disclaim{background:var(--card-2);border-radius:10px;padding:.85rem 1rem;color:var(--ink-mid);font-weight:600}
+footer a{color:var(--acc)}
+:focus-visible{outline:2px solid var(--eosin);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<header class="hero">
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="hero-veil"></div>
+  <div class="hero-inner">
+    <h1>위암, 왜 내시경일까?</h1>
+    <p>위암은 <em>조용히</em> 시작합니다. 그래서 속이 편한 사람도 2년마다 들여다봅니다.</p>
+    <p class="meta">정독 약 9분 · 2023년 국가암등록통계 기준</p>
+    <div class="scroll-cue" aria-hidden="true">
+      <svg viewBox="0 0 24 28" width="24" height="28" fill="none" stroke="currentColor"
+           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 9l7 7 7-7" />
+        <path d="M5 17l7 7 7-7" opacity=".45" />
+      </svg>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section id="s2">
+    <p class="caveat" style="margin-top:2.25rem">먼저 짚고 갑니다. 이 글은 <b>위암을 이해하는 데 쓰라고 만든 것</b>이지 <b>진료를 대신하라고 만든 것이 아닙니다.</b> 지금 몸에 걸리는 데가 있다면 검진 시기를 따지지 말고 병원부터 가시는 게 맞습니다.</p>
+    <p class="step"><b>02</b> 한눈에 보기</p>
+    <h2>숫자로 먼저</h2>
+    <div class="glance">
+      <div class="gl"><span class="v">5위</span><span class="l">2023년 신규 발생 순위</span></div>
+      <div class="gl"><span class="v">78.6%</span><span class="l">5년 상대생존율<br />2019~2023년 진단 기준</span></div>
+      <div class="gl wide"><span class="v">+20.6%p</span><span class="l">20년 사이 생존율 상승폭. 2001~2005년에는 58.0%였습니다. 위내시경 검진이 자리 잡으면서 일찍 발견되는 비율이 크게 올랐습니다.</span></div>
+    </div>
+    <p class="caveat">생존율은 <b>과거에 진단받은 환자 집단의 통계</b>이며 개인의 예후를 예측하는 숫자가 아닙니다. 같은 암이라도 발견된 병기, 나이, 건강 상태에 따라 결과는 크게 달라집니다.</p>
+  </section>
+
+  <section id="s3">
+    <p class="step"><b>03</b> 장기</p>
+    <h2>위는 무슨 일을 하나</h2>
+    <p>삼킨 음식을 잠시 담아 두고, 위산과 소화효소로 잘게 풀어 십이지장으로 조금씩 내보냅니다. 강한 산을 담고도 스스로 녹지 않는 것은 안쪽을 덮은 점막이 막아 주기 때문입니다.</p>
+    <div class="note">위암은 대부분 이 <b>점막</b>에서 시작합니다. 그래서 안쪽을 직접 들여다보는 내시경이 가장 확실한 방법이 됩니다.</div>
+  </section>
+
+  <section id="s4">
+    <p class="step"><b>04</b> 정의</p>
+    <h2>위암이란</h2>
+    <div class="path">
+      <div class="pth"><span class="n">1</span><b>정상 점막</b><span>위 안쪽을 덮고 보호하는 층입니다.</span></div>
+      <div class="pth"><span class="n">2</span><b>만성 위축성 위염</b><span>점막이 얇아지고 위산을 내는 세포가 줄어듭니다.</span></div>
+      <div class="pth"><span class="n">3</span><b>장상피화생</b><span>위 점막이 장 점막처럼 바뀝니다. 아직 암은 아닙니다.</span></div>
+      <div class="pth"><span class="n">4</span><b>위암</b><span>점막에서 시작해 위벽 안쪽으로 파고듭니다.</span></div>
+    </div>
+    <div class="note cool">이 변화는 대개 <b>오랜 세월에 걸쳐</b> 진행됩니다. 중간에 끊어낼 시간이 있다는 뜻입니다.</div>
+  </section>
+
+  <section id="s5">
+    <p class="step"><b>05</b> 현황</p>
+    <h2>줄고 있습니다</h2>
+    <p>위암은 국내에서 오래 1위를 지키던 암이지만, 발생과 사망 모두 뚜렷하게 줄어드는 흐름입니다. 냉장 보관이 일반화되면서 염장식품 섭취가 줄었고, 위내시경 검진이 자리를 잡았기 때문으로 봅니다.</p>
+    
+  </section>
+
+  <section id="s6">
+    <p class="step"><b>06</b> 위험요인</p>
+    <h2>누가 잘 걸리나</h2>
+    <p>해당하는 항목을 눌러 보세요. <strong>바꿀 수 있는 것과 그렇지 않은 것</strong>을 구분해 보여 드립니다.</p>
+    <div class="card">
+      <div class="risks" id="risks">
+        <label class="risk"><input type="checkbox" data-kind="mod" /><span class="txt"><b>헬리코박터 파일로리 감염</b><span class="kind mod">조절 가능</span> — 국제암연구소가 위암의 1군 발암요인으로 분류했습니다. 국내 성인의 절반 가량이 보유하고 있습니다.</span></label>
+        <label class="risk"><input type="checkbox" data-kind="mod" /><span class="txt"><b>짠 음식 · 염장식품</b><span class="kind mod">조절 가능</span> — 젓갈, 장아찌처럼 소금에 절인 음식입니다.</span></label>
+        <label class="risk"><input type="checkbox" data-kind="mod" /><span class="txt"><b>흡연</b><span class="kind mod">조절 가능</span></span></label>
+        <label class="risk"><input type="checkbox" data-kind="mod" /><span class="txt"><b>잦은 음주</b><span class="kind mod">조절 가능</span></span></label>
+        <label class="risk"><input type="checkbox" data-kind="fix" /><span class="txt"><b>만 40세 이상</b><span class="kind fix">고정</span></span></label>
+        <label class="risk"><input type="checkbox" data-kind="fix" /><span class="txt"><b>직계 가족 중 위암 환자</b><span class="kind fix">고정</span></span></label>
+        <label class="risk"><input type="checkbox" data-kind="fix" /><span class="txt"><b>만성 위축성 위염 · 장상피화생</b><span class="kind fix">고정</span> — 이미 점막이 변한 상태라 더 자주 살핍니다.</span></label>
+      </div>
+      <div class="risk-out" id="riskOut" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="s7">
+    <p class="step"><b>07</b> 증상</p>
+    <h2>어떤 신호가 나타나나</h2>
+    <div class="note warm"><b>초기에는 증상이 없습니다.</b> 아래 신호는 대개 진행된 뒤에 나타나고, 흔한 소화기 증상과 구분되지 않습니다.</div>
+    <div class="symptoms">
+      <div class="sym"><b>소화불량 · 속쓰림</b><span>위염이나 위궤양과 똑같이 느껴집니다.</span></div>
+      <div class="sym"><b>상복부 불편감</b><span>명치 부근이 더부룩합니다.</span></div>
+      <div class="sym"><b>식욕 저하 · 체중 감소</b><span>이유 없이 살이 빠집니다.</span></div>
+      <div class="sym"><b>흑색변 · 빈혈</b><span>출혈이 있으면 변이 검게 나오고 어지럽습니다.</span></div>
+      <div class="sym"><b>구토 · 삼킴 곤란</b><span>통로가 좁아진 경우입니다.</span></div>
+      <div class="sym"><b>조기 포만감</b><span>조금만 먹어도 배가 찹니다.</span></div>
+    </div>
+    <div class="note">이 신호들은 <b>훨씬 흔한 다른 병에서도 똑같이 나타납니다.</b> 증상만으로는 구분되지 않고, 흔한 병이라 여겨 넘기기도 쉽습니다. 몇 주 이상 이어진다면 나이와 관계없이 진료를 받으시는 편이 낫습니다.</div>
+  </section>
+
+  <section id="s8">
+    <p class="step"><b>08</b> 예방</p>
+    <h2>예방할 수 있나</h2>
+    <p>위암은 바꿀 수 있는 위험요인이 비교적 뚜렷한 편입니다.</p>
+    <div class="symptoms">
+      <div class="sym"><b>헬리코박터 제균</b><span>감염이 확인되고 치료 대상에 해당하면, 약으로 없앱니다. 제균 후 위암 발생이 줄었다는 연구가 이어지고 있습니다.</span></div>
+      <div class="sym"><b>싱겁게 먹기</b><span>염장식품의 빈도를 낮추는 것이 핵심입니다.</span></div>
+      <div class="sym"><b>금연 · 절주</b><span></span></div>
+      <div class="sym"><b>채소와 과일</b><span></span></div>
+      <div class="sym"><b>정기 내시경</b><span>위 어떤 것보다 근거가 분명합니다.</span></div>
+    </div>
+    <div class="note amber">헬리코박터가 있다고 <b>누구나 바로 제균하는 것은 아닙니다.</b> 검사와 치료의 대상 기준이 따로 있으니 진료 시 상의하세요.</div>
+  </section>
+
+  <section id="s9">
+    <p class="step"><b>09</b> 검진</p>
+    <h2>검진은 어떻게 받나</h2>
+    <p>위암은 국가암검진에 포함돼 있습니다. 해당되는지 확인해 보세요.</p>
+
+    <div class="card">
+      <div class="field">
+        <label for="ageIn">나이 (만)</label>
+        <input type="number" id="ageIn" min="0" max="120" value="45" inputmode="numeric" />
+      </div>
+      
+      <div class="elig" id="elig" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="note amber">만 40세 이상이면 2년마다 받을 수 있습니다. 출생 연도가 짝수면 짝수 해에, 홀수면 홀수 해에 대상이 됩니다.</div>
+  </section>
+
+  <section id="s10">
+    <p class="step"><b>10</b> 진단</p>
+    <h2>어떻게 진단하나</h2>
+    <p>검진이나 영상에서 이상이 나왔다고 곧 암은 아닙니다. 확진까지는 단계가 있습니다.</p>
+    <div class="path">
+      <div class="pth"><span class="n">1</span><b>위내시경</b><span>안쪽을 직접 보고, 의심스러운 곳이 있으면 조직을 뗍니다.</span></div>
+      <div class="pth"><span class="n">2</span><b>조직 검사</b><span><b>암인지 아닌지는 여기서 결정됩니다.</b></span></div>
+      <div class="pth"><span class="n">3</span><b>CT 등 영상 검사</b><span>얼마나 퍼졌는지 확인합니다.</span></div>
+      <div class="pth"><span class="n">4</span><b>병기 결정</b><span>치료 방향이 정해집니다.</span></div>
+    </div>
+    
+  </section>
+
+  <section id="s11">
+    <p class="step"><b>11</b> 병기</p>
+    <h2>병기와 예후</h2>
+    <p>병기는 <strong>얼마나 깊이 파고들었고 어디까지 번졌는지</strong>를 정리한 것입니다.</p>
+    <div class="card">
+      <div class="stages">
+        <div class="stg"><span class="nm">국한</span><span class="tr"><i style="width:97%"></i></span><span class="pc">97</span><span class="desc">위를 벗어나지 않은 상태</span></div>
+        <div class="stg"><span class="nm">국소</span><span class="tr"><i style="width:62%"></i></span><span class="pc">62</span><span class="desc">주변 조직·림프절까지</span></div>
+        <div class="stg low"><span class="nm">원격</span><span class="tr"><i style="width:7%"></i></span><span class="pc">7</span><span class="desc">멀리 떨어진 장기로 전이</span></div>
+      </div>
+      <p class="caveat" style="margin:0">요약병기별 5년 상대생존율(%)의 대략적인 수준입니다. 집계 판본에 따라 값이 조금씩 다릅니다. <b>초기에 찾으면 결과가 완전히 달라집니다.</b></p>
+    </div>
+  </section>
+
+  <section id="s12">
+    <p class="step"><b>12</b> 치료</p>
+    <h2>어떻게 치료하나</h2>
+    <p>병기와 상태에 따라 조합이 달라집니다. 아래는 어떤 선택지가 있는지 개관한 것입니다.</p>
+    <div class="tx">
+      <div class="txc"><h3>내시경 절제</h3><p>아주 초기라 점막에 머물러 있으면 내시경으로 병변만 떼어냅니다. 위를 그대로 남깁니다.</p><span class="when">아주 초기</span></div>
+      <div class="txc"><h3>수술</h3><p>암이 있는 부분이나 위 전체를 절제하고 주변 림프절을 함께 제거합니다. 복강경·로봇 수술이 늘고 있습니다.</p><span class="when">기본이 되는 치료</span></div>
+      <div class="txc"><h3>항암 약물</h3><p>수술 전후로 쓰거나, 진행된 경우 병을 조절합니다. 검사 결과에 따라 표적치료제나 면역항암제를 함께 쓰기도 합니다.</p><span class="when">수술 전후 · 진행된 경우</span></div>
+    </div>
+    
+  </section>
+
+  <section id="s13">
+    <p class="step"><b>13</b> 정리</p>
+    <h2>흔한 오해 세 가지</h2>
+    <p>여기까지 읽으셨다면 아래 세 문장이 왜 어긋났는지 설명하실 수 있습니다. 눌러서 확인해 보세요.</p>
+    <div class="myths">
+      <button class="myth" aria-expanded="false">
+        <span class="badge">오해</span>
+        <span class="claim">속이 편하면 위는 괜찮다</span>
+        <span class="tap">눌러서 사실 확인 →</span>
+        <span class="fact">초기 위암은 아무 증상이 없습니다. 반대로 속이 자주 쓰린 사람 대부분은 위염이지 암이 아닙니다. 증상은 위 상태를 알려 주는 지표가 못 됩니다. 그래서 증상과 무관하게 주기적으로 들여다봅니다.</span>
+      </button>
+      <button class="myth" aria-expanded="false">
+        <span class="badge">오해</span>
+        <span class="claim">위암은 무조건 위를 다 잘라낸다</span>
+        <span class="tap">눌러서 사실 확인 →</span>
+        <span class="fact">아주 초기에 발견하면 내시경으로 병변만 떼고 위를 그대로 두는 경우가 있습니다. 수술을 하더라도 위 전체가 아니라 일부만 절제하는 경우가 많습니다. 어디까지 잘라낼지는 위치와 병기에 따라 정해집니다.</span>
+      </button>
+      <button class="myth" aria-expanded="false">
+        <span class="badge">오해</span>
+        <span class="claim">헬리코박터가 있으면 곧 위암이다</span>
+        <span class="tap">눌러서 사실 확인 →</span>
+        <span class="fact">국내 성인의 상당수가 보유하고 있지만 그 대부분은 위암에 걸리지 않습니다. 위험을 높이는 요인인 것은 분명하나 확정된 미래는 아닙니다. 검사와 제균 대상 기준이 따로 있으니 진료에서 확인하세요.</span>
+      </button>
+    </div>
+  </section>
+
+  <div class="wrap-up">
+    <h2>오늘 정리</h2>
+    <ol>
+      <li><b>위암은 조용히 시작합니다.</b> 초기에는 증상이 없고, 있어도 흔한 소화기 증상과 구분되지 않습니다.</li>
+      <li><b>만 40세부터 2년마다 위내시경을 받을 수 있습니다.</b> 국가암검진에 포함돼 있습니다.</li>
+      <li><b>생존율이 20년 사이 20.6%p 올랐습니다.</b> 58.0%에서 78.6%로. 일찍 찾아낸 몫이 큽니다.</li>
+      <li><b>헬리코박터는 1군 발암요인입니다.</b> 다만 있다고 다 암이 되는 것은 아니고, 제균 대상 기준이 따로 있습니다.</li>
+      <li><b>초기에 찾으면 위를 남길 수도 있습니다.</b> 내시경으로 병변만 떼고 끝나는 경우가 있습니다.</li>
+    </ol>
+    <button class="share" id="shareBtn">이 자료 공유하기</button>
+  </div>
+
+</main>
+
+<footer>
+  <h4>참고 자료</h4>
+  <ul>
+    <li>보건복지부 · 중앙암등록본부, 「2023년 국가암등록통계」 (2025년 12월 공표) — 발생 순위, 5년 상대생존율 78.6%, 2001~2005년 대비 20.6%p 상승</li>
+    <li>국립암센터 국가암검진사업 — 위암 검진 대상 연령 및 주기</li>
+    <li>국제암연구소(IARC) — 헬리코박터 파일로리를 위암의 1군 발암요인으로 분류</li>
+    <li>헬리코박터 제균과 위암 예방에 관한 국내외 연구 — 제균 후 위암 발생 감소 보고. 장기 추적 연구가 진행 중입니다</li>
+  </ul>
+  <p>수치에는 모두 기준연도를 붙였습니다. 통계는 해마다 갱신되므로 시간이 지나면 숫자가 달라집니다. 최신 값은 국가암정보센터에서 확인하실 수 있습니다.</p>
+  <p class="disclaim">여기까지 읽으셨다면 위암이 어떤 병인지는 대략 잡히셨을 겁니다. 다만 이 글이 진료를 대신할 수는 없습니다. 몸에 걸리는 데가 있거나 검진 결과가 마음에 걸린다면, 이 글을 다시 읽는 것보다 의료진과 이야기하시는 편이 훨씬 정확합니다.</p>
+  <p><a href="cancer.html">← 다른 암 자료 보기</a></p>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var bar = document.getElementById('progress');
+  function onScroll() {
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = Math.min(100, Math.max(0, h > 0 ? (window.scrollY / h) * 100 : 0)) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+
+  /* 표지 배경 — 세포 무리 */
+  var cv = document.getElementById('field');
+  var ctx = cv.getContext('2d');
+  var cells = [], t = 0;
+  function css(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function seed() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = cv.getBoundingClientRect();
+    cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cells = [];
+    var n = Math.max(16, Math.min(48, Math.round(r.width * r.height / 9000)));
+    for (var i = 0; i < n; i++) {
+      cells.push({ x: Math.random() * r.width, y: Math.random() * r.height,
+        r: 7 + Math.random() * 12, vx: (Math.random() - .5) * .12, vy: (Math.random() - .5) * .12,
+        bad: i > n * 0.76 });
+    }
+    return r;
+  }
+  function draw() {
+    var r = cv.getBoundingClientRect();
+    var a = css('--acc') || '#444', bad = css('--eosin') || '#D0356A';
+    ctx.clearRect(0, 0, r.width, r.height);
+    for (var i = 0; i < cells.length; i++) {
+      var c = cells[i];
+      c.x += c.vx; c.y += c.vy;
+      if (c.x < -20) c.x = r.width + 20; if (c.x > r.width + 20) c.x = -20;
+      if (c.y < -20) c.y = r.height + 20; if (c.y > r.height + 20) c.y = -20;
+      var col = c.bad ? bad : a;
+      ctx.globalAlpha = c.bad ? .26 : .14; ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = c.bad ? .55 : .3; ctx.lineWidth = 1.1; ctx.strokeStyle = col; ctx.stroke();
+      ctx.globalAlpha = c.bad ? .8 : .45;
+      ctx.beginPath(); ctx.arc(c.x, c.y, c.r * .34, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  function loop() { t++; draw(); requestAnimationFrame(loop); }
+  seed();
+  if (reduce) draw(); else loop();
+  window.addEventListener('resize', function () { seed(); if (reduce) draw(); });
+
+  /* 위험요인 */
+  var riskBox = document.getElementById('risks');
+  var riskOut = document.getElementById('riskOut');
+  function renderRisk() {
+    var mod = 0, fix = 0;
+    riskBox.querySelectorAll('input').forEach(function (b) {
+      if (!b.checked) return;
+      b.dataset.kind === 'mod' ? mod++ : fix++;
+    });
+    riskOut.innerHTML = '';
+    if (mod + fix === 0) {
+      riskOut.textContent = '해당하는 항목을 눌러 보세요. 몇 개인지 세는 것이 목적이 아니라, 어느 쪽에 손을 댈 수 있는지 보시는 게 목적입니다.';
+      return;
+    }
+    var s = document.createElement('span');
+    if (mod === 0) {
+      s.innerHTML = '고른 항목이 모두 <b>바꾸기 어려운 쪽</b>입니다. 이런 경우일수록 <b>검진 주기를 지키는 것</b>이 실질적인 대응이 됩니다.';
+    } else {
+      s.innerHTML = '고르신 것 중 <b>' + mod + '개는 조절할 수 있는 항목</b>입니다' +
+        (fix ? ', 나머지 ' + fix + '개는 바꾸기 어려운 쪽이고요' : '') +
+        '. 바꿀 수 있는 쪽을 줄이고 검진 주기를 지키는 것, 지금 하실 수 있는 일은 이 두 가지입니다.';
+    }
+    riskOut.appendChild(s);
+    var note = document.createElement('span');
+    note.style.cssText = 'display:block;margin-top:.5rem;font-size:.83rem;color:var(--ink-soft)';
+    note.textContent = '이 결과는 위험도를 계산한 것이 아니며 진단이나 예측이 아닙니다.';
+    riskOut.appendChild(note);
+  }
+  riskBox.addEventListener('change', renderRisk);
+  renderRisk();
+
+  var ageIn = document.getElementById('ageIn');
+  var elig = document.getElementById('elig');
+  var sexSeg = document.getElementById('sexSeg');
+  var sex = 'f';
+  function renderElig() {
+    var a = parseInt(ageIn.value, 10); if (isNaN(a)) a = 0;
+    var ok = a >= 40;
+    if (ok) {
+      elig.className = 'elig yes';
+      elig.innerHTML = '<b>국가암검진 대상입니다.</b> 2년마다 위내시경 검사 (또는 위장조영검사)를 받을 수 있습니다.';
+    } else {
+      elig.className = 'elig not';
+      
+      
+      var left = 40 - a;
+      elig.innerHTML = '아직 국가암검진 대상 연령이 아닙니다. <b>' + left + '년 뒤</b> 대상이 됩니다. ' +
+        '가족력이나 기저질환이 있다면 그 전에도 검사를 권하는 경우가 있고, <b>증상이 있다면 나이와 관계없이 진료를 받으셔야 합니다.</b>';
+    }
+  }
+  ageIn.addEventListener('input', renderElig);
+  if (sexSeg) sexSeg.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    sex = b.dataset.sex;
+    sexSeg.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+    renderElig();
+  });
+  renderElig();
+
+  /* 오해 뒤집기 */
+  document.querySelectorAll('.myth').forEach(function (m) {
+    m.addEventListener('click', function () {
+      var open = m.getAttribute('aria-expanded') === 'true';
+      m.setAttribute('aria-expanded', String(!open));
+      m.querySelector('.badge').textContent = open ? '오해' : '사실';
+    });
+  });
+
+  /* 공유 */
+  document.getElementById('shareBtn').addEventListener('click', async function () {
+    var text = "위암, 왜 내시경일까?";
+    var url = location.href;
+    try {
+      if (navigator.share) { await navigator.share({ title: text, text: text, url: url }); return; }
+      await navigator.clipboard.writeText(text + '\n' + url);
+      this.textContent = '링크를 복사했습니다';
+      var self = this;
+      setTimeout(function () { self.textContent = '이 자료 공유하기'; }, 2000);
+    } catch (_) {}
+  });
+})();
+</script>
+</body>
+</html>

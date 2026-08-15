@@ -28,7 +28,8 @@
   --ink:#2B1B3F; --ink-mid:#5C4B72; --ink-soft:#8B7BA0;
   --line:#EADFE8; --line-firm:#DBCBDA;
   --hema:#6C3FC5; --hema-soft:#EFE8FC;
-  --g3:#007A46; --g3-soft:#D0F9DE;
+  --g1:#B84200; --g2:#827800; --g3:#007A46; --g5:#006FA8; --g8:#C94677;
+  --g3-soft:#D0F9DE;
   --eosin:#D0356A; --eosin-soft:#FCE7EF;
   --on-accent:#FFF;
   --shadow:0 1px 2px rgba(43,27,63,.05), 0 8px 24px -12px rgba(43,27,63,.16);
@@ -40,7 +41,8 @@
   --ink:#F3EDF8; --ink-mid:#C3B5D4; --ink-soft:#8F80A6;
   --line:#342844; --line-firm:#43344F;
   --hema:#B294F7; --hema-soft:#2A1E47;
-  --g3:#22C77E; --g3-soft:#0E2A1D;
+  --g1:#B33700; --g2:#978600; --g3:#22C77E; --g5:#006DB4; --g8:#E65F83;
+  --g3-soft:#0E2A1D;
   --eosin:#FF7DA8; --eosin-soft:#3B1B2B;
   --on-accent:#140E1D;
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
@@ -50,7 +52,8 @@
   --ink:#F3EDF8; --ink-mid:#C3B5D4; --ink-soft:#8F80A6;
   --line:#342844; --line-firm:#43344F;
   --hema:#B294F7; --hema-soft:#2A1E47;
-  --g3:#22C77E; --g3-soft:#0E2A1D;
+  --g1:#B33700; --g2:#978600; --g3:#22C77E; --g5:#006DB4; --g8:#E65F83;
+  --g3-soft:#0E2A1D;
   --eosin:#FF7DA8; --eosin-soft:#3B1B2B;
   --on-accent:#140E1D;
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
@@ -94,7 +97,12 @@ strong{color:var(--ink);font-weight:700}
   border-radius:99px;padding:.15rem .6rem;
 }
 .mod.c1{--c:var(--hema)}
-.mod.t06{--c:var(--g3)}
+.mod.g1{--c:var(--g1)}
+.mod.g2{--c:var(--g2)}
+.mod.g3{--c:var(--g3)}
+.mod.g5{--c:var(--g5)}
+.mod.g8{--c:var(--g8)}
+.mod .rank{font-variant-numeric:tabular-nums}
 
 .rules{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem}
 .rules li{
@@ -140,6 +148,7 @@ footer a{color:var(--hema)}
 
 <section>
   <h2>여기서부터</h2>
+  <p style="font-size:.9rem">기초 한 편을 먼저 읽고, 궁금한 암종으로 가시면 됩니다. 암종은 <strong>국내 발생이 많은 순서</strong>로 놓았습니다.</p>
   <div class="mods">
     <a class="mod c1" href="cancer-basics.html">
       <span class="rail"></span>
@@ -150,13 +159,49 @@ footer a{color:var(--hema)}
         <span class="facts"><span>정독 약 14분</span><span>15개 절</span><span>만져 보는 장치 6종</span></span>
       </span>
     </a>
-    <a class="mod t06" href="cancer-colorectal.html">
+    <a class="mod g5" href="cancer-lung.html">
       <span class="rail"></span>
       <span class="mod-body">
-        <span class="code">암종</span>
+        <span class="code">발생 2위</span>
+        <h3>폐암, 담배만의 문제일까?</h3>
+        <span class="sub">가장 크게 좋아진 암입니다. 20년 사이 생존율이 25.9%p 올랐습니다. 다만 담배를 안 피워도 걸립니다.</span>
+        <span class="facts"><span>정독 약 10분</span><span>생존율 42.5%</span></span>
+      </span>
+    </a>
+    <a class="mod g3" href="cancer-colorectal.html">
+      <span class="rail"></span>
+      <span class="mod-body">
+        <span class="code">발생 3위</span>
         <h3>대장암, 왜 검진부터일까?</h3>
-        <span class="sub">대장암은 미리 신호를 남깁니다. 그 신호를 떼어내면 암 발생이 76~90% 줄어듭니다. 검진 얘기를 계속하는 이유입니다.</span>
-        <span class="facts"><span>정독 약 10분</span><span>검진 대상 확인</span><span>만져 보는 장치 4종</span></span>
+        <span class="sub">대장암은 미리 신호를 남깁니다. 그 신호를 떼어내면 암 발생이 76~90% 줄어듭니다.</span>
+        <span class="facts"><span>정독 약 10분</span><span>생존율 75.6%</span></span>
+      </span>
+    </a>
+    <a class="mod g8" href="cancer-breast.html">
+      <span class="rail"></span>
+      <span class="mod-body">
+        <span class="code">발생 4위</span>
+        <h3>유방암, 멍울이 없어도?</h3>
+        <span class="sub">여성에게 가장 많은 암이지만 가장 많이 살아남는 암이기도 합니다. 멍울은 대개 아프지 않습니다.</span>
+        <span class="facts"><span>정독 약 10분</span><span>생존율 94.7%</span></span>
+      </span>
+    </a>
+    <a class="mod g1" href="cancer-stomach.html">
+      <span class="rail"></span>
+      <span class="mod-body">
+        <span class="code">발생 5위</span>
+        <h3>위암, 왜 내시경일까?</h3>
+        <span class="sub">속이 편해도 2년마다 들여다봅니다. 20년 사이 생존율이 58.0%에서 78.6%로 올랐습니다.</span>
+        <span class="facts"><span>정독 약 9분</span><span>생존율 78.6%</span></span>
+      </span>
+    </a>
+    <a class="mod g2" href="cancer-liver.html">
+      <span class="rail"></span>
+      <span class="mod-body">
+        <span class="code">발생 7위</span>
+        <h3>간암, 왜 6개월마다일까?</h3>
+        <span class="sub">간은 아프다는 말을 하지 않습니다. 대신 누가 위험한지는 미리 알 수 있어 고위험군만 자주 봅니다.</span>
+        <span class="facts"><span>정독 약 9분</span><span>생존율 40.4%</span></span>
       </span>
     </a>
   </div>
@@ -176,15 +221,15 @@ footer a{color:var(--hema)}
   <h2>다음엔 이런 걸</h2>
   <p>같은 방식으로 하나씩 늘려 갑니다.</p>
   <div class="soon">
+    <span>갑상선암 (발생 1위)</span>
+    <span>전립선암 (발생 6위)</span>
+    <span>췌장암</span>
+    <span>자궁경부암</span>
+    <span>담도담낭암</span>
+    <span>식도암</span>
     <span>숫자로 보는 한국의 암</span>
     <span>무엇이 암을 부르는가</span>
     <span>국가암검진 사용설명서</span>
-    <span>암은 어떻게 치료되는가</span>
-    <span>암 정보 판별법</span>
-    <span>위암</span>
-    <span>폐암</span>
-    <span>유방암</span>
-    <span>간암</span>
   </div>
 </section>
 

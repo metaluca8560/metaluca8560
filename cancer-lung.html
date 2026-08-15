@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>폐암, 담배만의 문제일까?</title>
+<meta name="description" content="가장 많이 좋아진 암이자, 아직 갈 길이 가장 먼 암입니다." />
+<link rel="canonical" href="https://luca-darakbang.netlify.app/cancer-lung.html" />
+
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="디지털다락방" />
+<meta property="og:title" content="폐암, 담배만의 문제일까?" />
+<meta property="og:description" content="가장 많이 좋아진 암이자, 아직 갈 길이 가장 먼 암입니다." />
+<meta property="og:url" content="https://luca-darakbang.netlify.app/cancer-lung.html" />
+<meta property="og:image" content="https://luca-darakbang.netlify.app/cancer-lung-og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="ko_KR" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="폐암, 담배만의 문제일까?" />
+<meta name="twitter:description" content="가장 많이 좋아진 암이자, 아직 갈 길이 가장 먼 암입니다." />
+<meta name="twitter:image" content="https://luca-darakbang.netlify.app/cancer-lung-og.png" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%23006FA8'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23D0356A'/%3E%3C/svg%3E" />
+<style>
+:root {
+  --acc:#006FA8; --acc-soft:#ddf0ff;
+  --ground:#FAFAF9; --card:#FFF; --card-2:#F1F0EE;
+  --ink:#1F2320; --ink-mid:#4F554F; --ink-soft:#82887F;
+  --line:#E3E4E0; --line-firm:#CFD1CB;
+  --eosin:#D0356A; --eosin-soft:#FCE7EF; --eosin-ink:#A81D50;
+  --amber:#B5760A; --amber-soft:#FBF0DC;
+  --on-acc:#FFF;
+  --shadow:0 1px 2px rgba(31,35,32,.05),0 8px 24px -12px rgba(31,35,32,.18);
+  --sans:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --w:34rem; --pad:1.25rem;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --acc:#006DB4; --acc-soft:#04253b;
+  --ground:#111310; --card:#191C18; --card-2:#212520;
+  --ink:#ECEFEA; --ink-mid:#BCC1BA; --ink-soft:#878E85;
+  --line:#2C302B; --line-firm:#3A3F38;
+  --eosin:#FF7DA8; --eosin-soft:#3B1B2B; --eosin-ink:#FFA0C0;
+  --amber:#E0A94E; --amber-soft:#33260F;
+  --on-acc:#0D0F0C;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6);
+}}
+:root[data-theme="dark"]{
+  --acc:#006DB4; --acc-soft:#04253b;
+  --ground:#111310; --card:#191C18; --card-2:#212520;
+  --ink:#ECEFEA; --ink-mid:#BCC1BA; --ink-soft:#878E85;
+  --line:#2C302B; --line-firm:#3A3F38;
+  --eosin:#FF7DA8; --eosin-soft:#3B1B2B; --eosin-ink:#FFA0C0;
+  --amber:#E0A94E; --amber-soft:#33260F;
+  --on-acc:#0D0F0C;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:16px;
+  line-height:1.8;word-break:keep-all;overflow-wrap:break-word;-webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom)}
+#progress{position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,var(--acc),var(--eosin));z-index:90;transition:width .12s linear}
+
+.hero{position:relative;min-height:64vh;min-height:64svh;display:flex;flex-direction:column;
+  justify-content:flex-end;overflow:hidden;background:var(--card-2);padding:0 var(--pad) 3.4rem}
+#field{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-veil{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to bottom,color-mix(in srgb,var(--card-2) 15%,transparent) 0%,
+  color-mix(in srgb,var(--card-2) 60%,transparent) 48%,
+  color-mix(in srgb,var(--card-2) 95%,transparent) 80%,var(--card-2) 100%)}
+.hero-inner{position:relative;max-width:var(--w);width:100%;margin:0 auto;display:flex;flex-direction:column;gap:.7rem}
+.hero h1{font-size:clamp(2.1rem,9.5vw,3.1rem);font-weight:800;letter-spacing:-.045em;line-height:1.13;margin:.2rem 0 0;text-wrap:balance}
+.hero p{margin:0;color:var(--ink-mid);font-size:1.02rem;max-width:27ch}
+.hero p em{font-style:normal;font-weight:700;color:var(--acc)}
+.hero .meta{margin-top:.5rem;font-size:.78rem;color:var(--ink-soft);letter-spacing:.04em}
+.scroll-cue{margin-top:1.4rem;color:var(--ink-soft);display:flex;animation:nudge 2.1s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateY(0);opacity:.55}50%{transform:translateY(5px);opacity:1}}
+
+main{max-width:var(--w);margin:0 auto;padding:0 var(--pad) 3rem}
+section{padding:3rem 0 0;display:flex;flex-direction:column;gap:1rem;scroll-margin-top:1rem}
+.step{display:flex;align-items:center;gap:.55rem;font-size:.72rem;font-weight:700;letter-spacing:.14em;color:var(--acc);margin:0}
+.step b{font-variant-numeric:tabular-nums;background:var(--acc-soft);color:var(--acc);border-radius:100px;padding:.1rem .55rem;letter-spacing:.05em}
+h2{font-size:clamp(1.5rem,6.5vw,1.95rem);font-weight:800;letter-spacing:-.035em;line-height:1.32;margin:0;text-wrap:balance}
+h3{font-size:1.05rem;font-weight:700;letter-spacing:-.02em;margin:0}
+p{margin:0}
+section>p{color:var(--ink-mid)}
+strong{font-weight:700;color:var(--ink)}
+.pull{font-size:1.2rem;font-weight:700;line-height:1.55;letter-spacing:-.03em;color:var(--ink);
+  border-left:3px solid var(--acc);padding-left:1rem;margin:.4rem 0;text-wrap:balance}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.25rem;
+  box-shadow:var(--shadow);display:flex;flex-direction:column;gap:.8rem}
+.note{background:var(--card-2);border-radius:12px;padding:1rem 1.1rem;font-size:.95rem;color:var(--ink-mid);border-left:3px solid var(--acc)}
+.note.warm{background:var(--eosin-soft);border-left-color:var(--eosin)}
+.note.cool{background:var(--acc-soft);border-left-color:var(--acc)}
+.note.amber{background:var(--amber-soft);border-left-color:var(--amber)}
+.note b{color:var(--ink)}
+.caveat{position:relative;background:var(--amber-soft);border-radius:10px;padding:.8rem .95rem .8rem 2.5rem;
+  font-size:.84rem;line-height:1.6;color:var(--ink-mid)}
+.caveat::before{content:"!";position:absolute;left:.95rem;top:.95rem;display:grid;place-items:center;
+  width:1.1rem;height:1.1rem;border-radius:50%;background:var(--amber);color:var(--ground);font-size:.72rem;font-weight:800;line-height:1}
+.caveat b{color:var(--ink)}
+
+.glance{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.gl{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:.95rem 1rem;display:flex;flex-direction:column;gap:.1rem}
+.gl .v{font-size:1.45rem;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:var(--acc);line-height:1.25}
+.gl .l{font-size:.8rem;color:var(--ink-soft);line-height:1.45}
+.gl.wide{grid-column:1/-1}
+
+.path{display:flex;flex-direction:column;gap:.4rem}
+.pth{display:grid;grid-template-columns:1.6rem 1fr;gap:.1rem .7rem;background:var(--card);
+  border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:10px;padding:.8rem 1rem}
+.pth .n{grid-row:1/span 2;font-weight:800;color:var(--acc);font-variant-numeric:tabular-nums}
+.pth b{font-size:.97rem}
+.pth span:not(.n){font-size:.86rem;color:var(--ink-mid);line-height:1.6}
+
+.risks{display:flex;flex-direction:column;gap:.4rem}
+.risk{display:flex;align-items:flex-start;gap:.6rem;background:var(--card);border:1px solid var(--line);
+  border-radius:10px;padding:.7rem .85rem;cursor:pointer;font-size:.9rem;line-height:1.5;color:var(--ink-mid)}
+.risk input{margin-top:.3rem;accent-color:var(--acc);width:1rem;height:1rem;flex:none}
+.risk .txt b{color:var(--ink);font-weight:700}
+.risk .kind{font-size:.68rem;font-weight:800;letter-spacing:.06em;border-radius:99px;padding:.08rem .45rem;margin-left:.35rem;white-space:nowrap}
+.risk .kind.mod{background:var(--acc-soft);color:var(--acc)}
+.risk .kind.fix{background:var(--card-2);color:var(--ink-soft)}
+.risk-out{background:var(--acc-soft);border-radius:10px;padding:.9rem 1rem;font-size:.9rem;color:var(--ink-mid);line-height:1.65}
+.risk-out b{color:var(--ink)}
+
+.symptoms{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.sym{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:.8rem .85rem;display:flex;flex-direction:column;gap:.2rem}
+.sym b{font-size:.93rem}
+.sym span{font-size:.8rem;color:var(--ink-soft);line-height:1.5}
+
+.field{display:flex;flex-direction:column;gap:.4rem}
+.field label{font-size:.85rem;font-weight:700;color:var(--ink)}
+.seg{display:flex;gap:.4rem}
+.seg button{flex:1;font-family:inherit;font-size:.9rem;font-weight:600;padding:.6rem;border-radius:10px;
+  border:1px solid var(--line-firm);background:var(--card);color:var(--ink-mid);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+input[type=number]{font-family:inherit;font-size:1rem;padding:.65rem .8rem;border-radius:10px;
+  border:1px solid var(--line-firm);background:var(--card);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
+.elig{border-radius:10px;padding:.9rem 1rem;font-size:.92rem;line-height:1.6}
+.elig.yes{background:var(--acc-soft);color:var(--ink-mid);border-left:3px solid var(--acc)}
+.elig.not{background:var(--card-2);color:var(--ink-mid);border-left:3px solid var(--ink-soft)}
+.elig b{color:var(--ink)}
+
+.stages{display:flex;flex-direction:column;gap:.55rem}
+.stg{display:grid;grid-template-columns:4.6rem 1fr 3.2rem;gap:.55rem;align-items:center;font-size:.85rem}
+.stg .nm{font-weight:700;color:var(--ink)}
+.stg .tr{background:var(--card-2);border-radius:99px;height:.7rem;overflow:hidden}
+.stg .tr i{display:block;height:100%;border-radius:99px;background:var(--acc)}
+.stg .pc{text-align:right;font-weight:800;font-variant-numeric:tabular-nums;color:var(--acc)}
+.stg.low .tr i{background:var(--eosin)}
+.stg.low .pc{color:var(--eosin)}
+.stg .desc{grid-column:1/-1;font-size:.8rem;color:var(--ink-soft);margin-top:-.3rem}
+
+.tx{display:flex;flex-direction:column;gap:.5rem}
+.txc{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--acc);border-radius:12px;
+  padding:.95rem 1rem;display:flex;flex-direction:column;gap:.25rem}
+.txc h3{color:var(--acc)}
+.txc p{font-size:.89rem;color:var(--ink-mid)}
+.txc .when{font-size:.78rem;font-weight:700;color:var(--ink-soft);letter-spacing:.03em}
+
+.myths{display:flex;flex-direction:column;gap:.5rem}
+.myth{width:100%;text-align:left;font-family:inherit;background:var(--eosin-soft);border:1px solid var(--eosin);
+  border-radius:12px;padding:.9rem 1rem;cursor:pointer;display:flex;flex-direction:column;gap:.45rem;color:var(--ink)}
+.myth .badge{align-self:flex-start;font-size:.68rem;font-weight:800;letter-spacing:.1em;
+  background:var(--eosin);color:var(--ground);border-radius:100px;padding:.12rem .55rem}
+.myth .claim{font-size:1rem;font-weight:700;line-height:1.5}
+.myth .tap{font-size:.78rem;color:var(--eosin-ink);font-weight:700}
+.myth .fact{display:none;font-size:.89rem;color:var(--ink-mid);line-height:1.65}
+.myth[aria-expanded="true"]{background:var(--acc-soft);border-color:var(--acc)}
+.myth[aria-expanded="true"] .badge{background:var(--acc);color:var(--on-acc)}
+.myth[aria-expanded="true"] .claim{text-decoration:line-through;color:var(--ink-soft);font-weight:600}
+.myth[aria-expanded="true"] .tap{display:none}
+.myth[aria-expanded="true"] .fact{display:block}
+
+.wrap-up{margin-top:3rem;background:var(--ink);color:var(--ground);border-radius:16px;padding:1.75rem 1.4rem;
+  display:flex;flex-direction:column;gap:1.1rem}
+.wrap-up h2{color:var(--ground);font-size:1.4rem}
+.wrap-up ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.85rem;counter-reset:w}
+.wrap-up li{counter-increment:w;position:relative;padding-left:2.1rem;font-size:.95rem;line-height:1.65;
+  color:color-mix(in srgb,var(--ground) 78%,transparent)}
+.wrap-up li::before{content:counter(w,decimal-leading-zero);position:absolute;left:0;top:0;
+  font-weight:800;font-variant-numeric:tabular-nums;color:var(--eosin)}
+.wrap-up li b{color:var(--ground)}
+.share{margin-top:1.25rem;width:100%;font-family:inherit;font-size:1rem;font-weight:700;padding:.95rem;
+  border-radius:12px;border:0;background:var(--acc);color:var(--on-acc);cursor:pointer}
+.share:active{transform:translateY(1px)}
+
+footer{max-width:var(--w);margin:0 auto;padding:2.25rem var(--pad) 3.5rem;border-top:1px solid var(--line);
+  display:flex;flex-direction:column;gap:.8rem;font-size:.8rem;color:var(--ink-soft);line-height:1.7}
+footer h4{margin:0;font-size:.72rem;letter-spacing:.16em;color:var(--ink-mid)}
+footer ul{margin:0;padding-left:1.1rem;display:flex;flex-direction:column;gap:.3rem}
+footer .disclaim{background:var(--card-2);border-radius:10px;padding:.85rem 1rem;color:var(--ink-mid);font-weight:600}
+footer a{color:var(--acc)}
+:focus-visible{outline:2px solid var(--eosin);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<header class="hero">
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="hero-veil"></div>
+  <div class="hero-inner">
+    <h1>폐암, 담배만의 문제일까?</h1>
+    <p>가장 많이 좋아진 암이자, 아직 갈 길이 <em>가장 먼</em> 암입니다.</p>
+    <p class="meta">정독 약 10분 · 2023년 국가암등록통계 기준</p>
+    <div class="scroll-cue" aria-hidden="true">
+      <svg viewBox="0 0 24 28" width="24" height="28" fill="none" stroke="currentColor"
+           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 9l7 7 7-7" />
+        <path d="M5 17l7 7 7-7" opacity=".45" />
+      </svg>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section id="s2">
+    <p class="caveat" style="margin-top:2.25rem">먼저 짚고 갑니다. 이 글은 <b>폐암을 이해하는 데 쓰라고 만든 것</b>이지 <b>진료를 대신하라고 만든 것이 아닙니다.</b> 지금 몸에 걸리는 데가 있다면 검진 시기를 따지지 말고 병원부터 가시는 게 맞습니다.</p>
+    <p class="step"><b>02</b> 한눈에 보기</p>
+    <h2>숫자로 먼저</h2>
+    <div class="glance">
+      <div class="gl"><span class="v">2위</span><span class="l">2023년 신규 발생 순위<br />갑상선암 다음</span></div>
+      <div class="gl"><span class="v">42.5%</span><span class="l">5년 상대생존율<br />2019~2023년 진단 기준</span></div>
+      <div class="gl wide"><span class="v">+25.9%p</span><span class="l">20년 사이 생존율 상승폭으로 모든 암 가운데 가장 큽니다. 저선량 CT 검진이 도입됐고, 표적치료제와 면역항암제가 들어왔기 때문입니다.</span></div>
+    </div>
+    <p class="caveat">생존율은 <b>과거에 진단받은 환자 집단의 통계</b>이며 개인의 예후를 예측하는 숫자가 아닙니다. 같은 암이라도 발견된 병기, 나이, 건강 상태에 따라 결과는 크게 달라집니다.</p>
+  </section>
+
+  <section id="s3">
+    <p class="step"><b>03</b> 장기</p>
+    <h2>폐는 무슨 일을 하나</h2>
+    <p>들이마신 공기에서 산소를 받아 피에 넘기고, 몸이 만든 이산화탄소를 받아 내보냅니다. 기관지가 나뭇가지처럼 갈라지고 그 끝에 폐포라는 작은 주머니가 3억 개쯤 달려 있습니다.</p>
+    <div class="note">폐에는 <b>통증을 느끼는 신경이 거의 없습니다.</b> 종양이 어느 정도 자라도 아프지 않은 이유이고, 초기 발견이 어려운 이유이기도 합니다.</div>
+  </section>
+
+  <section id="s4">
+    <p class="step"><b>04</b> 정의</p>
+    <h2>폐암이란</h2>
+    <div class="path">
+      <div class="pth"><span class="n">1</span><b>비소세포폐암</b><span>전체의 대부분을 차지합니다. 선암, 편평상피세포암 등이 여기 속합니다.</span></div>
+      <div class="pth"><span class="n">2</span><b>소세포폐암</b><span>자라는 속도가 빠르고 일찍 퍼지는 편이라 치료 방식이 다릅니다.</span></div>
+      <div class="pth"><span class="n">3</span><b>유전자 변이 확인</b><span>비소세포폐암에서는 EGFR, ALK 같은 변이를 찾아 맞는 약을 고릅니다.</span></div>
+      <div class="pth"><span class="n">4</span><b>치료 전략 결정</b><span>같은 폐암이라도 여기서 길이 갈립니다.</span></div>
+    </div>
+    <div class="note cool">폐암은 <b>하나의 병이 아닙니다.</b> 조직형과 유전자 변이에 따라 쓰는 약이 완전히 달라집니다.</div>
+  </section>
+
+  <section id="s5">
+    <p class="step"><b>05</b> 현황</p>
+    <h2>담배를 안 피워도 걸립니다</h2>
+    <p>흡연이 가장 큰 위험요인인 것은 분명합니다. 다만 국내 폐암 환자 가운데 담배를 피운 적 없는 사람의 비중이 적지 않고, 특히 여성에서 그렇습니다. 간접흡연, 라돈, 조리 연기, 대기오염 등이 거론되지만 아직 정리되지 않았습니다.</p>
+    <div class="note amber">그래서 <b>비흡연자라는 이유로 증상을 넘겨서는 안 됩니다.</b> 다만 국가 검진은 흡연력이 많은 사람을 대상으로 설계돼 있습니다.</div>
+  </section>
+
+  <section id="s6">
+    <p class="step"><b>06</b> 위험요인</p>
+    <h2>누가 잘 걸리나</h2>
+    <p>해당하는 항목을 눌러 보세요. <strong>바꿀 수 있는 것과 그렇지 않은 것</strong>을 구분해 보여 드립니다.</p>
+    <div class="card">
+      <div class="risks" id="risks">
+        <label class="risk"><input type="checkbox" data-kind="mod" /><span class="txt"><b>흡연</b><span class="kind mod">조절 가능</span> — 가장 큰 위험요인입니다. 끊은 뒤에도 위험이 서서히 내려갑니다.</span></label>
+        <label class="risk"><input type="checkbox" data-kind="mod" /><span class="txt"><b>간접흡연</b><span class="kind mod">조절 가능</span></span></label>
+        <label class="risk"><input type="checkbox" data-kind="mod" /><span class="txt"><b>라돈 노출</b><span class="kind mod">조절 가능</span> — 토양·암석에서 나오는 방사성 기체입니다. 주택 실내 농도를 측정할 수 있습니다.</span></label>
+        <label class="risk"><input type="checkbox" data-kind="mod" /><span class="txt"><b>석면 · 직업적 분진 노출</b><span class="kind mod">조절 가능</span></span></label>
+        <label class="risk"><input type="checkbox" data-kind="fix" /><span class="txt"><b>만성 폐질환</b><span class="kind fix">고정</span> — 만성폐쇄성폐질환, 폐섬유증 등입니다.</span></label>
+        <label class="risk"><input type="checkbox" data-kind="fix" /><span class="txt"><b>직계 가족 중 폐암 환자</b><span class="kind fix">고정</span></span></label>
+        <label class="risk"><input type="checkbox" data-kind="fix" /><span class="txt"><b>나이</b><span class="kind fix">고정</span></span></label>
+      </div>
+      <div class="risk-out" id="riskOut" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="s7">
+    <p class="step"><b>07</b> 증상</p>
+    <h2>어떤 신호가 나타나나</h2>
+    <div class="note warm"><b>초기에는 증상이 없습니다.</b> 폐에는 통증 신경이 거의 없어 상당히 자란 뒤에야 신호가 나타납니다.</div>
+    <div class="symptoms">
+      <div class="sym"><b>오래가는 기침</b><span>2~3주 이상 이어지거나 평소 기침이 달라집니다.</span></div>
+      <div class="sym"><b>객혈 · 피 섞인 가래</b><span></span></div>
+      <div class="sym"><b>숨참</b><span>평소 하던 활동에 숨이 찹니다.</span></div>
+      <div class="sym"><b>가슴 · 등 통증</b><span></span></div>
+      <div class="sym"><b>쉰 목소리</b><span>성대로 가는 신경이 눌린 경우입니다.</span></div>
+      <div class="sym"><b>체중 감소 · 피로</b><span></span></div>
+    </div>
+    <div class="note">이 신호들은 <b>훨씬 흔한 다른 병에서도 똑같이 나타납니다.</b> 증상만으로는 구분되지 않고, 흔한 병이라 여겨 넘기기도 쉽습니다. 몇 주 이상 이어진다면 나이와 관계없이 진료를 받으시는 편이 낫습니다.</div>
+  </section>
+
+  <section id="s8">
+    <p class="step"><b>08</b> 예방</p>
+    <h2>예방할 수 있나</h2>
+    <p>폐암은 <strong>예방으로 줄일 수 있는 몫이 가장 큰 암</strong>에 속합니다.</p>
+    <div class="symptoms">
+      <div class="sym"><b>금연</b><span>가장 확실합니다. 끊은 시점부터 위험이 내려가기 시작합니다.</span></div>
+      <div class="sym"><b>간접흡연 피하기</b><span></span></div>
+      <div class="sym"><b>라돈 확인</b><span>주택 실내 라돈 농도는 측정과 저감이 가능합니다.</span></div>
+      <div class="sym"><b>직업 노출 관리</b><span>석면·분진을 다루는 환경이라면 보호구와 정기 검진이 중요합니다.</span></div>
+      <div class="sym"><b>해당되면 저선량 CT</b><span>고위험군에게는 검진의 근거가 분명합니다.</span></div>
+    </div>
+    
+  </section>
+
+  <section id="s9">
+    <p class="step"><b>09</b> 검진</p>
+    <h2>검진은 어떻게 받나</h2>
+    <p>폐암은 국가암검진에 포함돼 있습니다. 해당되는지 확인해 보세요.</p>
+
+    <div class="card">
+      <div class="field">
+        <label for="ageIn">나이 (만)</label>
+        <input type="number" id="ageIn" min="0" max="120" value="59" inputmode="numeric" />
+      </div>
+      
+      <div class="elig" id="elig" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="note amber">만 54~74세이면서 30갑년 이상 흡연한 분이 대상입니다. 30갑년은 하루 한 갑씩 30년을 피운 정도를 말합니다. 일반 흉부 X선은 초기 폐암을 놓치는 경우가 많아 검진용으로 쓰지 않습니다.</div>
+  </section>
+
+  <section id="s10">
+    <p class="step"><b>10</b> 진단</p>
+    <h2>어떻게 진단하나</h2>
+    <p>검진이나 영상에서 이상이 나왔다고 곧 암은 아닙니다. 확진까지는 단계가 있습니다.</p>
+    <div class="path">
+      <div class="pth"><span class="n">1</span><b>영상 검사</b><span>저선량 CT나 흉부 CT로 결절을 확인합니다.</span></div>
+      <div class="pth"><span class="n">2</span><b>조직 검사</b><span>기관지내시경이나 바늘로 조직을 얻습니다. <b>암 진단은 여기서 확정됩니다.</b></span></div>
+      <div class="pth"><span class="n">3</span><b>유전자 · 단백질 검사</b><span>EGFR, ALK, PD-L1 등을 확인해 쓸 수 있는 약을 찾습니다.</span></div>
+      <div class="pth"><span class="n">4</span><b>병기 결정</b><span>PET-CT, 뇌 MRI 등으로 퍼진 범위를 확인합니다.</span></div>
+    </div>
+    
+  </section>
+
+  <section id="s11">
+    <p class="step"><b>11</b> 병기</p>
+    <h2>병기와 예후</h2>
+    <p>병기는 <strong>얼마나 깊이 파고들었고 어디까지 번졌는지</strong>를 정리한 것입니다.</p>
+    <div class="card">
+      <div class="stages">
+        <div class="stg"><span class="nm">국한</span><span class="tr"><i style="width:78%"></i></span><span class="pc">78</span><span class="desc">폐를 벗어나지 않은 상태</span></div>
+        <div class="stg"><span class="nm">국소</span><span class="tr"><i style="width:45%"></i></span><span class="pc">45</span><span class="desc">주변 조직·림프절까지</span></div>
+        <div class="stg low"><span class="nm">원격</span><span class="tr"><i style="width:12%"></i></span><span class="pc">12</span><span class="desc">멀리 떨어진 장기로 전이</span></div>
+      </div>
+      <p class="caveat" style="margin:0">요약병기별 5년 상대생존율(%)의 대략적인 수준입니다. 집계 판본에 따라 값이 조금씩 다릅니다. 폐암은 <b>원격 전이 상태에서 발견되는 비율이 높은 편</b>이라 전체 생존율이 낮게 나옵니다.</p>
+    </div>
+  </section>
+
+  <section id="s12">
+    <p class="step"><b>12</b> 치료</p>
+    <h2>어떻게 치료하나</h2>
+    <p>병기와 상태에 따라 조합이 달라집니다. 아래는 어떤 선택지가 있는지 개관한 것입니다.</p>
+    <div class="tx">
+      <div class="txc"><h3>수술</h3><p>초기 비소세포폐암의 기본 치료입니다. 폐엽 단위로 절제하며, 흉강경이나 로봇으로 하는 경우가 많습니다.</p><span class="when">초기</span></div>
+      <div class="txc"><h3>방사선</h3><p>수술이 어려운 초기 병변에 정밀 방사선을 쓰기도 하고, 항암과 함께 쓰기도 합니다.</p><span class="when">초기~국소진행</span></div>
+      <div class="txc"><h3>표적치료</h3><p>EGFR, ALK 같은 변이가 있으면 그 변이를 겨냥한 약을 먹습니다. 잘 맞으면 오래 조절됩니다.</p><span class="when">변이가 있는 경우</span></div>
+      <div class="txc"><h3>면역항암제</h3><p>암세포가 면역세포의 눈을 피하는 수법을 풀어 줍니다. 진행된 폐암의 장기 생존 사례가 여기서 나왔습니다.</p><span class="when">진행된 경우</span></div>
+    </div>
+    
+  </section>
+
+  <section id="s13">
+    <p class="step"><b>13</b> 정리</p>
+    <h2>흔한 오해 세 가지</h2>
+    <p>여기까지 읽으셨다면 아래 세 문장이 왜 어긋났는지 설명하실 수 있습니다. 눌러서 확인해 보세요.</p>
+    <div class="myths">
+      <button class="myth" aria-expanded="false">
+        <span class="badge">오해</span>
+        <span class="claim">담배를 안 피우면 폐암은 남 얘기다</span>
+        <span class="tap">눌러서 사실 확인 →</span>
+        <span class="fact">흡연이 가장 큰 위험요인인 것은 맞지만, 담배를 피운 적 없는 폐암 환자가 적지 않습니다. 특히 여성에서 비중이 큽니다. 비흡연자라는 사실이 오래가는 기침이나 숨참을 넘길 근거가 되지는 못합니다.</span>
+      </button>
+      <button class="myth" aria-expanded="false">
+        <span class="badge">오해</span>
+        <span class="claim">가슴 X선을 찍었으니 안심이다</span>
+        <span class="tap">눌러서 사실 확인 →</span>
+        <span class="fact">일반 흉부 X선은 작은 초기 폐암을 놓치는 경우가 많습니다. 그래서 고위험군 검진에는 저선량 CT를 씁니다. X선이 깨끗했다는 것이 폐암이 없다는 뜻은 아닙니다.</span>
+      </button>
+      <button class="myth" aria-expanded="false">
+        <span class="badge">오해</span>
+        <span class="claim">폐암은 걸리면 끝이다</span>
+        <span class="tap">눌러서 사실 확인 →</span>
+        <span class="fact">20년 사이 생존율이 25.9%p 올라 모든 암 가운데 상승폭이 가장 큽니다. 표적치료제와 면역항암제가 들어오면서 예전에는 손쓰기 어렵던 진행 폐암에서도 장기 생존 사례가 나오고 있습니다.</span>
+      </button>
+    </div>
+  </section>
+
+  <div class="wrap-up">
+    <h2>오늘 정리</h2>
+    <ol>
+      <li><b>폐에는 통증 신경이 거의 없습니다.</b> 초기에 증상이 없는 구조적인 이유입니다.</li>
+      <li><b>가장 크게 좋아진 암입니다.</b> 20년 사이 생존율이 25.9%p 올랐습니다.</li>
+      <li><b>담배를 안 피워도 걸립니다.</b> 비흡연 폐암이 적지 않고, 특히 여성에서 비중이 큽니다.</li>
+      <li><b>고위험군은 저선량 CT로 검진합니다.</b> 만 54~74세, 30갑년 이상 흡연자가 대상입니다.</li>
+      <li><b>같은 폐암이라도 쓰는 약이 다릅니다.</b> 유전자 변이를 확인해 맞는 치료를 고릅니다.</li>
+    </ol>
+    <button class="share" id="shareBtn">이 자료 공유하기</button>
+  </div>
+
+</main>
+
+<footer>
+  <h4>참고 자료</h4>
+  <ul>
+    <li>보건복지부 · 중앙암등록본부, 「2023년 국가암등록통계」 (2025년 12월 공표) — 발생 순위 2위, 5년 상대생존율 42.5%, 2001~2005년 대비 25.9%p 상승</li>
+    <li>국립암센터 국가암검진사업 — 폐암 검진 대상(만 54~74세, 30갑년 이상) 및 저선량 CT 주기</li>
+    <li>표적치료 및 면역관문억제제 관련 임상 연구 — 진행성 비소세포폐암의 치료 성적 개선</li>
+  </ul>
+  <p>수치에는 모두 기준연도를 붙였습니다. 통계는 해마다 갱신되므로 시간이 지나면 숫자가 달라집니다. 최신 값은 국가암정보센터에서 확인하실 수 있습니다.</p>
+  <p class="disclaim">여기까지 읽으셨다면 폐암이 어떤 병인지는 대략 잡히셨을 겁니다. 다만 이 글이 진료를 대신할 수는 없습니다. 몸에 걸리는 데가 있거나 검진 결과가 마음에 걸린다면, 이 글을 다시 읽는 것보다 의료진과 이야기하시는 편이 훨씬 정확합니다.</p>
+  <p><a href="cancer.html">← 다른 암 자료 보기</a></p>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var bar = document.getElementById('progress');
+  function onScroll() {
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = Math.min(100, Math.max(0, h > 0 ? (window.scrollY / h) * 100 : 0)) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+
+  /* 표지 배경 — 세포 무리 */
+  var cv = document.getElementById('field');
+  var ctx = cv.getContext('2d');
+  var cells = [], t = 0;
+  function css(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+  function seed() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = cv.getBoundingClientRect();
+    cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cells = [];
+    var n = Math.max(16, Math.min(48, Math.round(r.width * r.height / 9000)));
+    for (var i = 0; i < n; i++) {
+      cells.push({ x: Math.random() * r.width, y: Math.random() * r.height,
+        r: 7 + Math.random() * 12, vx: (Math.random() - .5) * .12, vy: (Math.random() - .5) * .12,
+        bad: i > n * 0.76 });
+    }
+    return r;
+  }
+  function draw() {
+    var r = cv.getBoundingClientRect();
+    var a = css('--acc') || '#444', bad = css('--eosin') || '#D0356A';
+    ctx.clearRect(0, 0, r.width, r.height);
+    for (var i = 0; i < cells.length; i++) {
+      var c = cells[i];
+      c.x += c.vx; c.y += c.vy;
+      if (c.x < -20) c.x = r.width + 20; if (c.x > r.width + 20) c.x = -20;
+      if (c.y < -20) c.y = r.height + 20; if (c.y > r.height + 20) c.y = -20;
+      var col = c.bad ? bad : a;
+      ctx.globalAlpha = c.bad ? .26 : .14; ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = c.bad ? .55 : .3; ctx.lineWidth = 1.1; ctx.strokeStyle = col; ctx.stroke();
+      ctx.globalAlpha = c.bad ? .8 : .45;
+      ctx.beginPath(); ctx.arc(c.x, c.y, c.r * .34, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  function loop() { t++; draw(); requestAnimationFrame(loop); }
+  seed();
+  if (reduce) draw(); else loop();
+  window.addEventListener('resize', function () { seed(); if (reduce) draw(); });
+
+  /* 위험요인 */
+  var riskBox = document.getElementById('risks');
+  var riskOut = document.getElementById('riskOut');
+  function renderRisk() {
+    var mod = 0, fix = 0;
+    riskBox.querySelectorAll('input').forEach(function (b) {
+      if (!b.checked) return;
+      b.dataset.kind === 'mod' ? mod++ : fix++;
+    });
+    riskOut.innerHTML = '';
+    if (mod + fix === 0) {
+      riskOut.textContent = '해당하는 항목을 눌러 보세요. 몇 개인지 세는 것이 목적이 아니라, 어느 쪽에 손을 댈 수 있는지 보시는 게 목적입니다.';
+      return;
+    }
+    var s = document.createElement('span');
+    if (mod === 0) {
+      s.innerHTML = '고른 항목이 모두 <b>바꾸기 어려운 쪽</b>입니다. 이런 경우일수록 <b>검진 주기를 지키는 것</b>이 실질적인 대응이 됩니다.';
+    } else {
+      s.innerHTML = '고르신 것 중 <b>' + mod + '개는 조절할 수 있는 항목</b>입니다' +
+        (fix ? ', 나머지 ' + fix + '개는 바꾸기 어려운 쪽이고요' : '') +
+        '. 바꿀 수 있는 쪽을 줄이고 검진 주기를 지키는 것, 지금 하실 수 있는 일은 이 두 가지입니다.';
+    }
+    riskOut.appendChild(s);
+    var note = document.createElement('span');
+    note.style.cssText = 'display:block;margin-top:.5rem;font-size:.83rem;color:var(--ink-soft)';
+    note.textContent = '이 결과는 위험도를 계산한 것이 아니며 진단이나 예측이 아닙니다.';
+    riskOut.appendChild(note);
+  }
+  riskBox.addEventListener('change', renderRisk);
+  renderRisk();
+
+  var ageIn = document.getElementById('ageIn');
+  var elig = document.getElementById('elig');
+  var sexSeg = document.getElementById('sexSeg');
+  var sex = 'f';
+  function renderElig() {
+    var a = parseInt(ageIn.value, 10); if (isNaN(a)) a = 0;
+    var ok = a >= 54 && a <= 74;
+    if (ok) {
+      elig.className = 'elig yes';
+      elig.innerHTML = '<b>국가암검진 대상입니다.</b> 2년마다 저선량 흉부 CT를 받을 수 있습니다.';
+    } else {
+      elig.className = 'elig not';
+      
+      if (a > 74) { elig.innerHTML = '국가암검진 대상 연령(만 54~74세)을 넘었습니다. <b>검진이 필요 없다는 뜻은 아니므로</b> 진료에서 상의하세요.'; return; }
+      var left = 54 - a;
+      elig.innerHTML = '아직 국가암검진 대상 연령이 아닙니다. <b>' + left + '년 뒤</b> 대상이 됩니다. ' +
+        '가족력이나 기저질환이 있다면 그 전에도 검사를 권하는 경우가 있고, <b>증상이 있다면 나이와 관계없이 진료를 받으셔야 합니다.</b>';
+    }
+  }
+  ageIn.addEventListener('input', renderElig);
+  if (sexSeg) sexSeg.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    sex = b.dataset.sex;
+    sexSeg.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+    renderElig();
+  });
+  renderElig();
+
+  /* 오해 뒤집기 */
+  document.querySelectorAll('.myth').forEach(function (m) {
+    m.addEventListener('click', function () {
+      var open = m.getAttribute('aria-expanded') === 'true';
+      m.setAttribute('aria-expanded', String(!open));
+      m.querySelector('.badge').textContent = open ? '오해' : '사실';
+    });
+  });
+
+  /* 공유 */
+  document.getElementById('shareBtn').addEventListener('click', async function () {
+    var text = "폐암, 담배만의 문제일까?";
+    var url = location.href;
+    try {
+      if (navigator.share) { await navigator.share({ title: text, text: text, url: url }); return; }
+      await navigator.clipboard.writeText(text + '\n' + url);
+      this.textContent = '링크를 복사했습니다';
+      var self = this;
+      setTimeout(function () { self.textContent = '이 자료 공유하기'; }, 2000);
+    } catch (_) {}
+  });
+})();
+</script>
+</body>
+</html>
