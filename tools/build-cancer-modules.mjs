@@ -370,6 +370,7 @@ const MODULES = [
     ],
   },
 
+
 ];
 
 /* ─────────────────────────────────────────────────────────────
@@ -402,7 +403,7 @@ function render(m) {
   const diagnose = m.diagnose.map(([b, s], i) =>
     `      <div class="pth"><span class="n">${i + 1}</span><b>${b}</b><span>${s}</span></div>`).join('\n');
 
-  const stages = m.stages.map(([n, pct, d], i) =>
+  const stages = (m.stages || []).map(([n, pct, d], i) =>
     `        <div class="stg${i === 2 ? ' low' : ''}"><span class="nm">${n}</span>` +
     `<span class="tr"><i style="width:${pct}%"></i></span><span class="pc">${pct}</span>` +
     `<span class="desc">${d}</span></div>`).join('\n');
@@ -787,9 +788,9 @@ ${diagnose}
     <h2>병기와 예후</h2>
     <p>병기는 <strong>얼마나 깊이 파고들었고 어디까지 번졌는지</strong>를 정리한 것입니다.</p>
     <div class="card">
-      <div class="stages">
+${m.stages ? `      <div class="stages">
 ${stages}
-      </div>
+      </div>` : `      <p style="font-size:.93rem;color:var(--ink-mid)">${m.stagesText}</p>`}
       <p class="caveat" style="margin:0">${m.stagesNote}</p>
     </div>
   </section>
