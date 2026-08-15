@@ -149,8 +149,8 @@ body {
 .hero p { margin: 0; color: var(--ink-mid); font-size: 1.02rem; max-width: 27ch; }
 .hero p em { font-style: normal; font-weight: 700; color: var(--g3); }
 .hero .meta { margin-top: .5rem; font-size: .78rem; color: var(--ink-soft); letter-spacing: .04em; }
-.scroll-cue { margin-top: 1rem; font-size: .8rem; color: var(--ink-soft); display: flex; align-items: center; gap: .45rem; }
-.scroll-cue i { display: block; width: 1px; height: 1.5rem; background: linear-gradient(var(--ink-soft), transparent); }
+.scroll-cue { margin-top: 1.4rem; color: var(--ink-soft); display: flex; animation: nudge 2.1s ease-in-out infinite; }
+@keyframes nudge { 0%,100% { transform: translateY(0); opacity: .55; } 50% { transform: translateY(5px); opacity: 1; } }
 
 /* ============ 레이아웃 ============ */
 main { max-width: var(--w); margin: 0 auto; padding: 0 var(--pad) 3rem; }
@@ -385,8 +385,14 @@ footer .disclaim { background: var(--card-2); border-radius: 10px; padding: .85r
     <span class="tag">T06 · 하부소화기</span>
     <h1>대장암,<br />왜 검진부터일까?</h1>
     <p>대장암은 <em>예고편</em>을 남기는 드문 암입니다. 그 예고편을 미리 떼어내면 암이 되는 것을 막을 수 있습니다.</p>
-    <p class="meta">암 기초 교양 · Track 모듈 T06</p>
-    <div class="scroll-cue"><i></i> 스크롤해서 시작하기</div>
+    <p class="meta">정독 약 10분 · 2023년 국가암등록통계 기준</p>
+    <div class="scroll-cue" aria-hidden="true">
+      <svg viewBox="0 0 24 28" width="24" height="28" fill="none" stroke="currentColor"
+           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 9l7 7 7-7" />
+        <path d="M5 17l7 7 7-7" opacity=".45" />
+      </svg>
+    </div>
   </div>
 </header>
 
