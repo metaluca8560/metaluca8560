@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>암, 알고 봅시다 — 읽고 만지는 암 교양</title>
+<meta name="description" content="암이 어떤 병인지 처음부터 짚어 보는 교양 자료. 공개 통계와 학술 문헌만으로 자체 집필했고, 수치마다 기준연도와 출처를 밝혔습니다." />
+<meta name="author" content="디지털다락방" />
+<link rel="canonical" href="https://luca-darakbang.netlify.app/cancer.html" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="디지털다락방" />
+<meta property="og:title" content="암, 알고 봅시다 — 읽고 만지는 암 교양" />
+<meta property="og:description" content="암이 어떤 병인지 처음부터 짚어 보는 교양 자료. 공개 통계와 학술 문헌만으로 자체 집필했습니다." />
+<meta property="og:url" content="https://luca-darakbang.netlify.app/cancer.html" />
+<meta property="og:image" content="https://luca-darakbang.netlify.app/cancer-og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="ko_KR" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="암, 알고 봅시다 — 읽고 만지는 암 교양" />
+<meta name="twitter:description" content="암이 어떤 병인지 처음부터 짚어 보는 교양 자료. 공개 통계와 학술 문헌만으로 자체 집필했습니다." />
+<meta name="twitter:image" content="https://luca-darakbang.netlify.app/cancer-og.png" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%236C3FC5'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23D0356A'/%3E%3C/svg%3E" />
+<style>
+:root {
+  --ground:#FCF8FA; --card:#FFF; --card-2:#F6EFF4;
+  --ink:#2B1B3F; --ink-mid:#5C4B72; --ink-soft:#8B7BA0;
+  --line:#EADFE8; --line-firm:#DBCBDA;
+  --hema:#6C3FC5; --hema-soft:#EFE8FC;
+  --g3:#007A46; --g3-soft:#D0F9DE;
+  --eosin:#D0356A; --eosin-soft:#FCE7EF;
+  --on-accent:#FFF;
+  --shadow:0 1px 2px rgba(43,27,63,.05), 0 8px 24px -12px rgba(43,27,63,.16);
+  --sans:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --w:38rem;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#140E1D; --card:#1D1529; --card-2:#281D38;
+  --ink:#F3EDF8; --ink-mid:#C3B5D4; --ink-soft:#8F80A6;
+  --line:#342844; --line-firm:#43344F;
+  --hema:#B294F7; --hema-soft:#2A1E47;
+  --g3:#22C77E; --g3-soft:#0E2A1D;
+  --eosin:#FF7DA8; --eosin-soft:#3B1B2B;
+  --on-accent:#140E1D;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
+}}
+:root[data-theme="dark"]{
+  --ground:#140E1D; --card:#1D1529; --card-2:#281D38;
+  --ink:#F3EDF8; --ink-mid:#C3B5D4; --ink-soft:#8F80A6;
+  --line:#342844; --line-firm:#43344F;
+  --hema:#B294F7; --hema-soft:#2A1E47;
+  --g3:#22C77E; --g3-soft:#0E2A1D;
+  --eosin:#FF7DA8; --eosin-soft:#3B1B2B;
+  --on-accent:#140E1D;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.8;word-break:keep-all;overflow-wrap:break-word;
+  -webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom);
+}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 1.25rem 4rem}
+
+header{padding:clamp(3rem,9vw,5rem) 0 0;display:flex;flex-direction:column;gap:.85rem}
+h1{font-size:clamp(2.1rem,8vw,3rem);font-weight:800;letter-spacing:-.045em;line-height:1.14;margin:0;text-wrap:balance}
+.lede{margin:0;font-size:1.05rem;color:var(--ink-mid);max-width:32ch}
+.meta{margin:.3rem 0 0;font-size:.8rem;color:var(--ink-soft);letter-spacing:.03em}
+
+section{padding-top:clamp(2.5rem,6vw,3.5rem);display:flex;flex-direction:column;gap:1rem}
+h2{font-size:1.3rem;font-weight:800;letter-spacing:-.03em;margin:0}
+p{margin:0;color:var(--ink-mid)}
+strong{color:var(--ink);font-weight:700}
+
+.mods{display:flex;flex-direction:column;gap:.75rem}
+.mod{
+  display:grid;grid-template-columns:6px 1fr;text-decoration:none;color:inherit;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  overflow:hidden;box-shadow:var(--shadow);transition:transform .15s,border-color .15s;
+}
+.mod:hover,.mod:focus-visible{transform:translateY(-2px);border-color:var(--c)}
+.mod .rail{background:var(--c)}
+.mod-body{padding:1.15rem 1.25rem;display:flex;flex-direction:column;gap:.4rem;min-width:0}
+.mod .code{
+  align-self:flex-start;font-size:.68rem;font-weight:800;letter-spacing:.1em;
+  background:var(--c);color:var(--on-accent);border-radius:99px;padding:.12rem .55rem;
+}
+.mod h3{margin:0;font-size:1.22rem;font-weight:800;letter-spacing:-.03em;line-height:1.35}
+.mod .sub{font-size:.92rem;color:var(--ink-mid);line-height:1.6}
+.mod .facts{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.3rem}
+.mod .facts span{
+  font-size:.74rem;color:var(--ink-soft);background:var(--card-2);
+  border-radius:99px;padding:.15rem .6rem;
+}
+.mod.c1{--c:var(--hema)}
+.mod.t06{--c:var(--g3)}
+
+.rules{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem}
+.rules li{
+  background:var(--card);border:1px solid var(--line);border-left:3px solid var(--hema);
+  border-radius:11px;padding:.85rem 1rem;font-size:.93rem;color:var(--ink-mid);line-height:1.65;
+}
+.rules li b{color:var(--ink)}
+
+.soon{display:flex;flex-wrap:wrap;gap:.4rem}
+.soon span{
+  font-size:.82rem;color:var(--ink-soft);border:1px dashed var(--line-firm);
+  border-radius:99px;padding:.28rem .75rem;
+}
+
+.notice{
+  position:relative;background:var(--eosin-soft);border-radius:12px;
+  padding:1rem 1.15rem 1rem 2.7rem;font-size:.92rem;color:var(--ink-mid);line-height:1.7;
+}
+.notice::before{
+  content:"!";position:absolute;left:1.1rem;top:1.15rem;
+  display:grid;place-items:center;width:1.15rem;height:1.15rem;border-radius:50%;
+  background:var(--eosin);color:var(--ground);font-size:.74rem;font-weight:800;line-height:1;
+}
+.notice b{color:var(--ink)}
+
+footer{
+  margin-top:clamp(2.5rem,6vw,3.5rem);padding-top:1.5rem;border-top:1px solid var(--line);
+  display:flex;flex-direction:column;gap:.7rem;font-size:.82rem;color:var(--ink-soft);line-height:1.7;
+}
+footer a{color:var(--hema)}
+:focus-visible{outline:2px solid var(--eosin);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>암, 알고 봅시다</h1>
+  <p class="lede">암이 어떤 병인지 처음부터 짚어 보는 교양 자료입니다. 읽기만 하는 글이 아니라, 직접 눌러 보며 이해하도록 만들었습니다.</p>
+  <p class="meta">공개 통계 · 학술 문헌 기반 자체 집필 · 2026년 8월 기준</p>
+</header>
+
+<section>
+  <h2>지금 읽을 수 있는 것</h2>
+  <div class="mods">
+    <a class="mod c1" href="cancer-basics.html">
+      <span class="rail"></span>
+      <span class="mod-body">
+        <span class="code">기초</span>
+        <h3>암이란 뭘까?</h3>
+        <span class="sub">세포가 지키던 규칙이 어떻게, 얼마나 오래 걸려 무너지는가. 정상세포에서 전이까지 한 번에 따라갑니다.</span>
+        <span class="facts"><span>정독 약 14분</span><span>15개 절</span><span>만져 보는 장치 6종</span></span>
+      </span>
+    </a>
+    <a class="mod t06" href="cancer-colorectal.html">
+      <span class="rail"></span>
+      <span class="mod-body">
+        <span class="code">암종</span>
+        <h3>대장암, 왜 검진부터일까?</h3>
+        <span class="sub">대장암은 용종이라는 예고편을 남깁니다. 그 예고편을 떼어내면 발생이 76~90% 줄어듭니다.</span>
+        <span class="facts"><span>정독 약 10분</span><span>검진 대상 확인</span><span>만져 보는 장치 4종</span></span>
+      </span>
+    </a>
+  </div>
+</section>
+
+<section>
+  <h2>이 자료를 만든 원칙</h2>
+  <ul class="rules">
+    <li><b>모든 수치에 기준연도와 출처를 붙였습니다.</b> 국내 통계는 2023년 국가암등록통계(2025년 12월 공표)가 현재 최신 판입니다. 확인되지 않은 숫자는 넣지 않았습니다.</li>
+    <li><b>공개 자료만 근거로 삼았습니다.</b> 국가암등록통계, 국가암검진 지침, 국제 학술지에 실린 연구가 전부입니다. 타 저작물의 문장·표·삽화를 인용하거나 옮겨 실은 부분은 없습니다.</li>
+    <li><b>겁주지 않으려 했습니다.</b> 무서운 병이라는 인상 대신 이해할 수 있는 병이라는 쪽으로 썼습니다. 생존율이 나오는 곳마다 그것이 집단의 과거 통계이지 개인의 예후가 아니라는 점을 함께 적었습니다.</li>
+    <li><b>학설이 바뀌면 고칩니다.</b> 암세포의 공통 행동 목록은 2026년 개정판까지, 인체 세포 수는 2023년 추정치까지 반영했습니다.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>이어서 만들 것</h2>
+  <p>같은 형식으로 넓혀 갈 예정입니다.</p>
+  <div class="soon">
+    <span>숫자로 보는 한국의 암</span>
+    <span>무엇이 암을 부르는가</span>
+    <span>국가암검진 사용설명서</span>
+    <span>암은 어떻게 치료되는가</span>
+    <span>암 정보 판별법</span>
+    <span>위암</span>
+    <span>폐암</span>
+    <span>유방암</span>
+    <span>간암</span>
+  </div>
+</section>
+
+<section>
+  <div class="notice">이 자료는 <b>암을 이해하는 데 쓰라고 만든 것</b>이지 <b>진료를 대신하라고 만든 것이 아닙니다.</b> 몸에 걸리는 데가 있거나 검진 결과가 마음에 걸린다면, 이 글을 다시 읽는 것보다 의료진과 이야기하시는 편이 훨씬 정확합니다. 증상이 있다면 검진 시기를 따지지 말고 진료를 받으세요.</div>
+</section>
+
+<footer>
+  <p>만든 곳 · <a href="index.html">디지털다락방</a></p>
+  <p>내용에 잘못된 부분을 발견하시면 알려 주세요. 확인해서 고치겠습니다.</p>
+</footer>
+
+</div>
+</body>
+</html>
