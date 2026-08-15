@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>암이란 무엇인가 — 세포가 규칙을 어길 때</title>
+<title>암이란 뭘까?</title>
 <meta name="description" content="정상세포는 왜 암세포가 되는가. 30조 개의 세포가 지키는 규칙부터 전이까지, 최신 통계와 함께 따라가는 암 기초 교양." />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%236C3FC5'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23D6386E'/%3E%3C/svg%3E" />
 <style>
@@ -815,7 +815,7 @@ footer .brand { letter-spacing: .22em; font-size: .7rem; }
   <div class="hero-veil"></div>
   <div class="hero-inner">
     <span class="tag">암 기초 교양</span>
-    <h1>암이란<br />무엇인가</h1>
+    <h1>암이란<br />뭘까?</h1>
     <p>30조 개의 세포가 지키던 규칙이 <em>어떻게</em>, <em>얼마나 오래 걸려</em> 무너지는가.</p>
     <p class="meta">일반 대중 교양 강좌 · 공개 자료 기반 자체 집필</p>
     <div class="scroll-cue"><i></i> 스크롤해서 시작하기</div>
@@ -1718,7 +1718,7 @@ footer .brand { letter-spacing: .22em; font-size: .7rem; }
 
   /* ---------- 공유 ---------- */
   document.getElementById('shareBtn').addEventListener('click', async function () {
-    var text = '암이란 무엇인가 — 정상세포는 왜 암세포가 되는가';
+    var text = '암이란 뭘까? — 정상세포는 왜 암세포가 되는가';
     var url = location.href;
     try {
       if (window.AppsInToss && typeof window.AppsInToss.share === 'function') {
@@ -1729,7 +1729,7 @@ footer .brand { letter-spacing: .22em; font-size: .7rem; }
         return;
       }
       if (navigator.share) {
-        await navigator.share({ title: '암이란 무엇인가', text: text, url: url });
+        await navigator.share({ title: '암이란 뭘까?', text: text, url: url });
         return;
       }
       await navigator.clipboard.writeText(text + '\n' + url);

@@ -16,7 +16,7 @@ export default defineConfig({
   },
   outdir: 'dist',
   brand: {
-    displayName: '암이란 무엇인가',
+    displayName: '암이란 뭘까?',
     primaryColor: '#6C3FC5',
     icon: 'https://metaluca8560.vercel.app/cancer-basics-icon.png',
   },
