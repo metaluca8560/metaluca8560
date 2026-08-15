@@ -32,6 +32,8 @@
   --amber:      #B5760A;
   --amber-soft: #FBF0DC;
 
+  --on-accent:  #FFFFFF;   /* 강조색 채움 위에 올리는 글자색 */
+
   --shadow: 0 1px 2px rgba(43,27,63,.05), 0 8px 24px -12px rgba(43,27,63,.16);
 
   --sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
@@ -66,6 +68,8 @@
     --amber:      #E0A94E;
     --amber-soft: #33260F;
 
+    --on-accent:  #140E1D;
+
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
   }
 }
@@ -88,6 +92,7 @@
   --calm-soft:  #10322E;
   --amber:      #E0A94E;
   --amber-soft: #33260F;
+  --on-accent:  #140E1D;
   --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
 }
 
@@ -163,7 +168,7 @@ body {
   gap: .45rem;
   align-self: flex-start;
   background: var(--hema);
-  color: #fff;
+  color: var(--on-accent);
   font-size: .7rem;
   font-weight: 700;
   letter-spacing: .1em;
@@ -451,7 +456,7 @@ input[type=range]::-moz-range-thumb {
 .cmp-head { display: grid; grid-template-columns: 5.4rem 1fr 1fr; gap: .3rem; }
 .cmp-head div {
   font-size: .8rem; font-weight: 700; text-align: center;
-  padding: .55rem .3rem; border-radius: 8px 8px 0 0; color: #fff;
+  padding: .55rem .3rem; border-radius: 8px 8px 0 0; color: var(--on-accent);
 }
 .cmp-head .sp { background: transparent; }
 .cmp-head .b { background: var(--calm); }
@@ -494,7 +499,7 @@ input[type=range]::-moz-range-thumb {
 .tabs button[aria-selected="true"] {
   background: var(--hema);
   border-color: var(--hema);
-  color: #fff;
+  color: var(--on-accent);
 }
 .tab-note { font-size: .88rem; color: var(--ink-soft); }
 .marks { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
@@ -554,7 +559,7 @@ input[type=range]::-moz-range-thumb {
   border: 1px solid var(--line-firm); background: var(--card); color: var(--ink-mid);
   cursor: pointer;
 }
-.seg button[aria-pressed="true"] { background: var(--hema); border-color: var(--hema); color: #fff; }
+.seg button[aria-pressed="true"] { background: var(--hema); border-color: var(--hema); color: var(--on-accent); }
 input[type=number] {
   font-family: inherit; font-size: 1rem;
   padding: .65rem .8rem;
@@ -724,7 +729,7 @@ input[type=number] {
 }
 .myth .badge {
   align-self: flex-start; font-size: .68rem; font-weight: 800; letter-spacing: .1em;
-  background: var(--eosin); color: #fff; border-radius: 100px; padding: .12rem .55rem;
+  background: var(--eosin); color: var(--on-accent); border-radius: 100px; padding: .12rem .55rem;
 }
 .myth .claim { font-size: 1rem; font-weight: 700; line-height: 1.5; }
 .myth .tap { font-size: .78rem; color: var(--eosin-ink); font-weight: 700; }
@@ -754,27 +759,28 @@ input[type=number] {
   padding: 1.75rem 1.4rem;
   display: flex; flex-direction: column; gap: 1.1rem;
 }
-.wrap-up h2 { color: #fff; font-size: 1.4rem; }
+.wrap-up h2 { color: var(--ground); font-size: 1.4rem; }
 .wrap-up ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: .85rem; counter-reset: w; }
 .wrap-up li {
   counter-increment: w;
-  display: grid; grid-template-columns: 1.6rem 1fr; gap: .6rem;
+  position: relative; padding-left: 2.1rem;
   font-size: .95rem; line-height: 1.65;
   color: color-mix(in srgb, var(--ground) 78%, transparent);
 }
 .wrap-up li::before {
   content: counter(w, decimal-leading-zero);
+  position: absolute; left: 0; top: 0;
   font-weight: 800; font-variant-numeric: tabular-nums;
   color: var(--eosin);
 }
-.wrap-up li b { color: #fff; }
+.wrap-up li b { color: var(--ground); }
 
 .share {
   margin-top: 1.25rem;
   width: 100%;
   font-family: inherit; font-size: 1rem; font-weight: 700;
   padding: .95rem; border-radius: 12px;
-  border: 0; background: var(--hema); color: #fff;
+  border: 0; background: var(--hema); color: var(--on-accent);
   cursor: pointer;
 }
 .share:active { transform: translateY(1px); }
