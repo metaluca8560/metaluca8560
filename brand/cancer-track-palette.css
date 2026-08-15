@@ -1,0 +1,146 @@
+/* 암 교양 강좌 — 계통 색상 체계 v1.0
+ *
+ * 근거: H&E 조직염색. 헤마톡실린 보라 = Core, 에오신 로즈 = 악성·경고 전용.
+ * 검증: dataviz/validate_palette.js — 라이트·다크 모두 전 쌍(all-pairs) 전항목 통과.
+ *       라이트 최소 ΔE 15.6(정상) / 8.3(CVD) · 다크 16.9 / 8.7
+ *
+ * 스텝 사용 규칙
+ *   --g*-base  마크 · 좌측 세로선 · 도표 채움 (대비 3:1+). 뒤에 텍스트를 놓지 않는다.
+ *   --g*-ink   텍스트, 흰 글자를 얹는 배경 (대비 4.5:1+) — 기획안 §4
+ *   --g*-soft  배경 틴트. 글자는 본문 잉크색으로.
+ *   --g*-line  옅은 테두리
+ *
+ * 계통은 색상만으로 구분하지 않는다. 코드(G1~G8)와 계통명을 항상 함께 표기한다.
+ */
+:root {
+  /* G1 상부소화기 — 위 · 식도 · 앰버 — 소화관 상부 */
+  --g1-base: #B84200;
+  --g1-ink:  #B84200;
+  --g1-soft: #ffe7de;
+  --g1-line: #fdc1ac;
+  /* G2 간담췌 — 간 · 담도담낭 · 췌장 · 올리브 — 담즙의 색 */
+  --g2-base: #A19500;
+  --g2-ink:  #827800;
+  --g2-soft: #f2efc5;
+  --g2-line: #d9d49b;
+  /* G3 하부소화기 — 대장 · 그린 — 소화관 하부 */
+  --g3-base: #007A46;
+  --g3-ink:  #007A46;
+  --g3-soft: #d0f9de;
+  --g3-line: #a9e0bd;
+  /* G4 부인암 — 자궁경부 · 자궁내막 · 난소 · 틸 — 자궁경부·난소암 인식 리본 */
+  --g4-base: #00A4B1;
+  --g4-ink:  #00838e;
+  --g4-soft: #c2f8fe;
+  --g4-line: #95e0e8;
+  /* G5 흉부·두경부 — 폐 · 후두 · 구강 · 블루 — 호흡과 공기 */
+  --g5-base: #006FA8;
+  --g5-ink:  #006FA8;
+  --g5-soft: #ddf0ff;
+  --g5-line: #a6d8ff;
+  /* G6 혈액·골연부 — 다발성골수종 · 골육종 · 마젠타 — 골수 */
+  --g6-base: #992776;
+  --g6-ink:  #992776;
+  --g6-soft: #ffe4f3;
+  --g6-line: #f5bede;
+  /* G7 피부 — 피부암 · 인디고 — 자외선 */
+  --g7-base: #8E82F8;
+  --g7-ink:  #7366d9;
+  --g7-soft: #eaebff;
+  --g7-line: #cbcbff;
+  /* G8 유방 — 유방 · 림프부종 · 로즈 — 핑크리본 */
+  --g8-base: #E96491;
+  --g8-ink:  #c94677;
+  --g8-soft: #ffe5eb;
+  --g8-line: #fcbdce;
+  /* CORE 공통 트랙 — C1~C10 · 헤마톡실린 — 조직염색에서 핵을 물들이는 보라 */
+  --core-base: #6C3FC5;
+  --core-ink:  #6C3FC5;
+  --core-soft: #f0e8ff;
+  --core-line: #dac6fb;
+
+  /* 예약색 — 계통 색으로 쓰지 않는다 */
+  --status-malignant: #D0356A;  /* 에오신 로즈 — 악성 · 경고 */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --g1-base: #B33700;
+    --g1-ink:  #B33700;
+    --g1-soft: #38180c;
+    --g1-line: #38180c;
+    --g2-base: #978600;
+    --g2-ink:  #978600;
+    --g2-soft: #272400;
+    --g2-line: #272400;
+    --g3-base: #007246;
+    --g3-ink:  #007246;
+    --g3-soft: #062a17;
+    --g3-line: #062a17;
+    --g4-base: #00A6B2;
+    --g4-ink:  #00A6B2;
+    --g4-soft: #00292d;
+    --g4-line: #00292d;
+    --g5-base: #006DB4;
+    --g5-ink:  #006DB4;
+    --g5-soft: #04253b;
+    --g5-line: #04253b;
+    --g6-base: #A13588;
+    --g6-ink:  #A13588;
+    --g6-soft: #35172a;
+    --g6-line: #35172a;
+    --g7-base: #8E7AF0;
+    --g7-ink:  #8E7AF0;
+    --g7-soft: #201e3c;
+    --g7-line: #201e3c;
+    --g8-base: #E65F83;
+    --g8-ink:  #E65F83;
+    --g8-soft: #381621;
+    --g8-line: #381621;
+    --core-base: #AC71E2;
+    --core-ink:  #AC71E2;
+    --core-soft: #281c39;
+    --core-line: #281c39;
+    --status-malignant: #FF7DA8;
+  }
+}
+
+:root[data-theme="dark"] {
+  --g1-base: #B33700;
+  --g1-ink:  #B33700;
+  --g1-soft: #38180c;
+  --g1-line: #38180c;
+  --g2-base: #978600;
+  --g2-ink:  #978600;
+  --g2-soft: #272400;
+  --g2-line: #272400;
+  --g3-base: #007246;
+  --g3-ink:  #007246;
+  --g3-soft: #062a17;
+  --g3-line: #062a17;
+  --g4-base: #00A6B2;
+  --g4-ink:  #00A6B2;
+  --g4-soft: #00292d;
+  --g4-line: #00292d;
+  --g5-base: #006DB4;
+  --g5-ink:  #006DB4;
+  --g5-soft: #04253b;
+  --g5-line: #04253b;
+  --g6-base: #A13588;
+  --g6-ink:  #A13588;
+  --g6-soft: #35172a;
+  --g6-line: #35172a;
+  --g7-base: #8E7AF0;
+  --g7-ink:  #8E7AF0;
+  --g7-soft: #201e3c;
+  --g7-line: #201e3c;
+  --g8-base: #E65F83;
+  --g8-ink:  #E65F83;
+  --g8-soft: #381621;
+  --g8-line: #381621;
+  --core-base: #AC71E2;
+  --core-ink:  #AC71E2;
+  --core-soft: #281c39;
+  --core-line: #281c39;
+  --status-malignant: #FF7DA8;
+}

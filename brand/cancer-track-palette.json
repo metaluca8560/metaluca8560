@@ -1,0 +1,151 @@
+{
+  "$meta": {
+    "name": "암 교양 강좌 — 계통 색상 체계",
+    "version": "1.0",
+    "basis": "H&E 조직염색 (헤마톡실린 보라 = Core, 에오신 로즈 = 경고/악성 예약)",
+    "validated": {
+      "tool": "dataviz/validate_palette.js",
+      "light": {
+        "surface": "#FFFFFF",
+        "pairs": "all",
+        "result": "ALL CHECKS PASS",
+        "worstNormalDeltaE": 15.6,
+        "worstCvdDeltaE": 8.3
+      },
+      "dark": {
+        "surface": "#140E1D",
+        "pairs": "all",
+        "result": "ALL CHECKS PASS",
+        "worstNormalDeltaE": 16.9,
+        "worstCvdDeltaE": 8.7
+      }
+    },
+    "rules": [
+      "base — 마크·세로선·도표 채움. 대비 3:1 이상. 뒤에 텍스트를 놓지 않는다.",
+      "ink — 텍스트, 그리고 흰 글자를 얹는 배경. 대비 4.5:1 이상. [기획안 §4]",
+      "soft — 배경 틴트. 위에 얹는 글자는 본문 잉크색을 쓴다.",
+      "dark — 다크 모드 전용 스텝. 라이트를 반전한 값이 아니라 별도로 선택했다.",
+      "계통은 색상만으로 구분하지 않는다. 코드(G1~G8)와 계통명을 항상 함께 표기한다. [기획안 §4]",
+      "에오신 로즈(#D0356A)는 악성·경고 전용. 계통 색으로 쓰지 않는다."
+    ]
+  },
+  "core": {
+    "code": "CORE",
+    "name": "공통 트랙",
+    "organs": "C1~C10",
+    "tracks": "Core 10모듈",
+    "base": "#6C3FC5",
+    "ink": "#6C3FC5",
+    "soft": "#f0e8ff",
+    "line": "#dac6fb",
+    "dark": "#AC71E2",
+    "softDark": "#281c39",
+    "why": "헤마톡실린 — 조직염색에서 핵을 물들이는 보라"
+  },
+  "groups": {
+    "G1": {
+      "name": "상부소화기",
+      "organs": "위 · 식도",
+      "tracks": "T01 위암 · T02 식도암",
+      "why": "앰버 — 소화관 상부",
+      "pattern": "사선 45°",
+      "base": "#B84200",
+      "ink": "#B84200",
+      "soft": "#ffe7de",
+      "line": "#fdc1ac",
+      "dark": "#B33700",
+      "softDark": "#38180c"
+    },
+    "G2": {
+      "name": "간담췌",
+      "organs": "간 · 담도담낭 · 췌장",
+      "tracks": "T03 간암 · T04 담도담낭암 · T05 췌장암",
+      "why": "올리브 — 담즙의 색",
+      "pattern": "사선 135°",
+      "base": "#A19500",
+      "ink": "#827800",
+      "soft": "#f2efc5",
+      "line": "#d9d49b",
+      "dark": "#978600",
+      "softDark": "#272400"
+    },
+    "G3": {
+      "name": "하부소화기",
+      "organs": "대장",
+      "tracks": "T06 대장암",
+      "why": "그린 — 소화관 하부",
+      "pattern": "수직선",
+      "base": "#007A46",
+      "ink": "#007A46",
+      "soft": "#d0f9de",
+      "line": "#a9e0bd",
+      "dark": "#007246",
+      "softDark": "#062a17"
+    },
+    "G4": {
+      "name": "부인암",
+      "organs": "자궁경부 · 자궁내막 · 난소",
+      "tracks": "T07 자궁경부암 · T08 자궁내막암 · T09 난소암",
+      "why": "틸 — 자궁경부·난소암 인식 리본",
+      "pattern": "수평선",
+      "base": "#00A4B1",
+      "ink": "#00838e",
+      "soft": "#c2f8fe",
+      "line": "#95e0e8",
+      "dark": "#00A6B2",
+      "softDark": "#00292d"
+    },
+    "G5": {
+      "name": "흉부·두경부",
+      "organs": "폐 · 후두 · 구강",
+      "tracks": "T10 폐암 · T11 후두암 · T12 구강암",
+      "why": "블루 — 호흡과 공기",
+      "pattern": "점",
+      "base": "#006FA8",
+      "ink": "#006FA8",
+      "soft": "#ddf0ff",
+      "line": "#a6d8ff",
+      "dark": "#006DB4",
+      "softDark": "#04253b"
+    },
+    "G6": {
+      "name": "혈액·골연부",
+      "organs": "다발성골수종 · 골육종",
+      "tracks": "T13 다발성골수종 · T14 골육종",
+      "why": "마젠타 — 골수",
+      "pattern": "격자",
+      "base": "#992776",
+      "ink": "#992776",
+      "soft": "#ffe4f3",
+      "line": "#f5bede",
+      "dark": "#A13588",
+      "softDark": "#35172a"
+    },
+    "G7": {
+      "name": "피부",
+      "organs": "피부암",
+      "tracks": "T15 피부암",
+      "why": "인디고 — 자외선",
+      "pattern": "파선",
+      "base": "#8E82F8",
+      "ink": "#7366d9",
+      "soft": "#eaebff",
+      "line": "#cbcbff",
+      "dark": "#8E7AF0",
+      "softDark": "#201e3c"
+    },
+    "G8": {
+      "name": "유방",
+      "organs": "유방 · 림프부종",
+      "tracks": "T16 유방암 · T17 림프부종",
+      "why": "로즈 — 핑크리본",
+      "pattern": "동심원",
+      "base": "#E96491",
+      "ink": "#c94677",
+      "soft": "#ffe5eb",
+      "line": "#fcbdce",
+      "dark": "#E65F83",
+      "softDark": "#381621"
+    }
+  }
+}

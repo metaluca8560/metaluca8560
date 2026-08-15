@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>암이란 무엇인가 — 세포가 규칙을 어길 때</title>
+<meta name="description" content="정상세포는 왜 암세포가 되는가. 30조 개의 세포가 지키는 규칙부터 전이까지, 최신 통계와 함께 따라가는 암 기초 교양." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%236C3FC5'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23D6386E'/%3E%3C/svg%3E" />
+<style>
+:root {
+  /* H&E 조직염색 팔레트 — 헤마톡실린(핵)·에오신(세포질) */
+  --ground:     #FCF8FA;
+  --card:       #FFFFFF;
+  --card-2:     #F6EFF4;
+  --ink:        #2B1B3F;
+  --ink-mid:    #5C4B72;
+  --ink-soft:   #8B7BA0;
+  --line:       #EADFE8;
+  --line-firm:  #DBCBDA;
+
+  --hema:       #6C3FC5;
+  --hema-soft:  #EFE8FC;
+  --hema-ink:   #4A2699;
+
+  --eosin:      #D0356A;
+  --eosin-soft: #FCE7EF;
+  --eosin-ink:  #A81D50;
+
+  --calm:       #0C8878;
+  --calm-soft:  #DDF2EE;
+
+  --amber:      #B5760A;
+  --amber-soft: #FBF0DC;
+
+  --shadow: 0 1px 2px rgba(43,27,63,.05), 0 8px 24px -12px rgba(43,27,63,.16);
+
+  --sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+          "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+
+  --w: 34rem;
+  --pad: 1.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:     #140E1D;
+    --card:       #1D1529;
+    --card-2:     #281D38;
+    --ink:        #F3EDF8;
+    --ink-mid:    #C3B5D4;
+    --ink-soft:   #8F80A6;
+    --line:       #342844;
+    --line-firm:  #43344F;
+
+    --hema:       #B294F7;
+    --hema-soft:  #2A1E47;
+    --hema-ink:   #CDB6FF;
+
+    --eosin:      #FF7DA8;
+    --eosin-soft: #3B1B2B;
+    --eosin-ink:  #FFA0C0;
+
+    --calm:       #3ACFB6;
+    --calm-soft:  #10322E;
+
+    --amber:      #E0A94E;
+    --amber-soft: #33260F;
+
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"] {
+  --ground:     #140E1D;
+  --card:       #1D1529;
+  --card-2:     #281D38;
+  --ink:        #F3EDF8;
+  --ink-mid:    #C3B5D4;
+  --ink-soft:   #8F80A6;
+  --line:       #342844;
+  --line-firm:  #43344F;
+  --hema:       #B294F7;
+  --hema-soft:  #2A1E47;
+  --hema-ink:   #CDB6FF;
+  --eosin:      #FF7DA8;
+  --eosin-soft: #3B1B2B;
+  --eosin-ink:  #FFA0C0;
+  --calm:       #3ACFB6;
+  --calm-soft:  #10322E;
+  --amber:      #E0A94E;
+  --amber-soft: #33260F;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.8;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ============ 진행률 바 ============ */
+#progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--hema), var(--eosin));
+  z-index: 90;
+  transition: width .12s linear;
+}
+
+/* ============ 히어로 ============ */
+.hero {
+  position: relative;
+  min-height: 82vh;
+  min-height: 82svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  background: var(--card-2);
+  padding: 0 var(--pad) 2.5rem;
+}
+#dish {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.hero-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+    color-mix(in srgb, var(--card-2) 10%, transparent) 0%,
+    color-mix(in srgb, var(--card-2) 55%, transparent) 45%,
+    color-mix(in srgb, var(--card-2) 94%, transparent) 78%,
+    var(--card-2) 100%);
+  pointer-events: none;
+}
+.hero-inner {
+  position: relative;
+  max-width: var(--w);
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  align-self: flex-start;
+  background: var(--hema);
+  color: #fff;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  padding: .3rem .7rem;
+  border-radius: 100px;
+}
+.hero h1 {
+  font-size: clamp(2.35rem, 11vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -.045em;
+  line-height: 1.1;
+  margin: .2rem 0 0;
+  text-wrap: balance;
+}
+.hero h1 em {
+  font-style: normal;
+  color: var(--eosin);
+}
+.hero p {
+  margin: 0;
+  color: var(--ink-mid);
+  font-size: 1.02rem;
+  max-width: 26ch;
+}
+.hero p em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--eosin);
+}
+.hero .meta {
+  margin-top: .6rem;
+  font-size: .78rem;
+  color: var(--ink-soft);
+  letter-spacing: .04em;
+}
+.scroll-cue {
+  margin-top: 1.1rem;
+  font-size: .8rem;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+}
+.scroll-cue i {
+  display: block;
+  width: 1px; height: 1.6rem;
+  background: linear-gradient(var(--ink-soft), transparent);
+}
+
+/* ============ 레이아웃 ============ */
+main {
+  max-width: var(--w);
+  margin: 0 auto;
+  padding: 0 var(--pad) 3rem;
+}
+section {
+  padding: 3rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  scroll-margin-top: 1rem;
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  color: var(--hema);
+  margin: 0;
+}
+.step b {
+  font-variant-numeric: tabular-nums;
+  background: var(--hema-soft);
+  color: var(--hema-ink);
+  border-radius: 100px;
+  padding: .1rem .55rem;
+  letter-spacing: .05em;
+}
+h2 {
+  font-size: clamp(1.5rem, 6.5vw, 1.95rem);
+  font-weight: 800;
+  letter-spacing: -.035em;
+  line-height: 1.32;
+  margin: 0;
+  text-wrap: balance;
+}
+h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  margin: 0;
+}
+p { margin: 0; }
+section > p { color: var(--ink-mid); }
+strong { font-weight: 700; color: var(--ink); }
+
+.pull {
+  font-size: 1.22rem;
+  font-weight: 700;
+  line-height: 1.55;
+  letter-spacing: -.03em;
+  color: var(--ink);
+  border-left: 3px solid var(--eosin);
+  padding-left: 1rem;
+  margin: .4rem 0;
+  text-wrap: balance;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: .8rem;
+}
+.note {
+  background: var(--card-2);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  font-size: .95rem;
+  color: var(--ink-mid);
+  border-left: 3px solid var(--hema);
+}
+.note.warm { background: var(--eosin-soft); border-left-color: var(--eosin); }
+.note.cool { background: var(--calm-soft); border-left-color: var(--calm); }
+.note.amber { background: var(--amber-soft); border-left-color: var(--amber); }
+.note b { color: var(--ink); }
+
+/* ============ 규칙 ============ */
+.rules { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .7rem; }
+.rules li {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  display: grid;
+  grid-template-columns: 1.75rem 1fr;
+  gap: .1rem .7rem;
+}
+.rules .k {
+  grid-row: 1 / span 2;
+  font-weight: 800;
+  color: var(--eosin);
+  font-variant-numeric: tabular-nums;
+}
+.rules b { font-size: 1rem; }
+.rules span { font-size: .92rem; color: var(--ink-mid); line-height: 1.65; }
+
+/* ============ 시뮬레이터 ============ */
+.sim-toggles { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+.toggle {
+  border: 1px solid var(--line-firm);
+  background: var(--card);
+  border-radius: 12px;
+  padding: .85rem .7rem;
+  text-align: center;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: .9rem;
+  color: var(--ink-mid);
+  line-height: 1.45;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.toggle b { display: block; font-size: 1rem; color: var(--ink); }
+.toggle .state { font-size: .78rem; font-weight: 700; letter-spacing: .04em; }
+.toggle[aria-pressed="false"] .state { color: var(--calm); }
+.toggle[aria-pressed="true"] { background: var(--eosin-soft); border-color: var(--eosin); }
+.toggle[aria-pressed="true"] .state { color: var(--eosin-ink); }
+.toggle[aria-pressed="true"] b { color: var(--eosin-ink); }
+
+.sim-out {
+  border-radius: 12px;
+  padding: 1.1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  background: var(--calm-soft);
+  border: 1px solid transparent;
+}
+.sim-out .verdict { font-size: 1.08rem; font-weight: 800; letter-spacing: -.02em; color: var(--calm); }
+.sim-out p { font-size: .93rem; color: var(--ink-mid); }
+.sim-out[data-level="warn"]  { background: var(--amber-soft); }
+.sim-out[data-level="warn"] .verdict { color: var(--amber); }
+.sim-out[data-level="bad"]   { background: var(--eosin-soft); }
+.sim-out[data-level="bad"] .verdict { color: var(--eosin-ink); }
+
+/* ============ 단계 ============ */
+.stages { display: flex; flex-direction: column; gap: .4rem; }
+.stg {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .8rem;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: .8rem 1rem;
+  position: relative;
+}
+.stg .dot {
+  width: .6rem; height: .6rem; border-radius: 50%;
+  background: var(--bul, var(--hema));
+}
+.stg b { font-size: .97rem; }
+.stg span { display: block; font-size: .85rem; color: var(--ink-soft); }
+.stg:nth-child(1) { --bul: var(--calm); }
+.stg:nth-child(2) { --bul: #8E6BD8; }
+.stg:nth-child(3) { --bul: var(--hema); }
+.stg:nth-child(4) { --bul: var(--amber); }
+.stg:nth-child(5) { --bul: var(--eosin); border-color: var(--eosin); background: var(--eosin-soft); }
+
+/* ============ 잠복기 슬라이더 ============ */
+.lat-readout {
+  display: flex;
+  align-items: baseline;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+.lat-readout .yr {
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--hema);
+  line-height: 1.1;
+}
+.lat-readout .unit { font-size: .95rem; color: var(--ink-soft); }
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 26px;
+  background: transparent;
+  margin: 0;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  height: 6px; border-radius: 99px;
+  background: linear-gradient(90deg, var(--calm), var(--hema) 55%, var(--eosin));
+}
+input[type=range]::-moz-range-track {
+  height: 6px; border-radius: 99px;
+  background: linear-gradient(90deg, var(--calm), var(--hema) 55%, var(--eosin));
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--card);
+  border: 3px solid var(--hema);
+  margin-top: -9px;
+  box-shadow: var(--shadow);
+}
+input[type=range]::-moz-range-thumb {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--card);
+  border: 3px solid var(--hema);
+  box-shadow: var(--shadow);
+}
+.lat-scale {
+  display: flex; justify-content: space-between;
+  font-size: .74rem; color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.lat-state {
+  background: var(--card-2);
+  border-radius: 10px;
+  padding: .9rem 1rem;
+  font-size: .93rem;
+  color: var(--ink-mid);
+  min-height: 5.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+.lat-state b { color: var(--ink); font-size: 1rem; }
+.lat-state .detect { font-size: .82rem; font-weight: 700; letter-spacing: .04em; }
+
+/* ============ 비교표 ============ */
+.cmp { display: flex; flex-direction: column; gap: .1rem; }
+.cmp-head { display: grid; grid-template-columns: 5.4rem 1fr 1fr; gap: .3rem; }
+.cmp-head div {
+  font-size: .8rem; font-weight: 700; text-align: center;
+  padding: .55rem .3rem; border-radius: 8px 8px 0 0; color: #fff;
+}
+.cmp-head .sp { background: transparent; }
+.cmp-head .b { background: var(--calm); }
+.cmp-head .m { background: var(--eosin); }
+.cmp-row {
+  display: grid;
+  grid-template-columns: 5.4rem 1fr 1fr;
+  gap: .3rem;
+  align-items: stretch;
+}
+.cmp-row > * {
+  padding: .7rem .55rem;
+  font-size: .87rem;
+  line-height: 1.5;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+}
+.cmp-row .lbl { font-weight: 700; font-size: .82rem; background: var(--card-2); color: var(--ink); }
+.cmp-row .bn { color: var(--ink-mid); }
+.cmp-row .mg { color: var(--ink-mid); }
+
+/* ============ 홀마크 탭 ============ */
+.tabs { display: flex; gap: .4rem; }
+.tabs button {
+  flex: 1;
+  font-family: inherit;
+  font-size: .85rem;
+  font-weight: 700;
+  padding: .6rem .4rem;
+  border-radius: 10px;
+  border: 1px solid var(--line-firm);
+  background: var(--card);
+  color: var(--ink-mid);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.tabs button[aria-selected="true"] {
+  background: var(--hema);
+  border-color: var(--hema);
+  color: #fff;
+}
+.tab-note { font-size: .88rem; color: var(--ink-soft); }
+.marks { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+.mark {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--hema);
+  border-radius: 10px;
+  padding: .75rem .8rem;
+  font-size: .87rem;
+  line-height: 1.5;
+}
+.mark b { display: block; font-size: .92rem; }
+.mark span { color: var(--ink-soft); font-size: .8rem; }
+.mark.is-new { border-left-color: var(--eosin); background: var(--eosin-soft); }
+.mark.is-enable { border-left-color: var(--amber); }
+
+/* ============ 숫자 스트립 ============ */
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+.stat {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: .95rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .1rem;
+}
+.stat .v {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--hema);
+  line-height: 1.2;
+}
+.stat .l { font-size: .8rem; color: var(--ink-soft); line-height: 1.45; }
+.stat.wide { grid-column: 1 / -1; }
+.stat.accent .v { color: var(--eosin); }
+
+.bars { display: flex; flex-direction: column; gap: .55rem; }
+.bar-row { display: grid; grid-template-columns: 4.2rem 1fr 3rem; gap: .5rem; align-items: center; font-size: .85rem; }
+.bar-row .nm { color: var(--ink); font-weight: 600; }
+.bar-track { background: var(--card-2); border-radius: 99px; height: .65rem; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 99px; background: var(--hema); }
+.bar-row.low .bar-fill { background: var(--eosin); }
+.bar-row .pc { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-mid); font-weight: 700; }
+
+/* ============ 검진 찾기 ============ */
+.field { display: flex; flex-direction: column; gap: .4rem; }
+.field label { font-size: .85rem; font-weight: 700; color: var(--ink); }
+.seg { display: flex; gap: .4rem; }
+.seg button {
+  flex: 1;
+  font-family: inherit; font-size: .9rem; font-weight: 600;
+  padding: .6rem; border-radius: 10px;
+  border: 1px solid var(--line-firm); background: var(--card); color: var(--ink-mid);
+  cursor: pointer;
+}
+.seg button[aria-pressed="true"] { background: var(--hema); border-color: var(--hema); color: #fff; }
+input[type=number] {
+  font-family: inherit; font-size: 1rem;
+  padding: .65rem .8rem;
+  border-radius: 10px;
+  border: 1px solid var(--line-firm);
+  background: var(--card);
+  color: var(--ink);
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+.checks { display: flex; flex-direction: column; gap: .45rem; }
+.checks label {
+  display: flex; align-items: flex-start; gap: .55rem;
+  font-size: .88rem; font-weight: 500; color: var(--ink-mid);
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 10px; padding: .65rem .8rem; cursor: pointer;
+  line-height: 1.5;
+}
+.checks input { margin-top: .3rem; accent-color: var(--hema); width: 1rem; height: 1rem; flex: none; }
+.screen-out { display: flex; flex-direction: column; gap: .5rem; }
+.scr {
+  background: var(--card); border: 1px solid var(--line);
+  border-left: 3px solid var(--calm);
+  border-radius: 10px; padding: .8rem .9rem;
+}
+.scr b { font-size: .95rem; }
+.scr span { display: block; font-size: .84rem; color: var(--ink-mid); line-height: 1.55; }
+.scr .cyc { color: var(--calm); font-weight: 700; font-size: .8rem; letter-spacing: .03em; }
+.scr.none { border-left-color: var(--ink-soft); }
+
+/* ============ 퀴즈 ============ */
+.quiz { display: flex; flex-direction: column; gap: 1.1rem; }
+.q { display: flex; flex-direction: column; gap: .55rem; }
+.q .qt { font-size: .98rem; font-weight: 700; line-height: 1.55; }
+.q .qt em { font-style: normal; color: var(--hema); font-variant-numeric: tabular-nums; }
+.opts { display: flex; flex-direction: column; gap: .4rem; }
+.opts button {
+  font-family: inherit; font-size: .9rem; text-align: left;
+  padding: .7rem .85rem; border-radius: 10px;
+  border: 1px solid var(--line-firm); background: var(--card); color: var(--ink-mid);
+  cursor: pointer; line-height: 1.5;
+  transition: background .15s, border-color .15s;
+}
+.opts button:disabled { cursor: default; }
+.opts button.right { background: var(--calm-soft); border-color: var(--calm); color: var(--ink); font-weight: 600; }
+.opts button.wrong { background: var(--eosin-soft); border-color: var(--eosin); color: var(--ink); }
+.expl {
+  font-size: .86rem; color: var(--ink-mid);
+  background: var(--card-2); border-radius: 8px; padding: .65rem .8rem;
+  line-height: 1.6;
+}
+.score {
+  text-align: center; padding: 1.1rem;
+  background: var(--hema-soft); border-radius: 12px;
+  font-weight: 700; color: var(--hema-ink);
+}
+.score .n { font-size: 1.8rem; font-variant-numeric: tabular-nums; letter-spacing: -.03em; display: block; }
+
+/* ============ 통계 해석 주의 (고정 문구) ============ */
+.caveat {
+  position: relative;
+  background: var(--amber-soft);
+  border-radius: 10px;
+  padding: .8rem .95rem .8rem 2.5rem;
+  font-size: .84rem;
+  line-height: 1.6;
+  color: var(--ink-mid);
+}
+.caveat::before {
+  content: "!";
+  position: absolute;
+  left: .95rem;
+  top: .95rem;
+  display: grid;
+  place-items: center;
+  width: 1.1rem; height: 1.1rem;
+  border-radius: 50%;
+  background: var(--amber);
+  color: var(--ground);
+  font-size: .72rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.caveat b { color: var(--ink); }
+
+/* ============ 두 축 비교 ============ */
+.twin { display: flex; flex-direction: column; gap: 1.1rem; }
+.tw { display: flex; flex-direction: column; gap: .5rem; }
+.tw-lbl { font-size: .85rem; font-weight: 700; color: var(--ink); line-height: 1.5; }
+.tw-lbl small { font-weight: 500; color: var(--ink-soft); font-size: .78rem; }
+.tw-bars { display: flex; flex-direction: column; gap: .35rem; }
+.tw-b { display: grid; grid-template-columns: 2.6rem 1fr 5rem; gap: .5rem; align-items: center; }
+.tw-b .y { font-size: .78rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.tw-b .t { background: var(--card-2); border-radius: 99px; height: .6rem; overflow: hidden; }
+.tw-b .t i { display: block; height: 100%; background: var(--hema); border-radius: 99px; }
+.tw-b .t i.hot { background: var(--eosin); }
+.tw-b .v { font-size: .8rem; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-mid); }
+.tw-note { font-size: .78rem; font-weight: 700; letter-spacing: .03em; }
+.tw-note.up { color: var(--eosin); }
+.tw-note.flat { color: var(--calm); }
+
+/* ============ 극복 — 생존율 추이 ============ */
+.era { display: flex; flex-direction: column; gap: .45rem; }
+.era-row { display: grid; grid-template-columns: 6.4rem 1fr 3rem; gap: .5rem; align-items: center; font-size: .84rem; }
+.era-row .p { color: var(--ink-soft); font-variant-numeric: tabular-nums; font-size: .78rem; }
+.era-row .t { background: var(--card-2); border-radius: 99px; height: .7rem; overflow: hidden; }
+.era-row .t i { display: block; height: 100%; border-radius: 99px; background: var(--calm); }
+.era-row .n { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--calm); }
+.era-row.now .t i { background: var(--hema); }
+.era-row.now .n { color: var(--hema); }
+
+/* ============ 전이 3단계 ============ */
+.steps3 { display: flex; flex-direction: column; gap: .5rem; }
+.st3 {
+  background: var(--card); border: 1px solid var(--line);
+  border-left: 3px solid var(--c, var(--hema));
+  border-radius: 12px; padding: .9rem 1rem;
+  display: grid; grid-template-columns: 1.7rem 1fr; gap: .1rem .7rem;
+}
+.st3 .n {
+  grid-row: 1 / span 2; font-weight: 800; color: var(--c, var(--hema));
+  font-variant-numeric: tabular-nums;
+}
+.st3 b { font-size: 1rem; }
+.st3 span { font-size: .89rem; color: var(--ink-mid); line-height: 1.6; }
+.st3:nth-child(1) { --c: #8E6BD8; }
+.st3:nth-child(2) { --c: var(--hema); }
+.st3:nth-child(3) { --c: var(--eosin); }
+
+/* ============ 전이 경로 ============ */
+.routes { display: flex; flex-direction: column; gap: .3rem; }
+.route {
+  display: grid; grid-template-columns: 5.5rem 1.2rem 1fr;
+  align-items: center; gap: .4rem;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 10px; padding: .6rem .85rem; font-size: .89rem;
+}
+.route b { font-weight: 700; }
+.route .arw { color: var(--eosin); text-align: center; }
+.route span { color: var(--ink-mid); }
+
+/* ============ 원인 세 갈래 ============ */
+.causes { display: flex; flex-direction: column; gap: .55rem; }
+.cause {
+  background: var(--card); border: 1px solid var(--line);
+  border-top: 3px solid var(--c); border-radius: 12px;
+  padding: 1rem 1.05rem; display: flex; flex-direction: column; gap: .3rem;
+}
+.cause h3 { color: var(--c); }
+.cause p { font-size: .9rem; color: var(--ink-mid); }
+.cause .fig {
+  font-size: .8rem; font-weight: 700; color: var(--c);
+  font-variant-numeric: tabular-nums; letter-spacing: .02em;
+}
+.cause.c1 { --c: var(--hema); }
+.cause.c2 { --c: var(--calm); }
+.cause.c3 { --c: var(--amber); }
+
+/* ============ 오해 뒤집기 ============ */
+.myths { display: flex; flex-direction: column; gap: .5rem; }
+.myth {
+  width: 100%; text-align: left; font-family: inherit;
+  background: var(--eosin-soft); border: 1px solid var(--eosin);
+  border-radius: 12px; padding: .9rem 1rem; cursor: pointer;
+  display: flex; flex-direction: column; gap: .45rem;
+  color: var(--ink);
+}
+.myth .badge {
+  align-self: flex-start; font-size: .68rem; font-weight: 800; letter-spacing: .1em;
+  background: var(--eosin); color: #fff; border-radius: 100px; padding: .12rem .55rem;
+}
+.myth .claim { font-size: 1rem; font-weight: 700; line-height: 1.5; }
+.myth .tap { font-size: .78rem; color: var(--eosin-ink); font-weight: 700; }
+.myth .fact { display: none; font-size: .89rem; color: var(--ink-mid); line-height: 1.65; }
+.myth[aria-expanded="true"] { background: var(--calm-soft); border-color: var(--calm); }
+.myth[aria-expanded="true"] .badge { background: var(--calm); }
+.myth[aria-expanded="true"] .claim { text-decoration: line-through; color: var(--ink-soft); font-weight: 600; }
+.myth[aria-expanded="true"] .tap { display: none; }
+.myth[aria-expanded="true"] .fact { display: block; }
+
+/* ============ 다음 모듈 ============ */
+.next { display: flex; flex-direction: column; gap: .4rem; margin-top: .3rem; }
+.next .nx {
+  display: grid; grid-template-columns: 2.2rem 1fr; gap: .6rem;
+  font-size: .92rem;
+  color: color-mix(in srgb, var(--ground) 78%, transparent);
+  padding: .5rem 0; border-top: 1px solid color-mix(in srgb, var(--ground) 18%, transparent);
+}
+.next .nx b { color: var(--eosin); font-variant-numeric: tabular-nums; }
+
+/* ============ 마무리 ============ */
+.wrap-up {
+  margin-top: 3rem;
+  background: var(--ink);
+  color: var(--ground);
+  border-radius: 16px;
+  padding: 1.75rem 1.4rem;
+  display: flex; flex-direction: column; gap: 1.1rem;
+}
+.wrap-up h2 { color: #fff; font-size: 1.4rem; }
+.wrap-up ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: .85rem; counter-reset: w; }
+.wrap-up li {
+  counter-increment: w;
+  display: grid; grid-template-columns: 1.6rem 1fr; gap: .6rem;
+  font-size: .95rem; line-height: 1.65;
+  color: color-mix(in srgb, var(--ground) 78%, transparent);
+}
+.wrap-up li::before {
+  content: counter(w, decimal-leading-zero);
+  font-weight: 800; font-variant-numeric: tabular-nums;
+  color: var(--eosin);
+}
+.wrap-up li b { color: #fff; }
+
+.share {
+  margin-top: 1.25rem;
+  width: 100%;
+  font-family: inherit; font-size: 1rem; font-weight: 700;
+  padding: .95rem; border-radius: 12px;
+  border: 0; background: var(--hema); color: #fff;
+  cursor: pointer;
+}
+.share:active { transform: translateY(1px); }
+
+footer {
+  max-width: var(--w);
+  margin: 0 auto;
+  padding: 2.25rem var(--pad) 3.5rem;
+  border-top: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: .8rem;
+  font-size: .8rem; color: var(--ink-soft); line-height: 1.7;
+}
+footer h4 { margin: 0; font-size: .72rem; letter-spacing: .16em; color: var(--ink-mid); }
+footer ul { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: .3rem; }
+footer .disclaim {
+  background: var(--card-2); border-radius: 10px; padding: .85rem 1rem;
+  color: var(--ink-mid); font-weight: 600;
+}
+footer .brand { letter-spacing: .22em; font-size: .7rem; }
+
+:focus-visible { outline: 2px solid var(--eosin); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+}
+@media (min-width: 30rem) {
+  .marks { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<header class="hero">
+  <canvas id="dish" aria-hidden="true"></canvas>
+  <div class="hero-veil"></div>
+  <div class="hero-inner">
+    <span class="tag">암 기초 교양</span>
+    <h1>암이란<br />무엇인가</h1>
+    <p>30조 개의 세포가 지키던 규칙이 <em>어떻게</em>, <em>얼마나 오래 걸려</em> 무너지는가.</p>
+    <p class="meta">일반 대중 교양 강좌 · 공개 자료 기반 자체 집필</p>
+    <div class="scroll-cue"><i></i> 스크롤해서 시작하기</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- 00 왜 알아야 하나 -->
+  <section id="s0">
+    <p class="caveat" style="margin-top:2.25rem">본 자료는 <b>비영리 일반 대중 교양 교육</b>을 목적으로 제작되었으며, <b>개인의 진단·치료를 대체하지 않습니다.</b> 증상이 있다면 검진 주기와 관계없이 진료를 받으시기 바랍니다.</p>
+    <p class="step"><b>00</b> 왜 알아야 하나</p>
+    <h2>남의 일이 아니기 때문입니다</h2>
+    <p>암은 특별한 사람에게만 생기는 병이 아닙니다. 우리나라 사람이 기대수명까지 살 경우 암에 걸릴 확률은 이렇습니다.</p>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="v">44.6%</span>
+        <span class="l">남자가 평생 암에 걸릴 확률<br />약 2명 중 1명</span>
+      </div>
+      <div class="stat">
+        <span class="v">38.2%</span>
+        <span class="l">여자가 평생 암에 걸릴 확률<br />약 3명 중 1명</span>
+      </div>
+      <div class="stat wide accent">
+        <span class="v">73.7%</span>
+        <span class="l">최근 5년(2019~2023) 진단된 암환자의 5년 상대생존율. 10명 중 7명이 5년 이상 생존합니다. 2001~2005년의 54.2%에서 크게 올랐습니다.</span>
+      </div>
+    </div>
+
+    <p class="caveat"><b>생존율을 읽는 법.</b> 이 글에 나오는 생존율은 모두 <b>과거에 진단받은 환자 집단의 통계</b>입니다. 개인의 예후를 예측하는 숫자가 아닙니다. 같은 암이라도 발견된 병기, 나이, 건강 상태, 치료 반응에 따라 결과는 크게 달라집니다.</p>
+
+    <div class="note cool">확률이 높다는 사실과 절망은 다른 이야기입니다. <b>생존율은 계속 오르고 있고, 그 상승분의 상당 부분은 “일찍 발견해서”입니다.</b> 그러려면 이 병이 어떻게 시작되는지부터 알아야 합니다.</div>
+
+    <p style="font-size:.8rem;color:var(--ink-soft)">2023년 국가암등록통계(2025년 12월 공표) 기준. 신규 발생 288,613명, 암유병자 약 273만 명.</p>
+
+    <div class="card">
+      <h3>“암환자가 너무 늘었다”는 말, 맞을까요</h3>
+      <p style="font-size:.9rem;color:var(--ink-mid)">환자 수만 보면 맞습니다. 그런데 나이를 보정해서 보면 이야기가 달라집니다.</p>
+
+      <div class="twin">
+        <div class="tw">
+          <span class="tw-lbl">한 해 새로 진단된 사람</span>
+          <div class="tw-bars">
+            <div class="tw-b"><span class="y">1999</span><span class="t"><i style="width:35%"></i></span><span class="v">101,854명</span></div>
+            <div class="tw-b"><span class="y">2023</span><span class="t"><i style="width:100%" class="hot"></i></span><span class="v">288,613명</span></div>
+          </div>
+          <span class="tw-note up">24년 사이 2.8배</span>
+        </div>
+
+        <div class="tw">
+          <span class="tw-lbl">같은 나이 기준 걸릴 위험 <small>(연령표준화 발생률, 10만 명당)</small></span>
+          <div class="tw-bars">
+            <div class="tw-b"><span class="y">2021</span><span class="t"><i style="width:100%"></i></span><span class="v">531.4</span></div>
+            <div class="tw-b"><span class="y">2022</span><span class="t"><i style="width:98.1%"></i></span><span class="v">521.3</span></div>
+            <div class="tw-b"><span class="y">2023</span><span class="t"><i style="width:98.4%"></i></span><span class="v">522.9</span></div>
+          </div>
+          <span class="tw-note flat">사실상 제자리</span>
+        </div>
+      </div>
+
+      <p style="font-size:.87rem;color:var(--ink-mid)">환자 수가 늘어난 가장 큰 이유는 <strong>인구가 늙었기 때문</strong>입니다. 60세 이상의 암 발생률은 10만 명당 1,021.2명으로 다른 연령대를 압도합니다. 여기에 검진이 늘어 <strong>예전이라면 모르고 지나갔을 암이 발견되는 몫</strong>, 그리고 <strong>치료 후 오래 생존해 환자로 집계되는 몫</strong>이 더해집니다.</p>
+
+      <div class="note cool" style="margin:0">정리하면 <b>“요즘 사람이 암에 더 잘 걸리는 몸이 된 것”은 아닙니다.</b> 오래 살게 됐고, 더 잘 찾아내고, 더 오래 생존합니다.</div>
+    </div>
+  </section>
+
+  <!-- 01 규칙 -->
+  <section id="s1">
+    <p class="step"><b>01</b> 출발점</p>
+    <h2>우리 몸은 규칙을 지키는 세포로 되어 있습니다</h2>
+    <p>성인 한 사람의 몸에는 <strong>약 30조 개</strong>의 세포가 들어 있습니다. 이만한 수가 제멋대로 굴지 않고 사람의 형태를 유지한다는 게 오히려 이상한 일입니다. 세포들이 아래 세 가지를 지키기 때문에 가능합니다.</p>
+
+    <ul class="rules">
+      <li><span class="k">1</span><b>쓸 일이 있을 때만 늘어난다</b><span>다친 자리를 메우거나 수명이 다한 세포를 갈아 끼울 때에만 새로 만들어집니다. 그럴 일이 없으면 가만히 있습니다.</span></li>
+      <li><span class="k">2</span><b>망가지면 스스로 물러난다</b><span>고쳐 쓸 수 없을 만큼 상하면 세포는 자기 자신을 죽이는 쪽을 택합니다. 이 과정을 세포자멸사라고 부릅니다.</span></li>
+      <li><span class="k">3</span><b>자기 자리를 벗어나지 않는다</b><span>간에 있는 세포는 간에, 위에 있는 세포는 위에 남습니다. 몸속을 돌아다니지 않습니다.</span></li>
+    </ul>
+
+    <p class="pull">세 가지가 모두 지켜지는 동안에는, 몸의 모양도 기능도 크게 흔들리지 않습니다.</p>
+  </section>
+
+  <!-- 02 액셀·브레이크 -->
+  <section id="s2">
+    <p class="step"><b>02</b> 조절</p>
+    <h2>세포에는 액셀과 브레이크가 있습니다</h2>
+    <p>세포가 스스로 알아서 규칙을 지키는 건 아닙니다. <strong>늘어나라고 미는 힘</strong>과 <strong>그만하라고 잡는 힘</strong>이 항상 같이 걸려 있습니다. 자동차의 액셀과 브레이크를 떠올리면 이해가 빠릅니다.</p>
+
+    <div class="card">
+      <h3>직접 고장 내 보기</h3>
+      <p style="font-size:.9rem;color:var(--ink-mid)">둘 중 하나씩 눌러 망가뜨려 보세요. 세포가 어떻게 되는지 바로 나옵니다.</p>
+
+      <div class="sim-toggles">
+        <button class="toggle" id="tGas" aria-pressed="false">
+          <b>액셀</b>
+          늘어나라고 미는 유전자
+          <span class="state" id="stGas">정상</span>
+        </button>
+        <button class="toggle" id="tBrake" aria-pressed="false">
+          <b>브레이크</b>
+          그만하라고 잡는 유전자
+          <span class="state" id="stBrake">정상</span>
+        </button>
+      </div>
+
+      <div class="sim-out" id="simOut" data-level="ok" role="status" aria-live="polite">
+        <span class="verdict" id="simVerdict">둘 다 정상 — 통제 안에 있습니다</span>
+        <p id="simDesc">쓸 일이 있을 때만 늘어나고, 그 일이 끝나면 멈춥니다. 몸이 어제와 같은 모양을 유지하는 상태입니다.</p>
+      </div>
+    </div>
+
+    <div class="note">액셀 자체는 나쁜 장치가 아닙니다. 상처가 아물고 아이가 크는 것도 이 힘이 하는 일입니다. <b>따져야 할 것은 두 힘 사이의 균형입니다.</b> 미는 쪽이 망가져도 잡는 쪽이 살아 있으면 대개 거기서 멈춥니다.</div>
+  </section>
+
+  <!-- 03 누적 -->
+  <section id="s3">
+    <p class="step"><b>03</b> 과정</p>
+    <h2>암은 한 번의 사고가 아니라 누적입니다</h2>
+    <p>방금 눌러 본 대로, 고장 하나만으로는 암이 되지 않습니다. 미는 쪽이 망가지고, 잡는 쪽도 망가지고, 고치는 기능마저 손을 놓는 일이 <strong>여러 겹 겹쳐야</strong> 비로소 통제를 벗어난 증식이 시작됩니다.</p>
+
+    <div class="stages">
+      <div class="stg"><span class="dot"></span><div><b>정상세포</b><span>세 가지를 지키는 상태</span></div></div>
+      <div class="stg"><span class="dot"></span><div><b>첫 고장</b><span>복제 실수 · 발암물질</span></div></div>
+      <div class="stg"><span class="dot"></span><div><b>고장이 쌓임</b><span>고치는 데 거듭 실패</span></div></div>
+      <div class="stg"><span class="dot"></span><div><b>전암 단계</b><span>여기까지는 암이 아님</span></div></div>
+      <div class="stg"><span class="dot"></span><div><b>암</b><span>통제를 벗어난 증식</span></div></div>
+    </div>
+
+    <div class="note warm">그래서 어떤 한 순간의 잘못을 지목해 암의 원인이라 말하기는 어렵습니다. <b>뒤집어 보면, 위험을 낮추는 일도 한 번에 끝나지 않고 쌓이는 방식으로 작동합니다.</b></div>
+  </section>
+
+  <!-- 04 잠복기 -->
+  <section id="s4">
+    <p class="step"><b>04</b> 시간</p>
+    <h2>그래서 암은 하룻밤에 생기지 않습니다</h2>
+    <p>쌓이는 데에는 시간이 듭니다. 첫 고장이 난 순간부터 검사에 잡힐 만한 크기가 되기까지, 겉으로는 아무 일도 없어 보이는 긴 구간이 놓여 있습니다. 슬라이더를 끌어 보세요.</p>
+
+    <div class="card">
+      <div class="lat-readout">
+        <span class="yr" id="latYr">0</span>
+        <span class="unit" id="latUnit">첫 고장이 난 시점</span>
+      </div>
+      <input type="range" id="latRange" min="0" max="100" value="0" step="1"
+             aria-label="첫 고장 이후 지난 시간" />
+      <div class="lat-scale"><span>0년</span><span>10년</span><span>20년</span><span>30년</span></div>
+      <div class="lat-state" id="latState" role="status" aria-live="polite"></div>
+    </div>
+
+    <p class="pull">진단서에 적힌 날짜는 병이 시작된 날이 아니라, 눈에 띈 날입니다.</p>
+
+    <p>진단을 받고 나면 최근 몇 달을 돌아보며 원인을 찾게 됩니다. 그러나 출발점은 그보다 훨씬 앞에 있었을 가능성이 큽니다. 진단이 알려 주는 것은 <strong>언제 발견됐는가</strong>이지 언제 생겼는가가 아닙니다.</p>
+
+    <div class="note cool">이 긴 공백은 나쁜 소식만은 아닙니다. <b>불편한 곳이 하나도 없는 동안에도 찾아낼 수 있는 구간이 실제로 존재한다는 뜻</b>이고, 검진은 바로 그 구간을 노립니다. 아래에서 본인에게 해당하는 검진을 확인할 수 있습니다.</div>
+  </section>
+
+  <!-- 05 양성 vs 악성 -->
+  <section id="s5">
+    <p class="step"><b>05</b> 구분</p>
+    <h2>모든 혹이 암은 아닙니다</h2>
+    <p>어딘가에 혹이 만져진다고 해서 곧 암은 아닙니다. 종양은 양성과 악성으로 갈리고, 둘은 행동 방식이 확연히 다릅니다.</p>
+
+    <div class="cmp">
+      <div class="cmp-head">
+        <div class="sp"></div>
+        <div class="b">양성 종양<br />(암 아님)</div>
+        <div class="m">악성 종양<br />(암)</div>
+      </div>
+      <div class="cmp-row"><span class="lbl">자라는 속도</span><span class="bn">천천히</span><span class="mg">비교적 빠르게</span></div>
+      <div class="cmp-row"><span class="lbl">주변 경계</span><span class="bn">또렷하게 구분된다</span><span class="mg">경계가 흐릿하다</span></div>
+      <div class="cmp-row"><span class="lbl">주변 침범</span><span class="bn">옆으로 밀어낼 뿐이다</span><span class="mg">조직 사이로 파고든다</span></div>
+      <div class="cmp-row"><span class="lbl">전이</span><span class="bn">옮겨가지 않는다</span><span class="mg">옮겨갈 수 있다</span></div>
+      <div class="cmp-row"><span class="lbl">제거 후 재발</span><span class="bn">거의 없다</span><span class="mg">남아서 다시 생길 수 있다</span></div>
+    </div>
+
+    <p class="pull">갈림길은 얼마나 큰가가 아니라, 파고드는지 그리고 옮겨가는지에 있습니다.</p>
+    <p>그래서 <strong>지름 6cm짜리 양성 종양보다 1cm짜리 악성 종양이 더 까다로울 수 있습니다.</strong> 크기 하나만 듣고 마음을 놓거나 미리 겁먹을 일이 아닙니다.</p>
+  </section>
+
+  <!-- 06 홀마크 -->
+  <section id="s6">
+    <p class="step"><b>06</b> 특징</p>
+    <h2>암세포가 보이는 행동들</h2>
+    <p>연구자들은 암세포들이 공통으로 보이는 행동을 목록으로 추려 왔습니다. 이 목록은 25년 사이 세 차례 손질됐습니다. 연도를 눌러 비교해 보세요.</p>
+
+    <div class="card">
+      <div class="tabs" role="tablist" aria-label="홀마크 개정 연도">
+        <button role="tab" aria-selected="true" data-year="2000">2000년<br />6가지</button>
+        <button role="tab" aria-selected="false" data-year="2011">2011년<br />8+2</button>
+        <button role="tab" aria-selected="false" data-year="2022">2022년<br />14가지</button>
+      </div>
+      <p class="tab-note" id="tabNote"></p>
+      <div class="marks" id="marks"></div>
+    </div>
+
+    <div class="note amber">주황 선이 그어진 항목은 <b>거들어 주는 조건</b>입니다. 그 자체가 암세포의 행동은 아니고, 나머지 행동이 생겨나기 쉬운 판을 깔아 주는 배경입니다.</div>
+
+    <p>2011년에 들어온 <strong>면역 감시 회피</strong>는 특히 값진 항목이었습니다. 암세포가 어떤 수법으로 면역세포의 눈을 피하는지 밝혀지자, 그 수법을 무력화해 면역세포가 다시 표적을 알아보게 만드는 <strong>면역항암제</strong>가 등장했습니다. 관련 연구는 2018년 노벨생리의학상으로 이어졌습니다.</p>
+  </section>
+
+  <!-- 07 전이 -->
+  <section id="s7">
+    <p class="step"><b>07</b> 전이</p>
+    <h2>전이 — 암이 위험해지는 결정적 단계</h2>
+    <p>양성 종양은 부피가 아무리 늘어도 처음 생긴 자리를 떠나지 않습니다. 떼어내면 대개 거기서 끝납니다. 악성이 다른 길을 가는 것은 아래 세 단계를 밟기 때문입니다.</p>
+
+    <div class="steps3">
+      <div class="st3"><span class="n">①</span><b>침윤</b><span>원래 자리의 경계를 뚫고 이웃한 조직 사이로 파고듭니다.</span></div>
+      <div class="st3"><span class="n">②</span><b>이동</b><span>혈관이나 림프관에 올라타 몸속을 흘러 다닙니다. 이때 혈액에서 발견되는 암세포를 순환종양세포라 부릅니다.</span></div>
+      <div class="st3"><span class="n">③</span><b>정착</b><span>도착한 장기에 뿌리를 내리고 다시 불어나기 시작합니다.</span></div>
+    </div>
+
+    <div class="note warm">옮겨간 암의 이름은 <b>도착지가 아니라 출발지를 따릅니다.</b> 대장에서 시작해 간으로 넘어갔다면 간암이 아니라 <b>전이성 대장암</b>입니다. 세포의 성질이 여전히 대장 것이라 치료도 대장암 기준으로 잡기 때문에, 말장난이 아니라 실제로 중요한 구분입니다.</div>
+
+    <p class="pull">암이 무서운 까닭은 덩어리가 생겨서가 아니라, 그 덩어리가 한자리에 머물지 않아서입니다.</p>
+
+    <p>그래서 암을 다룰 때는 크기만이 아니라 <strong>어디까지 번졌는가</strong>를 반드시 함께 봅니다. 이 판단이 병기, 흔히 말하는 스테이지이고 치료 방향이 갈리는 지점입니다.</p>
+  </section>
+
+  <!-- 08 경로 -->
+  <section id="s8">
+    <p class="step"><b>08</b> 경로</p>
+    <h2>전이는 아무 곳으로나 가지 않습니다</h2>
+    <p>1889년 병리학자 스티븐 페이짓이 내놓은 <strong>씨앗과 토양</strong>이라는 설명이 지금도 쓰입니다. 떨어져 나온 암세포를 씨앗에 빗대면, 씨앗은 흙을 가립니다. <strong>조건이 맞는 장기를 만났을 때에만</strong> 뿌리가 내린다는 뜻입니다.</p>
+
+    <div class="card">
+      <h3>자주 관찰되는 경로 (예시)</h3>
+      <div class="routes">
+        <div class="route"><b>대장암</b><span class="arw">→</span><span>간 · 폐</span></div>
+        <div class="route"><b>유방암</b><span class="arw">→</span><span>뼈 · 폐 · 간</span></div>
+        <div class="route"><b>폐암</b><span class="arw">→</span><span>뇌 · 뼈 · 간</span></div>
+        <div class="route"><b>전립선암</b><span class="arw">→</span><span>뼈</span></div>
+      </div>
+      <p style="font-size:.82rem;color:var(--ink-soft)">순위와 빈도는 조사마다 차이가 납니다. 특정 환자에게 그대로 들어맞는 표가 아닙니다.</p>
+    </div>
+
+    <div class="note cool">요즘은 <b>혈액 속을 떠다니는 암세포와 암 DNA를 직접 붙잡는 검사</b>가 연구와 진료 현장에 들어와 있습니다. 흔히 액체생검이라 부르며, 조직을 떼어내지 않고 채혈만으로 재발 여부나 치료 반응을 살피는 데 씁니다. 다만 건강한 사람에게서 암을 처음 찾아내는 용도로는 아직 자리 잡지 못했습니다.</div>
+  </section>
+
+  <!-- 09 다양성 -->
+  <section id="s9">
+    <p class="step"><b>09</b> 다양성</p>
+    <h2>“암”은 하나의 병이 아닙니다</h2>
+    <p>여기까지 암을 하나의 병처럼 묶어 이야기했지만, 실제로는 <strong>100가지가 넘는 서로 다른 병을 한 이름으로 부르는 것</strong>에 가깝습니다. 나누는 기준은 크게 둘입니다.</p>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="v">생긴 장기</span>
+        <span class="l">위암·폐암처럼 처음 생긴 장기가 이름이 됩니다</span>
+      </div>
+      <div class="stat">
+        <span class="v">세포의 종류</span>
+        <span class="l">같은 장기라도 어떤 세포에서 났는지에 따라 다른 병이 됩니다</span>
+      </div>
+    </div>
+
+    <div class="note">최근에는 한 칸 더 들어갑니다. 같은 유방암이라도 <b>어떤 유전자와 단백질이 켜져 있는지에 따라 몇 갈래 아형으로 나누고, 갈래마다 쓰는 약이 다릅니다.</b> 유방암이라는 진단명 하나가 곧 하나의 치료법을 뜻하지 않는 이유입니다.</div>
+
+    <div class="note warm">그래서 <b>암에 좋다는 표현은 애초에 성립하기 어렵습니다.</b> 이름이 같은 암이라도 사람마다 처방이 갈리고, 기사 제목에 걸리는 정복이라는 말도 들여다보면 특정 암의 특정 유형에 관한 이야기입니다.</div>
+  </section>
+
+  <!-- 10 원인 -->
+  <section id="s10">
+    <p class="step"><b>10</b> 원인</p>
+    <h2>“왜 하필 나에게 생겼을까”</h2>
+    <p>진단을 받은 사람이라면 누구나 한 번은 던지는 물음입니다. 원인은 대체로 세 갈래로 갈립니다.</p>
+
+    <div class="causes">
+      <div class="cause c1">
+        <h3>우연</h3>
+        <p>세포가 갈라질 때마다 유전 정보를 베껴 쓰는데, 그 과정에서 나는 실수입니다. 누구도 피해 갈 수 없습니다.</p>
+        <span class="fig">32개 암종을 살핀 연구에서 핵심 돌연변이의 약 3분의 2가 이 갈래</span>
+      </div>
+      <div class="cause c2">
+        <h3>환경 · 생활습관</h3>
+        <p>담배, 술, 감염, 비만 같은 것들입니다. 세 갈래 가운데 <strong>손을 댈 수 있는 유일한 쪽</strong>입니다.</p>
+        <span class="fig">폐암에서는 이 갈래의 몫이 약 65%까지 올라감</span>
+      </div>
+      <div class="cause c3">
+        <h3>타고난 유전</h3>
+        <p>부모에게서 물려받은 소인입니다. 생각보다 비중은 크지 않습니다.</p>
+        <span class="fig">전체 암의 약 5~10%</span>
+      </div>
+    </div>
+
+    <div class="note amber">세 갈래가 차지하는 비율은 <b>암종에 따라 완전히 달라집니다.</b> 전립선·뇌·뼈에 생기는 암은 95% 넘게 복제 실수 쪽이지만, 폐암은 환경과 생활습관의 몫이 훨씬 큽니다. 그래서 어떤 개인을 두고 당신의 원인은 이것이라고 짚어 말할 수 있는 경우는 드뭅니다.</div>
+
+    <p class="pull">진단서는 잘잘못을 가리는 판결문이 아닙니다.</p>
+  </section>
+
+  <!-- 11 오해 -->
+  <section id="s11">
+    <p class="step"><b>11</b> 정리</p>
+    <h2>흔한 오해 세 가지</h2>
+    <p>여기까지 읽었다면 아래 세 문장이 왜 어긋났는지 스스로 설명할 수 있습니다. 눌러서 맞춰 보세요.</p>
+
+    <div class="myths">
+      <button class="myth" aria-expanded="false">
+        <span class="badge">오해</span>
+        <span class="claim">혹이 잡혔으면 암이다</span>
+        <span class="tap">눌러서 사실 확인 →</span>
+        <span class="fact">발견되는 혹 가운데 상당수는 양성입니다. 암인지 아닌지는 크기로 짐작하는 것이 아니라 조직을 떼어 확인합니다.</span>
+      </button>
+      <button class="myth" aria-expanded="false">
+        <span class="badge">오해</span>
+        <span class="claim">집안에 암 환자가 없으면 나는 안전하다</span>
+        <span class="tap">눌러서 사실 확인 →</span>
+        <span class="fact">물려받은 소인이 설명하는 몫은 전체 암의 5~10% 정도입니다. 나머지 대부분은 살아오는 동안 쌓인 고장에서 출발합니다.</span>
+      </button>
+      <button class="myth" aria-expanded="false">
+        <span class="badge">오해</span>
+        <span class="claim">당을 끊으면 암세포가 굶어 죽는다</span>
+        <span class="tap">눌러서 사실 확인 →</span>
+        <span class="fact">정상 세포도 똑같은 포도당을 연료로 씁니다. 특정 음식을 끊어서 암세포만 골라 굶길 수 있다는 근거는 확인된 바 없습니다.</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 12 검진 -->
+  <section id="s12">
+    <p class="step"><b>12</b> 적용</p>
+    <h2>지금 내가 받을 수 있는 검진</h2>
+    <p>긴 잠복기가 검진의 근거라고 했습니다. 왜 그렇게까지 강조하는지는 아래 숫자가 설명합니다.</p>
+
+    <div class="card">
+      <h3>암종별 5년 상대생존율</h3>
+      <p style="font-size:.88rem;color:var(--ink-mid)">2019~2023년 진단 기준</p>
+      <div class="bars">
+        <div class="bar-row"><span class="nm">갑상선암</span><span class="bar-track"><span class="bar-fill" style="width:100%"></span></span><span class="pc">100.2</span></div>
+        <div class="bar-row"><span class="nm">전립선암</span><span class="bar-track"><span class="bar-fill" style="width:96.9%"></span></span><span class="pc">96.9</span></div>
+        <div class="bar-row"><span class="nm">유방암</span><span class="bar-track"><span class="bar-fill" style="width:94.7%"></span></span><span class="pc">94.7</span></div>
+        <div class="bar-row low"><span class="nm">폐암</span><span class="bar-track"><span class="bar-fill" style="width:42.5%"></span></span><span class="pc">42.5</span></div>
+        <div class="bar-row low"><span class="nm">간암</span><span class="bar-track"><span class="bar-fill" style="width:40.4%"></span></span><span class="pc">40.4</span></div>
+        <div class="bar-row low"><span class="nm">췌장암</span><span class="bar-track"><span class="bar-fill" style="width:17%"></span></span><span class="pc">17.0</span></div>
+      </div>
+      <p style="font-size:.82rem;color:var(--ink-soft)">아래쪽 세 암종은 초기 증상이 거의 없어 <strong>이미 퍼진 뒤에 발견되는 비율</strong>이 높습니다. 생존율 차이의 큰 부분이 여기서 갈립니다. 앞에서 본 “증상이 없는 구간”을 놓치지 않는 것이 그래서 중요합니다.</p>
+      <p class="caveat">2023년 국가암등록통계 기준. <b>과거 진단 환자 집단의 통계이며 개인의 예후를 뜻하지 않습니다.</b> 같은 암종 안에서도 병기에 따라 수치가 크게 갈립니다.</p>
+    </div>
+
+    <p>우리나라는 6대 암에 대해 국가암검진을 운영합니다. 해당되는 항목을 확인해 보세요.</p>
+
+    <div class="card">
+      <div class="field">
+        <label for="ageIn">나이 (만)</label>
+        <input type="number" id="ageIn" min="0" max="120" value="45" inputmode="numeric" />
+      </div>
+      <div class="field">
+        <label>성별</label>
+        <div class="seg" id="sexSeg">
+          <button data-sex="f" aria-pressed="true">여성</button>
+          <button data-sex="m" aria-pressed="false">남성</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>해당되는 항목</label>
+        <div class="checks">
+          <label><input type="checkbox" id="chkLiver" /> 간경변증이 있거나 만성 B형·C형 간염 보유자입니다</label>
+          <label><input type="checkbox" id="chkSmoke" /> 30갑년 이상 흡연했습니다 (하루 1갑 × 30년 수준)</label>
+        </div>
+      </div>
+      <div class="screen-out" id="screenOut" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="note amber">검진은 <b>증상이 없을 때 받는 것</b>입니다. 이미 증상이 있다면 검진 주기를 기다리지 말고 진료를 받으셔야 합니다. 위 결과는 국가암검진 기준을 안내한 것으로, 개인의 가족력이나 기존 질환에 따라 권고가 달라질 수 있습니다.</div>
+  </section>
+
+  <!-- 13 전망 -->
+  <section id="s13">
+    <p class="step"><b>13</b> 전망</p>
+    <h2>암은 극복할 수 있나</h2>
+    <p>가장 많이 받는 질문입니다. 정직하게 답하면 <strong>“암 전체를 한 번에”는 아니지만, 이미 상당 부분 극복해 왔습니다.”</strong>입니다. 숫자가 그렇게 말합니다.</p>
+
+    <div class="card">
+      <h3>5년 상대생존율은 계속 올랐습니다</h3>
+      <div class="era">
+        <div class="era-row"><span class="p">2001~2005</span><span class="t"><i style="width:54.2%"></i></span><span class="n">54.2</span></div>
+        <div class="era-row now"><span class="p">2019~2023</span><span class="t"><i style="width:73.7%"></i></span><span class="n">73.7</span></div>
+      </div>
+      <p style="font-size:.85rem;color:var(--ink-mid)">약 20년 사이 <strong>19.5%p</strong>가 올랐습니다. 절반을 겨우 넘던 생존율이 <strong>4명 중 3명 수준</strong>이 됐습니다. 우리나라 암 생존율은 세계적으로도 높은 편에 속합니다.</p>
+    </div>
+
+    <p>다만 “극복”은 암 전체에 고르게 오지 않습니다. 앞에서 봤듯 <strong>“암”은 100가지가 넘는 다른 병</strong>이고, 성적표도 따로 나옵니다.</p>
+
+    <div class="note cool"><b>이미 극복에 가까워진 쪽</b> — 갑상선암 100.2%, 전립선암 96.9%, 유방암 94.7%. 조기에 발견되고, 잘 듣는 치료가 있습니다.</div>
+    <div class="note warm"><b>아직 갈 길이 먼 쪽</b> — 췌장암 17.0%, 간암 40.4%, 폐암 42.5%. 초기 증상이 거의 없어 이미 퍼진 뒤에 발견되는 경우가 많습니다.</div>
+    <p class="caveat">이 숫자들도 <b>집단 통계입니다.</b> 생존율이 낮은 암종이라고 개인의 결과가 정해지는 것이 아니고, 높은 암종이라고 안심이 보장되는 것도 아닙니다. 통계는 방향을 보는 도구이지 개인의 답이 아닙니다.</p>
+
+    <p>그래서 “암 정복”은 한 번의 사건으로 오지 않습니다. <strong>암종별로, 유형별로 하나씩</strong> 넘어가는 방식입니다. 지난 20년의 상승분을 만든 것도 두 가지였습니다.</p>
+
+    <div class="causes">
+      <div class="cause c2">
+        <h3>일찍 찾아내기</h3>
+        <p>국가암검진으로 증상 없는 구간에서 발견되는 비율이 올라갔습니다. 위암·대장암·자궁경부암의 생존율 상승에 특히 크게 기여했습니다.</p>
+      </div>
+      <div class="cause c1">
+        <h3>치료의 발전</h3>
+        <p>암세포만 골라 공격하는 표적치료, 그리고 면역세포의 브레이크를 풀어 암을 다시 보이게 하는 면역항암제가 들어왔습니다. 예전에는 손쓰기 어렵던 진행암에서도 장기 생존 사례가 나옵니다.</p>
+      </div>
+    </div>
+
+    <div class="note">‘극복’의 의미 자체도 달라지고 있습니다. 완치만이 아니라, <b>고혈압·당뇨처럼 관리하면서 오래 사는 병</b>으로 옮겨가는 중입니다. 실제로 우리나라 암환자 273만 명 중 <b>5년 넘게 생존한 사람이 61.3%</b>입니다. 암과 함께 살아가는 사람이 이미 다수입니다.</div>
+
+    <p class="pull">암은 이미 “걸리면 끝”인 병이 아닙니다. 다만 어떤 암을, 언제 발견했느냐가 여전히 결정적입니다.</p>
+
+    <div class="note amber">그래서 지금 개인이 할 수 있는 가장 확실한 일은 <b>바꿀 수 있는 갈래를 줄이고(금연·절주·감염 관리·체중), 해당되는 검진을 주기대로 받는 것</b>입니다. 위 12번에서 본인 해당 항목을 확인할 수 있습니다.</div>
+  </section>
+
+  <!-- 14 퀴즈 -->
+  <section id="s14">
+    <p class="step"><b>14</b> 확인</p>
+    <h2>얼마나 남았는지 확인해 볼까요</h2>
+    <p>여섯 문제입니다. 틀려도 바로 이유를 알려드립니다.</p>
+    <div class="quiz" id="quiz"></div>
+    <div class="score" id="score" hidden></div>
+  </section>
+
+  <div class="wrap-up">
+    <h2>오늘 정리</h2>
+    <ol>
+      <li><b>암은 바깥에서 들어온 것이 아니라 통제를 잃은 내 세포입니다.</b> 원래는 쓸 일이 있을 때만 늘고, 망가지면 물러나고, 자기 자리를 지키던 세포였습니다.</li>
+      <li><b>한 번의 사건이 아니라 오래 쌓인 고장의 결과입니다.</b> 미는 쪽 하나가 망가져도 잡는 쪽이 남아 있으면 대개 거기서 멈춥니다.</li>
+      <li><b>진단일과 발병일은 다른 날짜입니다.</b> 그 사이에 수 년에서 수십 년이 놓여 있고, 검진은 바로 그 구간을 노립니다.</li>
+      <li><b>자리를 떠나 번지는 성질, 곧 전이가 악성을 규정합니다.</b> 부피가 아니라 파고드는지와 옮겨가는지가 갈림길입니다.</li>
+      <li><b>암은 100가지가 넘는 다른 병을 묶은 이름입니다.</b> 그래서 암에 좋다는 말은 성립하기 어렵습니다.</li>
+      <li><b>원인은 우연·환경·유전 세 갈래이고 그 비율은 암종마다 다릅니다.</b> 진단서는 잘잘못을 가리는 판결문이 아닙니다.</li>
+    </ol>
+
+    <div class="next">
+      <div class="nx"><b>C2</b><span>숫자로 보는 한국의 암</span></div>
+      <div class="nx"><b>C3</b><span>무엇이 암을 부르는가</span></div>
+      <div class="nx"><b>C5</b><span>국가암검진 사용설명서</span></div>
+    </div>
+
+    <button class="share" id="shareBtn">이 자료 공유하기</button>
+  </div>
+
+</main>
+
+<footer>
+  <h4>참고 자료</h4>
+  <ul>
+    <li>보건복지부 · 중앙암등록본부, 「2023년 국가암등록통계」 (2025년 12월 공표) — 신규 발생 288,613명, 5년 상대생존율 73.7%, 암유병자 약 273만 명, 평생 암 발생 확률(남 44.6% · 여 38.2%), 암종별 생존율</li>
+    <li>Sender R, Fuchs S, Milo R. “Revised Estimates for the Number of Human and Bacteria Cells in the Body.” <em>PLOS Biology</em>, 2016 — 인체 세포 약 30조 개 추정</li>
+    <li>Hanahan D, Weinberg RA. “The Hallmarks of Cancer” (2000) · “The Next Generation” (2011) / Hanahan D. “New Dimensions” (<em>Cancer Discovery</em>, 2022) — 암세포의 공통 행동 6가지 → 14가지</li>
+    <li>Tomasetti C, Li L, Vogelstein B. “Stem cell divisions, somatic mutations, cancer etiology, and cancer prevention.” <em>Science</em>, 2017 — 32개 암종에서 driver 돌연변이의 약 2/3가 무작위 복제 오류, 암종별 편차</li>
+    <li>유전성 암 증후군 관련 문헌 — 전체 암의 약 5~10%가 생식세포계열 유전 변이에 기인</li>
+    <li>Paget S. “The distribution of secondary growths in cancer of the breast.” <em>The Lancet</em>, 1889 — 씨앗과 토양 가설. 순환종양세포 및 액체생검 관련 후속 연구</li>
+    <li>국립암센터 국가암검진사업 — 6대암 검진 대상 연령 및 주기</li>
+  </ul>
+  <p>본문은 위 공개 자료를 근거로 자체 집필했습니다. 타 저작물의 문장·표·삽화를 인용하거나 전재한 부분은 없습니다. 수치는 모두 기준연도와 출처를 함께 밝혔습니다.</p>
+  <p class="disclaim">본 강좌는 비영리 일반 대중 교양 교육을 목적으로 제작되었습니다. 본 자료는 일반 교양 목적이며 개인의 진단·치료를 대체하지 않습니다. 증상이나 검진에 대한 판단은 반드시 진료를 통해 확인하시기 바랍니다.</p>
+  
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- 진행률 ---------- */
+  var bar = document.getElementById('progress');
+  function onScroll() {
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    var p = h > 0 ? (window.scrollY / h) * 100 : 0;
+    bar.style.width = Math.min(100, Math.max(0, p)) + '%';
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+
+  /* ---------- 히어로: 배양 접시 ---------- */
+  var cv = document.getElementById('dish');
+  var ctx = cv.getContext('2d');
+  var cells = [], t = 0, raf = null;
+
+  function css(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  function sizeCanvas() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = cv.getBoundingClientRect();
+    cv.width = Math.round(r.width * dpr);
+    cv.height = Math.round(r.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return r;
+  }
+
+  function seed() {
+    var r = sizeCanvas();
+    cells = [];
+    var n = Math.round((r.width * r.height) / 8200);
+    n = Math.max(30, Math.min(95, n));
+    for (var i = 0; i < n; i++) {
+      cells.push({
+        x: Math.random() * r.width,
+        y: Math.random() * r.height,
+        r: 7 + Math.random() * 7,
+        vx: (Math.random() - 0.5) * 0.14,
+        vy: (Math.random() - 0.5) * 0.14,
+        bad: false,
+        born: 0
+      });
+    }
+    // 하나만 변이시켜 둡니다 — 이 강좌의 논지
+    var k = Math.floor(Math.random() * cells.length);
+    cells[k].bad = true;
+    cells[k].born = 0;
+  }
+
+  function draw() {
+    var r = cv.getBoundingClientRect();
+    var normal = css('--hema') || '#6C3FC5';
+    var bad = css('--eosin') || '#D0356A';
+
+    ctx.clearRect(0, 0, r.width, r.height);
+
+    for (var i = 0; i < cells.length; i++) {
+      var c = cells[i];
+      c.x += c.vx; c.y += c.vy;
+      if (c.x < -20) c.x = r.width + 20;
+      if (c.x > r.width + 20) c.x = -20;
+      if (c.y < -20) c.y = r.height + 20;
+      if (c.y > r.height + 20) c.y = -20;
+
+      var col = c.bad ? bad : normal;
+      var age = t - c.born;
+      var fade = c.bad ? Math.min(1, age / 60) : 1;
+
+      // 세포질
+      ctx.globalAlpha = (c.bad ? 0.30 : 0.16) * fade;
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 막
+      ctx.globalAlpha = (c.bad ? 0.65 : 0.34) * fade;
+      ctx.lineWidth = 1.1;
+      ctx.strokeStyle = col;
+      ctx.stroke();
+
+      // 핵
+      ctx.globalAlpha = (c.bad ? 0.85 : 0.5) * fade;
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, c.r * 0.36, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function divide() {
+    // 변이 세포만 빠르게 늘어납니다. 정상 세포는 수를 유지합니다.
+    var r = cv.getBoundingClientRect();
+    var bads = cells.filter(function (c) { return c.bad; });
+    if (!bads.length || cells.length > 150) return;
+    var p = bads[Math.floor(Math.random() * bads.length)];
+    var a = Math.random() * Math.PI * 2;
+    cells.push({
+      x: p.x + Math.cos(a) * p.r * 1.6,
+      y: p.y + Math.sin(a) * p.r * 1.6,
+      r: p.r * (0.85 + Math.random() * 0.25),
+      vx: (Math.random() - 0.5) * 0.2,
+      vy: (Math.random() - 0.5) * 0.2,
+      bad: true,
+      born: t
+    });
+    if (cells.length > 130) { seed(); t = 0; }
+  }
+
+  function loop() {
+    t++;
+    // 변이 세포가 늘수록 분열이 빨라집니다 — 누적이 가속되는 모습
+    var every = cells.length > 60 ? 10 : cells.length > 40 ? 16 : 24;
+    if (t % every === 0) divide();
+    draw();
+    raf = requestAnimationFrame(loop);
+  }
+
+  seed();
+  if (reduce) {
+    // 정지 화면 — 변이 세포 몇 개만 미리 배치
+    for (var d = 0; d < 12; d++) { t = 100; divide(); }
+    draw();
+  } else {
+    loop();
+  }
+  window.addEventListener('resize', function () { seed(); t = 0; if (reduce) draw(); });
+
+  /* ---------- 액셀·브레이크 시뮬레이터 ---------- */
+  var gasOn = false, brakeOn = false;
+  var tGas = document.getElementById('tGas');
+  var tBrake = document.getElementById('tBrake');
+  var out = document.getElementById('simOut');
+  var verdict = document.getElementById('simVerdict');
+  var desc = document.getElementById('simDesc');
+
+  var SIM = {
+    '00': ['ok', '둘 다 정상 — 통제 안에 있습니다', '쓸 일이 있을 때만 늘어나고, 그 일이 끝나면 멈춥니다. 몸이 어제와 같은 모양을 유지하는 상태입니다.'],
+    '10': ['warn', '미는 쪽 고장 — 그래도 대개 멈춥니다', '늘어나라는 신호가 꺼지지 않습니다. 그래도 잡는 쪽이 살아 있어 세포를 멈춰 세우거나, 수리가 안 되면 물러나게 만듭니다. 아직 암이 아닙니다.'],
+    '01': ['warn', '잡는 쪽 고장 — 아직 버팁니다', '제동과 수리 기능이 약해졌습니다. 다만 미는 힘이 정상이라 증식을 밀어붙일 동력이 없습니다. 위험은 올라갔지만 아직 암이 아닙니다.'],
+    '11': ['bad', '양쪽 다 고장 — 통제를 벗어납니다', '미는 신호는 계속 켜져 있고 세울 장치는 사라졌습니다. 여기에 고장이 더 쌓이면 통제를 벗어난 증식, 곧 암으로 이어집니다.']
+  };
+
+  function renderSim() {
+    var key = (gasOn ? '1' : '0') + (brakeOn ? '1' : '0');
+    var s = SIM[key];
+    out.setAttribute('data-level', s[0]);
+    verdict.textContent = s[1];
+    desc.textContent = s[2];
+    tGas.setAttribute('aria-pressed', String(gasOn));
+    tBrake.setAttribute('aria-pressed', String(brakeOn));
+    document.getElementById('stGas').textContent = gasOn ? '고장' : '정상';
+    document.getElementById('stBrake').textContent = brakeOn ? '고장' : '정상';
+  }
+  tGas.addEventListener('click', function () { gasOn = !gasOn; renderSim(); });
+  tBrake.addEventListener('click', function () { brakeOn = !brakeOn; renderSim(); });
+  renderSim();
+
+  /* ---------- 잠복기 슬라이더 ---------- */
+  var range = document.getElementById('latRange');
+  var latYr = document.getElementById('latYr');
+  var latUnit = document.getElementById('latUnit');
+  var latState = document.getElementById('latState');
+
+  var PHASES = [
+    [0,   '첫 고장', '세포 하나에 첫 고장이 생겼습니다. 눈으로 볼 수 있는 크기가 아니고, 본인은 아무런 낌새도 느끼지 못합니다.', '어떤 검사로도 잡히지 않음'],
+    [3,   '고장이 겹치는 중', '고장이 하나둘 더해집니다. 불편한 곳은 여전히 없고, 건강검진에도 걸리지 않습니다.', '어떤 검사로도 잡히지 않음'],
+    [10,  '무리가 만들어짐', '통제를 벗어난 세포들이 작은 무리를 이뤘습니다. 크기가 작아 아직 아무 증상이 없습니다. 이 무렵을 전암 단계라 부르기도 합니다.', '일부 검진에서 잡히기 시작'],
+    [18,  '검사에 걸리는 크기', '내시경이나 영상으로 확인할 수 있을 만큼 자랐습니다. 그런데도 몸으로 느껴지는 신호는 없을 수 있습니다.', '검진으로 발견 — 조기 발견 구간'],
+    [26,  '몸이 신호를 보냄', '이쯤 되어서야 불편함이 나타나기도 합니다. 증상을 느끼고 병원을 찾았을 때는 이미 진행된 경우가 많습니다.', '증상으로 발견 — 늦은 구간']
+  ];
+
+  function phaseFor(y) {
+    var p = PHASES[0];
+    for (var i = 0; i < PHASES.length; i++) if (y >= PHASES[i][0]) p = PHASES[i];
+    return p;
+  }
+
+  function renderLat() {
+    var y = Math.round(range.value * 0.3); // 0~30년
+    latYr.textContent = y;
+    latUnit.textContent = y === 0 ? '년 — 첫 고장이 난 시점' : '년 지남';
+    var p = phaseFor(y);
+    var tone = p[3].indexOf('불가') > -1 ? 'var(--ink-soft)'
+             : p[3].indexOf('늦은') > -1 ? 'var(--eosin)' : 'var(--calm)';
+    latState.innerHTML = '<b></b><span></span><span class="detect"></span>';
+    latState.querySelector('b').textContent = p[1];
+    latState.querySelectorAll('span')[0].textContent = p[2];
+    var d = latState.querySelector('.detect');
+    d.textContent = p[3];
+    d.style.color = tone;
+  }
+  range.addEventListener('input', renderLat);
+  renderLat();
+
+  /* ---------- 홀마크 탭 ---------- */
+  var H = {
+    '2000': {
+      note: '처음 정리된 여섯 가지입니다. 앞에서 본 미는 힘, 잡는 힘, 스스로 물러나기가 그대로 들어 있습니다.',
+      items: [
+        ['스스로 증식 신호를 켠다', '미는 힘을 자기 발로 밟는 셈'],
+        ['멈추라는 신호를 듣지 않는다', '잡는 힘이 걸리지 않는다'],
+        ['물러날 때 물러나지 않는다', '스스로 죽으라는 지시를 무시한다'],
+        ['분열 한도가 사라진다', '수명을 세던 시계가 풀린다'],
+        ['혈관을 새로 끌어들인다', '양분과 산소를 스스로 챙긴다'],
+        ['파고들고 번져 나간다', '한자리에 머물지 않는다']
+      ]
+    },
+    '2011': {
+      note: '11년 뒤 두 항목이 더해졌습니다. 그중 면역세포의 눈을 피한다는 대목이 훗날 면역항암제로 이어집니다. 주황으로 표시된 둘은 행동이 아니라 배경 조건입니다.',
+      items: [
+        ['스스로 증식 신호를 켠다', '미는 힘을 자기 발로 밟는 셈'],
+        ['멈추라는 신호를 듣지 않는다', '잡는 힘이 걸리지 않는다'],
+        ['물러날 때 물러나지 않는다', '스스로 죽으라는 지시를 무시한다'],
+        ['분열 한도가 사라진다', '수명을 세던 시계가 풀린다'],
+        ['혈관을 새로 끌어들인다', '양분과 산소를 스스로 챙긴다'],
+        ['파고들고 번져 나간다', '한자리에 머물지 않는다'],
+        ['연료 쓰는 방식을 바꾼다', '2011년 추가 · 대사 재프로그래밍', 'new'],
+        ['면역세포의 눈을 피한다', '2011년 추가 · 면역항암제의 출발점', 'new'],
+        ['유전체가 흔들린다', '거드는 조건 · 돌연변이가 쉽게 쌓임', 'enable'],
+        ['만성 염증이 판을 깐다', '거드는 조건 · 종양이 자라기 쉬운 환경', 'enable']
+      ]
+    },
+    '2022': {
+      note: '가장 최근 손질입니다. 돌연변이만이 아니라 세포가 정체를 바꾸는 능력, 주변 환경과 미생물의 역할까지 목록에 들어왔습니다.',
+      items: [
+        ['스스로 증식 신호를 켠다', '미는 힘을 자기 발로 밟는 셈'],
+        ['멈추라는 신호를 듣지 않는다', '잡는 힘이 걸리지 않는다'],
+        ['물러날 때 물러나지 않는다', '스스로 죽으라는 지시를 무시한다'],
+        ['분열 한도가 사라진다', '수명을 세던 시계가 풀린다'],
+        ['혈관을 새로 끌어들인다', '양분과 산소를 스스로 챙긴다'],
+        ['파고들고 번져 나간다', '한자리에 머물지 않는다'],
+        ['연료 쓰는 방식을 바꾼다', '대사 재프로그래밍'],
+        ['면역세포의 눈을 피한다', '면역항암제의 출발점'],
+        ['자기 정체를 갈아입는다', '2022년 추가 · 표현형 가소성', 'new'],
+        ['늙은 세포가 거든다', '2022년 추가 · 주변 노화세포의 영향', 'new'],
+        ['유전체가 흔들린다', '거드는 조건', 'enable'],
+        ['만성 염증이 판을 깐다', '거드는 조건', 'enable'],
+        ['유전자 스위치가 바뀐다', '거드는 조건 · 돌연변이 없이 일어나는 후성유전 변화', 'enable'],
+        ['몸속 미생물이 끼어든다', '거드는 조건 · 다형 미생물무리', 'enable']
+      ]
+    }
+  };
+
+  var marksEl = document.getElementById('marks');
+  var tabNote = document.getElementById('tabNote');
+  var tabBtns = document.querySelectorAll('.tabs button');
+
+  function renderMarks(year) {
+    var d = H[year];
+    tabNote.textContent = d.note;
+    marksEl.innerHTML = '';
+    d.items.forEach(function (it) {
+      var el = document.createElement('div');
+      el.className = 'mark' + (it[2] === 'new' ? ' is-new' : it[2] === 'enable' ? ' is-enable' : '');
+      var b = document.createElement('b'); b.textContent = it[0];
+      var s = document.createElement('span'); s.textContent = it[1];
+      el.appendChild(b); el.appendChild(s);
+      marksEl.appendChild(el);
+    });
+  }
+  tabBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      tabBtns.forEach(function (b) { b.setAttribute('aria-selected', 'false'); });
+      btn.setAttribute('aria-selected', 'true');
+      renderMarks(btn.dataset.year);
+    });
+  });
+  renderMarks('2000');
+
+  /* ---------- 국가암검진 찾기 ---------- */
+  var ageIn = document.getElementById('ageIn');
+  var sexSeg = document.getElementById('sexSeg');
+  var chkLiver = document.getElementById('chkLiver');
+  var chkSmoke = document.getElementById('chkSmoke');
+  var screenOut = document.getElementById('screenOut');
+  var sex = 'f';
+
+  function renderScreen() {
+    var age = parseInt(ageIn.value, 10);
+    if (isNaN(age)) age = 0;
+    var list = [];
+
+    if (age >= 40) list.push(['위암', '위내시경 검사 (또는 위장조영검사)', '2년마다']);
+    if (age >= 50) list.push(['대장암', '분변잠혈검사 — 양성이면 대장내시경', '1년마다']);
+    if (age >= 40 && chkLiver.checked) list.push(['간암', '간초음파 + 혈액검사(AFP)', '6개월마다']);
+    if (sex === 'f' && age >= 40) list.push(['유방암', '유방촬영술 (맘모그래피)', '2년마다']);
+    if (sex === 'f' && age >= 20) list.push(['자궁경부암', '자궁경부세포검사', '2년마다']);
+    if (age >= 54 && age <= 74 && chkSmoke.checked) list.push(['폐암', '저선량 흉부 CT', '2년마다']);
+
+    screenOut.innerHTML = '';
+
+    if (!list.length) {
+      var n = document.createElement('div');
+      n.className = 'scr none';
+      var nb = document.createElement('b'); nb.textContent = '지금은 해당되는 국가암검진 항목이 없습니다';
+      var ns = document.createElement('span');
+      ns.textContent = age < 20
+        ? '만 20세 이상 여성의 자궁경부암 검진부터 시작됩니다.'
+        : '나이가 되면 순차적으로 대상이 됩니다. 증상이 있다면 검진 대상 여부와 관계없이 진료를 받으세요.';
+      n.appendChild(nb); n.appendChild(ns);
+      screenOut.appendChild(n);
+      return;
+    }
+
+    list.forEach(function (it) {
+      var el = document.createElement('div');
+      el.className = 'scr';
+      var b = document.createElement('b'); b.textContent = it[0];
+      var s = document.createElement('span'); s.textContent = it[1];
+      var c = document.createElement('span'); c.className = 'cyc'; c.textContent = it[2];
+      el.appendChild(b); el.appendChild(s); el.appendChild(c);
+      screenOut.appendChild(el);
+    });
+  }
+
+  sexSeg.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    sex = b.dataset.sex;
+    sexSeg.querySelectorAll('button').forEach(function (x) {
+      x.setAttribute('aria-pressed', String(x === b));
+    });
+    renderScreen();
+  });
+  ageIn.addEventListener('input', renderScreen);
+  chkLiver.addEventListener('change', renderScreen);
+  chkSmoke.addEventListener('change', renderScreen);
+  renderScreen();
+
+  /* ---------- 오해 뒤집기 ---------- */
+  document.querySelectorAll('.myth').forEach(function (m) {
+    m.addEventListener('click', function () {
+      var open = m.getAttribute('aria-expanded') === 'true';
+      m.setAttribute('aria-expanded', String(!open));
+      m.querySelector('.badge').textContent = open ? '오해' : '사실';
+    });
+  });
+
+  /* ---------- 퀴즈 ---------- */
+  var QS = [
+    {
+      q: '늘어나라고 미는 유전자 하나가 망가졌습니다. 이 세포는 어떻게 되나요?',
+      o: ['그 즉시 암세포가 된다', '잡는 쪽이 남아 있으면 대개 거기서 멈춘다', '아무 일도 벌어지지 않는다'],
+      a: 1,
+      e: '따져야 할 것은 두 힘 사이의 균형입니다. 미는 쪽이 망가져도 잡는 쪽이 세포를 세우거나, 수리가 안 되면 물러나게 만듭니다.'
+    },
+    {
+      q: '건강검진에서 암이 확인됐습니다. 이 병은 언제 시작됐을까요?',
+      o: ['검진 직전 몇 달 사이', '수 년에서 수십 년 전일 가능성이 크다', '딱 1년 전'],
+      a: 1,
+      e: '첫 고장부터 검사에 걸릴 만한 크기가 되기까지 수 년에서 수십 년이 듭니다. 진단이 알려 주는 것은 언제 발견됐는가일 뿐입니다.'
+    },
+    {
+      q: '6cm짜리 양성 종양과 1cm짜리 악성 종양 중 어느 쪽이 더 까다로울까요?',
+      o: ['당연히 큰 쪽', '작아도 악성인 쪽', '크기가 같아야 비교할 수 있다'],
+      a: 1,
+      e: '갈림길은 부피가 아니라 파고드는지와 옮겨가는지입니다. 양성은 아무리 커도 한자리에 머물지만 악성은 번져 나갈 수 있습니다.'
+    },
+    {
+      q: '면역세포의 눈을 피한다는 항목이 목록에 들어온 시점은?',
+      o: ['2000년 최초 목록부터', '2011년 손질 때', '아직 목록에 없다'],
+      a: 1,
+      e: '2011년에 연료 쓰는 방식의 변화와 함께 들어왔습니다. 이 이해가 면역항암제로 이어졌고, 관련 연구는 2018년 노벨생리의학상을 받았습니다.'
+    },
+    {
+      q: '대장에서 시작한 암이 간으로 넘어갔습니다. 이 병의 이름은?',
+      o: ['간암', '전이성 대장암', '대장·간 복합암'],
+      a: 1,
+      e: '옮겨간 암은 도착지가 아니라 출발지의 이름을 씁니다. 세포의 성질이 여전히 대장 것이기 때문이고, 그래서 치료도 대장암 기준으로 잡습니다.'
+    },
+    {
+      q: '베껴 쓰다 난 우연한 실수가 암의 원인에서 차지하는 몫은?',
+      o: ['거의 없다 — 대부분 생활습관 탓이다', '적지 않다 — 암종마다 다르지만 상당한 몫을 차지한다', '전부다 — 생활습관은 무관하다'],
+      a: 1,
+      e: '32개 암종을 살핀 연구에서 핵심 돌연변이의 약 3분의 2가 무작위 복제 실수였습니다. 다만 폐암처럼 환경과 생활습관의 몫이 훨씬 큰 암도 있어 편차가 큽니다. 어느 쪽이든 진단서는 잘잘못을 가리는 판결문이 아닙니다.'
+    }
+  ];
+
+  var quizEl = document.getElementById('quiz');
+  var scoreEl = document.getElementById('score');
+  var answered = 0, correct = 0;
+
+  QS.forEach(function (item, i) {
+    var wrap = document.createElement('div');
+    wrap.className = 'q';
+
+    var qt = document.createElement('p');
+    qt.className = 'qt';
+    var em = document.createElement('em');
+    em.textContent = 'Q' + (i + 1) + '. ';
+    qt.appendChild(em);
+    qt.appendChild(document.createTextNode(item.q));
+
+    var opts = document.createElement('div');
+    opts.className = 'opts';
+
+    var expl = document.createElement('p');
+    expl.className = 'expl';
+    expl.hidden = true;
+    expl.textContent = item.e;
+
+    item.o.forEach(function (text, oi) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = text;
+      b.addEventListener('click', function () {
+        if (expl.hidden === false) return;
+        var btns = opts.querySelectorAll('button');
+        btns.forEach(function (x, xi) {
+          x.disabled = true;
+          if (xi === item.a) x.classList.add('right');
+        });
+        if (oi !== item.a) b.classList.add('wrong'); else correct++;
+        expl.hidden = false;
+        answered++;
+        if (answered === QS.length) {
+          scoreEl.hidden = false;
+          scoreEl.innerHTML = '';
+          var n = document.createElement('span');
+          n.className = 'n';
+          n.textContent = correct + ' / ' + QS.length;
+          var msg = document.createElement('span');
+          msg.textContent = correct === QS.length ? '전부 맞히셨습니다. C1 과정을 이해하셨습니다.'
+            : correct >= 3 ? '핵심은 잡으셨습니다. 틀린 문항의 설명을 한 번 더 보세요.'
+            : '괜찮습니다. 02번 액셀·브레이크와 04번 시간 부분을 다시 보시면 대부분 정리됩니다.';
+          scoreEl.appendChild(n);
+          scoreEl.appendChild(msg);
+        }
+      });
+      opts.appendChild(b);
+    });
+
+    wrap.appendChild(qt);
+    wrap.appendChild(opts);
+    wrap.appendChild(expl);
+    quizEl.appendChild(wrap);
+  });
+
+  /* ---------- 공유 ---------- */
+  document.getElementById('shareBtn').addEventListener('click', async function () {
+    var text = '암이란 무엇인가 — 정상세포는 왜 암세포가 되는가';
+    var url = location.href;
+    try {
+      if (window.AppsInToss && typeof window.AppsInToss.share === 'function') {
+        if (typeof window.AppsInToss.getTossShareLink === 'function') {
+          try { url = await window.AppsInToss.getTossShareLink(); } catch (_) {}
+        }
+        await window.AppsInToss.share({ message: text + '\n' + url });
+        return;
+      }
+      if (navigator.share) {
+        await navigator.share({ title: '암이란 무엇인가', text: text, url: url });
+        return;
+      }
+      await navigator.clipboard.writeText(text + '\n' + url);
+      this.textContent = '링크를 복사했습니다';
+      var self = this;
+      setTimeout(function () { self.textContent = '이 자료 공유하기'; }, 2000);
+    } catch (_) { /* 사용자가 취소한 경우 */ }
+  });
+
+})();
+</script>
+</body>
+</html>
