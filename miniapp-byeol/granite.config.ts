@@ -18,7 +18,7 @@ export default defineConfig({
   brand: {
     displayName: '곁별',
     primaryColor: '#1b2a5c',
-    icon: 'https://metaluca8560.vercel.app/gyeotbyeol-icon.png',
+    icon: 'https://vaulted-bus-346411.web.app/byeol/images/gyeotbyeol-icon.png',
   },
   permissions: [],
 });
