@@ -57,6 +57,6 @@ const c = await b.newContext({ viewport: { width: 1200, height: 630 }, deviceSca
 const p = await c.newPage();
 await p.setContent(html);
 await p.waitForTimeout(250);
-await p.screenshot({ path: '/home/user/metaluca8560/cancer-screening-og.png' });
+await p.screenshot({ path: '/home/user/metaluca8560/cancer-screening-card.png' });
 await b.close();
 console.log('생성: og-try.png');
