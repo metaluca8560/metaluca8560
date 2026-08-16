@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>곁별</title>
+<meta name="description" content="생일만 넣으면 오행 정령으로 바뀌고, 내 곁의 사람들과 궁합을 성좌 지도로 보여줘요.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://vaulted-bus-346411.web.app/byeol">
+<meta property="og:title" content="곁별 ⭐ 내 곁의 별">
+<meta property="og:description" content="생일만 넣으면 오행 정령이 되고, 내 곁의 사람들과 궁합을 성좌 지도로 봐요">
+<meta property="og:image" content="https://vaulted-bus-346411.web.app/byeol/images/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/styles.css?v=8">
+</head>
+<body>
+<main>
+  <section class="screen active" id="screen-intro">
+    <h1>곁별 ⭐</h1>
+    <p class="subtitle">생일만 넣으면 내 오행 정령이 나오고,<br>내 곁의 사람들이 별로 떠요</p>
+    <div class="form">
+      <input type="text" id="me-name" class="fld" placeholder="내 이름 또는 별명" maxlength="12">
+      <input type="number" id="me-year" class="fld" placeholder="태어난 해 (예: 1990)" min="1900" max="2099">
+      <div class="row">
+        <input type="number" id="me-month" class="fld" placeholder="월" min="1" max="12">
+        <input type="number" id="me-day" class="fld" placeholder="일" min="1" max="31">
+      </div>
+      <div class="seg" id="me-cal">
+        <button type="button" class="seg-btn active" data-cal="solar">양력</button>
+        <button type="button" class="seg-btn" data-cal="lunar">음력</button>
+      </div>
+      <p class="hint">태어난 시간은 안 물어봐요. 생년월일만 있으면 돼요.</p>
+      <button id="btn-me">내 정령 보기</button>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-me">
+    <div id="me-card"></div>
+    <button id="btn-to-add">곁의 사람 추가하러 가기</button>
+    <button id="btn-me-reset" style="background:none;border:1px solid #2a3559;color:#9fb0d6;font-size:14px;padding:12px;border-radius:12px;margin-top:10px">내 생일 다시 넣기</button>
+    <button id="btn-to-guide" style="background:none;border:1px solid #2a3559;color:#9fb0d6;font-size:14px;padding:12px;border-radius:12px;margin-top:8px">🧚 오행 정령 5인방 소개</button>
+  </section>
+
+  <section class="screen" id="screen-guide">
+    <h2>오행 정령 5인방</h2>
+    <p class="subtitle">태어난 날의 기운이 나의 정령이 돼요</p>
+    <div id="guide-list"></div>
+    <button id="btn-guide-back">돌아가기</button>
+  </section>
+
+  <section class="screen" id="screen-add">
+    <h2>곁의 사람 추가</h2>
+    <p class="subtitle">아는 사람 생일을 넣으면 나와의 궁합이 지도에 떠요</p>
+    <div class="form">
+      <input type="text" id="add-name" class="fld" placeholder="이름 또는 별명" maxlength="12">
+      <input type="number" id="add-year" class="fld" placeholder="태어난 해" min="1900" max="2099">
+      <div class="row">
+        <input type="number" id="add-month" class="fld" placeholder="월" min="1" max="12">
+        <input type="number" id="add-day" class="fld" placeholder="일" min="1" max="31">
+      </div>
+      <div class="seg" id="add-cal">
+        <button type="button" class="seg-btn active" data-cal="solar">양력</button>
+        <button type="button" class="seg-btn" data-cal="lunar">음력</button>
+      </div>
+      <button id="btn-add">지도에 별로 올리기</button>
+    </div>
+    <div id="people-list"></div>
+    <button id="btn-to-map">성좌 지도 보기</button>
+  </section>
+  <section class="screen" id="screen-map">
+    <h2 id="map-title">내 곁의 별</h2>
+    <div id="map-note"></div>
+    <div id="byeol-map"></div>
+    <div id="map-counts"></div>
+    <h3 class="rank-title">케미 순위</h3>
+    <div id="rank-list"></div>
+    <div id="person-detail" class="detail-hidden"></div>
+    <button id="btn-back-add">사람 더 추가</button>
+  </section>
+</main>
+<script src="/lib/lunar.js"></script>
+<script src="/data.js"></script>
+<script src="/saju.js"></script>
+<script src="/compat.js"></script>
+<script src="/people.js"></script>
+<script src="/map.js?v=4"></script>
+<script src="/app.js?v=8"></script>
+</body>
+</html>
