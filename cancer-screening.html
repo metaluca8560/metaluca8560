@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>내 검진, 언제지?</title>
+<meta name="description" content="태어난 해만 넣으면 올해 받을 국가암검진 항목과 다음 차례 연도를 계산합니다. 결과는 기기에만 저장되고, 휴대폰 달력에 알림으로 넣을 수 있습니다." />
+<meta name="author" content="디지털다락방" />
+<link rel="canonical" href="https://luca-darakbang.netlify.app/cancer-screening.html" />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="디지털다락방" />
+<meta property="og:title" content="내 검진, 언제지?" />
+<meta property="og:description" content="태어난 해만 넣으면 올해 받을 국가암검진 항목과 다음 차례 연도를 계산합니다. 달력 알림까지 한 번에." />
+<meta property="og:url" content="https://luca-darakbang.netlify.app/cancer-screening.html" />
+<meta property="og:image" content="https://luca-darakbang.netlify.app/cancer-screening-og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="ko_KR" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="내 검진, 언제지?" />
+<meta name="twitter:description" content="태어난 해만 넣으면 올해 받을 국가암검진 항목과 다음 차례 연도를 계산합니다." />
+<meta name="twitter:image" content="https://luca-darakbang.netlify.app/cancer-screening-og.png" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%236C3FC5'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23D0356A'/%3E%3C/svg%3E" />
+<style>
+:root {
+  --ground:#FCF8FA; --card:#FFF; --card-2:#F6EFF4;
+  --ink:#2B1B3F; --ink-mid:#5C4B72; --ink-soft:#8B7BA0;
+  --line:#EADFE8; --line-firm:#DBCBDA;
+  --hema:#6C3FC5; --hema-soft:#EFE8FC;
+  --g1:#B84200; --g2:#827800; --g3:#007A46; --g4:#00838E; --g5:#006FA8; --g8:#C94677;
+  --eosin:#D0356A; --eosin-soft:#FCE7EF;
+  --on-accent:#FFF;
+  /* 계통색을 배경으로 깔 때 그 위에 올릴 글자색.
+     계통색의 다크 스텝은 밝기가 제각각이라 한 값으로 못 덮는다 — 계통별로 계산해 둔다. */
+  --on-g1:#FFF; --on-g2:#FFF; --on-g3:#FFF; --on-g4:#FFF; --on-g5:#FFF; --on-g8:#FFF;
+  --shadow:0 1px 2px rgba(43,27,63,.05), 0 8px 24px -12px rgba(43,27,63,.16);
+  --sans:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --w:38rem;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#140E1D; --card:#1D1529; --card-2:#281D38;
+  --ink:#F3EDF8; --ink-mid:#C3B5D4; --ink-soft:#8F80A6;
+  --line:#342844; --line-firm:#43344F;
+  --hema:#B294F7; --hema-soft:#2A1E47;
+  --g1:#B33700; --g2:#978600; --g3:#22C77E; --g4:#00A6B2; --g5:#006DB4; --g8:#E65F83;
+  --eosin:#FF7DA8; --eosin-soft:#3B1B2B;
+  --on-accent:#140E1D;
+  /* g1·g5의 다크 스텝은 어두운 색이라 흰 글자, 나머지는 밝아서 어두운 글자 */
+  --on-g1:#FFF; --on-g2:#140E1D; --on-g3:#140E1D;
+  --on-g4:#140E1D; --on-g5:#FFF; --on-g8:#140E1D;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
+}}
+:root[data-theme="dark"]{
+  --ground:#140E1D; --card:#1D1529; --card-2:#281D38;
+  --ink:#F3EDF8; --ink-mid:#C3B5D4; --ink-soft:#8F80A6;
+  --line:#342844; --line-firm:#43344F;
+  --hema:#B294F7; --hema-soft:#2A1E47;
+  --g1:#B33700; --g2:#978600; --g3:#22C77E; --g4:#00A6B2; --g5:#006DB4; --g8:#E65F83;
+  --eosin:#FF7DA8; --eosin-soft:#3B1B2B;
+  --on-accent:#140E1D;
+  /* g1·g5의 다크 스텝은 어두운 색이라 흰 글자, 나머지는 밝아서 어두운 글자 */
+  --on-g1:#FFF; --on-g2:#140E1D; --on-g3:#140E1D;
+  --on-g4:#140E1D; --on-g5:#FFF; --on-g8:#140E1D;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.8;word-break:keep-all;overflow-wrap:break-word;
+  -webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom);
+}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 1.25rem 4rem}
+
+header{padding:clamp(2.5rem,8vw,4rem) 0 0;display:flex;flex-direction:column;gap:.8rem}
+.up{
+  align-self:flex-start;font-size:.82rem;color:var(--ink-soft);text-decoration:none;
+  margin-bottom:.4rem;
+}
+.up:hover{color:var(--hema)}
+h1{font-size:clamp(2rem,7.6vw,2.8rem);font-weight:800;letter-spacing:-.045em;line-height:1.16;margin:0;text-wrap:balance}
+.lede{margin:0;font-size:1.03rem;color:var(--ink-mid);max-width:34ch}
+.meta{margin:.25rem 0 0;font-size:.8rem;color:var(--ink-soft);letter-spacing:.03em}
+
+section{padding-top:clamp(2.2rem,5.5vw,3.2rem);display:flex;flex-direction:column;gap:1rem}
+h2{font-size:1.25rem;font-weight:800;letter-spacing:-.03em;margin:0}
+p{margin:0;color:var(--ink-mid)}
+strong{color:var(--ink);font-weight:700}
+
+/* ============ 입력 ============ */
+.form{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:1.35rem 1.3rem;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:1.25rem;
+}
+.field{display:flex;flex-direction:column;gap:.5rem}
+.field > label,.field > .lab{font-size:.86rem;font-weight:700;color:var(--ink)}
+.hint{font-size:.79rem;color:var(--ink-soft);line-height:1.6}
+
+.yearbox{display:flex;align-items:baseline;gap:.5rem}
+#yearIn{
+  width:7.5rem;font-family:inherit;font-size:1.5rem;font-weight:800;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;
+  padding:.5rem .7rem;border-radius:11px;border:1.5px solid var(--line-firm);
+  background:var(--ground);color:var(--ink);
+}
+#yearIn:focus{border-color:var(--hema);outline:none}
+.yearbox .unit{font-size:.95rem;color:var(--ink-mid);font-weight:600}
+#ageEcho{font-size:.82rem;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+
+.seg{display:flex;gap:.4rem}
+.seg button{
+  flex:1;font-family:inherit;font-size:.92rem;font-weight:700;cursor:pointer;
+  padding:.6rem .5rem;border-radius:11px;border:1.5px solid var(--line-firm);
+  background:var(--ground);color:var(--ink-mid);transition:all .13s;
+}
+.seg button[aria-pressed="true"]{
+  background:var(--hema);border-color:var(--hema);color:var(--on-accent);
+}
+
+.checks{display:flex;flex-direction:column;gap:.55rem}
+.chk{
+  display:flex;gap:.7rem;align-items:flex-start;cursor:pointer;
+  padding:.75rem .85rem;border-radius:11px;
+  border:1.5px solid var(--line);background:var(--ground);transition:border-color .13s;
+}
+.chk:has(input:checked){border-color:var(--hema);background:var(--hema-soft)}
+.chk input{width:1.15rem;height:1.15rem;margin:.28rem 0 0;accent-color:var(--hema);flex:none}
+.chk .txt{min-width:0}
+.chk .txt b{display:block;font-size:.9rem;font-weight:700;color:var(--ink)}
+.chk .txt span{display:block;font-size:.79rem;color:var(--ink-soft);line-height:1.55}
+
+/* ============ 결과 ============ */
+.tally{
+  display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;
+  background:var(--hema-soft);border-radius:13px;padding:.9rem 1.1rem;
+}
+.tally .big{font-size:1.6rem;font-weight:800;color:var(--hema);font-variant-numeric:tabular-nums;line-height:1}
+.tally .say{font-size:.92rem;color:var(--ink-mid);line-height:1.55;min-width:0;flex:1}
+.tally .say b{color:var(--ink)}
+
+.items{display:flex;flex-direction:column;gap:.7rem}
+.item{
+  display:grid;grid-template-columns:6px 1fr;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  overflow:hidden;box-shadow:var(--shadow);
+}
+.item .rail{background:var(--c)}
+.item-body{padding:1rem 1.15rem;display:flex;flex-direction:column;gap:.45rem;min-width:0}
+.item .top{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.item .nm{font-size:1.1rem;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
+.item .cyc{
+  font-size:.71rem;font-weight:800;letter-spacing:.04em;
+  background:var(--c);color:var(--on-c);border-radius:99px;padding:.1rem .5rem;
+}
+.item .how{font-size:.88rem;color:var(--ink-mid);line-height:1.6}
+.item .when{
+  font-size:.88rem;font-weight:700;line-height:1.6;
+  padding:.5rem .75rem;border-radius:9px;background:var(--card-2);color:var(--ink);
+}
+.item .when.now{background:var(--c);color:var(--on-c)}
+.item .more{font-size:.81rem;color:var(--hema);text-decoration:none;font-weight:700}
+.item .more:hover{text-decoration:underline}
+.item.g1{--c:var(--g1);--on-c:var(--on-g1)}
+.item.g2{--c:var(--g2);--on-c:var(--on-g2)}
+.item.g3{--c:var(--g3);--on-c:var(--on-g3)}
+.item.g4{--c:var(--g4);--on-c:var(--on-g4)}
+.item.g5{--c:var(--g5);--on-c:var(--on-g5)}
+.item.g8{--c:var(--g8);--on-c:var(--on-g8)}
+
+.none{
+  background:var(--card);border:1px dashed var(--line-firm);border-radius:14px;
+  padding:1.15rem 1.2rem;font-size:.93rem;color:var(--ink-mid);line-height:1.7;
+}
+.none b{display:block;color:var(--ink);font-size:1rem;margin-bottom:.3rem}
+
+/* ============ 저장 · 달력 ============ */
+.acts{display:flex;flex-direction:column;gap:.6rem}
+.btn{
+  font-family:inherit;font-size:.95rem;font-weight:700;cursor:pointer;
+  padding:.85rem 1rem;border-radius:12px;border:1.5px solid var(--hema);
+  background:var(--hema);color:var(--on-accent);transition:opacity .13s;
+  display:flex;align-items:center;justify-content:center;gap:.45rem;
+}
+.btn:hover{opacity:.88}
+.btn.ghost{background:transparent;color:var(--hema)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.said{
+  font-size:.84rem;color:var(--ink-soft);line-height:1.65;text-align:center;
+  min-height:1.4rem;
+}
+.said.ok{color:var(--g3);font-weight:700}
+
+.saved{
+  display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;
+  font-size:.84rem;color:var(--ink-soft);
+  background:var(--card-2);border-radius:11px;padding:.65rem .9rem;
+}
+.saved b{color:var(--ink)}
+.saved button{
+  margin-left:auto;font-family:inherit;font-size:.79rem;color:var(--ink-soft);
+  background:none;border:none;cursor:pointer;text-decoration:underline;padding:0;
+}
+.saved button:hover{color:var(--eosin)}
+
+/* ============ 설명 ============ */
+.rules{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem}
+.rules li{
+  background:var(--card);border:1px solid var(--line);border-left:3px solid var(--hema);
+  border-radius:11px;padding:.85rem 1rem;font-size:.91rem;color:var(--ink-mid);line-height:1.7;
+}
+.rules li b{color:var(--ink)}
+
+.notice{
+  position:relative;background:var(--eosin-soft);border-radius:12px;
+  padding:1rem 1.15rem 1rem 2.7rem;font-size:.91rem;color:var(--ink-mid);line-height:1.7;
+}
+.notice::before{
+  content:"!";position:absolute;left:1.1rem;top:1.15rem;
+  display:grid;place-items:center;width:1.15rem;height:1.15rem;border-radius:50%;
+  background:var(--eosin);color:var(--ground);font-size:.74rem;font-weight:800;line-height:1;
+}
+.notice b{color:var(--ink)}
+
+.srcs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.4rem;
+  font-size:.82rem;color:var(--ink-soft);line-height:1.65}
+.srcs li{padding-left:.9rem;position:relative}
+.srcs li::before{content:"·";position:absolute;left:.15rem;top:0}
+
+footer{
+  margin-top:clamp(2.5rem,6vw,3.5rem);padding-top:1.5rem;border-top:1px solid var(--line);
+  display:flex;flex-direction:column;gap:.7rem;font-size:.82rem;color:var(--ink-soft);line-height:1.7;
+}
+footer a{color:var(--hema)}
+:focus-visible{outline:2px solid var(--eosin);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <a class="up" href="cancer.html">← 암, 뭐부터 알아야 해?</a>
+  <h1>내 검진, 언제지?</h1>
+  <p class="lede">국가암검진은 태어난 해에 따라 받는 해가 갈립니다. 그래서 헷갈립니다. 태어난 해만 넣으면 올해 받을 것과 다음 차례를 계산해 드립니다.</p>
+  <p class="meta">2026년 국가암검진 기준 · 입력값은 이 기기에만 남습니다</p>
+</header>
+
+<section>
+  <div class="form">
+    <div class="field">
+      <label for="yearIn">태어난 해</label>
+      <div class="yearbox">
+        <input id="yearIn" type="number" inputmode="numeric" placeholder="1980" min="1900" max="2026" step="1" autocomplete="bday-year" />
+        <span class="unit">년생</span>
+      </div>
+      <p class="hint">생일이 아니라 <strong>연도</strong>만 씁니다. 공단도 생일이 아니라 출생연도로 대상자를 정합니다.</p>
+      <p id="ageEcho" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="field">
+      <span class="lab" id="sexLab">성별</span>
+      <div class="seg" id="sexSeg" role="group" aria-labelledby="sexLab">
+        <button type="button" data-sex="f" aria-pressed="true">여성</button>
+        <button type="button" data-sex="m" aria-pressed="false">남성</button>
+      </div>
+      <p class="hint">유방암·자궁경부암 검진은 여성만 대상입니다.</p>
+    </div>
+
+    <div class="field">
+      <span class="lab">해당되면 눌러 주세요</span>
+      <div class="checks">
+        <label class="chk">
+          <input type="checkbox" id="chkLiver" />
+          <span class="txt">
+            <b>간암 고위험군</b>
+            <span>간경변증이 있거나, B형·C형 간염 바이러스를 갖고 있는 경우</span>
+          </span>
+        </label>
+        <label class="chk">
+          <input type="checkbox" id="chkSmoke" />
+          <span class="txt">
+            <b>30갑년 이상 흡연</b>
+            <span>하루 한 갑씩 30년, 두 갑씩 15년이면 30갑년입니다. 끊은 지 15년이 안 된 분도 포함됩니다.</span>
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="resultSec" hidden>
+  <h2>이렇게 나옵니다</h2>
+  <div class="tally" id="tally" role="status" aria-live="polite"></div>
+  <div class="items" id="items"></div>
+
+  <div class="acts">
+    <button type="button" class="btn" id="icsBtn">휴대폰 달력에 알림으로 넣기</button>
+    <button type="button" class="btn ghost" id="saveBtn">이 기기에 저장해 두기</button>
+    <p class="said" id="said"></p>
+  </div>
+  <p class="hint">달력 파일(.ics)을 만들어 드립니다. 열어서 캘린더에 넣으면 <strong>다음 차례가 올 때 휴대폰이 알려 줍니다.</strong> 서버로 아무것도 보내지 않으니, 기기를 바꾸면 다시 넣으셔야 합니다.</p>
+</section>
+
+<section>
+  <h2>왜 해마다 대상이 달라질까</h2>
+  <ul class="rules">
+    <li><b>2년에 한 번 받는 검진은 태어난 해로 갈립니다.</b> 출생연도 끝자리가 짝수면 짝수 해에, 홀수면 홀수 해에 받습니다. 위암·유방암·자궁경부암·폐암이 여기 해당합니다. 2026년은 짝수 해라 짝수 해에 태어난 분들이 대상입니다.</li>
+    <li><b>대장암과 간암은 이 규칙을 따르지 않습니다.</b> 대장암은 만 50세부터 해마다, 간암 고위험군은 상반기·하반기로 나눠 6개월마다 받습니다. 태어난 해와 상관없습니다.</li>
+    <li><b>나이는 생일이 아니라 연도로 셉니다.</b> 2026년에 만 40세가 되는 1986년생은 생일이 지나지 않았어도 올해 위암검진 대상입니다.</li>
+    <li><b>2028년에 기준이 바뀝니다.</b> 2026년 2월 확정된 제5차 암관리종합계획에 따라, 대장암은 45~74세에게 10년 주기 대장내시경을 권고하는 쪽으로 옮겨 가고 폐암 검진 대상도 넓어질 예정입니다. 위 계산은 <strong>지금 시행 중인 기준</strong>입니다.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="notice">이건 <b>국가암검진 기준을 대신 계산해 주는 것</b>일 뿐, 진료가 아닙니다. 가족력이나 앓고 있는 병에 따라 필요한 검사는 달라집니다. 그리고 <b>몸에 걸리는 데가 있다면 검진 차례를 기다리지 마세요.</b> 검진은 아무 증상이 없을 때 받는 것이고, 증상이 있으면 그건 검진이 아니라 진료로 갈 일입니다.</div>
+</section>
+
+<section>
+  <h2>어디서 가져온 기준인가</h2>
+  <ul class="srcs">
+    <li>국가암검진사업 — 6대암 검진 대상 연령·주기·방법 (보건복지부·국립암센터)</li>
+    <li>국민건강보험공단 건강검진 안내 — 출생연도 홀·짝수에 따른 대상 연도</li>
+    <li>제5차 암관리종합계획(2026~2030), 국가암관리위원회 심의·의결 2026년 2월 24일</li>
+  </ul>
+  <p class="hint">계산 규칙은 위 기준을 그대로 옮긴 것입니다. 확인되지 않은 항목은 넣지 않았습니다.</p>
+</section>
+
+<footer>
+  <p>만든 곳 · <a href="index.html">디지털다락방</a> · <a href="cancer.html">암 자료 전체 보기</a></p>
+  <p>기준이 바뀌었는데 여기가 그대로면 알려 주세요. 확인해서 고치겠습니다.</p>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var NOW = new Date();
+  var THIS_YEAR = NOW.getFullYear();
+  var KEY = 'darakbang.screening.v1';
+
+  var yearIn   = document.getElementById('yearIn');
+  var ageEcho  = document.getElementById('ageEcho');
+  var sexSeg   = document.getElementById('sexSeg');
+  var chkLiver = document.getElementById('chkLiver');
+  var chkSmoke = document.getElementById('chkSmoke');
+  var resultSec= document.getElementById('resultSec');
+  var tally    = document.getElementById('tally');
+  var itemsEl  = document.getElementById('items');
+  var icsBtn   = document.getElementById('icsBtn');
+  var saveBtn  = document.getElementById('saveBtn');
+  var said     = document.getElementById('said');
+
+  var sex = 'f';
+  var current = [];   // 계산된 검진 항목
+
+  /* ---------- 검진 규칙 ----------
+     주기 종류
+       biennial : 2년마다. 출생연도 끝자리 짝·홀에 따라 받는 해가 갈린다.
+       annual   : 해마다. 출생연도와 무관.
+       biannual : 6개월마다(상·하반기). 출생연도와 무관.
+  ------------------------------------ */
+  var RULES = [
+    { key:'stomach', name:'위암', group:'g1', minAge:40,
+      how:'위내시경 검사 (형편이 안 되면 위장조영검사)',
+      cycle:'biennial', cycleLabel:'2년마다', link:'cancer-stomach.html' },
+
+    { key:'colon', name:'대장암', group:'g3', minAge:50,
+      how:'분변잠혈검사 — 피가 섞여 나오면 대장내시경으로 넘어갑니다',
+      cycle:'annual', cycleLabel:'해마다', link:'cancer-colorectal.html' },
+
+    { key:'liver', name:'간암', group:'g2', minAge:40, needs:'liver',
+      how:'간 초음파 + 혈액검사(AFP)',
+      cycle:'biannual', cycleLabel:'6개월마다', link:'cancer-liver.html' },
+
+    { key:'breast', name:'유방암', group:'g8', minAge:40, female:true,
+      how:'유방촬영술 (맘모그래피)',
+      cycle:'biennial', cycleLabel:'2년마다', link:'cancer-breast.html' },
+
+    { key:'cervix', name:'자궁경부암', group:'g4', minAge:20, female:true,
+      how:'자궁경부세포검사',
+      cycle:'biennial', cycleLabel:'2년마다', link:null },
+
+    { key:'lung', name:'폐암', group:'g5', minAge:54, maxAge:74, needs:'smoke',
+      how:'저선량 흉부 CT',
+      cycle:'biennial', cycleLabel:'2년마다', link:'cancer-lung.html' }
+  ];
+
+  /* 태어난 해로 2년 주기 항목의 대상 연도를 정한다.
+     끝자리가 짝수면 짝수 해, 홀수면 홀수 해. */
+  function biennialYear(birthYear) {
+    var mine = birthYear % 2;              // 0 = 짝수해 출생, 1 = 홀수해 출생
+    return (THIS_YEAR % 2 === mine) ? THIS_YEAR : THIS_YEAR + 1;
+  }
+
+  function halfLabel() {
+    return NOW.getMonth() < 6 ? '상반기' : '하반기';
+  }
+
+  function compute(birthYear) {
+    var age = THIS_YEAR - birthYear;       // 연 나이 — 공단 기준과 같다
+    var out = [];
+
+    RULES.forEach(function (r) {
+      if (age < r.minAge) return;
+      if (r.maxAge != null && age > r.maxAge) return;
+      if (r.female && sex !== 'f') return;
+      if (r.needs === 'liver' && !chkLiver.checked) return;
+      if (r.needs === 'smoke' && !chkSmoke.checked) return;
+
+      var it = { rule:r, name:r.name, group:r.group, how:r.how,
+                 cycleLabel:r.cycleLabel, link:r.link };
+
+      if (r.cycle === 'annual') {
+        it.year = THIS_YEAR;
+        it.due  = true;
+        it.when = THIS_YEAR + '년 — 올해 대상입니다. 해마다 받는 검사라 매년 돌아옵니다.';
+      } else if (r.cycle === 'biannual') {
+        it.year = THIS_YEAR;
+        it.due  = true;
+        it.when = THIS_YEAR + '년 ' + halfLabel() + ' — 6개월마다라 올해 두 번 대상입니다.';
+      } else {
+        var y = biennialYear(birthYear);
+        it.year = y;
+        it.due  = (y === THIS_YEAR);
+        it.when = it.due
+          ? y + '년 — 올해가 그 해입니다. 12월 31일까지 받으시면 됩니다.'
+          : y + '년 — 올해는 대상이 아닙니다. 내년에 돌아옵니다.';
+      }
+      out.push(it);
+    });
+
+    return out;
+  }
+
+  /* ---------- 그리기 ---------- */
+  function render() {
+    var birthYear = parseInt(yearIn.value, 10);
+    var valid = !isNaN(birthYear) && birthYear >= 1900 && birthYear <= THIS_YEAR;
+
+    if (!valid) {
+      ageEcho.textContent = '';
+      resultSec.hidden = true;
+      current = [];
+      return;
+    }
+
+    var age = THIS_YEAR - birthYear;
+    ageEcho.textContent = '올해 ' + age + '세 · 끝자리 ' +
+      (birthYear % 2 === 0 ? '짝수 → 짝수 해가 검진 해' : '홀수 → 홀수 해가 검진 해');
+
+    current = compute(birthYear);
+    resultSec.hidden = false;
+    itemsEl.textContent = '';
+    said.textContent = '';
+    said.className = 'said';
+
+    if (!current.length) {
+      tally.textContent = '';
+      var n = document.createElement('div');
+      n.className = 'none';
+      var nb = document.createElement('b');
+      nb.textContent = '지금 해당되는 국가암검진 항목이 없습니다';
+      var ns = document.createElement('span');
+      ns.textContent = age < 20
+        ? '가장 이른 항목이 만 20세 이상 여성의 자궁경부암 검진입니다. 나이가 되면 순서대로 대상이 됩니다.'
+        : '나이가 되면 순서대로 대상이 됩니다. 만 40세가 되면 위암 검진부터 시작됩니다. 그 전이라도 몸에 걸리는 데가 있으면 검진 대상 여부와 상관없이 진료를 받으세요.';
+      n.appendChild(nb); n.appendChild(ns);
+      itemsEl.appendChild(n);
+      icsBtn.disabled = true;
+      return;
+    }
+
+    icsBtn.disabled = false;
+
+    var dueCount = current.filter(function (i) { return i.due; }).length;
+    tally.textContent = '';
+    var big = document.createElement('span');
+    big.className = 'big';
+    big.textContent = dueCount + '개';
+    var say = document.createElement('span');
+    say.className = 'say';
+    if (dueCount === 0) {
+      big.textContent = '0개';
+      say.innerHTML = '올해 받을 것은 없습니다. 해당되는 항목 ' +
+        current.length + '개는 모두 <b>내년</b>이 차례입니다.';
+    } else {
+      say.innerHTML = '올해 안에 받으실 것이 <b>' + dueCount + '개</b> 있습니다. ' +
+        (current.length > dueCount
+          ? '나머지 ' + (current.length - dueCount) + '개는 내년 차례입니다.'
+          : '12월 31일까지 받으시면 됩니다.');
+    }
+    tally.appendChild(big);
+    tally.appendChild(say);
+
+    current.forEach(function (it) {
+      var el = document.createElement('div');
+      el.className = 'item ' + it.group;
+
+      var rail = document.createElement('span');
+      rail.className = 'rail';
+      el.appendChild(rail);
+
+      var body = document.createElement('div');
+      body.className = 'item-body';
+
+      var top = document.createElement('div');
+      top.className = 'top';
+      var nm = document.createElement('span');
+      nm.className = 'nm'; nm.textContent = it.name;
+      var cy = document.createElement('span');
+      cy.className = 'cyc'; cy.textContent = it.cycleLabel;
+      top.appendChild(nm); top.appendChild(cy);
+      body.appendChild(top);
+
+      var how = document.createElement('p');
+      how.className = 'how'; how.textContent = it.how;
+      body.appendChild(how);
+
+      var when = document.createElement('p');
+      when.className = 'when' + (it.due ? ' now' : '');
+      when.textContent = it.when;
+      body.appendChild(when);
+
+      if (it.link) {
+        var a = document.createElement('a');
+        a.className = 'more'; a.href = it.link;
+        a.textContent = it.name + '은 어떤 병인지 읽어 보기 →';
+        body.appendChild(a);
+      }
+
+      el.appendChild(body);
+      itemsEl.appendChild(el);
+    });
+  }
+
+  /* ---------- 달력 파일 ---------- */
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function ymd(d) { return d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()); }
+  function esc(s) { return String(s).replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n'); }
+
+  /* 첫 알림 날짜. 대상 연도가 아직 안 왔으면 그 해 3월 2일,
+     이미 그 해 안에 들어와 있으면 지금부터 일주일 뒤. */
+  function firstDate(it) {
+    if (it.year > THIS_YEAR) return new Date(it.year, 2, 2);
+    var soon = new Date(NOW.getFullYear(), NOW.getMonth(), NOW.getDate() + 7);
+    var anchor = new Date(it.year, 2, 2);
+    return anchor > soon ? anchor : soon;
+  }
+
+  function rrule(it) {
+    if (it.rule.cycle === 'annual')   return 'FREQ=YEARLY';
+    if (it.rule.cycle === 'biannual') return 'FREQ=MONTHLY;INTERVAL=6';
+    return 'FREQ=YEARLY;INTERVAL=2';
+  }
+
+  function buildIcs(list) {
+    var stamp = ymd(NOW) + 'T' + pad(NOW.getHours()) + pad(NOW.getMinutes()) + '00';
+    var L = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//디지털다락방//국가암검진 알림//KO',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'X-WR-CALNAME:내 국가암검진'
+    ];
+
+    list.forEach(function (it, i) {
+      var start = firstDate(it);
+      var end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + 1);
+      var desc = it.how + '\n' + it.cycleLabel + ' 받는 검진입니다.\n' +
+                 '그 해 안에 아무 때나 받으시면 되니 날짜는 편한 대로 옮기셔도 됩니다.\n' +
+                 '가까운 검진기관은 국민건강보험공단에서 확인하실 수 있습니다.';
+
+      L.push(
+        'BEGIN:VEVENT',
+        'UID:' + it.rule.key + '-' + ymd(start) + '-' + i + '@darakbang',
+        'DTSTAMP:' + stamp,
+        'DTSTART;VALUE=DATE:' + ymd(start),
+        'DTEND;VALUE=DATE:' + ymd(end),
+        'RRULE:' + rrule(it),
+        'SUMMARY:' + esc(it.name + ' 검진 (국가암검진)'),
+        'DESCRIPTION:' + esc(desc),
+        'TRANSP:TRANSPARENT',
+        'BEGIN:VALARM',
+        'TRIGGER:-P7D',
+        'ACTION:DISPLAY',
+        'DESCRIPTION:' + esc(it.name + ' 검진 받으실 때가 됐습니다'),
+        'END:VALARM',
+        'END:VEVENT'
+      );
+    });
+
+    L.push('END:VCALENDAR');
+    return L.join('\r\n');
+  }
+
+  icsBtn.addEventListener('click', function () {
+    if (!current.length) return;
+    try {
+      var blob = new Blob(['﻿' + buildIcs(current)],
+                          { type: 'text/calendar;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = '국가암검진.ics';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      said.textContent = '달력 파일을 만들었습니다. 열어서 캘린더에 넣어 주세요.';
+      said.className = 'said ok';
+    } catch (e) {
+      said.textContent = '이 브라우저에서는 달력 파일을 내려받지 못했습니다. 다른 브라우저에서 열어 보시거나, 위 연도를 직접 달력에 적어 두세요.';
+      said.className = 'said';
+    }
+  });
+
+  /* ---------- 저장 ---------- */
+  function store() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify({
+        y: yearIn.value, s: sex,
+        l: chkLiver.checked, k: chkSmoke.checked
+      }));
+      return true;
+    } catch (e) { return false; }
+  }
+
+  function restore() {
+    var raw;
+    try { raw = localStorage.getItem(KEY); } catch (e) { return false; }
+    if (!raw) return false;
+    try {
+      var v = JSON.parse(raw);
+      yearIn.value = v.y || '';
+      sex = v.s === 'm' ? 'm' : 'f';
+      chkLiver.checked = !!v.l;
+      chkSmoke.checked = !!v.k;
+      sexSeg.querySelectorAll('button').forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.dataset.sex === sex));
+      });
+      return true;
+    } catch (e) { return false; }
+  }
+
+  saveBtn.addEventListener('click', function () {
+    if (store()) {
+      said.textContent = '저장했습니다. 다음에 오시면 그대로 떠 있습니다.';
+      said.className = 'said ok';
+    } else {
+      said.textContent = '이 브라우저에서는 저장이 막혀 있습니다. 시크릿 모드가 아닌 창에서 시도해 보세요.';
+      said.className = 'said';
+    }
+  });
+
+  /* ---------- 이벤트 ---------- */
+  yearIn.addEventListener('input', render);
+  chkLiver.addEventListener('change', render);
+  chkSmoke.addEventListener('change', render);
+
+  sexSeg.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    sex = b.dataset.sex;
+    sexSeg.querySelectorAll('button').forEach(function (x) {
+      x.setAttribute('aria-pressed', String(x === b));
+    });
+    render();
+  });
+
+  if (restore()) render();
+})();
+</script>
+</body>
+</html>
