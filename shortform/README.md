@@ -1,30 +1,37 @@
-# 숏폼 트렌드 통합 대시보드
+# 🚀 숏폼 떡상 판독기 Pro (v2) 배포 가이드
 
-기존 `youtube-analyzer.html`, `tiktok-analyzer.html`, `reels-analyzer.html` 3개 페이지를
-하나의 앱으로 통합한 버전입니다.
+디지털다락방 LUCA 대표님을 위한 **숏폼 떡상 판독기 Pro** v2 배포 및 토스 미니앱 적용 가이드입니다.
 
-## 구성
+---
 
-| 파일 | 설명 |
-|------|------|
-| `index.html` | 대시보드 UI (탭으로 유튜브 쇼츠 / 틱톡 / 인스타 릴스 전환) |
-| `core.js` | 공통 엔진 — 플랫폼별 설정(`PLATFORMS`)만 다르고 분석·렌더링·이력 로직은 공유 |
+## 📂 파일 구성
 
-## 기능
+* `index.html` : 토스 TDS 감성의 모바일 최적화 메인 웹앱
+* `style.css` : 반응형 디자인, 플랫폼별 컬러 테마, 부드러운 인터랙션
+* `card-generator.js` : 1초 만에 인스타/단톡방 공유용 성적표 이미지를 생성하는 고해상도 Canvas 엔진
+* `core.js` : 알고리즘 티어 산출, 1줄 처방전, AI 컨설팅 연동 및 로컬 히스토리 관리
 
-- **플랫폼 탭 전환**: 입력 필드, 참여율 공식, AI 프롬프트가 플랫폼에 맞게 자동 변경
-- **분석 이력**: 결과를 `localStorage`에 최근 30건 저장. 지난 분석을 다시 열어 비교 가능
-- **n8n 알림**: 분석 완료 시 `/api/notify`를 통해 n8n 웹훅으로 전송 (웹훅 주소 비노출)
+---
 
-## 새 플랫폼 추가하기
+## ⚡ 기존 넷리파이(Netlify) 사이트 교체 방법 (In-Place Upgrade)
 
-`core.js`의 `PLATFORMS` 객체에 항목 하나만 추가하면 됩니다
-(필드 정의, 참여율 공식, 프롬프트 — HTML 수정 불필요).
+기존 사이트의 트래픽(400명 유저)과 SEO, 백엔드 API 연동을 100% 보존하면서 갈아끼우는 방법:
 
-## 배포 환경변수 (Vercel)
+1. 디지털다락방 깃허브 저장소의 `shortform/` 폴더로 이동합니다.
+2. 폴더 내 파일들을 이번에 생성된 4개 파일(`index.html`, `style.css`, `card-generator.js`, `core.js`)로 덮어씌웁니다.
+3. 깃 커밋 & 푸시 (`git push origin main`) 하면 Netlify에서 자동으로 즉시 배포 완료됩니다!
 
-| 변수 | 필수 | 설명 |
-|------|------|------|
-| `CLAUDE_API_KEY` | ✅ | Claude API 키 (`api/proxy.js`) |
-| `N8N_WEBHOOK_URL` | 선택 | n8n 웹훅 주소. 미설정 시 알림만 조용히 생략 (`api/notify.js`) |
-| `ALLOWED_ORIGINS` | 선택 | API 허용 출처 목록 (쉼표 구분). 미설정 시 배포 도메인만 허용. 로컬 테스트 시 `http://localhost:8000` 등을 추가 |
+```bash
+# 예시 커밋 메시지
+git add shortform/
+git commit -m "feat: 숏폼 떡상 판독기 Pro v2 대규모 업데이트 (1초 성적표 생성 & 퀵 모드)"
+git push origin main
+```
+
+---
+
+## 📱 토스 미니앱 (Apps in Toss) 등록 요령
+
+1. **웹뷰 URL 설정**: 토스 개발자 콘솔의 Webview 진입 URL에 `https://luca-darakbang.netlify.app/shortform/` 등록
+2. **모바일 최적화**: 100% 반응형 및 터치 제스처 최적화 완료
+3. **공유 유도**: '성적표 이미지 저장' 및 '복사' 버튼이 내장되어 있어 토스 유저들의 소셜 바이럴을 즉시 유도합니다.

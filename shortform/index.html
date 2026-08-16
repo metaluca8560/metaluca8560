@@ -2,163 +2,312 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>숏폼 트렌드 통합 대시보드 — AI 트렌드 다락방</title>
-  <meta name="description" content="릴스·쇼츠 성과 데이터를 입력하면 AI가 진단하고 다음 영상의 개선 포인트를 알려드려요." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>숏폼 떡상 판독기 Pro — 디지털다락방</title>
+  <meta name="description" content="쇼츠·릴스·틱톡 조회수 왜 안 나올까? 10초 만에 알고리즘 떡상 점수와 성적표 카드를 뽑아보세요!" />
+  
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="숏폼 성과 분석기 📱" />
-  <meta property="og:description" content="릴스·쇼츠 조회수 왜 안 나올까? 성과 데이터를 넣으면 AI가 진단하고 개선 포인트를 알려드려요" />
+  <meta property="og:title" content="숏폼 떡상 판독기 Pro 🚀" />
+  <meta property="og:description" content="내 쇼츠는 몇 점일까? 10초 떡상 판독 & 바이럴 성적표 카드 발급!" />
   <meta property="og:image" content="https://metaluca8560.vercel.app/shortform-og.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:url" content="https://metaluca8560.vercel.app/shortform/" />
+  <meta property="og:url" content="https://luca-darakbang.netlify.app/shortform/" />
+
   <link rel="icon" type="image/svg+xml" href="../logo.svg" />
   <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0a0a0f; --surface: #13131a; --surface2: #1c1c28; --border: #2a2a3a;
-      --text: #f0f0f5; --muted: #888; --radius: 14px;
-      --primary: #ff0000; --secondary: #ff9000;
-      --primary-glow: rgba(255,0,0,0.15);
-    }
-    body[data-platform="youtube"] { --primary: #ff0000; --secondary: #ff9000; --primary-glow: rgba(255,0,0,0.15); }
-    body[data-platform="tiktok"]  { --primary: #25f4ee; --secondary: #fe2c55; --primary-glow: rgba(37,244,238,0.12); }
-    body[data-platform="reels"]   { --primary: #c13584; --secondary: #f77737; --primary-glow: rgba(193,53,132,0.15); }
-    body { background: var(--bg); color: var(--text); font-family: 'Pretendard', -apple-system, sans-serif; min-height: 100vh; line-height: 1.6; }
-    .header { padding: 20px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
-    .header a { text-decoration: none; color: var(--muted); font-size: 14px; }
-    .header a:hover { color: var(--text); }
-    .header-logo { width: 32px; height: 32px; }
-    .header-title { font-size: 18px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .header-sep { color: var(--border); margin: 0 4px; }
-    .main { max-width: 900px; margin: 0 auto; padding: 40px 20px 80px; }
-    .hero { text-align: center; margin-bottom: 32px; }
-    .hero h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 800; letter-spacing: -1px; line-height: 1.2; }
-    .hero h1 span { background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero p { color: var(--muted); margin-top: 12px; font-size: 16px; }
-    .tabs { display: flex; gap: 10px; justify-content: center; margin-bottom: 32px; flex-wrap: wrap; }
-    .tab { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 30px; border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-    .tab:hover { color: var(--text); }
-    .tab.active { border-color: var(--primary); color: var(--text); background: var(--primary-glow); box-shadow: 0 0 0 3px var(--primary-glow); }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-bottom: 20px; }
-    .card-title { font-size: 15px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 20px; }
-    .card-desc { color: var(--muted); font-size: 13px; margin: -12px 0 20px; }
-    .field { margin-bottom: 18px; }
-    label { display: block; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
-    label .hint { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 6px; }
-    input, textarea, select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-family: inherit; font-size: 15px; outline: none; transition: border-color 0.2s; }
-    input:focus, textarea:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
-    textarea { resize: vertical; min-height: 90px; }
-    select option { background: var(--surface2); }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .grid-2 .field, .grid-3 .field { margin-bottom: 0; }
-    .metric-wrap { position: relative; }
-    .metric-wrap input { padding-right: 40px; }
-    .metric-unit { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 13px; pointer-events: none; }
-    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border: none; border-radius: 10px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
-    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; width: 100%; justify-content: center; font-size: 16px; }
-    .btn-primary:hover:not(:disabled) { box-shadow: 0 8px 24px var(--primary-glow); transform: translateY(-1px); }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-    .btn-secondary { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); font-size: 13px; padding: 8px 14px; }
-    .btn-secondary:hover { color: var(--text); border-color: var(--muted); }
-    .loading { display: none; text-align: center; padding: 40px; }
-    .loading.show { display: block; }
-    .spinner { width: 48px; height: 48px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading p { color: var(--muted); font-size: 14px; }
-    .result { display: none; }
-    .result.show { display: block; }
-    .score-bar { display: flex; align-items: center; gap: 20px; padding: 24px; background: var(--surface2); border-radius: 12px; margin-bottom: 24px; }
-    .score-circle { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 22px; font-weight: 900; border: 3px solid; }
-    .score-circle.great { border-color: #4ade80; color: #4ade80; background: rgba(74,222,128,0.1); }
-    .score-circle.good  { border-color: var(--secondary); color: var(--secondary); background: var(--primary-glow); }
-    .score-circle.ok    { border-color: #facc15; color: #facc15; background: rgba(250,204,21,0.1); }
-    .score-circle.low   { border-color: #f87171; color: #f87171; background: rgba(248,113,113,0.1); }
-    .score-info h3 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
-    .score-info p  { color: var(--muted); font-size: 14px; }
-    .section-label { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin: 28px 0 14px; display: flex; align-items: center; gap: 8px; }
-    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .insight-item { background: var(--surface2); border-radius: 10px; padding: 16px; }
-    .insight-item .label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
-    .insight-item .value { font-size: 22px; font-weight: 800; }
-    .insight-item .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .analysis-content { background: var(--surface2); border-radius: 12px; padding: 20px; font-size: 15px; line-height: 1.8; white-space: pre-wrap; }
-    .analysis-content h3 { font-size: 15px; font-weight: 700; color: var(--secondary); margin: 18px 0 8px; }
-    .analysis-content h3:first-child { margin-top: 0; }
-    .analysis-content ul { padding-left: 20px; }
-    .analysis-content li { margin-bottom: 6px; }
-    .analysis-content strong { color: var(--text); }
-    .action-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-    .history-list { display: flex; flex-direction: column; gap: 10px; }
-    .history-item { display: flex; align-items: center; gap: 14px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; cursor: pointer; transition: border-color 0.2s; }
-    .history-item:hover { border-color: var(--primary); }
-    .history-badge { flex-shrink: 0; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border); color: var(--muted); text-transform: uppercase; }
-    .history-badge.youtube { color: #ff6666; border-color: rgba(255,0,0,0.4); }
-    .history-badge.tiktok  { color: #25f4ee; border-color: rgba(37,244,238,0.4); }
-    .history-badge.reels   { color: #e1699e; border-color: rgba(193,53,132,0.5); }
-    .history-info { flex: 1; min-width: 0; }
-    .history-info .t { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .history-info .m { font-size: 12px; color: var(--muted); }
-    .history-del { flex-shrink: 0; background: none; border: none; color: var(--muted); font-size: 16px; cursor: pointer; padding: 4px 8px; }
-    .history-del:hover { color: #f87171; }
-    .history-empty { color: var(--muted); font-size: 14px; text-align: center; padding: 20px 0; }
-    @media (max-width: 600px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .grid-2 .field, .grid-3 .field { margin-bottom: 18px; } .insight-grid { grid-template-columns: 1fr 1fr; } }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body data-platform="youtube">
-<header class="header">
-  <img src="../logo.svg" class="header-logo" alt="logo" />
-  <a href="../index.html">AI 트렌드 다락방</a>
-  <span class="header-sep">›</span>
-  <span class="header-title">숏폼 트렌드 통합 대시보드</span>
-</header>
-<main class="main">
-  <div class="hero">
-    <h1>숏폼 트렌드<br><span>통합 AI 대시보드</span></h1>
-    <p>유튜브 쇼츠 · 틱톡 · 인스타 릴스를 한 곳에서 분석하고, 분석 이력을 쌓아 트렌드를 추적하세요</p>
-  </div>
+<body data-platform="youtube" data-mode="quick">
 
-  <div class="tabs" id="tabs"></div>
-
-  <div class="card">
-    <div class="card-title" id="infoTitle">영상 정보 입력</div>
-    <div id="infoFields"></div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">성과 지표</div>
-    <p class="card-desc" id="metricsDesc"></p>
-    <div class="grid-3" id="metricFields"></div>
-    <div class="field" style="margin-top:18px"><label>추가 메모 <span class="hint">선택사항 — 업로드 시간, 썸네일, BGM 등</span></label><textarea id="notes" style="min-height:70px"></textarea></div>
-  </div>
-
-  <button class="btn btn-primary" id="analyzeBtn" onclick="analyze()">
-    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-    AI 분석 시작
-  </button>
-
-  <div class="loading" id="loading"><div class="spinner"></div><p id="loadingText">AI가 분석 중이에요...</p></div>
-
-  <div class="result card" id="result" style="margin-top:24px">
-    <div id="resultContent"></div>
-    <div class="action-row">
-      <button class="btn btn-secondary" onclick="copyResult()">결과 복사</button>
-      <button class="btn btn-secondary" onclick="resetForm()">새 분석</button>
+  <!-- TDS Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <a href="/" class="brand-link" title="디지털다락방 홈">
+        <div class="brand-icon">🐟</div>
+        <div class="brand-text">
+          <span class="brand-sub">디지털다락방</span>
+          <span class="brand-name">숏폼 떡상 판독기 <span class="badge-pro">PRO v2</span></span>
+        </div>
+      </a>
+      <div class="header-actions">
+        <a href="#historySection" class="btn-icon" title="분석 이력">
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </a>
+      </div>
     </div>
-  </div>
+  </header>
 
-  <div class="card" style="margin-top:24px">
-    <div class="card-title" style="display:flex;align-items:center;justify-content:space-between">
-      <span>분석 이력</span>
-      <button class="btn btn-secondary" onclick="clearHistory()" style="text-transform:none;letter-spacing:0">전체 삭제</button>
+  <main class="main-container">
+
+    <!-- Hero Title -->
+    <section class="hero-section">
+      <div class="hero-chip">🔥 400+ 크리에이터가 검증한 떡상 알고리즘</div>
+      <h1 class="hero-title">내 영상, <span class="highlight">알고리즘 떡상</span><br>몇 점일까?</h1>
+      <p class="hero-desc">조회수와 좋아요만 넣으면 3초 만에 떡상 등급과 인스타 박제용 성적표를 만들어드려요</p>
+    </section>
+
+    <!-- Diagnosis Mode Switcher (Quick vs Pro) -->
+    <div class="mode-switcher-wrap">
+      <div class="mode-switcher">
+        <button class="mode-btn active" id="btnModeQuick" onclick="switchMode('quick')">
+          <span class="mode-icon">⚡</span>
+          <span class="mode-label">10초 퀵 판독</span>
+          <span class="mode-tag">인기</span>
+        </button>
+        <button class="mode-btn" id="btnModePro" onclick="switchMode('pro')">
+          <span class="mode-icon">🔬</span>
+          <span class="mode-label">프로 심층 분석</span>
+        </button>
+      </div>
     </div>
-    <div class="history-list" id="historyList"></div>
-  </div>
-</main>
-<script src="core.js"></script>
+
+    <!-- Platform Selector Tabs -->
+    <div class="platform-tabs" id="platformTabs">
+      <button class="plat-tab active" data-platform="youtube" onclick="switchPlatform('youtube')">
+        <span class="plat-icon">▶️</span>
+        <span class="plat-name">유튜브 쇼츠</span>
+      </button>
+      <button class="plat-tab" data-platform="reels" onclick="switchPlatform('reels')">
+        <span class="plat-icon">📸</span>
+        <span class="plat-name">인스타 릴스</span>
+      </button>
+      <button class="plat-tab" data-platform="tiktok" onclick="switchPlatform('tiktok')">
+        <span class="plat-icon">🎵</span>
+        <span class="plat-name">틱톡</span>
+      </button>
+    </div>
+
+    <!-- Main Input Form Card -->
+    <div class="card form-card">
+      <div class="card-header">
+        <h2 class="card-title" id="formHeaderTitle">🎬 영상 정보 입력</h2>
+        <span class="card-badge" id="formHeaderBadge">간편 입력</span>
+      </div>
+
+      <form id="analyzerForm" onsubmit="event.preventDefault(); runDiagnosis();">
+        
+        <!-- Video Basic Info -->
+        <div class="form-group">
+          <label for="videoTitle" class="form-label">영상 제목 또는 한 줄 설명 <span class="req">*</span></label>
+          <input type="text" id="videoTitle" class="form-control" placeholder="예: 3초 만에 집중력 2배 높이는 법" required />
+        </div>
+
+        <div class="form-row grid-2">
+          <div class="form-group">
+            <label for="videoCategory" class="form-label">카테고리</label>
+            <select id="videoCategory" class="form-control">
+              <option value="지식/정보">지식 / 정보 / 교육</option>
+              <option value="자기계발/동기부여">자기계발 / 동기부여</option>
+              <option value="엔터/유머">엔터테인먼트 / 유머</option>
+              <option value="뷰티/패션">뷰티 / 패션</option>
+              <option value="음식/요리">음식 / 요리</option>
+              <option value="라이프/브이로그">라이프 / 브이로그</option>
+              <option value="비즈니스/마케팅">비즈니스 / 마케팅</option>
+              <option value="피트니스/헬스">피트니스 / 헬스</option>
+              <option value="기타">기타</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="videoDuration" class="form-label">영상 길이</label>
+            <select id="videoDuration" class="form-control">
+              <option value="15초 이하">15초 이하 (초단타 후킹)</option>
+              <option value="15~30초" selected>15~30초 (황금 표준)</option>
+              <option value="30~45초">30~45초 (스토리텔링)</option>
+              <option value="45~60초">45~60초 (심층 정보)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Metrics Section: Essential (Quick) -->
+        <div class="section-divider">
+          <span>📊 핵심 성과 수치</span>
+        </div>
+
+        <div class="form-row grid-2">
+          <div class="form-group">
+            <label for="metricViews" class="form-label">조회수 <span class="req">*</span></label>
+            <div class="input-with-unit">
+              <input type="number" id="metricViews" class="form-control" placeholder="0" min="0" required />
+              <span class="unit">회</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="metricLikes" class="form-label">좋아요 수 <span class="req">*</span></label>
+            <div class="input-with-unit">
+              <input type="number" id="metricLikes" class="form-control" placeholder="0" min="0" required />
+              <span class="unit">개</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pro-only Fields -->
+        <div id="proFieldsSection" class="pro-fields-wrap" style="display:none;">
+          <div class="form-row grid-2">
+            <div class="form-group">
+              <label for="metricComments" class="form-label">댓글 수</label>
+              <div class="input-with-unit">
+                <input type="number" id="metricComments" class="form-control" placeholder="0" min="0" />
+                <span class="unit">개</span>
+              </div>
+            </div>
+            <div class="form-group" id="groupShareOrSave">
+              <label for="metricShares" class="form-label" id="labelShareOrSave">공유 / 저장 수</label>
+              <div class="input-with-unit">
+                <input type="number" id="metricShares" class="form-control" placeholder="0" min="0" />
+                <span class="unit">개</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row grid-2">
+            <div class="form-group">
+              <label for="metricWatchTime" class="form-label">평균 시청 지속시간 (완주율)</label>
+              <div class="input-with-unit">
+                <input type="number" id="metricWatchTime" class="form-control" placeholder="75" min="0" max="150" />
+                <span class="unit">%</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="metricNewSubs" class="form-label" id="labelNewSubs">신규 구독자 / 팔로워 전환</label>
+              <div class="input-with-unit">
+                <input type="number" id="metricNewSubs" class="form-control" placeholder="0" min="0" />
+                <span class="unit">명</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="videoNotes" class="form-label">추가 메모 <span class="hint">첫 3초 대사, 썸네일 카피, 사용한 음원 등</span></label>
+            <textarea id="videoNotes" class="form-control textarea" placeholder="예: '아직도 이렇게 하고 계신가요?'로 시작함"></textarea>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-submit" id="btnSubmit">
+          <span class="btn-text">🚀 떡상 판독 & 성적표 발급하기</span>
+          <span class="btn-shine"></span>
+        </button>
+
+      </form>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-box card" id="loadingBox" style="display:none;">
+      <div class="radar-pulse"></div>
+      <h3 class="loading-title">알고리즘 데이터 정밀 분석 중...</h3>
+      <p class="loading-desc" id="loadingStatusText">참여율, 완주 지수, 바이럴 가중치를 계산하고 있어요</p>
+    </div>
+
+    <!-- Result Section -->
+    <div class="result-container" id="resultContainer" style="display:none;">
+      
+      <!-- Tier Banner -->
+      <div class="tier-card card" id="tierCard">
+        <div class="tier-top">
+          <div class="tier-badge-wrap">
+            <div class="tier-glow" id="tierGlow"></div>
+            <div class="tier-badge" id="tierBadge">S</div>
+          </div>
+          <div class="tier-meta">
+            <span class="tier-tag" id="tierTag">알고리즘 상위 5%</span>
+            <h2 class="tier-title" id="tierTitle">바이럴 챔피언 👑</h2>
+            <p class="tier-score-text">종합 떡상 점수 <strong id="tierScore">89</strong> / 100점</p>
+          </div>
+        </div>
+
+        <!-- Key Metrics Grid -->
+        <div class="metrics-grid" id="resultMetricsGrid">
+          <!-- Injected via JS -->
+        </div>
+
+        <!-- 1-Line Core Prescription -->
+        <div class="prescription-box" id="prescriptionBox">
+          <div class="presc-header">
+            <span class="presc-icon">💊</span>
+            <strong>수석개발부장 루시안의 1줄 처방전</strong>
+          </div>
+          <p class="presc-content" id="prescriptionText">도입부 3초 후킹이 훌륭합니다! 댓글 유도 질문을 얹으면 SSS급으로 진화합니다.</p>
+        </div>
+      </div>
+
+      <!-- Viral Scorecard Preview & Share Buttons -->
+      <div class="card share-card">
+        <div class="card-header">
+          <h3 class="card-title">📸 인스타 / 단톡방 인증용 성적표</h3>
+          <span class="card-badge highlight-badge">1초 생성</span>
+        </div>
+        <p class="share-desc">내 알고리즘 성적표를 친구들이나 커뮤니티에 자랑해보세요!</p>
+
+        <!-- Canvas Card Wrapper -->
+        <div class="canvas-preview-wrap">
+          <canvas id="scorecardCanvas" width="750" height="920"></canvas>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="share-actions">
+          <button type="button" class="btn btn-save-img" onclick="downloadScorecard()">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            성적표 이미지 저장
+          </button>
+          <button type="button" class="btn btn-copy-img" onclick="copyScorecardImage()">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+            </svg>
+            이미지 복사
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Deep Consultation Report (Pro & AI mode) -->
+      <div class="card ai-report-card" id="aiReportCard">
+        <div class="card-header">
+          <h3 class="card-title">🤖 AI 심층 전략 컨설팅 리포트</h3>
+          <button class="btn-text-copy" onclick="copyReportText()">텍스트 복사</button>
+        </div>
+        <div class="ai-report-body" id="aiReportBody">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Re-test CTA -->
+      <div class="retest-wrap">
+        <button class="btn btn-ghost" onclick="resetDiagnosis()">
+          🔄 다른 영상도 판독하기
+        </button>
+      </div>
+
+    </div>
+
+    <!-- History Section -->
+    <section class="card history-card" id="historySection">
+      <div class="card-header">
+        <h3 class="card-title">📜 최근 판독 이력</h3>
+        <button class="btn-clear" onclick="clearAllHistory()">전체 비우기</button>
+      </div>
+      <div class="history-list" id="historyList">
+        <p class="history-empty">아직 판독한 이력이 없습니다. 첫 영상을 분석해보세요!</p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>© 디지털다락방 LUCA · 수석개발부장 루시안</p>
+      <p class="footer-links">
+        <a href="https://luca-darakbang.netlify.app/">디지털다락방 포털</a>
+        <span>·</span>
+        <a href="mailto:atlia0318@gmail.com">강의·컨설팅 문의</a>
+      </p>
+    </footer>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="card-generator.js"></script>
+  <script src="core.js"></script>
 </body>
 </html>
