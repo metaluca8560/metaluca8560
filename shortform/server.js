@@ -74,5 +74,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`🚀 [루시안 개발서버] 숏폼 떡상 판독기 Pro 실행 중: http://localhost:${PORT}`);
+  console.log(`🚀 [로컬 개발서버] 숏폼 떡상 판독기 Pro 실행 중: http://localhost:${PORT}`);
 });

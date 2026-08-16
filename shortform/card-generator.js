@@ -214,7 +214,7 @@ const CardGenerator = {
     ctx.font = 'bold 16px Pretendard, sans-serif';
     ctx.fillStyle = '#3182f6';
     ctx.textAlign = 'left';
-    ctx.fillText('💡 수석개발부장 루시안의 떡상 처방', 72, prescY + 38);
+    ctx.fillText('💡 AI 떡상 처방', 72, prescY + 38);
 
     // Prescription Content (wrap 2 lines if needed)
     ctx.font = '500 17px Pretendard, sans-serif';
