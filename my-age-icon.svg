@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="나 몇살이지 아이콘">
+  <defs>
+    <linearGradient id="maGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4d95f8"/>
+      <stop offset="1" stop-color="#3182f6"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="84" height="84" rx="22" fill="url(#maGrad)"/>
+  <!-- 케이크 -->
+  <g>
+    <rect x="26" y="48" width="44" height="26" rx="6" fill="#ffffff"/>
+    <path d="M26 58 q5.5 6 11 0 q5.5 6 11 0 q5.5 6 11 0 q5.5 6 11 0 v-4 a6 6 0 0 0 -6 -6 h-32 a6 6 0 0 0 -6 6 z" fill="#dbeafe"/>
+    <!-- 초 -->
+    <rect x="45.5" y="34" width="5" height="16" rx="2.5" fill="#ffd166"/>
+    <ellipse cx="48" cy="30" rx="3.6" ry="5" fill="#ff8a3d"/>
+    <ellipse cx="48" cy="31.2" rx="1.8" ry="2.6" fill="#ffd166"/>
+  </g>
+  <!-- 물음표 -->
+  <g>
+    <circle cx="67" cy="33" r="13" fill="#ffffff"/>
+    <path d="M63 30 a4.2 4.2 0 1 1 6 3.8 c-1.5 0.8 -2.2 1.6 -2.2 3.2" fill="none" stroke="#3182f6" stroke-width="3.4" stroke-linecap="round"/>
+    <circle cx="66.8" cy="40.6" r="2.1" fill="#3182f6"/>
+  </g>
+</svg>
