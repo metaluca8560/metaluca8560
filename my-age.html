@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>🎂 나 몇살이지? — 만나이·보험나이·인생 나이 계산기</title>
+<meta name="description" content="생년월일 하나면 만나이·연나이·세는나이부터 보험나이(상령일), 국민연금 수급 나이, 살아온 날까지 전부. 매년 1월마다 헷갈리는 당신을 위해.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="🎂 나 몇살이지?">
+<meta property="og:description" content="생일 하나로 만나이·보험나이·인생 나이 전부 계산. 매년 헷갈리는 하찮은 고민, 3초 만에 끝.">
+<meta property="og:url" content="https://luca-darakbang.netlify.app/my-age.html">
+<meta property="og:image" content="https://luca-darakbang.netlify.app/my-age-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="🎂 나 몇살이지?">
+<meta name="twitter:description" content="생일 하나로 만나이·보험나이·인생 나이 전부 계산.">
+<meta name="twitter:image" content="https://luca-darakbang.netlify.app/my-age-og.png">
+<link rel="icon" type="image/svg+xml" href="my-age-icon.svg">
+<style>
+  :root {
+    --bg: #f2f4f6;
+    --card: #ffffff;
+    --blue: #3182f6;
+    --blue-dark: #1b64da;
+    --blue-bg: #e8f3ff;
+    --text: #191f28;
+    --sub: #4e5968;
+    --muted: #8b95a1;
+    --line: #e5e8eb;
+    --green: #00a86b;
+    --orange: #f28b00;
+    --red: #f04452;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", "Noto Sans KR", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  .app { max-width: 480px; margin: 0 auto; padding: 24px 16px 40px; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+  header p { color: var(--muted); font-size: 0.85rem; margin-top: 6px; }
+
+  .card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 22px 20px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .section-title {
+    font-size: 0.78rem; font-weight: 800; color: var(--muted);
+    margin-bottom: 12px; letter-spacing: 0.03em;
+  }
+
+  /* 생일 입력 */
+  .birth-row { display: flex; gap: 8px; }
+  .birth-row select {
+    flex: 1;
+    appearance: none; -webkit-appearance: none;
+    background: var(--bg);
+    border: 1.5px solid transparent;
+    border-radius: 14px;
+    padding: 14px 12px;
+    font-size: 1rem; font-weight: 700; color: var(--text);
+    text-align: center;
+    outline: none;
+  }
+  .birth-row select:focus { border-color: var(--blue); background: var(--blue-bg); }
+  .go-btn {
+    width: 100%; margin-top: 14px;
+    background: var(--blue); border: none; border-radius: 14px;
+    padding: 16px 0; color: #fff; font-size: 1.05rem; font-weight: 800;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s;
+  }
+  .go-btn:active { background: var(--blue-dark); }
+  .remember { display: flex; align-items: center; gap: 6px; margin-top: 12px; justify-content: center; }
+  .remember label { font-size: 0.8rem; color: var(--muted); }
+  .remember input { accent-color: var(--blue); width: 16px; height: 16px; }
+
+  /* 결과 */
+  #result { display: none; }
+  .hero-age {
+    background: linear-gradient(135deg, var(--blue), #4d95f8);
+    border-radius: 20px; padding: 26px 20px; margin-bottom: 14px;
+    color: #fff; text-align: center;
+    box-shadow: 0 6px 20px rgba(49, 130, 246, 0.25);
+  }
+  .hero-age .ha-label { font-size: 0.85rem; opacity: 0.85; }
+  .hero-age .ha-main { font-size: 3rem; font-weight: 900; letter-spacing: -0.03em; margin: 4px 0 2px; }
+  .hero-age .ha-main small { font-size: 1.4rem; font-weight: 700; }
+  .hero-age .ha-quip { font-size: 0.8rem; opacity: 0.85; margin-top: 8px; }
+  .hero-sub { display: flex; border-top: 1px solid rgba(255,255,255,0.25); margin-top: 16px; padding-top: 14px; }
+  .hero-sub div { flex: 1; }
+  .hero-sub .hs-v { font-size: 1.15rem; font-weight: 800; word-break: keep-all; }
+  .hero-sub .hs-v.small { font-size: 0.92rem; line-height: 1.3; padding-top: 3px; }
+  .hero-sub .hs-k { font-size: 0.72rem; opacity: 0.8; margin-top: 2px; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mini {
+    background: var(--bg); border-radius: 14px; padding: 14px; text-align: center;
+  }
+  .mini .m-v { font-size: 1.1rem; font-weight: 800; }
+  .mini .m-k { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+
+  /* 보험나이 */
+  .ins-card { border: 1.5px solid var(--blue-bg); }
+  .ins-head { display: flex; justify-content: space-between; align-items: center; }
+  .ins-age { font-size: 1.5rem; font-weight: 900; color: var(--blue); }
+  .badge {
+    font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 20px;
+  }
+  .badge.warn { background: #fff3e0; color: var(--orange); }
+  .badge.safe { background: #e6f7f0; color: var(--green); }
+  .ins-desc { font-size: 0.8rem; color: var(--sub); margin-top: 10px; line-height: 1.6; }
+  .ins-desc strong { color: var(--text); }
+  .ins-note { font-size: 0.72rem; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+
+  /* 인생 일정표 */
+  .life-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--line);
+  }
+  .life-row:last-child { border-bottom: none; padding-bottom: 2px; }
+  .life-row .l-ico { font-size: 1.3rem; width: 30px; text-align: center; flex-shrink: 0; }
+  .life-row .l-body { flex: 1; }
+  .life-row .l-t { font-size: 0.88rem; font-weight: 700; }
+  .life-row .l-s { font-size: 0.74rem; color: var(--muted); margin-top: 2px; }
+  .life-row .l-d { font-size: 0.82rem; font-weight: 800; color: var(--blue); white-space: nowrap; }
+  .life-row .l-d.done { color: var(--green); }
+
+  .share-btn {
+    width: 100%; margin-top: 4px;
+    background: var(--blue-bg); border: none; border-radius: 14px;
+    padding: 14px 0; color: var(--blue); font-size: 0.95rem; font-weight: 800;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .share-btn:active { background: #d8eaff; }
+  .reset-btn {
+    width: 100%; margin-top: 10px; background: none; border: none;
+    color: var(--muted); font-size: 0.82rem; cursor: pointer; padding: 8px 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  footer { text-align: center; font-size: 0.72rem; color: var(--muted); line-height: 1.7; margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>🎂 나 몇살이지?</h1>
+    <p>매년 1월마다 헷갈리는 당신을 위해</p>
+  </header>
+
+  <div class="card" id="inputCard">
+    <div class="section-title">생년월일을 알려주세요</div>
+    <div class="birth-row">
+      <select id="selYear" aria-label="출생 연도"></select>
+      <select id="selMonth" aria-label="출생 월"></select>
+      <select id="selDay" aria-label="출생 일"></select>
+    </div>
+    <button class="go-btn" id="goBtn">몇살인지 알려줘</button>
+    <div class="remember">
+      <input type="checkbox" id="rememberMe" checked>
+      <label for="rememberMe">이 기기에 기억하기 (다음엔 바로 보여드려요)</label>
+    </div>
+  </div>
+
+  <div id="result">
+    <div class="hero-age">
+      <div class="ha-label">오늘 기준, 당신은</div>
+      <div class="ha-main"><span id="rMan">-</span><small>세</small></div>
+      <div class="ha-quip" id="rQuip"></div>
+      <div class="hero-sub">
+        <div><div class="hs-v" id="rYeon">-</div><div class="hs-k">연 나이</div></div>
+        <div><div class="hs-v" id="rKor">-</div><div class="hs-k">세는 나이</div></div>
+        <div><div class="hs-v small" id="rZodiac">-</div><div class="hs-k">띠 · 별자리</div></div>
+      </div>
+    </div>
+
+    <div class="card ins-card">
+      <div class="section-title">🛡️ 보험나이 (보험사가 보는 내 나이)</div>
+      <div class="ins-head">
+        <div class="ins-age"><span id="rIns">-</span>세</div>
+        <span class="badge" id="rInsBadge">-</span>
+      </div>
+      <div class="ins-desc" id="rInsDesc"></div>
+      <div class="ins-note">* 보험나이는 만나이 기준, 생일에서 6개월이 지나면 한 살 올라가요. 오르는 날(상령일) 전에 가입하면 1살 어린 나이로 보험료가 계산돼요.</div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">📆 살아온 시간</div>
+      <div class="grid2">
+        <div class="mini"><div class="m-v" id="rDays">-</div><div class="m-k">살아온 날</div></div>
+        <div class="mini"><div class="m-v" id="rBday">-</div><div class="m-k">다음 생일까지</div></div>
+        <div class="mini"><div class="m-v" id="rTenK">-</div><div class="m-k" id="rTenKLabel">다음 1만일까지</div></div>
+        <div class="mini"><div class="m-v" id="rWeeks">-</div><div class="m-k">살아온 주</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">🗓️ 나이로 보는 인생 일정표</div>
+      <div id="lifeList"></div>
+    </div>
+
+    <button class="share-btn" id="shareBtn">친구한테 "너 몇살이지?" 물어보기</button>
+    <button class="reset-btn" id="resetBtn">생년월일 다시 입력</button>
+  </div>
+
+  <footer>
+    만나이 통일법(2023.6.28.) 기준 · 보험나이는 보험업 감독규정의 일반 원칙 기준이에요.<br>
+    상품·회사별로 다를 수 있으니 가입 전 약관을 확인해 주세요.
+  </footer>
+</div>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const selYear = $('selYear'), selMonth = $('selMonth'), selDay = $('selDay');
+
+  /* ---------- 셀렉트 채우기 ---------- */
+  const now = new Date();
+  const thisYear = now.getFullYear();
+  for (let y = thisYear; y >= thisYear - 100; y--) {
+    selYear.add(new Option(y + '년', y));
+  }
+  for (let m = 1; m <= 12; m++) selMonth.add(new Option(m + '월', m));
+  function fillDays() {
+    const y = Number(selYear.value), m = Number(selMonth.value);
+    const days = new Date(y, m, 0).getDate();
+    const cur = Number(selDay.value) || 1;
+    selDay.innerHTML = '';
+    for (let d = 1; d <= days; d++) selDay.add(new Option(d + '일', d));
+    selDay.value = Math.min(cur, days);
+  }
+  selYear.value = thisYear - 30;
+  selMonth.value = 1;
+  fillDays();
+  selYear.addEventListener('change', fillDays);
+  selMonth.addEventListener('change', fillDays);
+
+  /* ---------- 나이 계산 ---------- */
+  const fmt = n => n.toLocaleString('ko-KR');
+  const DAY = 86400000;
+  const ZODIAC = ['쥐','소','호랑이','토끼','용','뱀','말','양','원숭이','닭','개','돼지'];
+  const STARS = [
+    [120, '물병'], [219, '물고기'], [321, '양'], [420, '황소'], [521, '쌍둥이'], [622, '게'],
+    [723, '사자'], [823, '처녀'], [923, '천칭'], [1023, '전갈'], [1122, '사수'], [1222, '염소'], [1232, '물병']
+  ];
+  function starSign(m, d) {
+    const key = m * 100 + d;
+    for (const [limit, name] of STARS) if (key <= limit) return name;
+    return '물병';
+  }
+  function pensionAge(by) {
+    if (by <= 1952) return 60;
+    if (by <= 1956) return 61;
+    if (by <= 1960) return 62;
+    if (by <= 1964) return 63;
+    if (by <= 1968) return 64;
+    return 65;
+  }
+  const mid = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  function addMonths(d, n) {
+    const r = new Date(d);
+    const day = r.getDate();
+    r.setMonth(r.getMonth() + n);
+    if (r.getDate() < day) r.setDate(0); // 말일 보정
+    return r;
+  }
+  function dday(target, today) {
+    return Math.round((mid(target) - mid(today)) / DAY);
+  }
+  function fmtDate(d) {
+    return d.getFullYear() + '.' + (d.getMonth() + 1) + '.' + d.getDate() + '.';
+  }
+
+  function calc(by, bm, bd) {
+    const today = mid(new Date());
+    const birth = new Date(by, bm - 1, bd);
+
+    // 만나이
+    let man = today.getFullYear() - by;
+    const hadBirthday = (today.getMonth() + 1 > bm) || (today.getMonth() + 1 === bm && today.getDate() >= bd);
+    if (!hadBirthday) man--;
+    const yeon = today.getFullYear() - by;
+    const kor = yeon + 1;
+
+    // 이번/다음 생일
+    let nextBday = new Date(today.getFullYear(), bm - 1, bd);
+    if (nextBday <= today) nextBday = new Date(today.getFullYear() + 1, bm - 1, bd);
+
+    // 보험나이: 마지막 생일 + 6개월 지나면 만나이+1
+    const lastBday = new Date(hadBirthday ? today.getFullYear() : today.getFullYear() - 1, bm - 1, bd);
+    const upDate = addMonths(lastBday, 6); // 이번 사이클 상령일
+    let insAge, nextUp;
+    if (today >= upDate) { insAge = man + 1; nextUp = addMonths(nextBday, 6); }
+    else { insAge = man; nextUp = upDate; }
+
+    // 살아온 날
+    const daysLived = Math.round((today - mid(birth)) / DAY) + 1;
+    const nextTenK = Math.ceil(daysLived / 10000) * 10000;
+
+    return { today, birth, man, yeon, kor, nextBday, insAge, nextUp, daysLived, nextTenK, by, bm, bd };
+  }
+
+  /* ---------- 렌더 ---------- */
+  const QUIPS = [
+    '네, 어제 물어봤을 때랑 같아요.',
+    '이제 진짜 안 까먹기로 해요 우리.',
+    '숫자보다 마음이 중요한 거 아시죠.',
+    '작년보다 하나 늘었을 뿐이에요. 아마도요.',
+    '헷갈리는 게 정상이에요. 나이가 세 종류나 되니까요.'
+  ];
+
+  function render(r) {
+    $('rMan').textContent = '만 ' + r.man;
+    $('rYeon').textContent = r.yeon + '세';
+    $('rKor').textContent = r.kor + '세';
+    $('rZodiac').textContent = ZODIAC[(r.by - 4) % 12 < 0 ? ((r.by - 4) % 12 + 12) : (r.by - 4) % 12] + '띠 · ' + starSign(r.bm, r.bd) + '자리';
+    $('rQuip').textContent = QUIPS[r.daysLived % QUIPS.length];
+
+    // 보험나이
+    const dUp = dday(r.nextUp, r.today);
+    $('rIns').textContent = r.insAge;
+    const badge = $('rInsBadge');
+    if (r.insAge === r.man) {
+      badge.className = 'badge warn';
+      badge.textContent = 'D-' + dUp + '에 +1살';
+      $('rInsDesc').innerHTML = '<strong>' + fmtDate(r.nextUp) + '</strong>(상령일)에 보험나이가 <strong>' + (r.insAge + 1) + '세</strong>로 올라가요. 보험 가입을 고민 중이라면 <strong>그 전이 유리</strong>해요.';
+    } else {
+      badge.className = 'badge safe';
+      badge.textContent = '만나이보다 +1살';
+      $('rInsDesc').innerHTML = '이미 상령일이 지나 보험나이는 <strong>' + r.insAge + '세</strong>예요. 다음 변동은 <strong>' + fmtDate(r.nextUp) + '</strong>이에요.';
+    }
+
+    // 살아온 시간
+    $('rDays').textContent = fmt(r.daysLived) + '일';
+    $('rBday').textContent = 'D-' + dday(r.nextBday, r.today);
+    $('rTenK').textContent = 'D-' + fmt(r.nextTenK - r.daysLived);
+    $('rTenKLabel').textContent = fmt(r.nextTenK / 10000) + '만일까지';
+    $('rWeeks').textContent = fmt(Math.floor(r.daysLived / 7)) + '주';
+
+    // 인생 일정표
+    const events = [
+      { ico: '🪪', t: '주민등록증 발급', s: '만 17세', age: 17 },
+      { ico: '🗳️', t: '투표할 수 있는 나이', s: '만 18세', age: 18 },
+      { ico: '🎓', t: '정년', s: '만 60세 (법정 기준)', age: 60 },
+      { ico: '💰', t: '국민연금 받기 시작', s: '만 ' + pensionAge(r.by) + '세 (' + r.by + '년생 기준)', age: pensionAge(r.by) },
+      { ico: '🚇', t: '지하철 무료 (우대용 교통카드)', s: '만 65세', age: 65 },
+      { ico: '🎉', t: '살아온 날 ' + fmt(r.nextTenK / 10000) + '만일', s: fmtDate(new Date(mid(r.birth).getTime() + (r.nextTenK - 1) * DAY)), age: null, days: r.nextTenK - r.daysLived }
+    ];
+    const list = $('lifeList');
+    list.innerHTML = '';
+    for (const ev of events) {
+      let right, done = false;
+      if (ev.age !== null) {
+        const yearsLeft = ev.age - r.man;
+        if (yearsLeft <= 0) { right = '달성 ✓'; done = true; }
+        else right = yearsLeft + '년 남음';
+      } else {
+        right = 'D-' + fmt(ev.days);
+      }
+      const row = document.createElement('div');
+      row.className = 'life-row';
+      row.innerHTML = '<div class="l-ico">' + ev.ico + '</div>' +
+        '<div class="l-body"><div class="l-t">' + ev.t + '</div><div class="l-s">' + ev.s + '</div></div>' +
+        '<div class="l-d' + (done ? ' done' : '') + '">' + right + '</div>';
+      list.appendChild(row);
+    }
+
+    $('inputCard').style.display = 'none';
+    $('result').style.display = 'block';
+  }
+
+  /* ---------- 이벤트 ---------- */
+  function run(save) {
+    const by = Number(selYear.value), bm = Number(selMonth.value), bd = Number(selDay.value);
+    if (save && $('rememberMe').checked) {
+      try { localStorage.setItem('myAgeBirth', JSON.stringify([by, bm, bd])); } catch (e) {}
+    }
+    render(calc(by, bm, bd));
+  }
+
+  $('goBtn').addEventListener('click', () => run(true));
+
+  $('resetBtn').addEventListener('click', () => {
+    try { localStorage.removeItem('myAgeBirth'); } catch (e) {}
+    $('result').style.display = 'none';
+    $('inputCard').style.display = 'block';
+  });
+
+  $('shareBtn').addEventListener('click', async () => {
+    const shareData = {
+      title: '나 몇살이지?',
+      text: '만나이·보험나이·인생 나이, 생일 하나로 3초 만에 확인!',
+      url: location.href.split('#')[0]
+    };
+    try {
+      if (window.AppsInToss && window.AppsInToss.share) {
+        await window.AppsInToss.share({ message: shareData.text + ' ' + (await window.AppsInToss.getTossShareLink()) });
+      } else if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        $('shareBtn').textContent = '링크 복사됨! 붙여넣어 주세요';
+        setTimeout(() => { $('shareBtn').textContent = '친구한테 "너 몇살이지?" 물어보기'; }, 2000);
+      }
+    } catch (e) { /* 사용자가 공유 취소 */ }
+  });
+
+  // 저장된 생일 있으면 바로 결과
+  try {
+    const saved = JSON.parse(localStorage.getItem('myAgeBirth') || 'null');
+    if (saved && saved.length === 3) {
+      selYear.value = saved[0]; selMonth.value = saved[1]; fillDays(); selDay.value = saved[2];
+      run(false);
+    }
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
