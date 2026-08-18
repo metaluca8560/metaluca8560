@@ -54,10 +54,10 @@ Worker를 계속 보게 되므로 `wrangler.toml`의 `name`은 그대로 두어�
 | 우리동네 무슨 축제? | `festival/` | `festival-api` |
 | 우리시장 | `market/` | `small-recipe-9345` `/recipe` |
 | 타로 | `tarot/` | `small-recipe-9345` `/tarot` |
-| 나좀봐 (룩) | `miniapp-look/`, `firebase-apps/look.html` | `small-recipe-9345` `/voice/tts` |
-| my scan2677 | `firebase-apps/scan.html` | `small-recipe-9345` `/scan` |
-| 마주톡 (번역) | `firebase-apps/talk.html` | `small-recipe-9345` `/translate` |
-| 킬링보이스 (음성) | `firebase-apps/voice.html` | `small-recipe-9345` `/voice/tts` `/voice/stt` |
+| 나좀봐 (룩) | `miniapp-look/` — Firebase판은 `huhsame-script` | `small-recipe-9345` `/voice/tts` |
+| my scan2677 | `huhsame-script`의 `landing/scan/` | `small-recipe-9345` `/scan` |
+| 마주톡 (번역) | `huhsame-script`의 `landing/talk/` | `small-recipe-9345` `/translate` |
+| 킬링보이스 (음성) | `huhsame-script`의 `landing/voice/` | `small-recipe-9345` `/voice/tts` `/voice/stt` |
 | 숏폼 분석 | `shortform/` | `/api/proxy` |
 | 꿈분석기 / 프로 | `dream-analyzer*.html` | `/api/dream`, `/api/notify` |
 | 점심 뭐 먹지 | `lunch-picker.html` | `/api/proxy` |
@@ -148,16 +148,14 @@ Worker에는 `DATA_GO_KR_KEY` 시크릿으로 등록합니다.
 **공용 Worker에 `DATA_GO_KR_KEY`가 없습니다.** 그래서 거기 있는 `/hospitals`는 동작하지
 않습니다. 메디앱이 `medi-api`로 옮겨간 뒤 아무도 쓰지 않는 엔드포인트라 그대로 두었습니다.
 
-**`firebase-apps/`는 배포본을 되받은 것입니다.** 원본 소스가 저장소에 없어서, 공개된
-배포 페이지를 그대로 내려받아 보존했습니다. 손대지 않은 원본이라 지금 살아 있는 것과
-동일합니다. 앞으로 이 앱들을 고칠 때는 이 파일을 고쳐서 Firebase에 다시 올리면 됩니다.
+**Firebase 앱의 프론트는 다른 저장소에 있습니다** — `metaluca27/huhsame-script`의
+`landing/`. 백엔드(`shared-api/`)는 이 저장소에 있으니, **프론트와 백엔드가 서로 다른
+저장소에 나뉘어 있습니다.** 자세한 건 `firebase-apps/README.md` 참고.
 
-Firebase 배포는 **수동**이라 자동화되어 있지 않습니다. 배포 방법(`firebase deploy`
-설정이 어디 있는지)은 아직 확인하지 못했습니다.
+그 저장소는 원래 원격이 없어 PC 바탕화면에만 있었습니다(커밋 64개). 백업했습니다.
+거기에 포털에 링크되지 않은 앱 3개(곁별, 다락방 짝꿍 찾기, 리버스 스와이프)와
+Cloudflare Worker 설정(`docs/worker/`)도 들어 있습니다. **이 저장소의 헬스체크는
+그 Worker를 확인하지 않습니다.**
 
-`root.html`이 부르는 이미지 3개(`images/class.jpg`, `intro.png`, `mascot.png`)는
-아직 받지 않았습니다. 포털을 실제로 고칠 일이 생기면 그때 받으면 됩니다.
-
-`firebase-apps/tarot.html`은 껍데기이고 실제 코드는 저장소의 `tarot/` 폴더를 부릅니다
-(`app.js`, `cards-data.js`, `styles.css` 모두 저장소에 있음). 타로는 원래부터
-안전했습니다.
+Firebase는 수동 배포입니다(`huhsame-script`에서 `firebase deploy`). 푸시만으로는
+반영되지 않습니다.
