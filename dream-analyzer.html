@@ -57,6 +57,8 @@
     label .hint { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 6px; }
     input, textarea, select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-family: inherit; font-size: 15px; outline: none; transition: border-color 0.2s; }
     input:focus, textarea:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    /* 입력이 빠진 칸을 잠깐 표시해 어디가 문제인지 눈에 띄게 한다 */
+    .field-error { border-color: #ff6b6b !important; box-shadow: 0 0 0 3px rgba(255,107,107,.28) !important; }
     textarea { resize: vertical; min-height: 120px; }
     select option { background: var(--surface2); }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -656,6 +658,18 @@ ${symNote}
 마지막에 **핵심 한 줄 요약**을 볼드로 작성해주세요.`
   }
 
+  // 검사에 걸린 칸으로 화면을 옮기고 커서를 넣는다.
+  // 안내만 띄우면 모바일에서는 문제의 칸이 화면 밖이라 뭐가 잘못됐는지 알 수 없다.
+  function focusMissing(id, len) {
+    const el = document.getElementById(id)
+    if (!el) return
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    el.classList.add('field-error')
+    setTimeout(() => el.classList.remove('field-error'), 2000)
+    alert(len ? '꿈 내용을 10자 이상 적어주세요. (지금 ' + len + '자)' : '꿈 내용을 먼저 적어주세요.')
+    el.focus({ preventScroll: true })
+  }
+
   async function analyze() {
     const data = {
       dreamText: document.getElementById('dreamText').value.trim(),
@@ -669,7 +683,7 @@ ${symNote}
       birthDate: document.getElementById('birthDate').value,
       dreamDate: document.getElementById('dreamDate').value,
     }
-    if (data.dreamText.length < 10) { alert('꿈 내용을 조금 더 자세히 적어주세요! (10자 이상)'); return }
+    if (data.dreamText.length < 10) { focusMissing('dreamText', data.dreamText.length); return }
     lastDreamExcerpt = data.dreamText.length > 200 ? data.dreamText.slice(0, 200) + '…' : data.dreamText
     const symbols = matchSymbols(data.dreamText)
     const fate = buildFate(data)
