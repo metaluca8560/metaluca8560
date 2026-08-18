@@ -229,7 +229,7 @@ async function fetchStandardFestivals(env, { region }) {
 
   let raw = pickStdItems(first);
   debug.firstPageCount = raw.length;
-  const totalCount = Number(first?.response?.body?.totalCount || 0);
+  const totalCount = Number(stdBody(first)?.totalCount || 0);
   debug.totalCount = totalCount;
   const perPage = raw.length || PER_PAGE;
   // 실제로 몇 건씩 주는지 보고 남은 페이지 수를 계산한다 (서버가 100건으로 깎아도 대응).
@@ -277,9 +277,15 @@ async function fetchStandardFestivals(env, { region }) {
   return { items, debug };
 }
 
-// type=json이면 items가 배열로 오지만, XML 형태({item:[...]})로 올 때도 있어 둘 다 받는다.
+// 이 API는 TourAPI와 달리 최상위에 response 래퍼가 없고 {header, body} 로 바로 온다.
+// 다른 data.go.kr API처럼 감싸서 오는 경우도 있어 둘 다 받는다.
+function stdBody(data) {
+  return data?.response?.body ?? data?.body ?? null;
+}
+
+// items는 {item:[...]} 로 오지만, 배열로 바로 오는 형태도 함께 받는다.
 function pickStdItems(data) {
-  const it = data?.response?.body?.items;
+  const it = stdBody(data)?.items;
   if (Array.isArray(it)) return it;
   if (Array.isArray(it?.item)) return it.item;
   if (it?.item) return [it.item];
