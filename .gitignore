@@ -6,3 +6,10 @@ logo_sheet.svg
 # 로컬 미리보기 산출물 (커밋 안 함)
 shots/
 shot.js
+
+# wrangler 배포 캐시 (medi/server, festival/server, shared-api에 생김)
+.wrangler/
+
+# 의존성·로그
+node_modules/
+*.log
