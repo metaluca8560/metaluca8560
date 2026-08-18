@@ -36,12 +36,16 @@ npx wrangler deploy
 
 ## Secret
 
+현재 이 Worker에 등록된 것은 `GEMINI_API_KEY`, `ANTHROPIC_API_KEY` 두 개입니다.
+Gemini 키가 있으면 Gemini를 우선 사용합니다.
+
 ```bash
 "키값" | npx wrangler secret put GEMINI_API_KEY
-"키값" | npx wrangler secret put DATA_GO_KR_KEY
 ```
 
-`ANTHROPIC_API_KEY`도 쓸 수 있습니다. Gemini 키가 있으면 Gemini를 우선 사용합니다.
+`DATA_GO_KR_KEY`는 **등록되어 있지 않습니다.** 따라서 `/hospitals`는 동작하지 않습니다.
+메디앱이 `medi-api`로 옮겨간 뒤로 아무도 쓰지 않는 엔드포인트라 그대로 두었습니다.
+되살릴 일이 생기면 그때 키를 넣으면 됩니다.
 
 ## 배포 전 주의
 
