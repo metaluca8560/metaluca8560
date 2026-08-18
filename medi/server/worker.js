@@ -224,8 +224,30 @@ async function handleHospitals(url, env, cors) {
   const res = await fetch(api.toString());
   if (!res.ok) return json({ error: "data.go.kr " + res.status, items: [] }, 502, cors);
   const xml = await res.text();
+  const apiErr = readApiError(xml);
+  if (apiErr) return json({ error: `data.go.kr ${apiErr.code}: ${apiErr.msg}`, items: [] }, 502, cors);
   const items = parseEgenItems(xml);
   return json({ items }, 200, cors);
+}
+
+// XML 태그 하나 꺼내기 (Workers에는 DOMParser가 없어 정규식 사용)
+function xmlTag(xml, tag) {
+  const m = xml.match(new RegExp(`<${tag}>([\\s\\S]*?)<\\/${tag}>`));
+  return m ? m[1].replace(/<!\[CDATA\[|\]\]>/g, "").trim() : "";
+}
+
+// data.go.kr은 키 만료·일일 한도 초과·활용신청 만료 같은 상황에서도 HTTP 200을
+// 돌려주고 실패 사유는 본문 XML에만 담는다. 그대로 파싱하면 <item>이 없어서
+// 빈 목록이 되고, 화면에는 "주변에 없어요"로 표시된다.
+// 병원·약국 안내에서 "조회 실패"와 "진짜 없음"이 같아 보이면 안 되므로 구분한다.
+function readApiError(xml) {
+  // ① 게이트웨이 단계 오류 (키 미등록, 트래픽 초과 등)
+  const authMsg = xmlTag(xml, "returnAuthMsg") || xmlTag(xml, "errMsg");
+  if (authMsg) return { code: xmlTag(xml, "returnReasonCode") || "AGW", msg: authMsg };
+  // ② 서비스 단계 오류 (정상은 "00")
+  const code = xmlTag(xml, "resultCode");
+  if (code && code !== "00") return { code, msg: xmlTag(xml, "resultMsg") || "알 수 없는 오류" };
+  return null;
 }
 
 // 공공데이터 XML을 간단 파싱 (Workers에는 DOMParser가 없어 정규식 사용)
@@ -266,6 +288,8 @@ async function handlePharmacies(url, env, cors) {
   const res = await fetch(api.toString());
   if (!res.ok) return json({ error: "data.go.kr " + res.status, items: [] }, 502, cors);
   const xml = await res.text();
+  const apiErr = readApiError(xml);
+  if (apiErr) return json({ error: `data.go.kr ${apiErr.code}: ${apiErr.msg}`, items: [] }, 502, cors);
   const items = parseParmacyItems(xml);
   return json({ items }, 200, cors);
 }
@@ -314,6 +338,8 @@ async function handleGeneralHospitals(url, env, cors) {
   const res = await fetch(api.toString());
   if (!res.ok) return json({ error: "data.go.kr " + res.status, items: [] }, 502, cors);
   const xml = await res.text();
+  const apiErr = readApiError(xml);
+  if (apiErr) return json({ error: `data.go.kr ${apiErr.code}: ${apiErr.msg}`, items: [] }, 502, cors);
   const items = parseHospInfoItems(xml);
   return json({ items }, 200, cors);
 }
