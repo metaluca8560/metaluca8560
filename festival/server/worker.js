@@ -181,8 +181,10 @@ async function fetchStandardFestivals(env, { region }) {
   if (!env.DATA_GO_KR_KEY) return { items: [] };
 
   const base = "https://api.data.go.kr/openapi/tn_pubr_public_cltur_fstvl_api";
-  const PER_PAGE = 1000;
-  const MAX_PAGES = 6; // 폭주 방지 상한
+  // numOfRows를 1000으로 올렸더니 200 응답에 totalCount 0이 돌아왔다.
+  // 미리보기에서 확인된 100건이 확실히 동작하므로 100으로 두고 페이지를 늘린다.
+  const PER_PAGE = 100;
+  const MAX_PAGES = 15; // 전체 1300여 건 → 13페이지. 폭주 방지 상한.
 
   const pageUrl = (pageNo) => {
     const u = new URL(base);
@@ -211,7 +213,10 @@ async function fetchStandardFestivals(env, { region }) {
       return null;
     }
     try {
-      return JSON.parse(text);
+      const parsed = JSON.parse(text);
+      // 200인데 0건인 경우가 있어, 성공 응답도 앞부분을 남겨 원인을 볼 수 있게 한다.
+      if (pageNo === 1) debug.sample = text.slice(0, 400);
+      return parsed;
     } catch (e) {
       // JSON을 기대했는데 XML/에러 페이지가 오는 경우가 잦다.
       if (pageNo === 1) debug.note = "JSON 아님, 앞부분: " + text.slice(0, 300);
