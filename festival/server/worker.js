@@ -192,17 +192,40 @@ async function fetchStandardFestivals(env, { region }) {
     u.searchParams.set("pageNo", String(pageNo));
     return u.toString();
   };
+  // 실패해도 조용히 넘어가면 원인을 알 수 없어서, 진단 정보를 남긴다(?debug=1로 확인).
+  const debug = { endpoint: base, status: null, note: "" };
+
   // 갱신주기가 분기라서 길게 캐싱해도 안전하다. (매 대화마다 1300건을 새로 받지 않도록)
-  const getPage = (pageNo) =>
-    fetch(pageUrl(pageNo), { cf: { cacheTtl: 21600, cacheEverything: true } })
-      .then((r) => (r.ok ? r.json() : null))
-      .catch(() => null);
+  const getPage = async (pageNo) => {
+    let res;
+    try {
+      res = await fetch(pageUrl(pageNo), { cf: { cacheTtl: 21600, cacheEverything: true } });
+    } catch (e) {
+      if (pageNo === 1) debug.note = "fetch 실패: " + String((e && e.message) || e);
+      return null;
+    }
+    if (pageNo === 1) debug.status = res.status;
+    const text = await res.text().catch(() => "");
+    if (!res.ok) {
+      if (pageNo === 1) debug.note = "본문: " + text.slice(0, 300);
+      return null;
+    }
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      // JSON을 기대했는데 XML/에러 페이지가 오는 경우가 잦다.
+      if (pageNo === 1) debug.note = "JSON 아님, 앞부분: " + text.slice(0, 300);
+      return null;
+    }
+  };
 
   const first = await getPage(1);
-  if (!first) return { items: [] };
+  if (!first) return { items: [], debug };
 
   let raw = pickStdItems(first);
+  debug.firstPageCount = raw.length;
   const totalCount = Number(first?.response?.body?.totalCount || 0);
+  debug.totalCount = totalCount;
   const perPage = raw.length || PER_PAGE;
   // 실제로 몇 건씩 주는지 보고 남은 페이지 수를 계산한다 (서버가 100건으로 깎아도 대응).
   if (totalCount > perPage) {
@@ -244,7 +267,9 @@ async function fetchStandardFestivals(env, { region }) {
     .filter((f) => !(f.rawStart.slice(4) === "0101" && f.rawEnd.slice(4) === "1231"))
     .filter((f) => !aliases || aliases.some((a) => f.address.startsWith(a)));
 
-  return { items };
+  debug.fetched = raw.length;
+  debug.afterFilter = items.length;
+  return { items, debug };
 }
 
 // type=json이면 items가 배열로 오지만, XML 형태({item:[...]})로 올 때도 있어 둘 다 받는다.
@@ -268,9 +293,11 @@ async function fetchFestivals(env, { region, from, to, numOfRows }) {
   const items = dedupeFestivals([...(tour.items || []), ...(std.items || [])])
     .sort((a, b) => (b.ongoing - a.ongoing) || a.rawStart.localeCompare(b.rawStart));
 
+  const debug = { tour: { count: (tour.items || []).length, error: tour.error || null }, std: std.debug || null };
+
   // 양쪽 다 빈손일 때만 오류로 취급한다 (한쪽만 죽어도 서비스는 계속되게).
-  if (!items.length && tour.error) return { items: [], error: tour.error };
-  return { items };
+  if (!items.length && tour.error) return { items: [], error: tour.error, debug };
+  return { items, debug };
 }
 
 // 같은 축제가 두 출처에 다 있는 경우가 많다("울산고래축제" 등).
@@ -301,9 +328,10 @@ async function handleFestivals(url, env, cors) {
   const region = url.searchParams.get("region") || "";
   const from = url.searchParams.get("from") || "";
   const to = url.searchParams.get("to") || "";
-  const { items, error } = await fetchFestivals(env, { region, from, to, numOfRows: 100 });
-  if (error) return json({ error, items: [] }, 200, cors);
-  return json({ items }, 200, cors);
+  const { items, error, debug } = await fetchFestivals(env, { region, from, to, numOfRows: 100 });
+  const withDebug = url.searchParams.get("debug") === "1";
+  if (error) return json({ error, items: [], ...(withDebug ? { debug } : {}) }, 200, cors);
+  return json({ items, ...(withDebug ? { debug } : {}) }, 200, cors);
 }
 
 // ----- POST /chat -----
