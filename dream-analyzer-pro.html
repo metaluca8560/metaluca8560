@@ -754,14 +754,18 @@ ${symNote}
 
   // 검사에 걸린 칸으로 화면을 옮기고 커서를 넣는다.
   // 안내만 띄우면 모바일에서는 문제의 칸이 화면 밖이라 뭐가 잘못됐는지 알 수 없다.
-  function focusMissing(id, len) {
+  function focusField(id, message) {
     const el = document.getElementById(id)
-    if (!el) return
+    if (!el) { alert(message); return }
     el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     el.classList.add('field-error')
     setTimeout(() => el.classList.remove('field-error'), 2000)
-    alert(len ? '꿈 내용을 10자 이상 적어주세요. (지금 ' + len + '자)' : '꿈 내용을 먼저 적어주세요.')
+    alert(message)
     el.focus({ preventScroll: true })
+  }
+
+  function focusMissing(id, len) {
+    focusField(id, len ? '꿈 내용을 10자 이상 적어주세요. (지금 ' + len + '자)' : '꿈 내용을 먼저 적어주세요.')
   }
 
   // ── 송금 링크 결제 (수동 확인 방식) ─────────────────────────────────
@@ -798,7 +802,7 @@ ${symNote}
 
   async function confirmTransfer() {
     const payerName = document.getElementById('payerName').value.trim()
-    if (!payerName) { alert('보내신 분 성함을 입력해주세요! (입금 확인용)'); return }
+    if (!payerName) { focusField('payerName', '보내신 분 성함을 입력해주세요! (입금 확인용)'); return }
     const data = JSON.parse(sessionStorage.getItem('dreamProData') || 'null') || collectData()
     if (!data) return
     const btn = document.getElementById('payBtn')
@@ -935,7 +939,7 @@ ${symNote}
 
   async function sendEmail() {
     const email = document.getElementById('emailAddr').value.trim()
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('올바른 이메일 주소를 입력해주세요!'); return }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { focusField('emailAddr', '올바른 이메일 주소를 입력해주세요!'); return }
     if (!lastAnalysisText) { alert('먼저 꿈 분석을 실행해주세요!'); return }
     const btn = document.getElementById('emailSendBtn')
     // 1순위: n8n 웹훅으로 발송
