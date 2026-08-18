@@ -72,7 +72,6 @@ strong { font-weight: 800; }
 .pick-card .pk-when { color: var(--brand-d); font-weight: 700; font-size: .9em; margin-top: 4px; }
 .pick-card .pk-where { color: var(--muted); font-size: .9em; margin-top: 2px; }
 .pick-card .pk-why { margin-top: 8px; font-size: .95em; }
-.pick-empty { color: var(--muted); font-size: .95em; padding: 6px 2px; }
 
 /* ===== 푸터 ===== */
 .footer { background: #ffeddc; padding: 26px 0 40px; color: var(--muted); }

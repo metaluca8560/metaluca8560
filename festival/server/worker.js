@@ -44,8 +44,14 @@ const SYSTEM_PROMPT = `당신은 한국어로 답하는 다정한 "동네 축제
 카드 줄 다음에는 1~2문장으로 밝게 정리합니다.
 주의: <card>...</card> 는 오직 이 추천 단계에서만 출력하고, 되묻는(질문하는) 답변에는 절대 넣지 않습니다.
 
+[목록 읽는 법]
+- 제목 옆에 [지금 진행중] 표시가 있으면 오늘 기준으로 열리고 있는 축제입니다.
+- "지금/오늘/이번 주말" 같은 질문에는 [지금 진행중] 축제를 먼저 살펴봅니다.
+
 [금지]
 - "실제 축제 목록"에 없는 축제·장소·날짜를 지어내지 않습니다.
+- "제가 가진 목록에는", "데이터를 못 가져왔어요" 처럼 내부 사정을 말하지 않습니다.
+  없으면 그냥 "그건 지금 찾아지는 게 없네요" 정도로만 담백하게 말합니다.
 - 너무 길게 설명하지 않습니다.`;
 
 export default {
@@ -86,9 +92,13 @@ async function fetchFestivals(env, { region, from, to, numOfRows }) {
   if (!env.DATA_GO_KR_KEY) return { items: [], error: "DATA_GO_KR_KEY 미설정" };
 
   const today = new Date();
-  const in90 = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000);
-  const eventStartDate = from || ymd(today);
-  const eventEndDate = to || ymd(in90);
+  // eventStartDate는 "시작일이 이 날짜 이후"를 뜻해서, 오늘로 잡으면
+  // 이미 시작해 지금 진행 중인 축제가 통째로 빠진다. 과거로 넉넉히 열고
+  // 아래에서 "이미 끝난 축제"를 직접 걸러낸다.
+  const past = new Date(today.getTime() - 120 * 24 * 60 * 60 * 1000);
+  const future = new Date(today.getTime() + 180 * 24 * 60 * 60 * 1000);
+  const eventStartDate = from || ymd(past);
+  const eventEndDate = to || ymd(future);
 
   // 서비스: 한국관광공사_국문 관광정보 서비스(KorService2) — 공공데이터포털에서 별도 활용신청 후 사용
   const api = new URL("https://apis.data.go.kr/B551011/KorService2/searchFestival2");
@@ -99,27 +109,44 @@ async function fetchFestivals(env, { region, from, to, numOfRows }) {
   api.searchParams.set("arrange", "A");
   api.searchParams.set("eventStartDate", eventStartDate);
   api.searchParams.set("eventEndDate", eventEndDate);
-  api.searchParams.set("numOfRows", String(numOfRows || 30));
+  api.searchParams.set("numOfRows", String(numOfRows || 100));
   api.searchParams.set("pageNo", "1");
   if (region && REGION_CODES[region]) api.searchParams.set("lDongRegnCd", REGION_CODES[region]);
 
-  const res = await fetch(api.toString());
-  if (!res.ok) return { items: [], error: "data.go.kr " + res.status };
+  // data.go.kr이 간헐적으로 522/타임아웃을 내서 한 번 더 시도한다.
+  let res = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    res = await fetch(api.toString()).catch(() => null);
+    if (res && res.ok) break;
+  }
+  if (!res || !res.ok) return { items: [], error: "data.go.kr " + (res ? res.status : "unreachable") };
+
   const data = await res.json().catch(() => null);
   const rawItems = data?.response?.body?.items?.item;
   if (!rawItems) return { items: [] };
   const list = Array.isArray(rawItems) ? rawItems : [rawItems];
 
-  const items = list.map((it) => ({
-    title: it.title || "",
-    address: [it.addr1, it.addr2].filter(Boolean).join(" "),
-    tel: it.tel || "",
-    startDate: fmtDate(it.eventstartdate),
-    endDate: fmtDate(it.eventenddate),
-    image: it.firstimage || "",
-    lat: it.mapy || "",
-    lng: it.mapx || "",
-  }));
+  const todayNum = ymd(today);
+  const items = list
+    .map((it) => ({
+      title: it.title || "",
+      address: [it.addr1, it.addr2].filter(Boolean).join(" "),
+      tel: it.tel || "",
+      rawStart: it.eventstartdate || "",
+      rawEnd: it.eventenddate || "",
+      startDate: fmtDate(it.eventstartdate),
+      endDate: fmtDate(it.eventenddate),
+      ongoing: !!(it.eventstartdate && it.eventenddate &&
+        it.eventstartdate <= todayNum && it.eventenddate >= todayNum),
+      image: it.firstimage || "",
+      lat: it.mapy || "",
+      lng: it.mapx || "",
+    }))
+    // 이미 끝난 축제는 제외
+    .filter((f) => !f.rawEnd || f.rawEnd >= todayNum)
+    // 진행 중인 축제를 먼저, 그다음 시작일 가까운 순
+    .sort((a, b) => (b.ongoing - a.ongoing) || a.rawStart.localeCompare(b.rawStart));
+
   return { items };
 }
 
@@ -133,7 +160,7 @@ async function handleFestivals(url, env, cors) {
   const region = url.searchParams.get("region") || "";
   const from = url.searchParams.get("from") || "";
   const to = url.searchParams.get("to") || "";
-  const { items, error } = await fetchFestivals(env, { region, from, to, numOfRows: 30 });
+  const { items, error } = await fetchFestivals(env, { region, from, to, numOfRows: 100 });
   if (error) return json({ error, items: [] }, 200, cors);
   return json({ items }, 200, cors);
 }
@@ -154,12 +181,17 @@ async function handleChat(request, env, cors) {
     return json({ error: "messages가 user로 시작해야 합니다" }, 400, cors);
   }
 
-  const { items } = await fetchFestivals(env, { region, numOfRows: 30 });
-  const pool = items.slice(0, 20).map(
-    (f) => `- ${f.title} | 기간: ${f.startDate}~${f.endDate} | 장소: ${f.address}`
+  const { items } = await fetchFestivals(env, { region, numOfRows: 100 });
+  const pool = items.slice(0, 45).map(
+    (f) => `- ${f.title}${f.ongoing ? " [지금 진행중]" : ""} | 기간: ${f.startDate}~${f.endDate} | 장소: ${f.address}`
   ).join("\n");
 
-  const system = SYSTEM_PROMPT + `\n\n[실제 축제 목록${region ? ` — ${region}` : " — 전국"}]\n${pool || "(현재 목록을 가져오지 못했습니다. 나중에 다시 시도해달라고 안내하세요.)"}`;
+  const now = new Date();
+  const todayLabel = `${now.getFullYear()}년 ${now.getMonth() + 1}월 ${now.getDate()}일`;
+
+  const system = SYSTEM_PROMPT +
+    `\n\n[오늘 날짜] ${todayLabel} — "이번 주말", "지금", "다음 달" 같은 말은 이 날짜를 기준으로 해석하세요.` +
+    `\n\n[실제 축제 목록${region ? ` — ${region}` : " — 전국"}]\n${pool || "(현재 목록을 가져오지 못했습니다. 나중에 다시 시도해달라고 안내하세요.)"}`;
 
   if (env.GEMINI_API_KEY) return await callGemini(env, system, messages, cors);
   return await callClaude(env, system, messages, cors);

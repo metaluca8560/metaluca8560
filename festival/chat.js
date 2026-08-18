@@ -91,7 +91,9 @@ function renderBotReply(thinkingEl, reply) {
   }
   const text = reply.replace(/<card>[\s\S]*?<\/card>/, "").trim();
 
-  if (card) {
+  // picks가 비어 있으면 카드를 그리지 않는다 — AI 답변 텍스트가 이미 같은 말을 하고 있어서
+  // 카드까지 띄우면 "없어요"가 두 번 나온다.
+  if (card && Array.isArray(card.picks) && card.picks.length) {
     const cardEl = buildPickCard(card);
     chatBox.insertBefore(cardEl, thinkingEl);
   }
@@ -104,13 +106,9 @@ function renderBotReply(thinkingEl, reply) {
 }
 
 function buildPickCard(data) {
-  const picks = Array.isArray(data.picks) ? data.picks : [];
+  const picks = data.picks;
   const el = document.createElement("div");
   el.className = "pick-list";
-  if (!picks.length) {
-    el.innerHTML = `<p class="pick-empty">지금은 조건에 딱 맞는 축제가 없어요. 다른 지역이나 시기로 다시 물어봐 주세요.</p>`;
-    return el;
-  }
   el.innerHTML = picks.map((p) => `
     <div class="pick-card">
       <div class="pk-title">🎪 ${escapeHtml(p.title || "")}</div>
