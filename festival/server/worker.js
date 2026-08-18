@@ -23,6 +23,18 @@ const REGION_CODES = {
   "제주특별자치도": "50",
 };
 
+// 표준데이터에는 지역코드 파라미터가 없어서 주소 앞부분으로 지역을 가려낸다.
+// 반드시 주소 "맨 앞"과 비교할 것 — 그래야 "경기도 광주시"가 광주광역시로 잘못 잡히지 않는다.
+const REGION_ALIASES = {
+  "서울특별시": ["서울"], "부산광역시": ["부산"], "대구광역시": ["대구"],
+  "인천광역시": ["인천"], "광주광역시": ["광주"], "대전광역시": ["대전"],
+  "울산광역시": ["울산"], "세종특별자치시": ["세종"], "경기도": ["경기"],
+  "강원특별자치도": ["강원"], "충청북도": ["충청북도", "충북"],
+  "충청남도": ["충청남도", "충남"], "전북특별자치도": ["전북", "전라북도"],
+  "전라남도": ["전라남도", "전남"], "경상북도": ["경상북도", "경북"],
+  "경상남도": ["경상남도", "경남"], "제주특별자치도": ["제주"],
+};
+
 const SYSTEM_PROMPT = `당신은 한국어로 답하는 다정한 "동네 축제 큐레이터"입니다. 사용자와 대화하며 관심사·분위기·시기를 파악해서, 아래 제공된 "실제 축제 목록" 중에서만 골라 추천합니다.
 
 [말투]
@@ -87,8 +99,8 @@ function ymd(date) {
   return `${y}${m}${d}`;
 }
 
-// ----- 축제 목록 조회 (TourAPI) -----
-async function fetchFestivals(env, { region, from, to, numOfRows }) {
+// ----- 축제 목록 조회 ① 한국관광공사 TourAPI -----
+async function fetchTourFestivals(env, { region, from, to, numOfRows }) {
   if (!env.DATA_GO_KR_KEY) return { items: [], error: "DATA_GO_KR_KEY 미설정" };
 
   const today = new Date();
@@ -141,6 +153,7 @@ async function fetchFestivals(env, { region, from, to, numOfRows }) {
       image: it.firstimage || "",
       lat: it.mapy || "",
       lng: it.mapx || "",
+      source: "tour",
     }))
     // 이미 끝난 축제는 제외
     .filter((f) => !f.rawEnd || f.rawEnd >= todayNum)
@@ -153,6 +166,134 @@ async function fetchFestivals(env, { region, from, to, numOfRows }) {
 function fmtDate(s) {
   if (!s || s.length !== 8) return s || "";
   return `${s.slice(0, 4)}.${s.slice(4, 6)}.${s.slice(6, 8)}`;
+}
+
+// "2026-10-15" / "20261015" 무엇이 와도 "20261015"로 맞춘다.
+function toYmd(s) {
+  const d = String(s || "").replace(/\D/g, "");
+  return d.length === 8 ? d : "";
+}
+
+// ----- 축제 목록 조회 ② 행정안전부 전국문화축제표준데이터 -----
+// 지자체가 직접 등록해서 관광공사 DB보다 훨씬 촘촘하다. 다만 지역 필터
+// 파라미터가 없고 지난 연도 축제까지 섞여 있어서, 전부 받아온 뒤 직접 거른다.
+async function fetchStandardFestivals(env, { region }) {
+  if (!env.DATA_GO_KR_KEY) return { items: [] };
+
+  const base = "https://api.data.go.kr/openapi/tn_pubr_public_cltur_fstvl_api";
+  const PER_PAGE = 1000;
+  const MAX_PAGES = 6; // 폭주 방지 상한
+
+  const pageUrl = (pageNo) => {
+    const u = new URL(base);
+    u.searchParams.set("serviceKey", env.DATA_GO_KR_KEY);
+    u.searchParams.set("type", "json");
+    u.searchParams.set("numOfRows", String(PER_PAGE));
+    u.searchParams.set("pageNo", String(pageNo));
+    return u.toString();
+  };
+  // 갱신주기가 분기라서 길게 캐싱해도 안전하다. (매 대화마다 1300건을 새로 받지 않도록)
+  const getPage = (pageNo) =>
+    fetch(pageUrl(pageNo), { cf: { cacheTtl: 21600, cacheEverything: true } })
+      .then((r) => (r.ok ? r.json() : null))
+      .catch(() => null);
+
+  const first = await getPage(1);
+  if (!first) return { items: [] };
+
+  let raw = pickStdItems(first);
+  const totalCount = Number(first?.response?.body?.totalCount || 0);
+  const perPage = raw.length || PER_PAGE;
+  // 실제로 몇 건씩 주는지 보고 남은 페이지 수를 계산한다 (서버가 100건으로 깎아도 대응).
+  if (totalCount > perPage) {
+    const need = Math.min(Math.ceil(totalCount / perPage), MAX_PAGES);
+    const rest = await Promise.all(
+      Array.from({ length: need - 1 }, (_, i) => getPage(i + 2))
+    );
+    for (const page of rest) if (page) raw = raw.concat(pickStdItems(page));
+  }
+
+  const todayNum = ymd(new Date());
+  const aliases = REGION_ALIASES[region] || null;
+
+  const items = raw
+    .map((it) => {
+      const addr = it.rdnmadr || it.lnmadr || "";
+      const rawStart = toYmd(it.fstvlStartDate);
+      const rawEnd = toYmd(it.fstvlEndDate);
+      return {
+        title: (it.fstvlNm || "").trim(),
+        address: addr,
+        place: it.opar || "",
+        tel: it.phoneNumber || "",
+        rawStart,
+        rawEnd,
+        startDate: fmtDate(rawStart),
+        endDate: fmtDate(rawEnd),
+        ongoing: !!(rawStart && rawEnd && rawStart <= todayNum && rawEnd >= todayNum),
+        image: "",
+        lat: it.latitude || "",
+        lng: it.longitude || "",
+        source: "std",
+      };
+    })
+    .filter((f) => f.title && f.rawStart && f.rawEnd)
+    // 이미 끝난 축제 제외 (2019~2025년 데이터가 그대로 남아 있음)
+    .filter((f) => f.rawEnd >= todayNum)
+    // 1월 1일~12월 31일은 일정 미정 자리표시자라 축제로 보여줄 수 없다.
+    .filter((f) => !(f.rawStart.slice(4) === "0101" && f.rawEnd.slice(4) === "1231"))
+    .filter((f) => !aliases || aliases.some((a) => f.address.startsWith(a)));
+
+  return { items };
+}
+
+// type=json이면 items가 배열로 오지만, XML 형태({item:[...]})로 올 때도 있어 둘 다 받는다.
+function pickStdItems(data) {
+  const it = data?.response?.body?.items;
+  if (Array.isArray(it)) return it;
+  if (Array.isArray(it?.item)) return it.item;
+  if (it?.item) return [it.item];
+  return [];
+}
+
+// ----- 두 출처 합치기 -----
+async function fetchFestivals(env, { region, from, to, numOfRows }) {
+  if (!env.DATA_GO_KR_KEY) return { items: [], error: "DATA_GO_KR_KEY 미설정" };
+
+  const [tour, std] = await Promise.all([
+    fetchTourFestivals(env, { region, from, to, numOfRows }).catch(() => ({ items: [] })),
+    fetchStandardFestivals(env, { region }).catch(() => ({ items: [] })),
+  ]);
+
+  const items = dedupeFestivals([...(tour.items || []), ...(std.items || [])])
+    .sort((a, b) => (b.ongoing - a.ongoing) || a.rawStart.localeCompare(b.rawStart));
+
+  // 양쪽 다 빈손일 때만 오류로 취급한다 (한쪽만 죽어도 서비스는 계속되게).
+  if (!items.length && tour.error) return { items: [], error: tour.error };
+  return { items };
+}
+
+// 같은 축제가 두 출처에 다 있는 경우가 많다("울산고래축제" 등).
+// 회차·연도 표기를 걷어낸 이름 + 개최 연월로 같은 축제인지 판단한다.
+function normTitle(s) {
+  return String(s || "")
+    .replace(/\s+/g, "")
+    .replace(/제?\d+회/g, "")
+    .replace(/^\d{4}년?/, "")
+    .replace(/[()[\]{}·・.,~\-–—'"]/g, "")
+    .toLowerCase();
+}
+
+function dedupeFestivals(list) {
+  const score = (x) => (x.image ? 2 : 0) + (x.address ? 1 : 0);
+  const map = new Map();
+  for (const f of list) {
+    const key = normTitle(f.title) + "|" + f.rawStart.slice(0, 6);
+    const prev = map.get(key);
+    // 사진·주소가 더 충실한 쪽을 남긴다 (보통 관광공사 쪽에 사진이 있다).
+    if (!prev || score(f) > score(prev)) map.set(key, f);
+  }
+  return [...map.values()];
 }
 
 // ----- GET /festivals -----
@@ -182,8 +323,8 @@ async function handleChat(request, env, cors) {
   }
 
   const { items } = await fetchFestivals(env, { region, numOfRows: 100 });
-  const pool = items.slice(0, 45).map(
-    (f) => `- ${f.title}${f.ongoing ? " [지금 진행중]" : ""} | 기간: ${f.startDate}~${f.endDate} | 장소: ${f.address}`
+  const pool = items.slice(0, 60).map(
+    (f) => `- ${f.title}${f.ongoing ? " [지금 진행중]" : ""} | 기간: ${f.startDate}~${f.endDate} | 장소: ${f.place || f.address}`
   ).join("\n");
 
   const now = new Date();
