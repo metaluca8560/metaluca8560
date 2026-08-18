@@ -54,8 +54,10 @@ Worker를 계속 보게 되므로 `wrangler.toml`의 `name`은 그대로 두어�
 | 우리동네 무슨 축제? | `festival/` | `festival-api` |
 | 우리시장 | `market/` | `small-recipe-9345` `/recipe` |
 | 타로 | `tarot/` | `small-recipe-9345` `/tarot` |
-| 룩(음성) | `miniapp-look/` | `small-recipe-9345` `/voice/tts` |
-| 스캔·번역 등 | **저장소에 없음** (Firebase) | `small-recipe-9345` `/scan` `/translate` `/voice/stt` |
+| 나좀봐 (룩) | `miniapp-look/`, `firebase-apps/look.html` | `small-recipe-9345` `/voice/tts` |
+| my scan2677 | `firebase-apps/scan.html` | `small-recipe-9345` `/scan` |
+| 마주톡 (번역) | `firebase-apps/talk.html` | `small-recipe-9345` `/translate` |
+| 킬링보이스 (음성) | `firebase-apps/voice.html` | `small-recipe-9345` `/voice/tts` `/voice/stt` |
 | 숏폼 분석 | `shortform/` | `/api/proxy` |
 | 꿈분석기 / 프로 | `dream-analyzer*.html` | `/api/dream`, `/api/notify` |
 | 점심 뭐 먹지 | `lunch-picker.html` | `/api/proxy` |
@@ -104,7 +106,7 @@ Worker에는 `DATA_GO_KR_KEY` 시크릿으로 등록합니다.
 | `luca-darakbang.netlify.app` | 주 사이트 | Netlify (푸시 시 자동) |
 | `metaluca8560.vercel.app` | Vercel 배포 | Vercel (푸시 시 자동) |
 | `metaluca8560.github.io` | GitHub Pages | `.github/workflows/deploy-pages.yml` |
-| `vaulted-bus-346411.web.app` | 타로·스캔·룩 | Firebase (수동) |
+| `vaulted-bus-346411.web.app` | 별도 포털 — 나좀봐·스캔·마주톡·타로·킬링보이스 | Firebase (수동) |
 
 앱마다 `og:image`가 가리키는 도메인이 달라서, 링크 공유 시 이미지가 안 뜨면 그 앱이
 어느 도메인 기준으로 작성됐는지 먼저 확인하세요.
@@ -146,11 +148,16 @@ Worker에는 `DATA_GO_KR_KEY` 시크릿으로 등록합니다.
 **공용 Worker에 `DATA_GO_KR_KEY`가 없습니다.** 그래서 거기 있는 `/hospitals`는 동작하지
 않습니다. 메디앱이 `medi-api`로 옮겨간 뒤 아무도 쓰지 않는 엔드포인트라 그대로 두었습니다.
 
-**Firebase 앱들의 소스가 저장소에 없습니다.** `/scan`, `/translate`, `/voice/stt`를
-호출하는 코드가 저장소 어디에도 없습니다. `vaulted-bus-346411.web.app`에 올라간 앱들이
-쓰고 있는데, 그 프론트 소스가 여기 없는 것입니다. 백엔드(`shared-api`)는 되찾았지만
-프론트는 여전히 배포본만 존재합니다. Firebase 콘솔이나 로컬 어딘가에 원본이 있는지
-확인해서 저장소로 가져오는 게 좋겠습니다. 없으면 그 앱들은 고칠 수 없습니다.
+**`firebase-apps/`는 배포본을 되받은 것입니다.** 원본 소스가 저장소에 없어서, 공개된
+배포 페이지를 그대로 내려받아 보존했습니다. 손대지 않은 원본이라 지금 살아 있는 것과
+동일합니다. 앞으로 이 앱들을 고칠 때는 이 파일을 고쳐서 Firebase에 다시 올리면 됩니다.
 
-`tarot/`은 저장소에 있지만 포털은 Firebase 쪽(`vaulted-bus-346411.web.app/tarot`)을
-가리킵니다. 둘이 같은 것인지, 저장소 쪽이 옛것인지 확인이 필요합니다.
+Firebase 배포는 **수동**이라 자동화되어 있지 않습니다. 배포 방법(`firebase deploy`
+설정이 어디 있는지)은 아직 확인하지 못했습니다.
+
+`root.html`이 부르는 이미지 3개(`images/class.jpg`, `intro.png`, `mascot.png`)는
+아직 받지 않았습니다. 포털을 실제로 고칠 일이 생기면 그때 받으면 됩니다.
+
+`firebase-apps/tarot.html`은 껍데기이고 실제 코드는 저장소의 `tarot/` 폴더를 부릅니다
+(`app.js`, `cards-data.js`, `styles.css` 모두 저장소에 있음). 타로는 원래부터
+안전했습니다.
