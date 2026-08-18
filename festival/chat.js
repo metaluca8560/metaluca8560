@@ -83,10 +83,13 @@ function renderFestivals() {
     return;
   }
 
-  festList.innerHTML = items.map(festivalCard).join("");
+  festList.innerHTML = items.map((f) => festivalCard(f)).join("");
+  attachImgFallback(festList);
+}
 
-  // 관광공사 이미지 URL이 종종 깨진다. 실패하면 빈 상자 대신 이모지로 바꾼다.
-  festList.querySelectorAll("img.fi-thumb").forEach((img) => {
+// 관광공사 이미지 URL이 종종 깨진다. 실패하면 빈 상자 대신 이모지로 바꾼다.
+function attachImgFallback(container) {
+  container.querySelectorAll("img.fi-thumb").forEach((img) => {
     img.addEventListener("error", () => {
       const ph = document.createElement("div");
       ph.className = "fi-thumb fi-noimg";
@@ -96,7 +99,8 @@ function renderFestivals() {
   });
 }
 
-function festivalCard(f) {
+// why를 주면 AI 추천 이유가 카드 안에 함께 표시된다.
+function festivalCard(f, why) {
   const where = f.place || f.address || "";
   const period = f.startDate === f.endDate ? f.startDate : `${f.startDate} ~ ${f.endDate}`;
   const mapQuery = encodeURIComponent(f.address || f.title);
@@ -112,12 +116,35 @@ function festivalCard(f) {
         </div>
         <div class="fi-when">${escapeHtml(period)}</div>
         ${where ? `<div class="fi-where">${escapeHtml(where)}</div>` : ""}
+        ${why ? `<div class="fi-why">${escapeHtml(why)}</div>` : ""}
         <div class="fi-actions">
           <a class="fi-link" href="https://map.kakao.com/?q=${mapQuery}" target="_blank" rel="noopener">지도</a>
           ${f.tel ? `<a class="fi-link" href="tel:${escapeHtml(f.tel)}">${escapeHtml(f.tel)}</a>` : ""}
         </div>
       </div>
     </article>`;
+}
+
+// AI가 추천한 이름으로 이미 받아둔 목록에서 같은 축제를 찾는다.
+// 회차·연도 표기가 붙거나 빠질 수 있어 그 부분을 걷어내고 비교한다.
+function normTitle(s) {
+  return String(s || "")
+    .replace(/\s+/g, "")
+    .replace(/제?\d+회/g, "")
+    .replace(/^\d{4}년?/, "")
+    .replace(/[()[\]{}·・.,~\-–—'"]/g, "")
+    .toLowerCase();
+}
+
+function findFestival(title) {
+  const key = normTitle(title);
+  if (!key) return null;
+  return loadedItems.find((f) => normTitle(f.title) === key)
+    || loadedItems.find((f) => {
+      const t = normTitle(f.title);
+      return t.includes(key) || key.includes(t);
+    })
+    || null;
 }
 
 // ---------- AI 채팅 ----------
@@ -209,13 +236,20 @@ function buildPickCard(data) {
   const picks = data.picks;
   const el = document.createElement("div");
   el.className = "pick-list";
-  el.innerHTML = picks.map((p) => `
+  // 목록에 있는 축제면 사진·지도·전화가 붙은 카드를 그대로 재사용하고,
+  // 못 찾으면(지역을 바꿨거나 목록 로딩 실패 등) AI가 준 정보로만 그린다.
+  el.innerHTML = picks.map((p) => {
+    const found = findFestival(p.title);
+    if (found) return festivalCard(found, p.why);
+    return `
     <div class="pick-card">
       <div class="pk-title">🎪 ${escapeHtml(p.title || "")}</div>
       ${p.when ? `<div class="pk-when">${escapeHtml(p.when)}</div>` : ""}
       ${p.where ? `<div class="pk-where">${escapeHtml(p.where)}</div>` : ""}
       ${p.why ? `<div class="pk-why">${escapeHtml(p.why)}</div>` : ""}
-    </div>`).join("");
+    </div>`;
+  }).join("");
+  attachImgFallback(el);
   return el;
 }
 

@@ -81,6 +81,10 @@ strong { font-weight: 800; }
 }
 .fi-when { color: var(--brand-d); font-weight: 700; font-size: .88em; margin-top: 4px; }
 .fi-where { color: var(--muted); font-size: .86em; margin-top: 2px; word-break: break-all; }
+.fi-why {
+  margin-top: 7px; font-size: .9em; line-height: 1.5; color: var(--ink);
+  background: var(--bg); border-radius: 9px; padding: 7px 10px;
+}
 .fi-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 8px; flex-wrap: wrap; }
 .fi-link {
   font-size: .82em; font-weight: 700; text-decoration: none;
