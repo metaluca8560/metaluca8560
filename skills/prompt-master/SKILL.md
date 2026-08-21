@@ -164,7 +164,7 @@ For prompts targeting agentic tools (Claude Code, Devin, Cursor, Windsurf, Cline
 
 1. Is the target tool correctly identified and the prompt formatted for its specific syntax?
 2. Are the critical constraints placed before the task body, where the model reads them first?
-3. Does every instruction that is genuinely non-negotiable say so plainly — and do the rest stay at normal volume? Marking everything critical makes the markers carry no information.
+3. Does every instruction use the strongest signal word? MUST over should. NEVER over avoid.
 4. Has every fabricated technique been removed?
 5. Is every sentence load-bearing — no vague adjectives, format explicit, scope bounded?
 6. Would this prompt produce the right output on the first attempt?
