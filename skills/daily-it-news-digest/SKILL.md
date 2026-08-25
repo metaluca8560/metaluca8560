@@ -19,6 +19,10 @@ description: >
 
 서브 에이전트 A·B는 `Promise.allSettled`로 **병렬 실행**. 하나 실패해도 나머지 진행.
 
+> **모델 ID에 날짜 접미사를 붙이지 않는다.** `claude-sonnet-5` 처럼 그대로 쓴다.
+> `web_search_20260209`는 현행 모델(Sonnet 5 / Opus 5 등)에서만 동작하므로 모델과 짝이다.
+> 둘 중 하나만 올리면 맞지 않는다.
+>
 > **MCP 커넥터는 반쪽만 쓰면 거부된다.** `mcp_servers`를 선언했으면 같은 이름을 가리키는
 > `tools: [{ type: "mcp_toolset", mcp_server_name: "..." }]`를 함께 넣어야 한다.
 > 베타 플래그 `mcp-client-2025-11-20`도 필요하다 — raw HTTP에서는 요청 본문이 아니라
@@ -33,7 +37,7 @@ description: >
 ```javascript
 // Anthropic API + web_search 툴
 {
-  model: "claude-sonnet-4-20250514",
+  model: "claude-sonnet-5",
   max_tokens: 2000,
   system: `당신은 IT 뉴스 큐레이터입니다. 반드시 순수 JSON만 반환:
 {"date":"YYYY-MM-DD",
@@ -41,7 +45,7 @@ description: >
  "tech_news":[{"title":"...","summary":"2-3문장","source":"출처명"}]}
 ai_news 4개, tech_news 4개.
 AI뉴스=LLM/생성AI/로봇/AI정책. 테크뉴스=빅테크/반도체/스타트업.`,
-  tools: [{ type: "web_search_20250305", name: "web_search" }],
+  tools: [{ type: "web_search_20260209", name: "web_search" }],
   messages: [{ role: "user", content: `${TODAY} 최신 AI 및 IT 테크 뉴스를 검색해서 JSON으로 요약해줘.` }]
 }
 ```
@@ -53,7 +57,7 @@ AI뉴스=LLM/생성AI/로봇/AI정책. 테크뉴스=빅테크/반도체/스타�
 
 ```javascript
 {
-  model: "claude-sonnet-4-20250514",
+  model: "claude-sonnet-5",
   max_tokens: 800,
   mcp_servers: [{ type: "url", url: "https://mcp.notion.com/mcp", name: "notion-mcp" }],
   tools: [{ type: "mcp_toolset", mcp_server_name: "notion-mcp" }],
@@ -71,7 +75,7 @@ AI뉴스=LLM/생성AI/로봇/AI정책. 테크뉴스=빅테크/반도체/스타�
 
 ```javascript
 {
-  model: "claude-sonnet-4-20250514",
+  model: "claude-sonnet-5",
   max_tokens: 800,
   mcp_servers: [{ type: "url", url: "https://gmailmcp.googleapis.com/mcp/v1", name: "gmail-mcp" }],
   tools: [{ type: "mcp_toolset", mcp_server_name: "gmail-mcp" }],

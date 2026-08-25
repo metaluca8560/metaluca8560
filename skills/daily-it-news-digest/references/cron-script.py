@@ -37,7 +37,7 @@ def call_api(body: dict) -> dict:
 # ── 1. 오케스트레이터: 뉴스 수집 ──────────────────────────────────────────
 def fetch_news() -> dict:
     data = call_api({
-        "model": "claude-sonnet-4-20250514",
+        "model": "claude-sonnet-5",
         "max_tokens": 2000,
         "system": (
             "당신은 IT 뉴스 큐레이터입니다. 반드시 순수 JSON만 반환:\n"
@@ -46,7 +46,7 @@ def fetch_news() -> dict:
             '"tech_news":[{"title":"...","summary":"2-3문장","source":"출처명"}]}\n'
             "ai_news 4개, tech_news 4개."
         ),
-        "tools": [{"type": "web_search_20250305", "name": "web_search"}],
+        "tools": [{"type": "web_search_20260209", "name": "web_search"}],
         "messages": [{"role": "user", "content": f"{TODAY} 최신 AI 및 IT 테크 뉴스를 검색해서 JSON으로 요약해줘."}]
     })
     text = next((b["text"] for b in data["content"] if b["type"] == "text"), "{}")
@@ -63,7 +63,7 @@ def save_to_notion(news: dict) -> str:
         content += f"{i}. **{n['title']}**\n{n['summary']}\n출처: {n['source']}\n\n"
 
     data = call_api({
-        "model": "claude-sonnet-4-20250514",
+        "model": "claude-sonnet-5",
         "max_tokens": 800,
         "mcp_servers": [{"type": "url", "url": "https://mcp.notion.com/mcp", "name": "notion-mcp"}],
         "tools": [{"type": "mcp_toolset", "mcp_server_name": "notion-mcp"}],
@@ -104,7 +104,7 @@ def send_email_draft(news: dict) -> str:
     )
 
     data = call_api({
-        "model": "claude-sonnet-4-20250514",
+        "model": "claude-sonnet-5",
         "max_tokens": 800,
         "mcp_servers": [{"type": "url", "url": "https://gmailmcp.googleapis.com/mcp/v1", "name": "gmail-mcp"}],
         "tools": [{"type": "mcp_toolset", "mcp_server_name": "gmail-mcp"}],
