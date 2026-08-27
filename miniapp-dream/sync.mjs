@@ -20,11 +20,15 @@ let out = src
   )
   // 출처 섹션의 외부 링크를 일반 텍스트로 변환 (텍스트는 유지)
   .replace(/<a href="https?:\/\/[^"]*"[^>]*>([\s\S]*?)<\/a>/g, '<span>$1</span>')
+  // 프리미엄 배너 제거: dream-analyzer-pro.html은 번들에 없어서 누르면 토스 에러 화면이 뜨고,
+  // 앱인토스는 미니앱 밖 링크와 외부 결제 유도를 금지해요. 웹 버전에는 그대로 남겨둬요.
+  .replace(/html \+= `<a href="dream-analyzer-pro\.html"[\s\S]*?<\/a>`/, '')
   // 파비콘/헤더 로고는 번들에 없으므로 제거
   .replace(/\s*<link rel="icon"[^>]*\/>/, '')
   .replace(/\s*<img src="automation\/logo\.svg"[^>]*\/>/, '');
 
 if (out === src) throw new Error('sync.mjs: 변환이 하나도 적용되지 않았어요. 원본 마크업이 바뀌었는지 확인하세요.');
+if (out.includes('dream-analyzer-pro.html')) throw new Error('sync.mjs: 프리미엄 배너가 제거되지 않았어요. 번들에 없는 페이지로 가는 링크가 남으면 토스 에러 화면이 떠요.');
 
 writeFileSync(join(here, 'index.html'), out);
 console.log('miniapp-dream/index.html generated from ../dream-analyzer.html');
