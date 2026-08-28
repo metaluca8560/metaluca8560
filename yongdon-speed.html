@@ -143,7 +143,8 @@
     var err = document.getElementById('setupErr');
     if (!Number.isFinite(v) || v <= 0) { err.textContent = '0보다 큰 숫자를 넣어주세요'; return; }
     err.textContent = '';
-    var s = { budget: v, remaining: v, month: monthKey(new Date()), lastBudget: v, lastResult: null };
+    var prev = load();
+    var s = { budget: v, remaining: v, month: monthKey(new Date()), lastBudget: v, lastResult: prev ? prev.lastResult : null };
     save(s); show('main'); render(s);
   };
 
@@ -171,9 +172,6 @@
   };
 
   document.getElementById('changeBtn').onclick = function () {
-    var s = load();
-    s.month = monthKey(new Date());
-    save(s);
     document.getElementById('budgetInput').value = '';
     show('setup');
   };
