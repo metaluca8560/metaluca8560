@@ -59,6 +59,18 @@
     <p class="note">이 기록은 서버로 보내지 않고 내 폰에만 저장돼요 🔒</p>
   </section>
 
+  <section id="inputPanel" hidden>
+    <h1 id="inputPanelTitle">-</h1>
+    <div class="card">
+      <input id="inputPanelInput" type="text" inputmode="numeric" placeholder="0" />
+      <div class="err" id="inputPanelErr"></div>
+      <div class="btns">
+        <button class="ghost" id="inputCancelBtn">취소</button>
+        <button id="inputConfirmBtn">확인</button>
+      </div>
+    </div>
+  </section>
+
   <section id="newMonth" hidden>
     <h1 id="newMonthTitle">새 달이 시작됐어요</h1>
     <div class="card">
@@ -80,7 +92,7 @@
   var monthKey = function (d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
 
   function show(id) {
-    ['setup', 'main', 'newMonth'].forEach(function (s) {
+    ['setup', 'main', 'newMonth', 'inputPanel'].forEach(function (s) {
       document.getElementById(s).hidden = s !== id;
     });
   }
@@ -148,20 +160,73 @@
     save(s); show('main'); render(s);
   };
 
-  document.getElementById('editBtn').onclick = function () {
+  var inputMode = null; // 'edit' | 'spend'
+
+  function openInputPanel(mode) {
+    inputMode = mode;
     var s = load();
-    var input = prompt('지금 남은 돈이 얼마예요?', s.remaining);
-    if (input === null || input.trim() === '') return; // 취소 또는 빈 입력은 그대로 둔다
-    var v = Number(input);
-    if (!Number.isFinite(v)) return;
-    s.remaining = v; save(s); render(s);
+    var title = document.getElementById('inputPanelTitle');
+    var input = document.getElementById('inputPanelInput');
+    var err = document.getElementById('inputPanelErr');
+    err.textContent = '';
+    if (mode === 'edit') {
+      title.textContent = '지금 남은 돈이 얼마예요?';
+      input.value = s.remaining;
+      input.placeholder = '0';
+    } else {
+      title.textContent = '얼마 쓰셨어요?';
+      input.value = '';
+      input.placeholder = '10000';
+    }
+    show('inputPanel');
+    input.focus();
+  }
+
+  function closeInputPanel() {
+    inputMode = null;
+    document.getElementById('inputPanelErr').textContent = '';
+    show('main');
+  }
+
+  document.getElementById('editBtn').onclick = function () { openInputPanel('edit'); };
+  document.getElementById('spendBtn').onclick = function () { openInputPanel('spend'); };
+
+  document.getElementById('inputCancelBtn').onclick = function () {
+    closeInputPanel(); // 저장된 값은 건드리지 않는다
   };
 
-  document.getElementById('spendBtn').onclick = function () {
+  document.getElementById('inputConfirmBtn').onclick = function () {
+    var raw = document.getElementById('inputPanelInput').value;
+    var err = document.getElementById('inputPanelErr');
     var s = load();
-    var v = Number(prompt('얼마 쓰셨어요?', ''));
-    if (!Number.isFinite(v) || v <= 0) return;
-    s.remaining = s.remaining - v; save(s); render(s);
+
+    if (raw === null || raw.trim() === '') {
+      // 빈 입력은 취소로 처리한다 (저장값 유지)
+      closeInputPanel();
+      return;
+    }
+
+    var v = Number(raw);
+    if (!Number.isFinite(v)) {
+      err.textContent = '숫자만 넣어주세요';
+      return;
+    }
+
+    if (inputMode === 'edit') {
+      // 0은 "남은 돈이 정말 없다"는 의도적인 값이라 그대로 받아들인다
+      s.remaining = v;
+    } else {
+      if (v <= 0) {
+        err.textContent = '0보다 큰 숫자를 넣어주세요';
+        return;
+      }
+      s.remaining = s.remaining - v;
+    }
+
+    save(s);
+    inputMode = null;
+    show('main');
+    render(s);
   };
 
   document.getElementById('keepBtn').onclick = function () {
