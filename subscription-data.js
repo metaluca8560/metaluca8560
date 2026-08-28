@@ -15,10 +15,10 @@ var SUBSCRIPTION_SERVICES = [
   { id: 'tving',      name: '티빙',            category: '영상',      price: 13500, hint: '스탠다드 기준이에요. 베이직 9,500원 · 프리미엄 17,000원' },
   { id: 'wavve',      name: '웨이브',          category: '영상',      price: 10900, hint: '스탠다드 기준이에요. 베이직 7,900원 · 프리미엄 13,900원' },
   { id: 'coupangplay',name: '쿠팡플레이',      category: '영상',      price: 0,     hint: '쿠팡 와우를 쓰시면 이미 포함돼 있어요. 광고 없는 프리미엄 패스는 3,900원 추가예요' },
-  { id: 'appletv',    name: '애플TV+',         category: '영상',      price: 6500,  hint: null },
+  { id: 'appletv',    name: '애플TV+',         category: '영상',      price: 6500,  hint: '애플 원을 쓰시면 이미 포함돼 있어요' },
   { id: 'watcha',     name: '왓챠',            category: '영상',      price: 7900,  hint: '베이직 기준이에요. 상위 요금제 12,900원' },
   { id: 'laftel',     name: '라프텔',          category: '영상',      price: 9900,  hint: '기본 기준이에요. 상위 요금제 14,900원' },
-  { id: 'ytpremium',  name: '유튜브 프리미엄',  category: '영상',      price: 14900, hint: 'Premium 기준이에요. Lite는 8,500원' },
+  { id: 'ytpremium',  name: '유튜브 프리미엄',  category: '영상',      price: 14900, hint: 'Premium 기준이에요. Lite는 8,500원. 유튜브 뮤직이 이미 포함돼 있어요' },
   { id: 'appleone',   name: '애플 원',         category: '영상',      price: 14900, hint: '개인 기준이에요. 가족 20,900원. 애플TV+·애플뮤직·아이클라우드가 포함돼요' },
 
   { id: 'ytmusic',    name: '유튜브 뮤직',      category: '음악',      price: null,  hint: '유튜브 프리미엄을 쓰시면 이미 포함돼 있어요' },
