@@ -12,14 +12,30 @@ var BudgetMath = (function () {
     return Math.floor(amount / 100) * 100;
   }
 
+  // 예산을 세운 날(startDay)을 1~그 달의 마지막 날 사이로 정리한다.
+  // 값이 없거나 이상하면 1일로 본다(= 예전 저장값은 지금까지와 똑같이 계산된다).
+  function normalizeStartDay(startDay, totalDays) {
+    if (!Number.isFinite(startDay)) return 1;
+    var d = Math.floor(startDay);
+    if (d < 1) return 1;
+    if (d > totalDays) return totalDays;
+    return d;
+  }
+
   function computeStatus(input) {
     var budget = input.budget;
     var remaining = input.remaining;
     var totalDays = daysInMonth(input.year, input.month);
-    var elapsedDays = input.day;
-    var leftDays = totalDays - elapsedDays;
+    var day = input.day;
+    var startDay = normalizeStartDay(input.startDay, totalDays);
 
-    var baseline = floorTo100(budget * (leftDays / totalDays));
+    // 예산 기간 = 예산을 세운 날부터 말일까지(양쪽 끝 포함). 1일에 세웠으면 한 달 전체다.
+    var periodDays = totalDays - startDay + 1;
+    // 기간 안에서 오늘까지 지난 날 수(오늘 포함). startDay가 1이면 예전과 같은 값이다.
+    var elapsedDays = day - startDay + 1;
+    var leftDays = totalDays - day; // 오늘 이후로 남은 날 수
+
+    var baseline = floorTo100(budget * (leftDays / periodDays));
     var spent = budget - remaining;
     var diff = baseline - remaining;
     var dailyAverage = elapsedDays > 0 ? Math.round(spent / elapsedDays) : 0;
@@ -28,7 +44,7 @@ var BudgetMath = (function () {
     var runOutDay = null;
     if (dailyAverage > 0 && remaining > 0) {
       var daysLeftAtPace = Math.floor(remaining / dailyAverage);
-      var candidate = elapsedDays + daysLeftAtPace;
+      var candidate = day + daysLeftAtPace; // 달력 날짜라 오늘 날짜에 더한다
       runOutDay = candidate <= totalDays ? candidate : null;
     }
 
@@ -36,8 +52,10 @@ var BudgetMath = (function () {
     var perDayLeft = Math.floor(remaining / (leftDays + 1));
 
     var state;
-    if (remaining <= 0) {
+    if (remaining < 0) {
       state = 'over';
+    } else if (remaining === 0) {
+      state = 'done'; // 딱 0원. 넘긴 건 아니고 다 쓴 것이다
     } else if (Math.abs(diff) <= budget * ON_TRACK_RATIO) {
       state = 'onTrack';
     } else if (diff > 0) {
@@ -48,6 +66,8 @@ var BudgetMath = (function () {
 
     return {
       totalDays: totalDays,
+      startDay: startDay,
+      periodDays: periodDays,
       elapsedDays: elapsedDays,
       leftDays: leftDays,
       baseline: baseline,

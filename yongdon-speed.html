@@ -102,17 +102,20 @@
     var r = BudgetMath.computeStatus({
       budget: state.budget, remaining: state.remaining,
       year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate(),
+      startDay: state.startDay, // 없으면 1일로 본다(예전 저장값 호환)
     });
     document.getElementById('baseline').textContent = won(r.baseline);
     document.getElementById('remaining').textContent = won(state.remaining);
 
     var el = document.getElementById('diffText');
-    var colors = { ahead:'var(--ahead)', easy:'var(--easy)', onTrack:'var(--ontrack)', over:'var(--ahead)' };
+    var colors = { ahead:'var(--ahead)', easy:'var(--easy)', onTrack:'var(--ontrack)',
+                   over:'var(--ahead)', done:'var(--ontrack)' };
     var texts = {
       ahead: won(BudgetMath.floorTo100(r.diff)) + ' 앞서가는 중 🏃',
       easy: won(BudgetMath.floorTo100(-r.diff)) + ' 여유 있어요 🌿',
       onTrack: '딱 맞게 가고 있어요 👌',
       over: '이번 달 예산을 ' + won(-state.remaining) + ' 넘었어요',
+      done: '이번 달 예산을 다 썼어요',
     };
     el.textContent = texts[r.state];
     el.style.color = colors[r.state];
@@ -120,6 +123,8 @@
     var sub = document.getElementById('subText');
     if (r.state === 'over') {
       sub.textContent = '남은 ' + r.leftDays + '일이에요. 여기서 멈추면 ' + won(-state.remaining) + ' 초과로 마감돼요';
+    } else if (r.state === 'done') {
+      sub.textContent = '남은 ' + r.leftDays + '일은 0원으로 버텨야 해요';
     } else if (r.runOutDay) {
       sub.textContent = '이 페이스면 ' + r.runOutDay + '일에 바닥나요';
     } else {
@@ -156,7 +161,10 @@
     if (!Number.isFinite(v) || v <= 0) { err.textContent = '0보다 큰 숫자를 넣어주세요'; return; }
     err.textContent = '';
     var prev = load();
-    var s = { budget: v, remaining: v, month: monthKey(new Date()), lastBudget: v, lastResult: prev ? prev.lastResult : null };
+    var now = new Date();
+    // 달 중간에 시작하면 "남은 기간 동안 쓸 돈"이라는 뜻이라 시작한 날을 같이 저장한다
+    var s = { budget: v, remaining: v, month: monthKey(now), startDay: now.getDate(),
+              lastBudget: v, lastResult: prev ? prev.lastResult : null };
     save(s); show('main'); render(s);
   };
 
@@ -213,6 +221,10 @@
     }
 
     if (inputMode === 'edit') {
+      if (v > s.budget) {
+        err.textContent = '남은 돈이 이번 달 예산(' + won(s.budget) + ')보다 많을 수는 없어요';
+        return;
+      }
       // 0은 "남은 돈이 정말 없다"는 의도적인 값이라 그대로 받아들인다
       s.remaining = v;
     } else {
@@ -231,8 +243,10 @@
 
   document.getElementById('keepBtn').onclick = function () {
     var s = load();
+    var now = new Date();
     s.budget = s.lastBudget; s.remaining = s.lastBudget;
-    s.month = monthKey(new Date());
+    s.month = monthKey(now);
+    s.startDay = now.getDate(); // 달을 건너뛰었어도 오늘부터 시작하는 예산으로 본다
     save(s); show('main'); render(s);
   };
 
