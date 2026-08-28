@@ -1,0 +1,21 @@
+{
+  "name": "yongdon-speed-miniapp",
+  "private": true,
+  "version": "1.0.0",
+  "description": "용돈 속도계 — 앱인토스 미니앱 패키지",
+  "type": "module",
+  "scripts": {
+    "web:dev": "node sync.mjs && vite --port 5186",
+    "web:build": "node sync.mjs && vite build",
+    "dev": "npm run web:dev",
+    "build": "npm run web:build && ait build",
+    "deploy": "ait deploy"
+  },
+  "dependencies": {
+    "@apps-in-toss/web-framework": "^3.1.1"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5",
+    "@apps-in-toss/devtools": "^3.1.1"
+  }
+}
