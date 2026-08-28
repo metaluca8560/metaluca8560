@@ -59,6 +59,17 @@
     <p class="note">이 기록은 서버로 보내지 않고 내 폰에만 저장돼요 🔒</p>
   </section>
 
+  <section id="newMonth" hidden>
+    <h1 id="newMonthTitle">새 달이 시작됐어요</h1>
+    <div class="card">
+      <div class="sub" id="lastResultText"></div>
+      <div class="big" id="proposeBudget">-</div>
+      <div class="label">이번 달도 이 금액으로 갈까요?</div>
+      <button id="keepBtn">네, 그대로 갈게요</button>
+      <button class="ghost" id="changeBtn">바꿀래요</button>
+    </div>
+  </section>
+
 </div>
 <script src="budget-math.js"></script>
 <script>
@@ -69,8 +80,9 @@
   var monthKey = function (d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
 
   function show(id) {
-    document.getElementById('setup').hidden = id !== 'setup';
-    document.getElementById('main').hidden = id !== 'main';
+    ['setup', 'main', 'newMonth'].forEach(function (s) {
+      document.getElementById(s).hidden = s !== id;
+    });
   }
 
   function render(state) {
@@ -106,6 +118,22 @@
   function start() {
     var state = load();
     if (!state) { show('setup'); return; }
+
+    var nowMonth = monthKey(new Date());
+    if (BudgetMath.isNewMonth(state.month, nowMonth)) {
+      var m = Number(nowMonth.split('-')[1]);
+      document.getElementById('newMonthTitle').textContent = m + '월이 시작됐어요';
+      var last = state.remaining;
+      document.getElementById('lastResultText').textContent =
+        last >= 0 ? '지난달은 ' + won(last) + ' 남기고 끝냈어요 👏'
+                  : '지난달은 ' + won(-last) + ' 넘겼어요';
+      document.getElementById('proposeBudget').textContent = won(state.budget);
+      state.lastBudget = state.budget;
+      state.lastResult = last;
+      save(state);
+      show('newMonth');
+      return;
+    }
     show('main');
     render(state);
   }
@@ -133,6 +161,21 @@
     var v = Number(prompt('얼마 쓰셨어요?', ''));
     if (!Number.isFinite(v) || v <= 0) return;
     s.remaining = s.remaining - v; save(s); render(s);
+  };
+
+  document.getElementById('keepBtn').onclick = function () {
+    var s = load();
+    s.budget = s.lastBudget; s.remaining = s.lastBudget;
+    s.month = monthKey(new Date());
+    save(s); show('main'); render(s);
+  };
+
+  document.getElementById('changeBtn').onclick = function () {
+    var s = load();
+    s.month = monthKey(new Date());
+    save(s);
+    document.getElementById('budgetInput').value = '';
+    show('setup');
   };
 
   start();

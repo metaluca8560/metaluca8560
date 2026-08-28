@@ -68,3 +68,10 @@ test('computeStatus: 마지막 날이면 남은 날이 0이고 나눗셈이 깨�
   assert.strictEqual(r.perDayLeft, 20000);      // 남은 날이 0이면 남은 돈 그대로
   assert.ok(Number.isFinite(r.perDayLeft));
 });
+
+test('isNewMonth: 저장된 달과 지금 달이 다르면 참', () => {
+  assert.strictEqual(BudgetMath.isNewMonth('2026-08', '2026-09'), true);
+  assert.strictEqual(BudgetMath.isNewMonth('2026-08', '2026-08'), false);
+  assert.strictEqual(BudgetMath.isNewMonth('2026-12', '2027-01'), true);
+  assert.strictEqual(BudgetMath.isNewMonth(null, '2026-08'), true); // 저장값 없으면 새 달로 본다
+});

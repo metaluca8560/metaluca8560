@@ -60,10 +60,16 @@ var BudgetMath = (function () {
     };
   }
 
+  function isNewMonth(savedMonth, nowMonth) {
+    if (!savedMonth) return true;
+    return savedMonth !== nowMonth;
+  }
+
   return {
     daysInMonth: daysInMonth,
     floorTo100: floorTo100,
     computeStatus: computeStatus,
+    isNewMonth: isNewMonth,
   };
 })();
 
