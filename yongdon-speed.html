@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>용돈 속도계 — AI 트렌드 다락방</title>
+<style>
+  :root { --bg:#0f1115; --card:#171a21; --line:#252a34; --text:#e8eaed; --muted:#9aa0aa;
+          --ahead:#ff6b6b; --easy:#51cf66; --ontrack:#4dabf7; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+         font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+         padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom); }
+  .wrap { max-width:480px; margin:0 auto; padding:32px 0 40px; }
+  h1 { font-size:20px; margin:0 0 24px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px; }
+  .label { color:var(--muted); font-size:14px; text-align:center; }
+  .big { font-size:38px; font-weight:800; text-align:center; margin:6px 0 20px; letter-spacing:-1px; }
+  .row { display:flex; justify-content:space-between; align-items:baseline;
+         padding:12px 0; border-top:1px solid var(--line); }
+  .diff { text-align:center; font-size:18px; font-weight:700; margin:16px 0 4px; }
+  .sub { text-align:center; color:var(--muted); font-size:14px; }
+  input { width:100%; padding:16px; font-size:20px; text-align:center; border-radius:12px;
+          border:1px solid var(--line); background:#0b0d11; color:var(--text); }
+  button { width:100%; padding:16px; font-size:16px; font-weight:700; border:0;
+           border-radius:12px; background:#3182f6; color:#fff; margin-top:12px; cursor:pointer; }
+  button.ghost { background:transparent; border:1px solid var(--line); color:var(--text); }
+  .btns { display:flex; gap:10px; margin-top:20px; }
+  .btns button { margin-top:0; }
+  .note { color:var(--muted); font-size:12px; text-align:center; margin-top:20px; }
+  .err { color:#ff8787; font-size:13px; text-align:center; margin-top:10px; min-height:18px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section id="setup" hidden>
+    <h1>이번 달 쓸 수 있는 돈이 얼마예요?</h1>
+    <div class="card">
+      <input id="budgetInput" type="number" inputmode="numeric" placeholder="500000" />
+      <div class="err" id="setupErr"></div>
+      <button id="startBtn">시작하기</button>
+    </div>
+    <p class="note">이 기록은 서버로 보내지 않고 내 폰에만 저장돼요 🔒</p>
+  </section>
+
+  <section id="main" hidden>
+    <div class="card">
+      <div class="label">지금 남아 있어야 할 돈</div>
+      <div class="big" id="baseline">-</div>
+      <div class="row"><span class="label">실제 남은 돈</span><strong id="remaining">-</strong></div>
+      <div class="diff" id="diffText">-</div>
+      <div class="sub" id="subText"></div>
+    </div>
+    <div class="btns">
+      <button class="ghost" id="editBtn">남은 돈 고치기</button>
+      <button class="ghost" id="spendBtn">쓴 돈 기록</button>
+    </div>
+    <p class="note">이 기록은 서버로 보내지 않고 내 폰에만 저장돼요 🔒</p>
+  </section>
+
+</div>
+<script src="budget-math.js"></script>
+<script>
+  var KEY = 'yongdon-speed';
+  var won = function (n) { return Math.round(n).toLocaleString('ko-KR') + '원'; };
+  var load = function () { try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { return null; } };
+  var save = function (s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} };
+  var monthKey = function (d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
+
+  function show(id) {
+    document.getElementById('setup').hidden = id !== 'setup';
+    document.getElementById('main').hidden = id !== 'main';
+  }
+
+  function render(state) {
+    var now = new Date();
+    var r = BudgetMath.computeStatus({
+      budget: state.budget, remaining: state.remaining,
+      year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate(),
+    });
+    document.getElementById('baseline').textContent = won(r.baseline);
+    document.getElementById('remaining').textContent = won(state.remaining);
+
+    var el = document.getElementById('diffText');
+    var colors = { ahead:'var(--ahead)', easy:'var(--easy)', onTrack:'var(--ontrack)', over:'var(--ahead)' };
+    var texts = {
+      ahead: won(r.diff) + ' 앞서가는 중 🏃',
+      easy: won(-r.diff) + ' 여유 있어요 🌿',
+      onTrack: '딱 맞게 가고 있어요 👌',
+      over: '이번 달 예산을 ' + won(-state.remaining) + ' 넘었어요',
+    };
+    el.textContent = texts[r.state];
+    el.style.color = colors[r.state];
+
+    var sub = document.getElementById('subText');
+    if (r.state === 'over') {
+      sub.textContent = '남은 ' + r.leftDays + '일이에요. 여기서 멈추면 ' + won(-state.remaining) + ' 초과로 마감돼요';
+    } else if (r.runOutDay) {
+      sub.textContent = '이 페이스면 ' + r.runOutDay + '일에 바닥나요';
+    } else {
+      sub.textContent = '이번 달 하루 ' + won(r.perDayLeft) + '씩 쓸 수 있어요';
+    }
+  }
+
+  function start() {
+    var state = load();
+    if (!state) { show('setup'); return; }
+    show('main');
+    render(state);
+  }
+
+  document.getElementById('startBtn').onclick = function () {
+    var v = Number(document.getElementById('budgetInput').value);
+    var err = document.getElementById('setupErr');
+    if (!Number.isFinite(v) || v <= 0) { err.textContent = '0보다 큰 숫자를 넣어주세요'; return; }
+    err.textContent = '';
+    var s = { budget: v, remaining: v, month: monthKey(new Date()), lastBudget: v, lastResult: null };
+    save(s); show('main'); render(s);
+  };
+
+  document.getElementById('editBtn').onclick = function () {
+    var s = load();
+    var v = Number(prompt('지금 남은 돈이 얼마예요?', s.remaining));
+    if (!Number.isFinite(v)) return;
+    s.remaining = v; save(s); render(s);
+  };
+
+  document.getElementById('spendBtn').onclick = function () {
+    var s = load();
+    var v = Number(prompt('얼마 쓰셨어요?', ''));
+    if (!Number.isFinite(v) || v <= 0) return;
+    s.remaining = s.remaining - v; save(s); render(s);
+  };
+
+  start();
+</script>
+</body>
+</html>
