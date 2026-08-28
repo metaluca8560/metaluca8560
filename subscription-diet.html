@@ -45,6 +45,10 @@
     <p class="lead">가격은 2026년 8월 기준이에요. 눌러서 고칠 수 있어요.</p>
     <div id="chipArea"></div>
 
+    <div class="panel" id="conflictPanel" hidden style="border-color:var(--warn)">
+      <div id="conflictBody"></div>
+    </div>
+
     <div class="panel" id="pricePanel" hidden>
       <h2 id="priceTitle">금액</h2>
       <p>한 달에 얼마 내세요?</p>
@@ -98,6 +102,21 @@
   }
 
   var state = load() || { selected: [], prices: defaultPrices(), custom: [], unused: [] };
+
+  // 이전 세션이 비정상 종료돼 "선택됐지만 가격은 모름" 상태가 남아있으면 정리한다.
+  // 이 앱의 불변식은 "selected에 있으면 prices에도 값이 있다"인데, 이게 깨진 채로
+  // 들고 가면 총액이 조용히 그 항목을 0원으로 세거나 화면과 계산이 어긋난다.
+  // 가격을 몰라서 남은 선택은 되살리지 않고 선택 해제한다 — 칩이 눌리지 않은 채로
+  // 보이는 게, 값도 모르면서 선택된 것처럼 보이는 것보다 사실과 가깝다.
+  // 필요하면 사용자가 다시 눌러서 금액을 넣으면 된다.
+  (function healOrphanSelections() {
+    var before = state.selected.length;
+    state.selected = state.selected.filter(function (id) {
+      return typeof state.prices[id] === 'number';
+    });
+    if (state.selected.length !== before) save(state);
+  })();
+
   var pendingId = null; // 금액 입력 패널이 열린 대상
 
   function allServices() { return SUBSCRIPTION_SERVICES.concat(state.custom); }
@@ -132,6 +151,42 @@
     });
 
     document.getElementById('toResult').disabled = state.selected.length === 0;
+    renderConflicts();
+  }
+
+  // 서로 포함 관계인 두 서비스가 지금 "둘 다" 선택된 경우만 찾는다.
+  // 총액이 실제로 부풀어 있는 순간에만 경고해야 나머지 시간엔 조용하다.
+  function conflictPairs() {
+    var pairs = [];
+    SUBSCRIPTION_SERVICES.forEach(function (s) {
+      if (!s.includedIn) return;
+      if (state.selected.indexOf(s.id) < 0) return;
+      if (state.selected.indexOf(s.includedIn) < 0) return;
+      pairs.push({ name: s.name, hostName: nameOf(s.includedIn) });
+    });
+    return pairs;
+  }
+
+  function renderConflicts() {
+    var pairs = conflictPairs();
+    var panel = document.getElementById('conflictPanel');
+    var body = document.getElementById('conflictBody');
+    body.textContent = '';
+    if (pairs.length === 0) { panel.hidden = true; return; }
+
+    var title = document.createElement('p');
+    title.style.cssText = 'color:var(--warn);font-size:13px;margin:0 0 6px;font-weight:700';
+    title.textContent = '중복으로 포함된 구독이 있어요';
+    body.appendChild(title);
+
+    pairs.forEach(function (p) {
+      var line = document.createElement('p');
+      line.style.cssText = 'color:var(--muted);font-size:13px;margin:0 0 4px';
+      line.textContent = p.name + '은(는) ' + p.hostName + '에 이미 포함돼 있어요. 총액이 부풀어 있을 수 있으니 하나만 골라주세요.';
+      body.appendChild(line);
+    });
+
+    panel.hidden = false;
   }
 
   function toggle(id) {
@@ -141,11 +196,16 @@
       save(state); renderChips();
       return;
     }
+    // 금액을 모르는 항목은 물어보기만 하고, 아직 selected에는 커밋하지 않는다.
+    // 확인을 눌러 금액이 확정된 뒤에야 selected에 들어간다 — 그래야 패널이 열린
+    // 채로 앱이 닫혀도 "선택은 됐는데 가격은 모름"인 상태가 저장되지 않는다.
+    if (SubMath.missingPriceIds([id], state.prices).length > 0) {
+      openPrice(id);
+      return;
+    }
     state.selected.push(id);
     save(state);
-    // 금액을 모르는 항목이면 바로 물어본다.
-    if (SubMath.missingPriceIds([id], state.prices).length > 0) openPrice(id);
-    else renderChips();
+    renderChips();
   }
 
   function nameOf(id) {
@@ -180,11 +240,15 @@
     var v = Number(raw);
     if (!isFinite(v) || v < 0) { err.textContent = '0 이상의 숫자를 넣어주세요'; return; }
     state.prices[pendingId] = v;
+    // 금액이 이제 확정됐으니 여기서만 selected에 커밋한다.
+    if (state.selected.indexOf(pendingId) < 0) state.selected.push(pendingId);
     save(state); closePrice(); renderChips();
   };
 
   document.getElementById('priceCancel').onclick = function () {
-    // 금액을 안 넣었으면 선택도 되돌린다. 금액 없는 항목이 남으면 총액이 틀어진다.
+    // 취소 시점엔 pendingId를 아직 selected에 넣지 않았으므로 되돌릴 것도 없다.
+    // 혹시 이미 금액이 있는 채로 열렸던 경우(선택이 그대로 유지돼야 하는 경우)를
+    // 대비해, 방어적으로 "금액이 여전히 없을 때만" selected에서 제거한다.
     if (pendingId && SubMath.missingPriceIds([pendingId], state.prices).length > 0) {
       var i = state.selected.indexOf(pendingId);
       if (i >= 0) state.selected.splice(i, 1);
