@@ -85,8 +85,8 @@
     var el = document.getElementById('diffText');
     var colors = { ahead:'var(--ahead)', easy:'var(--easy)', onTrack:'var(--ontrack)', over:'var(--ahead)' };
     var texts = {
-      ahead: won(r.diff) + ' 앞서가는 중 🏃',
-      easy: won(-r.diff) + ' 여유 있어요 🌿',
+      ahead: won(BudgetMath.floorTo100(r.diff)) + ' 앞서가는 중 🏃',
+      easy: won(BudgetMath.floorTo100(-r.diff)) + ' 여유 있어요 🌿',
       onTrack: '딱 맞게 가고 있어요 👌',
       over: '이번 달 예산을 ' + won(-state.remaining) + ' 넘었어요',
     };
@@ -99,7 +99,7 @@
     } else if (r.runOutDay) {
       sub.textContent = '이 페이스면 ' + r.runOutDay + '일에 바닥나요';
     } else {
-      sub.textContent = '이번 달 하루 ' + won(r.perDayLeft) + '씩 쓸 수 있어요';
+      sub.textContent = '이번 달 하루 ' + won(BudgetMath.floorTo100(r.perDayLeft)) + '씩 쓸 수 있어요';
     }
   }
 
@@ -121,7 +121,9 @@
 
   document.getElementById('editBtn').onclick = function () {
     var s = load();
-    var v = Number(prompt('지금 남은 돈이 얼마예요?', s.remaining));
+    var input = prompt('지금 남은 돈이 얼마예요?', s.remaining);
+    if (input === null || input.trim() === '') return; // 취소 또는 빈 입력은 그대로 둔다
+    var v = Number(input);
     if (!Number.isFinite(v)) return;
     s.remaining = v; save(s); render(s);
   };
