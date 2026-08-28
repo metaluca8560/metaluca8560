@@ -82,12 +82,66 @@
     <p class="note">이 기록은 서버로 보내지 않고 내 폰에만 저장돼요 🔒</p>
   </section>
 
+  <section id="result" hidden>
+    <p class="lead" id="countLine"></p>
+    <div class="panel" style="text-align:center">
+      <div style="color:var(--muted);font-size:14px">한 달</div>
+      <div style="font-size:26px;font-weight:700" id="monthly">-</div>
+      <div style="color:var(--muted);font-size:14px;margin-top:14px">1년이면</div>
+      <div style="font-size:40px;font-weight:800;color:var(--warn);letter-spacing:-1px" id="yearly">-</div>
+      <div style="color:var(--muted);font-size:14px;margin-top:14px" id="perDay"></div>
+      <div style="color:var(--muted);font-size:14px" id="coffee"></div>
+    </div>
+    <div class="panel">
+      <h2>제일 비싼 것</h2>
+      <div id="topList"></div>
+    </div>
+    <div class="bar">
+      <button id="toDiet">안 쓰는 것 골라내기</button>
+      <div style="height:10px"></div>
+      <button class="ghost" id="shareBtn">공유하기</button>
+      <div style="height:10px"></div>
+      <button class="ghost" id="backToPick">다시 고르기</button>
+    </div>
+  </section>
+
+  <section id="diet" hidden>
+    <h1>3개월 넘게 안 쓴 게 있나요?</h1>
+    <p class="lead">고른 것 중에서 눌러주세요.</p>
+    <div id="unusedArea"></div>
+    <div class="panel" id="savingBox" hidden style="text-align:center">
+      <div style="color:var(--muted);font-size:14px">이것만 정리하면</div>
+      <div style="font-size:32px;font-weight:800;color:var(--good)" id="savingYear">-</div>
+      <div style="color:var(--muted);font-size:14px">1년에 아껴요</div>
+    </div>
+    <div class="bar">
+      <button class="ghost" id="backToResult">뒤로</button>
+    </div>
+    <p class="note">해지는 각 서비스에서 해야 해요</p>
+  </section>
+
 </div>
 <script src="subscription-data.js"></script>
 <script src="subscription-math.js"></script>
 <script>
   var KEY = 'subscription-diet';
   var won = function (n) { return Math.round(n).toLocaleString('ko-KR') + '원'; };
+
+  // 이름 끝 글자에 받침이 있는지로 조사(은/는, 이/가, 을/를)를 고른다.
+  // 한글로 끝나지 않는 이름("애플TV+", "네이버 MYBOX" 등)은 받침을 셀 수 없는데,
+  // 이 앱에 나오는 그런 이름들은 실제로 "플러스"·"박스"처럼 받침 없는 소리로
+  // 끝나므로, 판단이 안 될 때는 받침 없는 쪽(withoutBatchim)을 쓴다.
+  function endsWithBatchim(name) {
+    var trimmed = (name || '').trim();
+    if (!trimmed) return null;
+    var code = trimmed.charCodeAt(trimmed.length - 1);
+    if (code < 0xAC00 || code > 0xD7A3) return null;
+    return (code - 0xAC00) % 28 !== 0;
+  }
+  function josa(name, withBatchim, withoutBatchim) {
+    var has = endsWithBatchim(name);
+    return has ? withBatchim : withoutBatchim;
+  }
 
   function load() {
     try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { return null; }
@@ -182,7 +236,7 @@
     pairs.forEach(function (p) {
       var line = document.createElement('p');
       line.style.cssText = 'color:var(--muted);font-size:13px;margin:0 0 4px';
-      line.textContent = p.name + '은(는) ' + p.hostName + '에 이미 포함돼 있어요. 총액이 부풀어 있을 수 있으니 하나만 골라주세요.';
+      line.textContent = p.name + josa(p.name, '은', '는') + ' ' + p.hostName + '에 이미 포함돼 있어요. 총액이 부풀어 있을 수 있으니 하나만 골라주세요.';
       body.appendChild(line);
     });
 
@@ -281,6 +335,89 @@
     save(state);
     document.getElementById('customPanel').hidden = true;
     renderChips();
+  };
+
+  function show(id) {
+    ['pick', 'result', 'diet'].forEach(function (s) {
+      document.getElementById(s).hidden = s !== id;
+    });
+    window.scrollTo(0, 0);
+  }
+
+  function renderResult() {
+    var sum = SubMath.summarize(SubMath.monthlyTotal(state.selected, state.prices));
+    document.getElementById('countLine').textContent =
+      '쓰고 계신 구독 ' + state.selected.length + '개';
+    document.getElementById('monthly').textContent = won(sum.monthly);
+    document.getElementById('yearly').textContent = won(sum.yearly) + ' 💸';
+    document.getElementById('perDay').textContent = '하루로 치면 ' + won(sum.daily);
+    document.getElementById('coffee').textContent = '커피로 치면 ' + sum.coffees + '잔';
+
+    var list = document.getElementById('topList');
+    list.textContent = '';
+    SubMath.topSpenders(state.selected, state.prices, 3).forEach(function (row, i) {
+      var d = document.createElement('div');
+      d.style.cssText = 'display:flex;justify-content:space-between;padding:10px 0;'
+        + (i > 0 ? 'border-top:1px solid var(--line)' : '');
+      var left = document.createElement('span');
+      left.textContent = (i + 1) + '. ' + nameOf(row.id);
+      var right = document.createElement('strong');
+      right.textContent = won(row.price);
+      d.appendChild(left); d.appendChild(right);
+      list.appendChild(d);
+    });
+  }
+
+  function renderDiet() {
+    // result 화면 이후 선택이 바뀌었을 수도 있으니(취소 등), 더 이상 선택되지
+    // 않은 항목은 unused에서도 지운다. 그래야 total도, 절약액도 항상 selected를
+    // 기준으로 맞아떨어진다.
+    state.unused = state.unused.filter(function (id) { return state.selected.indexOf(id) >= 0; });
+
+    var area = document.getElementById('unusedArea');
+    area.textContent = '';
+    var box = document.createElement('div');
+    box.className = 'chips';
+    state.selected.forEach(function (id) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip' + (state.unused.indexOf(id) >= 0 ? ' on' : '');
+      b.textContent = nameOf(id);
+      b.onclick = function () {
+        var i = state.unused.indexOf(id);
+        if (i >= 0) state.unused.splice(i, 1); else state.unused.push(id);
+        save(state); renderDiet();
+      };
+      box.appendChild(b);
+    });
+    area.appendChild(box);
+
+    var saving = SubMath.savings(state.unused, state.prices);
+    var boxEl = document.getElementById('savingBox');
+    if (state.unused.length === 0) {
+      boxEl.hidden = true;
+    } else {
+      boxEl.hidden = false;
+      document.getElementById('savingYear').textContent = won(saving.yearly);
+    }
+    save(state);
+  }
+
+  document.getElementById('toResult').onclick = function () { renderResult(); show('result'); };
+  document.getElementById('backToPick').onclick = function () { renderChips(); show('pick'); };
+  document.getElementById('toDiet').onclick = function () { renderDiet(); show('diet'); };
+  document.getElementById('backToResult').onclick = function () { renderResult(); show('result'); };
+
+  document.getElementById('shareBtn').onclick = function () {
+    var sum = SubMath.summarize(SubMath.monthlyTotal(state.selected, state.prices));
+    var text = '저는 구독료로 1년에 ' + won(sum.yearly) + ' 쓰고 있었어요 😱';
+    try {
+      if (window.AppsInToss && window.AppsInToss.share) {
+        window.AppsInToss.share({ message: text });
+        return;
+      }
+    } catch (e) {}
+    if (navigator.share) { navigator.share({ text: text }).catch(function () {}); }
   };
 
   renderChips();
