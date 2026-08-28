@@ -21,6 +21,19 @@
   .chip.on { border-color:var(--accent); background:rgba(49,130,246,0.15); }
   .chip .won { color:var(--muted); font-size:12px; margin-left:6px; }
   .chip.on .won { color:var(--text); }
+  /* 금액이 있는 칩은 "이름(선택/해제)"과 "금액(고치기)" 두 칸으로 나뉜다.
+     칩 겉모습(알약 테두리·배경·글자)은 그대로 두고, 안쪽만 버튼 두 개로 쪼갠다.
+     기존 칩은 button 기본 규칙(width:100%) 때문에 한 줄을 다 쓰므로 나눈 칩도
+     폭을 100%로 맞춘다 — 이름은 왼쪽, 금액은 오른쪽 끝에 붙는다. */
+  .chip.split { width:100%; padding:0; display:flex; align-items:stretch; overflow:hidden; }
+  .chip.split .chip-main, .chip.split .chip-edit {
+    width:auto; padding:10px 14px; border:0; border-radius:0; background:transparent;
+    color:var(--text); font-size:14px; cursor:pointer; }
+  .chip.split .chip-main { flex:1 1 auto; text-align:left; }
+  .chip.split .chip-edit { flex:0 0 auto; border-left:1px solid var(--line); }
+  .chip.split.on .chip-edit { border-left-color:var(--accent); }
+  .chip.split .chip-edit .won { margin-left:0; }
+  .chip.split .chip-edit .pen { font-size:12px; margin-left:6px; }
   .bar { position:sticky; bottom:0; background:var(--bg); padding:14px 0 0; margin-top:24px; }
   button { width:100%; padding:16px; font-size:16px; font-weight:700; border:0;
            border-radius:12px; background:var(--accent); color:#fff; cursor:pointer; }
@@ -42,7 +55,7 @@
 
   <section id="pick">
     <h1>쓰고 있는 구독을 골라주세요</h1>
-    <p class="lead">가격은 2026년 8월 기준이에요. 눌러서 고칠 수 있어요.</p>
+    <p class="lead">가격은 2026년 8월 기준이에요. 오른쪽 금액을 누르면 고칠 수 있어요.</p>
     <div id="chipArea"></div>
 
     <div class="panel" id="conflictPanel" hidden style="border-color:var(--warn)">
@@ -84,6 +97,9 @@
 
   <section id="result" hidden>
     <p class="lead" id="countLine"></p>
+    <div class="panel" id="resultConflictPanel" hidden style="border-color:var(--warn)">
+      <div id="resultConflictBody"></div>
+    </div>
     <div class="panel" style="text-align:center">
       <div style="color:var(--muted);font-size:14px">한 달</div>
       <div style="font-size:26px;font-weight:700" id="monthly">-</div>
@@ -114,6 +130,9 @@
       <div style="font-size:32px;font-weight:800;color:var(--good)" id="savingYear">-</div>
       <div style="color:var(--muted);font-size:14px">1년에 아껴요</div>
     </div>
+    <div class="panel" id="dietEmptyBox" hidden style="text-align:center">
+      <div style="font-size:18px;font-weight:700;color:var(--good)">정리할 게 없네요 👏</div>
+    </div>
     <div class="bar">
       <button class="ghost" id="backToResult">뒤로</button>
     </div>
@@ -143,8 +162,29 @@
     return has ? withBatchim : withoutBatchim;
   }
 
+  // 저장된 값이 "JSON으로는 읽히는데 모양이 다른" 경우가 실제로 생긴다(다른 버전이
+  // 남긴 값, 손으로 고친 값, 잘린 값). 그대로 쓰면 state.selected.length에서 터져
+  // 화면이 통째로 하얗게 남고, 사용자는 되돌릴 방법이 없다. 그래서 모양을 확인하고
+  // 조금이라도 어긋나면 새 상태로 시작한다 — 빈 화면보다 빈 목록이 낫다.
+  function isStringArray(v) {
+    return Array.isArray(v) && v.every(function (x) { return typeof x === 'string'; });
+  }
+  function isValidState(s) {
+    if (!s || typeof s !== 'object' || Array.isArray(s)) return false;
+    if (!isStringArray(s.selected)) return false;
+    if (!isStringArray(s.unused)) return false;
+    if (!s.prices || typeof s.prices !== 'object' || Array.isArray(s.prices)) return false;
+    if (!Array.isArray(s.custom)) return false;
+    return s.custom.every(function (c) {
+      return c && typeof c === 'object' && !Array.isArray(c)
+        && typeof c.id === 'string' && typeof c.name === 'string'
+        && typeof c.category === 'string';
+    });
+  }
   function load() {
-    try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { return null; }
+    var parsed;
+    try { parsed = JSON.parse(localStorage.getItem(KEY)); } catch (e) { return null; }
+    return isValidState(parsed) ? parsed : null;
   }
   function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
 
@@ -171,7 +211,8 @@
     if (state.selected.length !== before) save(state);
   })();
 
-  var pendingId = null; // 금액 입력 패널이 열린 대상
+  var pendingId = null;       // 금액 입력 패널이 열린 대상
+  var pendingSelect = false;  // 이번 입력이 "고르는 중"인지(true), "고치는 중"인지(false)
 
   function allServices() { return SUBSCRIPTION_SERVICES.concat(state.custom); }
 
@@ -188,18 +229,48 @@
       var box = document.createElement('div');
       box.className = 'chips';
       allServices().filter(function (s) { return s.category === cat; }).forEach(function (s) {
-        var b = document.createElement('button');
-        b.className = 'chip' + (state.selected.indexOf(s.id) >= 0 ? ' on' : '');
-        b.type = 'button';
-        b.appendChild(document.createTextNode(s.name));
+        var on = state.selected.indexOf(s.id) >= 0;
         var price = state.prices[s.id];
-        if (typeof price === 'number') {
-          var w = document.createElement('span');
-          w.className = 'won'; w.textContent = won(price);
-          b.appendChild(w);
+
+        // 금액을 모르는 항목은 예전처럼 칩 하나 = 버튼 하나다. 누르면 금액을 물어본다.
+        if (typeof price !== 'number') {
+          var one = document.createElement('button');
+          one.type = 'button';
+          one.className = 'chip' + (on ? ' on' : '');
+          one.setAttribute('aria-pressed', on ? 'true' : 'false');
+          one.textContent = s.name;
+          one.onclick = function () { toggle(s.id); };
+          box.appendChild(one);
+          return;
         }
-        b.onclick = function () { toggle(s.id); };
-        box.appendChild(b);
+
+        // 금액이 있는 항목은 칩을 두 칸으로 나눈다.
+        // 왼쪽(이름)은 지금까지처럼 선택/해제, 오른쪽(금액)은 금액 고치기다.
+        // 화면에 보이는 금액 자체가 버튼이라 "여기를 누르면 고쳐진다"가 눈에 보이고,
+        // 두 동작이 같은 탭 제스처를 두고 다투지 않는다.
+        var wrap = document.createElement('div');
+        wrap.className = 'chip split' + (on ? ' on' : '');
+
+        var main = document.createElement('button');
+        main.type = 'button';
+        main.className = 'chip-main';
+        main.setAttribute('aria-pressed', on ? 'true' : 'false');
+        main.textContent = s.name;
+        main.onclick = function () { toggle(s.id); };
+
+        var edit = document.createElement('button');
+        edit.type = 'button';
+        edit.className = 'chip-edit';
+        edit.setAttribute('aria-label', s.name + ' 금액 고치기');
+        var w = document.createElement('span');
+        w.className = 'won'; w.textContent = won(price);
+        var pen = document.createElement('span');
+        pen.className = 'pen'; pen.setAttribute('aria-hidden', 'true'); pen.textContent = '✏️';
+        edit.appendChild(w); edit.appendChild(pen);
+        edit.onclick = function () { openPrice(s.id, false); };
+
+        wrap.appendChild(main); wrap.appendChild(edit);
+        box.appendChild(wrap);
       });
       area.appendChild(box);
     });
@@ -221,10 +292,18 @@
     return pairs;
   }
 
+  // 고르는 화면과 결과 화면 둘 다에 같은 경고를 그린다.
+  // 부풀어 있는 숫자를 크게 보여주는 건 결과 화면인데, 경고가 고르는 화면에만
+  // 있으면 사용자는 부푼 총액을 그대로 믿고 공유까지 하게 된다.
   function renderConflicts() {
+    paintConflicts('conflictPanel', 'conflictBody');
+    paintConflicts('resultConflictPanel', 'resultConflictBody');
+  }
+
+  function paintConflicts(panelId, bodyId) {
     var pairs = conflictPairs();
-    var panel = document.getElementById('conflictPanel');
-    var body = document.getElementById('conflictBody');
+    var panel = document.getElementById(panelId);
+    var body = document.getElementById(bodyId);
     body.textContent = '';
     if (pairs.length === 0) { panel.hidden = true; return; }
 
@@ -254,7 +333,7 @@
     // 확인을 눌러 금액이 확정된 뒤에야 selected에 들어간다 — 그래야 패널이 열린
     // 채로 앱이 닫혀도 "선택은 됐는데 가격은 모름"인 상태가 저장되지 않는다.
     if (SubMath.missingPriceIds([id], state.prices).length > 0) {
-      openPrice(id);
+      openPrice(id, true);
       return;
     }
     state.selected.push(id);
@@ -272,8 +351,11 @@
     return found && found.hint ? found.hint : '';
   }
 
-  function openPrice(id) {
+  // selectAfter=true 면 "고르려다 금액을 몰라서 물어보는 중"이라 확인 시 선택까지 한다.
+  // false 면 "이미 아는 금액을 고치는 중"이라 확인해도 선택 상태는 건드리지 않는다.
+  function openPrice(id, selectAfter) {
     pendingId = id;
+    pendingSelect = selectAfter === true;
     document.getElementById('priceTitle').textContent = nameOf(id);
     document.getElementById('priceHint').textContent = hintOf(id);
     document.getElementById('priceInput').value =
@@ -284,6 +366,7 @@
   }
   function closePrice() {
     pendingId = null;
+    pendingSelect = false;
     document.getElementById('pricePanel').hidden = true;
   }
 
@@ -295,14 +378,16 @@
     if (!isFinite(v) || v < 0) { err.textContent = '0 이상의 숫자를 넣어주세요'; return; }
     state.prices[pendingId] = v;
     // 금액이 이제 확정됐으니 여기서만 selected에 커밋한다.
-    if (state.selected.indexOf(pendingId) < 0) state.selected.push(pendingId);
+    // 단, 금액만 고치러 열었을 때는 선택 상태를 바꾸지 않는다 —
+    // 값을 바로잡았다고 안 쓰는 구독이 총액에 슬쩍 끼어들면 안 된다.
+    if (pendingSelect && state.selected.indexOf(pendingId) < 0) state.selected.push(pendingId);
     save(state); closePrice(); renderChips();
   };
 
   document.getElementById('priceCancel').onclick = function () {
     // 취소 시점엔 pendingId를 아직 selected에 넣지 않았으므로 되돌릴 것도 없다.
-    // 혹시 이미 금액이 있는 채로 열렸던 경우(선택이 그대로 유지돼야 하는 경우)를
-    // 대비해, 방어적으로 "금액이 여전히 없을 때만" selected에서 제거한다.
+    // 금액을 고치러 열었던 경우(이미 값이 있는 경우)에는 값도 선택도 그대로 둔다.
+    // 방어적으로 "금액이 여전히 없을 때만" selected에서 제거한다.
     if (pendingId && SubMath.missingPriceIds([pendingId], state.prices).length > 0) {
       var i = state.selected.indexOf(pendingId);
       if (i >= 0) state.selected.splice(i, 1);
@@ -345,6 +430,7 @@
   }
 
   function renderResult() {
+    paintConflicts('resultConflictPanel', 'resultConflictBody');
     var sum = SubMath.summarize(SubMath.monthlyTotal(state.selected, state.prices));
     document.getElementById('countLine').textContent =
       '쓰고 계신 구독 ' + state.selected.length + '개';
@@ -394,9 +480,14 @@
 
     var saving = SubMath.savings(state.unused, state.prices);
     var boxEl = document.getElementById('savingBox');
+    var emptyEl = document.getElementById('dietEmptyBox');
+    // 아무것도 안 골랐을 때 화면이 비어 있으면 "아직 덜 만들어진 화면"처럼 보인다.
+    // 정리할 게 없다는 것도 결과이므로 그렇다고 말해준다.
     if (state.unused.length === 0) {
       boxEl.hidden = true;
+      emptyEl.hidden = false;
     } else {
+      emptyEl.hidden = true;
       boxEl.hidden = false;
       document.getElementById('savingYear').textContent = won(saving.yearly);
     }
@@ -408,16 +499,35 @@
   document.getElementById('toDiet').onclick = function () { renderDiet(); show('diet'); };
   document.getElementById('backToResult').onclick = function () { renderResult(); show('result'); };
 
-  document.getElementById('shareBtn').onclick = function () {
-    var sum = SubMath.summarize(SubMath.monthlyTotal(state.selected, state.prices));
-    var text = '저는 구독료로 1년에 ' + won(sum.yearly) + ' 쓰고 있었어요 😱';
+  // 공유는 이 앱의 유일한 유입 경로라, 문장만 보내면 본 사람이 앱으로 올 길이 없다.
+  // SDK가 딥링크를 주면 붙이고, 없거나 실패하면 예전처럼 문장만 보낸다(절대 안 터진다).
+  function shareLink() {
+    try {
+      if (window.AppsInToss && typeof window.AppsInToss.getTossShareLink === 'function') {
+        return Promise.resolve(window.AppsInToss.getTossShareLink())
+          .then(function (link) { return typeof link === 'string' ? link : ''; })
+          .catch(function () { return ''; });
+      }
+    } catch (e) {}
+    return Promise.resolve('');
+  }
+
+  function doShare(message) {
     try {
       if (window.AppsInToss && window.AppsInToss.share) {
-        window.AppsInToss.share({ message: text });
+        window.AppsInToss.share({ message: message });
         return;
       }
     } catch (e) {}
-    if (navigator.share) { navigator.share({ text: text }).catch(function () {}); }
+    if (navigator.share) { navigator.share({ text: message }).catch(function () {}); }
+  }
+
+  document.getElementById('shareBtn').onclick = function () {
+    var sum = SubMath.summarize(SubMath.monthlyTotal(state.selected, state.prices));
+    var text = '저는 구독료로 1년에 ' + won(sum.yearly) + ' 쓰고 있었어요 😱';
+    shareLink().then(function (link) {
+      doShare(link ? text + '\n' + link : text);
+    });
   };
 
   renderChips();

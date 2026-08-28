@@ -25,6 +25,41 @@ test('목록: 다른 구독에 포함되는 항목은 안내를 달아 둔다', 
   assert.ok(play.hint && play.hint.indexOf('쿠팡 와우') >= 0, '포함 사실을 안내해야 해요');
 });
 
+test('목록: includedIn은 실제로 있는 서비스 id를 가리킨다', () => {
+  // 여기 오타가 나면 앱은 조용히 망가진다. 중복 경고가 아예 안 뜨고(총액이 부풀어도
+  // 아무 말이 없고), 화면에는 서비스 이름 대신 'appleone' 같은 날 id가 찍힌다.
+  const ids = new Set(SERVICES.map(s => s.id));
+  const bundled = SERVICES.filter(s => s.includedIn);
+  assert.ok(bundled.length > 0, '포함 관계가 있는 항목이 있어야 해요');
+  for (const s of bundled) {
+    assert.strictEqual(typeof s.includedIn, 'string', s.id + '의 includedIn은 문자열이어야 해요');
+    assert.ok(ids.has(s.includedIn),
+      s.id + '의 includedIn "' + s.includedIn + '" 이 목록에 없어요');
+    assert.notStrictEqual(s.includedIn, s.id, s.id + ' 이 자기 자신을 가리키면 안 돼요');
+  }
+});
+
+test('목록: 포함 관계인 두 항목은 양쪽 다 안내 문구를 갖는다', () => {
+  // 안내가 한쪽에만 있으면, 사용자가 상위 서비스부터 고를 때 아무 설명도 못 본다.
+  const byId = new Map(SERVICES.map(s => [s.id, s]));
+  for (const s of SERVICES.filter(x => x.includedIn)) {
+    const host = byId.get(s.includedIn);
+    assert.ok(s.hint && s.hint.trim().length > 0, s.id + '에 안내 문구가 있어야 해요');
+    assert.ok(host.hint && host.hint.trim().length > 0,
+      host.id + '(' + s.id + '을 포함)에도 안내 문구가 있어야 해요');
+  }
+});
+
+test('목록: 모든 항목이 includedIn 필드를 갖고 있다', () => {
+  // 필드를 빠뜨린 항목은 null과 구분이 안 돼 포함 관계가 조용히 사라진다.
+  for (const s of SERVICES) {
+    assert.ok(Object.prototype.hasOwnProperty.call(s, 'includedIn'),
+      s.id + '에 includedIn 필드가 있어야 해요');
+    assert.ok(s.includedIn === null || typeof s.includedIn === 'string',
+      s.id + '의 includedIn은 문자열이거나 null이어야 해요');
+  }
+});
+
 test('목록: 값이 확실하지 않은 항목은 null로 비워 둔다', () => {
   const blank = SERVICES.filter(s => s.price === null);
   assert.ok(blank.length > 0, '비워 둔 항목이 있어야 해요');
