@@ -57,6 +57,7 @@
       <button class="ghost" id="spendBtn">쓴 돈 기록</button>
     </div>
     <p class="note">이 기록은 서버로 보내지 않고 내 폰에만 저장돼요 🔒</p>
+    <div id="adSlot"></div>
   </section>
 
   <section id="inputPanel" hidden>
@@ -130,6 +131,14 @@
     } else {
       sub.textContent = '이번 달 하루 ' + won(BudgetMath.floorTo100(r.perDayLeft)) + '씩 쓸 수 있어요';
     }
+
+    // 배너 광고: 토스 앱 안이고 광고 그룹 ID가 설정돼 있을 때만 붙는다.
+    // 앱인토스 SDK가 없는 일반 웹에서는 window.AppsInToss 자체가 없어 아무 일도 안 생긴다.
+    try {
+      if (window.AppsInToss && typeof window.AppsInToss.attachAdBanner === 'function') {
+        window.AppsInToss.attachAdBanner('adSlot');
+      }
+    } catch (e) {}
   }
 
   function start() {

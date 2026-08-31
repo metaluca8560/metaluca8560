@@ -119,6 +119,7 @@
       <div style="height:10px"></div>
       <button class="ghost" id="backToPick">다시 고르기</button>
     </div>
+    <div id="adSlot"></div>
   </section>
 
   <section id="diet" hidden>
@@ -452,6 +453,15 @@
       d.appendChild(left); d.appendChild(right);
       list.appendChild(d);
     });
+
+    // 배너 광고: 결과 화면(1년 총액을 보여주는 화면)에만 붙인다. 고르는 화면에는 절대 두지 않는다 —
+    // 똑딱거리는 선택 흐름을 광고로 끊으면 완료율이 떨어진다는 설계 판단 때문.
+    // 앱인토스 SDK가 없는 일반 웹에서는 window.AppsInToss 자체가 없어 아무 일도 안 생긴다.
+    try {
+      if (window.AppsInToss && typeof window.AppsInToss.attachAdBanner === 'function') {
+        window.AppsInToss.attachAdBanner('adSlot');
+      }
+    } catch (e) {}
   }
 
   function renderDiet() {
