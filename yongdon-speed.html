@@ -92,11 +92,34 @@
   var save = function (s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} };
   var monthKey = function (d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); };
 
-  function show(id) {
+  // 뒤로가기 대응: 처음 보여주는 화면(설정/메인/새 달 중 그날 상황에 맞는 것)은
+  // history에 쌓지 않는다 — 그래야 거기서 시스템 뒤로가기를 누르면 앱이 바로 종료된다.
+  // 그다음부터 넘어가는 화면은 history에 쌓아서, 뒤로가기를 누르면 이전 화면으로
+  // 돌아오게 한다. popstate로 불릴 때(fromPop)는 다시 쌓지 않는다.
+  var historyReady = false;
+  var entryScreen = null;
+
+  function show(id, fromPop) {
     ['setup', 'main', 'newMonth', 'inputPanel'].forEach(function (s) {
       document.getElementById(s).hidden = s !== id;
     });
+    if (!historyReady) {
+      historyReady = true;
+      entryScreen = id;
+      return;
+    }
+    if (!fromPop) {
+      try { history.pushState({ screen: id }, ''); } catch (e) {}
+    }
   }
+
+  window.addEventListener('popstate', function (e) {
+    var id = (e.state && e.state.screen) || entryScreen || 'setup';
+    // 새로고침 등으로 입력 패널을 열었던 맥락(inputMode)이 사라졌으면
+    // 빈 패널 대신 진입 화면으로 안전하게 보낸다.
+    if (id === 'inputPanel' && inputMode === null) id = entryScreen || 'main';
+    show(id, true);
+  });
 
   function render(state) {
     var now = new Date();

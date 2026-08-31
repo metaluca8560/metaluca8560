@@ -108,6 +108,7 @@
       <div style="color:var(--muted);font-size:14px;margin-top:14px" id="perDay"></div>
       <div style="color:var(--muted);font-size:14px" id="coffee"></div>
     </div>
+    <div id="adSlot"></div>
     <div class="panel">
       <h2>제일 비싼 것</h2>
       <div id="topList"></div>
@@ -119,7 +120,6 @@
       <div style="height:10px"></div>
       <button class="ghost" id="backToPick">다시 고르기</button>
     </div>
-    <div id="adSlot"></div>
   </section>
 
   <section id="diet" hidden>
@@ -423,12 +423,27 @@
     renderChips();
   };
 
-  function show(id) {
+  // 뒤로가기 대응: 첫 화면(고르는 화면)은 history에 쌓지 않는다 — 거기서 시스템
+  // 뒤로가기를 누르면 앱이 바로 종료된다. 그다음 화면(결과/정리)부터는 history에
+  // 쌓아서 뒤로가기를 누르면 이전 화면으로 돌아오게 한다. popstate로 불릴 때
+  // (fromPop)는 다시 쌓지 않는다 — 안 그러면 뒤로가기 한 번에 다시 앞으로 쌓인다.
+  function show(id, fromPop) {
     ['pick', 'result', 'diet'].forEach(function (s) {
       document.getElementById(s).hidden = s !== id;
     });
     window.scrollTo(0, 0);
+    if (!fromPop) {
+      try { history.pushState({ screen: id }, ''); } catch (e) {}
+    }
   }
+
+  window.addEventListener('popstate', function (e) {
+    var id = (e.state && e.state.screen) || 'pick';
+    if (id === 'pick') renderChips();
+    else if (id === 'result') renderResult();
+    else if (id === 'diet') renderDiet();
+    show(id, true);
+  });
 
   function renderResult() {
     paintConflicts('resultConflictPanel', 'resultConflictBody');
