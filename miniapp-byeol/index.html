@@ -12,6 +12,7 @@
 <meta property="og:image" content="https://vaulted-bus-346411.web.app/byeol/images/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/styles.css?v=8">
+  <script type="module" src="/src/ait-bridge.js"></script>
 </head>
 <body>
 <main>
@@ -40,6 +41,7 @@
     <button id="btn-me-reset" style="background:none;border:1px solid #2a3559;color:#9fb0d6;font-size:14px;padding:12px;border-radius:12px;margin-top:10px">내 생일 다시 넣기</button>
     <button id="btn-to-guide" style="background:none;border:1px solid #2a3559;color:#9fb0d6;font-size:14px;padding:12px;border-radius:12px;margin-top:8px">🧚 오행 정령 5인방 소개</button>
     <button id="btn-share" style="background:linear-gradient(135deg,#5b7cff,#8f6bff);border:none;color:#fff;font-size:15px;font-weight:700;padding:14px;border-radius:14px;margin-top:8px">💫 내 정령 자랑하기</button>
+    <div id="adSlot-me"></div>
   </section>
 
   <section class="screen" id="screen-guide">
@@ -86,5 +88,28 @@
 <script src="/people.js"></script>
 <script src="/map.js?v=4"></script>
 <script src="/app.js?v=8"></script>
+<script>
+// 정령 결과 화면(#screen-me)에 실제로 도달했을 때만 배너를 붙여요.
+// app.js는 화면을 바꿀 때마다 .screen 요소의 active 클래스를 껐다 켜는 방식이라,
+// #screen-me가 active를 얻는 순간을 MutationObserver로 지켜보면 app.js를 안 건드리고도
+// "도착했을 때만" 붙일 수 있어요. 앱인토스 SDK가 없는 일반 웹에서는
+// window.AppsInToss 자체가 없어 아무 일도 안 생겨요.
+(function () {
+  var screenMe = document.getElementById('screen-me');
+  if (!screenMe) return;
+  var adAttached = false; // 화면을 나갔다 다시 들어와도 광고를 두 번 붙이지 않도록 기억해요
+  function tryAttachAd() {
+    if (adAttached || !screenMe.classList.contains('active')) return;
+    try {
+      if (window.AppsInToss && typeof window.AppsInToss.attachAdBanner === 'function') {
+        window.AppsInToss.attachAdBanner('adSlot-me');
+      }
+    } catch (e) {}
+    adAttached = true;
+  }
+  new MutationObserver(tryAttachAd).observe(screenMe, { attributes: true, attributeFilter: ['class'] });
+  tryAttachAd(); // 저장된 데이터가 있으면 시작하자마자 me 화면일 수도 있어 최초 1회도 확인해요
+})();
+</script>
 </body>
 </html>
