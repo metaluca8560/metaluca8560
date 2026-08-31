@@ -9,6 +9,7 @@
     "web:build": "node sync.mjs && vite build",
     "dev": "npm run web:dev",
     "build": "npm run web:build && ait build",
+    "build:test-ads": "node sync.mjs && vite build --mode ait-test-ads",
     "deploy": "ait deploy"
   },
   "dependencies": {

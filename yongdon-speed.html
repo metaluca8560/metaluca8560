@@ -10,8 +10,12 @@
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--text);
          font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
-         padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom); }
+         padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom); overflow-x:hidden; }
   .wrap { max-width:480px; margin:0 auto; padding:32px 0 40px; }
+  /* 배너 광고 자리: 앱인토스 문서가 요구하는 대로 가로 폭을 화면 폭과 똑같이 맞춘다.
+     .wrap의 좌우 여백을 뚫고 나가는 트릭이라 부모가 어떻게 생겼든 항상 화면 끝까지
+     찬다. 높이는 일부러 정하지 않는다 — 광고가 없으면 빈 div라 0px이라 자리도 안 생긴다. */
+  #adSlot { width:100vw; margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw); }
   h1 { font-size:20px; margin:0 0 24px; }
   .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px; }
   .label { color:var(--muted); font-size:14px; text-align:center; }
