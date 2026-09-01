@@ -1,7 +1,6 @@
 import React from "react";
 import { Composition } from "remotion";
 import { defaultProps } from "./content";
-import { HeroLoop } from "./HeroLoop";
 import { calculateShortFormMetadata, ShortForm } from "./ShortForm";
 
 export const RemotionRoot: React.FC = () => {
@@ -28,19 +27,6 @@ export const RemotionRoot: React.FC = () => {
         durationInFrames={330}
         defaultProps={defaultProps}
         calculateMetadata={calculateShortFormMetadata}
-      />
-      {/*
-        index.html 히어로 뒤에 깔리는 배경 루프 — 7초, 이음매 없음.
-        움직임이 아주 느려서 15fps로도 육안 차이가 없다. 프레임 수를 절반으로
-        줄이면 파일도 그만큼 가벼워진다.
-      */}
-      <Composition
-        id="HeroLoop"
-        component={HeroLoop}
-        width={1920}
-        height={1080}
-        fps={15}
-        durationInFrames={105}
       />
     </>
   );
