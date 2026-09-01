@@ -87,8 +87,9 @@ a { color: inherit; text-decoration: none; }
   object-fit: fill;
   pointer-events: none;
 }
-/* 움직임을 불편해하는 사용자에게는 영상을 걷어낸다. body의 기존 그라디언트가 남는다. */
-@media (prefers-reduced-motion: reduce) { .site-bg { display: none; } }
+/* 동작 축소를 켠 사용자에게는 재생만 멈춘다(아래 스크립트). 요소는 그대로 두어
+   poster가 정지 배경으로 남는다. 예전에는 display:none으로 통째로 없앴는데,
+   그러면 움직임뿐 아니라 배경 그림까지 사라져서 화면이 허전해졌다. */
 .avatar {
   display: inline-block; border-radius: 50%;
   filter: drop-shadow(0 8px 26px rgba(124, 58, 237, 0.25));

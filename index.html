@@ -71,6 +71,15 @@
       var v = document.querySelector('.site-bg')
       if (!v) return
 
+      // 동작 축소를 켠 사용자(윈도우 '애니메이션 효과' 끄기 등)에게는 재생하지 않는다.
+      // 요소는 남겨두므로 poster가 정지 배경으로 깔린다. 움직임만 빠지고 그림은 남는다.
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
+      if (reduce.matches) {
+        v.removeAttribute('autoplay')
+        v.pause()
+        return
+      }
+
       var tryPlay = function () { var p = v.play(); if (p) p.catch(function () {}) }
 
       v.addEventListener('loadeddata', tryPlay)
