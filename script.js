@@ -36,7 +36,7 @@ const STATS = {
 const REELS = [
   // title은 비워도 된다. 넣으면 카드 아래쪽에 한 줄로 얹힌다.
   { code: "DcDz9ekSfID", title: "비개발자의 역습", thumb: "reels/DcDz9ekSfID.jpg" },
-  { code: "DcL5RkDyVat", title: "토스 미니앱 14개 출시", thumb: "reels/DcL5RkDyVat.jpg" },
+  { code: "DcL5RkDyVat", title: "토스 미니앱 16개 출시", thumb: "reels/DcL5RkDyVat.jpg" },
   { code: "Dcn4YmLyhFG", title: "명함 공모전", thumb: "reels/Dcn4YmLyhFG.jpg" },
 ];
 
