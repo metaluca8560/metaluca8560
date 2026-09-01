@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>히어로 루프 진단</title>
+<!--
+  임시 진단 페이지. 히어로 배경 영상이 실제로 재생되는지 기기에서 확인하려고 만들었다.
+  원인이 확인되면 지운다.
+-->
+<style>
+  body { margin:0; font:14px/1.6 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+         background:#faf9f6; color:#221e33; padding:16px; }
+  h1 { font-size:17px; margin:0 0 12px; }
+  video { width:100%; border-radius:12px; display:block; background:#eee; }
+  table { width:100%; border-collapse:collapse; margin-top:14px; font-size:13px; }
+  td { padding:7px 6px; border-bottom:1px solid #e8e4f5; }
+  td:first-child { color:#6f6a85; width:42%; }
+  b { font-variant-numeric:tabular-nums; }
+  .ok { color:#15803d; font-weight:700; }
+  .bad { color:#b91c1c; font-weight:700; }
+  p.hint { color:#6f6a85; font-size:13px; margin-top:14px; }
+</style>
+</head>
+<body>
+<h1>히어로 루프 진단</h1>
+
+<video id="v" autoplay muted loop playsinline preload="auto" poster="hero-poster.jpg?v=2">
+  <source src="hero-loop.webm?v=2" type="video/webm" />
+  <source src="hero-loop.mp4?v=2" type="video/mp4" />
+</video>
+
+<table>
+  <tr><td>재생 상태</td><td id="state">—</td></tr>
+  <tr><td>재생 위치</td><td><b id="time">—</b></td></tr>
+  <tr><td>고른 파일</td><td id="src">—</td></tr>
+  <tr><td>영상 길이</td><td><b id="dur">—</b></td></tr>
+  <tr><td>해상도</td><td><b id="size">—</b></td></tr>
+  <tr><td>버퍼링</td><td id="ready">—</td></tr>
+  <tr><td>화면 변화량</td><td><b id="delta">측정 중…</b></td></tr>
+</table>
+
+<p class="hint">
+  <b>재생 위치</b>가 계속 올라가면 영상은 정상 재생 중입니다.<br />
+  <b>화면 변화량</b>은 3초 간격으로 픽셀이 얼마나 바뀌는지 잰 값입니다.
+  10 이상이면 눈에 보여야 하는 수준입니다.
+</p>
+
+<script>
+var v = document.getElementById('v')
+var $ = function (id) { return document.getElementById(id) }
+var STATES = ['아무것도 없음', '메타데이터만', '현재 프레임', '조금 더', '충분함']
+
+setInterval(function () {
+  $('state').innerHTML = v.paused
+    ? '<span class="bad">멈춤 — 자동재생이 막혔습니다</span>'
+    : '<span class="ok">재생 중</span>'
+  $('time').textContent = v.currentTime.toFixed(2) + ' 초'
+  $('src').textContent = v.currentSrc ? v.currentSrc.split('/').pop() : '못 고름'
+  $('dur').textContent = isNaN(v.duration) ? '—' : v.duration.toFixed(2) + ' 초'
+  $('size').textContent = v.videoWidth ? v.videoWidth + ' × ' + v.videoHeight : '—'
+  $('ready').textContent = STATES[v.readyState] || v.readyState
+}, 250)
+
+// 3초 간격으로 두 프레임을 캔버스에 그려 픽셀 차이를 잰다.
+var c = document.createElement('canvas')
+var ctx = c.getContext('2d', { willReadFrequently: true })
+var prev = null
+function grab() {
+  if (!v.videoWidth) return
+  c.width = 80; c.height = 45
+  ctx.drawImage(v, 0, 0, 80, 45)
+  var cur = ctx.getImageData(0, 0, 80, 45).data
+  if (prev) {
+    var mx = 0, tot = 0, n = 0
+    for (var i = 0; i < cur.length; i += 4) {
+      var d = Math.max(Math.abs(cur[i]-prev[i]), Math.abs(cur[i+1]-prev[i+1]), Math.abs(cur[i+2]-prev[i+2]))
+      if (d > mx) mx = d
+      tot += d; n++
+    }
+    $('delta').innerHTML = (mx >= 10)
+      ? '<span class="ok">최대 ' + mx + ' / 평균 ' + (tot/n).toFixed(1) + ' — 움직입니다</span>'
+      : '<span class="bad">최대 ' + mx + ' / 평균 ' + (tot/n).toFixed(1) + ' — 거의 안 변합니다</span>'
+  }
+  prev = cur
+}
+setInterval(grab, 3000)
+setTimeout(grab, 800)
+</script>
+</body>
+</html>

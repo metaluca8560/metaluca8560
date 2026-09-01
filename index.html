@@ -57,11 +57,32 @@
         원본은 remotion/src/HeroLoop.tsx — `npm run render:hero`로 다시 뽑는다.
       -->
       <video class="hero-bg" autoplay muted loop playsinline
-             preload="metadata" poster="hero-poster.jpg"
+             preload="auto" poster="hero-poster.jpg"
              aria-hidden="true" tabindex="-1">
-        <source src="hero-loop.webm" type="video/webm" />
-        <source src="hero-loop.mp4" type="video/mp4" />
+        <source src="hero-loop.webm?v=2" type="video/webm" />
+        <source src="hero-loop.mp4?v=2" type="video/mp4" />
       </video>
+      <script>
+        // 자동재생을 거절당하는 경우가 있다(절전 모드, 데이터 절약, 백그라운드 복귀).
+        // 그러면 poster만 남아 정지 화면처럼 보이므로, 다시 한 번 재생을 시도하고
+        // 그래도 안 되면 첫 상호작용 때 붙인다.
+        (function () {
+          var v = document.querySelector('.hero-bg')
+          if (!v) return
+          var tryPlay = function () { var p = v.play(); if (p) p.catch(function () {}) }
+          v.addEventListener('loadeddata', tryPlay)
+          v.addEventListener('canplay', tryPlay)
+          document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) tryPlay()
+          })
+          ;['touchstart', 'click'].forEach(function (e) {
+            document.addEventListener(e, function once() {
+              tryPlay()
+              document.removeEventListener(e, once)
+            }, { passive: true })
+          })
+        })()
+      </script>
       <div class="avatar">
         <img id="avatarImg" src="profile.jpg" alt="루카 프로필"
              onerror="this.remove();document.getElementById('avatarSvg').style.display='block';" />
