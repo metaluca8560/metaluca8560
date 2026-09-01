@@ -15,7 +15,7 @@ const LINKS = {
   spatial: "https://www.spatial.io/s/metarukas-Healing-space-627e1fa4bf651d0001da7543?share=5565475882378913124",
   marpple: "https://marpple.shop/kr/metaluca_2750/",
   github: "https://github.com/metaluca8560",
-  kmong: "", // E-book 주소 생기면 여기에
+  kmong: "https://kmong.com/gig/803533", // 「비개발자의 역습 — 삽질의 후예」
 };
 
 // 성과 수치 — 예: lectures: "120회+", students: "3,000+", projects: "50+", contents: "500+"
