@@ -28,6 +28,8 @@ type Blob = {
   /** 시작 위상 (0~1) */
   phase: number;
   opacity: number;
+  /** 크기가 숨쉬는 주기 — 이것도 정수여야 이음매가 유지된다 */
+  breathTurns: number;
 };
 
 const blobs: Blob[] = [
@@ -36,33 +38,36 @@ const blobs: Blob[] = [
     size: 0.85,
     cx: 0.5,
     cy: 0.05,
-    rx: 0.13,
-    ry: 0.06,
+    rx: 0.26,
+    ry: 0.13,
     turns: 1,
     phase: 0,
-    opacity: 0.3,
+    opacity: 0.44,
+    breathTurns: 2,
   },
   {
     color: siteTheme.purple,
     size: 0.6,
     cx: 0.2,
     cy: 0.3,
-    rx: 0.1,
-    ry: 0.08,
+    rx: 0.2,
+    ry: 0.16,
     turns: 1,
     phase: 0.35,
-    opacity: 0.14,
+    opacity: 0.22,
+    breathTurns: 1,
   },
   {
     color: siteTheme.sky,
     size: 0.62,
     cx: 0.82,
     cy: 0.28,
-    rx: 0.11,
-    ry: 0.09,
+    rx: 0.22,
+    ry: 0.18,
     turns: 1,
     phase: 0.7,
-    opacity: 0.11,
+    opacity: 0.18,
+    breathTurns: 1,
   },
   // 옐로우는 스카이블루에서 떼어놓는다. 겹치면 초록빛이 돌아 브랜드 색에서 벗어난다.
   {
@@ -70,11 +75,12 @@ const blobs: Blob[] = [
     size: 0.4,
     cx: 0.3,
     cy: 0.72,
-    rx: 0.09,
-    ry: 0.07,
+    rx: 0.18,
+    ry: 0.14,
     turns: 2,
     phase: 0.15,
-    opacity: 0.07,
+    opacity: 0.11,
+    breathTurns: 3,
   },
 ];
 
@@ -89,7 +95,11 @@ export const HeroLoop: React.FC = () => {
         const angle = (t * blob.turns + blob.phase) * Math.PI * 2;
         const x = (blob.cx + Math.cos(angle) * blob.rx) * width;
         const y = (blob.cy + Math.sin(angle) * blob.ry) * height;
-        const radius = blob.size * width * 0.5;
+        // 크기를 함께 흔든다. 부드러운 그라디언트는 위치가 움직이는 것보다
+        // 크기가 변하는 쪽이 훨씬 잘 보인다.
+        const breathe =
+          1 + Math.sin((t * blob.breathTurns + blob.phase) * Math.PI * 2) * 0.16;
+        const radius = blob.size * width * 0.5 * breathe;
 
         return (
           <div
