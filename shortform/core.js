@@ -185,6 +185,12 @@ function switchMode(mode) {
 function switchPlatform(plat) {
   currentPlatform = plat;
   document.body.dataset.platform = plat;
+
+  // 주소에도 반영한다. 새로고침하거나 북마크로 돌아와도 같은 탭이 열린다.
+  // history를 쌓지 않으므로 뒤로 가기 동작은 그대로다.
+  const url = new URL(location.href);
+  url.searchParams.set('platform', plat);
+  history.replaceState(null, '', url);
   
   document.querySelectorAll('.plat-tab').forEach(tab => {
     tab.classList.toggle('active', tab.dataset.platform === plat);
@@ -551,4 +557,10 @@ function escapeHtml(s) {
 document.addEventListener('DOMContentLoaded', () => {
   CardGenerator.init();
   renderHistoryUI();
+
+  // reels-analyzer.html, tiktok-analyzer.html 같은 진입점이 ?platform=reels 로
+  // 넘겨준다. 이 값을 읽지 않으면 어디로 들어오든 유튜브 화면이 떠서,
+  // 릴스 분석기를 눌렀는데 유튜브가 나오는 상황이 된다.
+  const wanted = new URLSearchParams(location.search).get('platform');
+  if (wanted && PLATFORMS_CONFIG[wanted]) switchPlatform(wanted);
 });
