@@ -273,7 +273,8 @@ a { color: inherit; text-decoration: none; }
 
 .reel {
   position: relative; display: block; padding: 0;
-  aspect-ratio: 9 / 16;
+  /* 커버 이미지가 3:4로 제작돼 있다. 9:16으로 두면 좌우가 잘려 제목이 날아간다. */
+  aspect-ratio: 3 / 4;
   border: 1px solid var(--line); border-radius: var(--radius);
   background: var(--surface); box-shadow: var(--shadow);
   overflow: hidden; cursor: pointer;
