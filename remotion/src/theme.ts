@@ -13,3 +13,15 @@ export const theme = {
   yellow: "#f5b91b",
   font: '"Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif',
 } as const;
+
+/**
+ * 사이트(index.html) 쪽 라이트 팔레트. 히어로 배경 루프처럼
+ * 웹사이트 위에 얹히는 영상은 이쪽을 쓴다.
+ */
+export const siteTheme = {
+  bg: "#faf9f6",
+  purple: "#7c3aed",
+  purpleSoft: "#a78bfa",
+  sky: "#0ea5e9",
+  yellow: "#f5b91b",
+} as const;

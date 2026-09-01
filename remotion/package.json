@@ -8,6 +8,7 @@
     "render": "remotion render ShortForm out/shortform.mp4",
     "render:square": "remotion render ShortFormSquare out/shortform-square.mp4",
     "render:props": "remotion render ShortForm out/shortform.mp4 --props=props.json",
+    "render:hero": "remotion render HeroLoop ../hero-loop.webm --codec=vp9 --crf=42 --scale=0.5 && remotion render HeroLoop ../hero-loop.mp4 --codec=h264 --crf=30 --scale=0.5 && remotion still HeroLoop ../hero-poster.jpg --frame=0 --scale=0.5 --image-format=jpeg --jpeg-quality=82",
     "thumbnail": "remotion still ShortForm out/thumbnail.png --frame=45",
     "typecheck": "tsc --noEmit",
     "upgrade": "remotion upgrade"

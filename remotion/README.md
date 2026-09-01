@@ -66,6 +66,32 @@ npx remotion render ShortForm out/10월2주차.mp4 --props=10월2주차.json
 영상 길이는 `beats` 개수에 맞춰 자동으로 계산됩니다(`calculateShortFormMetadata`).
 비트를 늘리면 영상도 그만큼 길어집니다.
 
+## 사이트 배경 루프
+
+`index.html` 전체에 깔리는 배경 영상은 `HeroLoop` 컴포지션입니다.
+뷰포트에 고정돼 있어서 스크롤해도 계속 움직입니다. 릴스와 성격이 완전히
+달라서 따로 만들었습니다.
+
+- **라이트 톤** — 사이트가 오프화이트 배경에 어두운 본문이라, 릴스의 딥 톤을
+  그대로 쓰면 글자가 안 읽힙니다. `styles.css`의 라이트 팔레트를 씁니다.
+- **이음매 없음** — 모든 움직임이 원운동이고 루프 길이 동안 정수 바퀴만 돕니다.
+  마지막 프레임 다음이 첫 프레임과 정확히 이어져서 되감기는 티가 안 납니다.
+- **15fps** — 움직임이 느려서 육안 차이가 없고, 파일만 가벼워집니다.
+- **위치 + 크기** — 부드러운 그라디언트는 위치가 움직이는 것보다 크기가 변하는
+  쪽이 훨씬 잘 보입니다. 둘을 같이 흔듭니다. `breathTurns`도 정수여야 합니다.
+
+```bash
+npm run render:hero
+```
+
+WebM(VP9) · MP4(H.264) · 포스터 JPG 세 개를 레포 루트에 바로 떨굽니다.
+색이나 움직임을 바꾸려면 `src/HeroLoop.tsx`의 `blobs` 배열을 고치세요.
+`turns`는 반드시 정수여야 이음매가 유지됩니다.
+
+브라우저는 WebM(약 30KB)을 먼저 쓰고, WebM을 못 트는 구형 사파리·iOS만
+MP4로 넘어갑니다. 둘 다 못 틀면 포스터 이미지가 정지 화면으로 남습니다.
+`prefers-reduced-motion`을 켠 사용자에게는 영상이 아예 안 나갑니다.
+
 ## 구조
 
 | 파일 | 역할 |
@@ -76,6 +102,7 @@ npx remotion render ShortForm out/10월2주차.mp4 --props=10월2주차.json
 | `src/content.ts` | 기본 대본과 props 타입. **평소엔 여기만 고치면 된다** |
 | `src/theme.ts` | 색·폰트. 루트 `styles.css`의 브랜드 컬러와 같은 값 |
 | `src/fonts.ts` | Pretendard를 CDN에서 로드 (실패하면 시스템 폰트로 폴백) |
+| `src/HeroLoop.tsx` | 사이트 전체 배경 루프 (릴스와 별개) |
 | `props.example.json` | 대본 JSON 예시. 복사해서 쓰면 된다 |
 
 `insta-shortform` / `nyanbot-shorts` 스킬이 뽑아주는 훅–본문–CTA 기획안을
