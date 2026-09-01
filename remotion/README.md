@@ -66,10 +66,11 @@ npx remotion render ShortForm out/10월2주차.mp4 --props=10월2주차.json
 영상 길이는 `beats` 개수에 맞춰 자동으로 계산됩니다(`calculateShortFormMetadata`).
 비트를 늘리면 영상도 그만큼 길어집니다.
 
-## 사이트 히어로 배경 루프
+## 사이트 배경 루프
 
-`index.html` 히어로 뒤에 깔리는 배경 영상은 `HeroLoop` 컴포지션입니다.
-릴스와 성격이 완전히 달라서 따로 만들었습니다.
+`index.html` 전체에 깔리는 배경 영상은 `HeroLoop` 컴포지션입니다.
+뷰포트에 고정돼 있어서 스크롤해도 계속 움직입니다. 릴스와 성격이 완전히
+달라서 따로 만들었습니다.
 
 - **라이트 톤** — 사이트가 오프화이트 배경에 어두운 본문이라, 릴스의 딥 톤을
   그대로 쓰면 글자가 안 읽힙니다. `styles.css`의 라이트 팔레트를 씁니다.
@@ -101,7 +102,7 @@ MP4로 넘어갑니다. 둘 다 못 틀면 포스터 이미지가 정지 화면�
 | `src/content.ts` | 기본 대본과 props 타입. **평소엔 여기만 고치면 된다** |
 | `src/theme.ts` | 색·폰트. 루트 `styles.css`의 브랜드 컬러와 같은 값 |
 | `src/fonts.ts` | Pretendard를 CDN에서 로드 (실패하면 시스템 폰트로 폴백) |
-| `src/HeroLoop.tsx` | 사이트 히어로 배경 루프 (릴스와 별개) |
+| `src/HeroLoop.tsx` | 사이트 전체 배경 루프 (릴스와 별개) |
 | `props.example.json` | 대본 JSON 예시. 복사해서 쓰면 된다 |
 
 `insta-shortform` / `nyanbot-shorts` 스킬이 뽑아주는 훅–본문–CTA 기획안을
