@@ -35,9 +35,9 @@ const STATS = {
 // 카드를 누르기 전까지 인스타그램 쪽 리소스는 하나도 불러오지 않습니다.
 const REELS = [
   // title은 비워도 된다. 넣으면 카드 아래쪽에 한 줄로 얹힌다.
-  { code: "DcDz9ekSfID", title: "비개발자의 역습" },
-  { code: "DcL5RkDyVat", title: "토스 미니앱 14개 출시" },
-  { code: "Dcn4YmLyhFG", title: "명함 공모전" },
+  { code: "DcDz9ekSfID", title: "비개발자의 역습", thumb: "reels/DcDz9ekSfID.jpg" },
+  { code: "DcL5RkDyVat", title: "토스 미니앱 16개 출시", thumb: "reels/DcL5RkDyVat.jpg" },
+  { code: "Dcn4YmLyhFG", title: "명함 공모전", thumb: "reels/Dcn4YmLyhFG.jpg" },
 ];
 
 document.getElementById("year").textContent = new Date().getFullYear();
@@ -93,6 +93,11 @@ document.querySelectorAll("[data-link]").forEach((el) => {
     card.dataset.code = reel.code;
     card.setAttribute("aria-label", (reel.title || "릴스") + " 재생");
 
+    // 커버는 대부분 제목이 이미 박혀 있다. 글자 위에 재생 버튼이나 라벨을
+    // 덮어씌우면 원본을 가리므로, 썸네일 영역과 제목을 위아래로 분리한다.
+    const thumb = document.createElement("span");
+    thumb.className = "reel-thumb";
+
     if (reel.thumb) {
       const img = document.createElement("img");
       img.src = reel.thumb;
@@ -101,12 +106,13 @@ document.querySelectorAll("[data-link]").forEach((el) => {
       // 썸네일 파일이 없거나 깨지면 그라데이션 카드로 되돌린다
       img.addEventListener("error", () => {
         img.remove();
-        card.classList.add("no-thumb");
+        thumb.classList.add("no-thumb");
       });
-      card.appendChild(img);
+      thumb.appendChild(img);
     } else {
-      card.classList.add("no-thumb");
+      thumb.classList.add("no-thumb");
     }
+    card.appendChild(thumb);
 
     if (reel.title) {
       const label = document.createElement("span");
