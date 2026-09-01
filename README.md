@@ -14,6 +14,7 @@ metaluca의 개인 브랜드/포트폴리오 사이트입니다. 다크 테크 �
 | `artist/` | ATELIER — 작가 포트폴리오 템플릿 |
 | `youtube-analyzer.html` 등 | 유튜브/릴스/틱톡 트렌드 분석 도구 |
 | `apps-script.gs` | automation 폼의 Google Apps Script 백엔드 (설정법은 `automation/` 참고) |
+| `remotion/` | 숏폼 영상(릴스·쇼츠) 렌더링 — React로 만들어 mp4로 뽑는다. 사용법은 `remotion/README.md` |
 
 ## 테마 수정
 
@@ -25,6 +26,12 @@ metaluca의 개인 브랜드/포트폴리오 사이트입니다. 다크 테크 �
 ```bash
 python3 -m http.server 8000
 # http://localhost:8000 접속
+```
+
+숏폼 영상 작업은 별도 폴더입니다. 정적 사이트와 분리돼 있어 배포에는 영향이 없습니다.
+
+```bash
+cd remotion && npm install && npm run studio
 ```
 
 ## 배포
