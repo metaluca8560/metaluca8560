@@ -28,6 +28,21 @@ npm run studio
 
 문구를 다듬는 작업은 대부분 여기서 끝납니다. 마음에 드는 상태가 되면 렌더하세요.
 
+### props 패널에 뜨는 노란 경고
+
+`Can't save default props: Could not find or extract defaultProps` — 에러가 아닙니다.
+기본 대본을 `src/content.ts`에 따로 두고 불러 쓰기 때문에, 스튜디오가 그 파일을
+직접 고쳐 저장하지는 못한다는 뜻입니다. 미리보기는 아무 문제 없이 됩니다.
+
+스튜디오에서 다듬은 문구를 남기려면 이렇게 하세요.
+
+1. props 패널 위쪽의 **JSON** 탭을 누른다
+2. 내용을 통째로 복사한다
+3. `props.json`에 붙여넣고 저장한다
+4. `npm run render:props`
+
+기본 대본 자체를 바꾸려면 `src/content.ts`의 `defaultProps`를 고치면 됩니다.
+
 ## 렌더
 
 ```bash
@@ -101,7 +116,7 @@ MP4로 넘어갑니다. 둘 다 못 틀면 포스터 이미지가 정지 화면�
 | `src/ShortForm.tsx` | 실제 화면. 훅 → 본문 비트 → CTA 순서로 장면이 이어진다 |
 | `src/content.ts` | 기본 대본과 props 타입. **평소엔 여기만 고치면 된다** |
 | `src/theme.ts` | 색·폰트. 루트 `styles.css`의 브랜드 컬러와 같은 값 |
-| `src/fonts.ts` | Pretendard를 CDN에서 로드 (실패하면 시스템 폰트로 폴백) |
+| `src/fonts.ts` | Pretendard 로드. 주소는 `index.html`과 똑같이 버전 태그를 붙여야 한다 |
 | `src/HeroLoop.tsx` | 사이트 전체 배경 루프 (릴스와 별개) |
 | `props.example.json` | 대본 JSON 예시. 복사해서 쓰면 된다 |
 

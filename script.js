@@ -30,14 +30,17 @@ const STATS = {
 // 사이트에 걸 인스타그램 릴스.
 //   code  — 릴스 주소의 마지막 조각. instagram.com/reel/ABC123xyz/ 라면 "ABC123xyz"
 //   title — 카드에 보이는 한 줄 설명
+//   date  — 올린 날짜 "2026-08-17". 이것만 적어두면 최신순 정렬은 자동이다.
+//           순서를 신경 쓸 필요 없이 아래에 계속 덧붙이기만 하면 된다.
+//           비워두면 날짜 없이 맨 뒤로 간다.
 //   thumb — (선택) 직접 저장한 썸네일 경로. 없으면 브랜드 그라데이션 카드로 나온다.
 //           인스타 CDN 주소를 직접 걸면 만료돼서 깨지므로, 쓸 거면 파일로 받아두세요.
 // 카드를 누르기 전까지 인스타그램 쪽 리소스는 하나도 불러오지 않습니다.
 const REELS = [
   // title은 비워도 된다. 넣으면 카드 아래쪽에 한 줄로 얹힌다.
-  { code: "DcDz9ekSfID", title: "비개발자의 역습", thumb: "reels/DcDz9ekSfID.jpg" },
-  { code: "DcL5RkDyVat", title: "토스 미니앱 16개 출시", thumb: "reels/DcL5RkDyVat.jpg" },
-  { code: "Dcn4YmLyhFG", title: "명함 공모전", thumb: "reels/Dcn4YmLyhFG.jpg" },
+  { code: "DcDz9ekSfID", title: "비개발자의 역습", date: "", thumb: "reels/DcDz9ekSfID.jpg" },
+  { code: "DcL5RkDyVat", title: "토스 미니앱 16개 출시", date: "", thumb: "reels/DcL5RkDyVat.jpg" },
+  { code: "Dcn4YmLyhFG", title: "명함 공모전", date: "", thumb: "reels/Dcn4YmLyhFG.jpg" },
 ];
 
 document.getElementById("year").textContent = new Date().getFullYear();
@@ -84,7 +87,18 @@ document.querySelectorAll("[data-link]").forEach((el) => {
   const frame = document.getElementById("reelFrame");
   if (!section || !grid || !modal || !frame) return;
 
-  REELS.forEach((reel) => {
+  // 최신순으로 세운다. 날짜를 안 적은 건 순서를 알 수 없으니 뒤로 보내고,
+  // 저희끼리는 적어둔 순서를 지킨다.
+  const sorted = REELS.map((reel, i) => ({ reel, i })).sort((a, b) => {
+    const da = a.reel.date || "";
+    const db = b.reel.date || "";
+    if (da && db) return db.localeCompare(da);
+    if (da) return -1;
+    if (db) return 1;
+    return a.i - b.i;
+  });
+
+  sorted.forEach(({ reel }) => {
     if (!reel || !reel.code) return;
 
     const card = document.createElement("button");
@@ -120,6 +134,17 @@ document.querySelectorAll("[data-link]").forEach((el) => {
       label.textContent = reel.title;
       card.appendChild(label);
     }
+
+    if (reel.date) {
+      const when = document.createElement("time");
+      when.className = "reel-date";
+      when.dateTime = reel.date;
+      // "2026-08-17" → "2026. 8. 17."
+      const [y, m, d] = reel.date.split("-");
+      when.textContent = `${y}. ${Number(m)}. ${Number(d)}.`;
+      card.appendChild(when);
+    }
+
     grid.appendChild(card);
   });
 

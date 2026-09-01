@@ -45,7 +45,7 @@ export const defaultProps: ShortFormProps = {
     },
   ],
   cta: "자동화 루틴 더 보기",
-  handle: "@metaluca",
+  handle: "@metaluca2750",
   hookSeconds: 2.5,
   beatSeconds: 3,
   ctaSeconds: 2.5,
