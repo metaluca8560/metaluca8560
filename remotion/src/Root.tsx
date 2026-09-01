@@ -30,7 +30,7 @@ export const RemotionRoot: React.FC = () => {
         calculateMetadata={calculateShortFormMetadata}
       />
       {/*
-        index.html 히어로 뒤에 깔리는 배경 루프 — 10초, 이음매 없음.
+        index.html 히어로 뒤에 깔리는 배경 루프 — 7초, 이음매 없음.
         움직임이 아주 느려서 15fps로도 육안 차이가 없다. 프레임 수를 절반으로
         줄이면 파일도 그만큼 가벼워진다.
       */}
@@ -40,7 +40,7 @@ export const RemotionRoot: React.FC = () => {
         width={1920}
         height={1080}
         fps={15}
-        durationInFrames={150}
+        durationInFrames={105}
       />
     </>
   );
