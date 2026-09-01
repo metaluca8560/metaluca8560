@@ -7,7 +7,7 @@ metaluca의 개인 브랜드/포트폴리오 사이트입니다. 다크 테크 �
 
 | 경로 | 설명 |
 |------|------|
-| `index.html` / `styles.css` / `script.js` | 메인 랜딩 — AI 교육·자동화 파트너 소개 (라이트 퍼플 테마, 성과 수치는 `script.js`의 `STATS`) |
+| `index.html` / `styles.css` / `script.js` | 메인 랜딩 — AI 교육·자동화 파트너 소개 (라이트 퍼플 테마, 성과 수치는 `script.js`의 `STATS`, 릴스는 `REELS`) |
 | `automation/` | AI 트렌드 다락방 — 업무 자동화 & AI 챗봇 컨설팅 랜딩 (구 메인) |
 | `medi/` | 오늘 어디 아파? — 증상 안내 & 병원 찾기 웹앱 |
 | `canva-ai/` | 캔바 × AI 디자인 클래스 랜딩 |

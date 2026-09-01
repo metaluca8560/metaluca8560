@@ -464,6 +464,25 @@
       </div>
     </section>
 
+    <!-- ===== 릴스 =====
+         ✏️ 걸어둘 릴스는 script.js 상단의 REELS 배열에서 관리합니다.
+         비워두면 이 섹션은 통째로 숨겨집니다. (가짜 콘텐츠를 채우지 않기 위함) -->
+    <section class="reels" id="reels" aria-label="릴스" hidden>
+      <p class="sec-label">Reels</p>
+      <h2 class="sec-title">짧게 보는 <em>AI 활용법</em></h2>
+      <div class="reel-grid" id="reelGrid"></div>
+      <a class="reel-more" data-link="instagram" href="#">인스타그램에서 더 보기 →</a>
+    </section>
+
+    <!-- 릴스 재생창. 카드를 누르기 전까지 인스타그램은 한 바이트도 안 부른다. -->
+    <div class="reel-modal" id="reelModal" hidden>
+      <div class="reel-backdrop" data-close></div>
+      <div class="reel-box" role="dialog" aria-modal="true" aria-label="릴스 재생">
+        <button class="reel-close" type="button" data-close aria-label="닫기">✕</button>
+        <div class="reel-frame" id="reelFrame"></div>
+      </div>
+    </div>
+
     <!-- ===== 후기 =====
          실제 수강생/고객 후기가 모이면 주석을 풀고 내용을 교체하세요.
          (가짜 후기는 신뢰를 깎습니다 — 실명/소속 동의를 받은 후기만!)
