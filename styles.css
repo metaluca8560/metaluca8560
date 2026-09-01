@@ -357,6 +357,8 @@ a { color: inherit; text-decoration: none; }
   border-radius: 999px; padding: 3px 10px; margin-bottom: 10px;
 }
 .svc strong { display: block; font-size: 1.04rem; font-weight: 800; margin-bottom: 4px; }
+a.svc-link { color: inherit; text-decoration: none; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
+a.svc-link:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(124, 58, 237, .14); }
 .svc p { font-size: 0.86rem; color: var(--muted); }
 
 /* ---------- 만든 것들 ---------- */
