@@ -41,7 +41,7 @@ function getZodiac(month, day) {
   });
 }
 
-function showScreen(id) {
+function showScreen(id, fromPop) {
   var screens = document.querySelectorAll(".screen");
   screens.forEach(function (screen) {
     screen.classList.remove("active");
@@ -49,6 +49,10 @@ function showScreen(id) {
   var target = document.getElementById("screen-" + id);
   if (target) {
     target.classList.add("active");
+  }
+  // 뒤로가기 스택: popstate로 부른 게 아니면 history에 쌓는다(토스 뒤로가기 대응).
+  if (!fromPop) {
+    try { history.pushState({ screen: id }, ""); } catch (e) {}
   }
 }
 
@@ -596,7 +600,13 @@ function initShuffleAndFan() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  showScreen("intro");
+  // 뒤로가기 스택: state 없이 popstate가 오면 진입 화면(intro)으로 취급한다.
+  window.addEventListener("popstate", function (e) {
+    var id = (e.state && e.state.screen) || "intro";
+    showScreen(id, true);
+  });
+
+  showScreen("intro", true); // 진입 화면은 history에 쌓지 않는다 (뒤로가기 1번에 앱 종료)
   pureumSay("심연의 타로예요. 준비되면 시작해요.");
 
   var btnStart = document.getElementById("btn-start");
