@@ -35,9 +35,9 @@ const STATS = {
 // 카드를 누르기 전까지 인스타그램 쪽 리소스는 하나도 불러오지 않습니다.
 const REELS = [
   // title은 비워도 된다. 넣으면 카드 아래쪽에 한 줄로 얹힌다.
-  { code: "DcDz9ekSfID", title: "" },
-  { code: "DcL5RkDyVat", title: "" },
-  { code: "Dcn4YmLyhFG", title: "" },
+  { code: "DcDz9ekSfID", title: "비개발자의 역습" },
+  { code: "DcL5RkDyVat", title: "토스 미니앱 14개 출시" },
+  { code: "Dcn4YmLyhFG", title: "명함 공모전" },
 ];
 
 document.getElementById("year").textContent = new Date().getFullYear();
