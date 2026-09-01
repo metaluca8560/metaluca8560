@@ -1,0 +1,26 @@
+{
+  "name": "metaluca-remotion",
+  "version": "1.0.0",
+  "private": true,
+  "description": "메타루카 숏폼 영상 렌더링 (Remotion)",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render ShortForm out/shortform.mp4",
+    "render:square": "remotion render ShortFormSquare out/shortform-square.mp4",
+    "render:props": "remotion render ShortForm out/shortform.mp4 --props=props.json",
+    "thumbnail": "remotion still ShortForm out/thumbnail.png --frame=45",
+    "typecheck": "tsc --noEmit",
+    "upgrade": "remotion upgrade"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.519",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "remotion": "4.0.519"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "typescript": "5.9.3"
+  }
+}
