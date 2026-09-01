@@ -73,8 +73,22 @@ a { color: inherit; text-decoration: none; }
 .btn-lg { padding: 18px 34px; font-size: 1.06rem; }
 
 /* ---------- Hero — 넓은 여백, 3초 안에 전달 ---------- */
-.hero { text-align: center; padding: 84px 0 10px; }
+.hero { text-align: center; padding: 84px 0 10px; position: relative; isolation: isolate; }
 @media (max-width: 639px) { .hero { padding-top: 60px; } }
+
+/* 히어로 배경 루프 — 내용 뒤에 깔리고, 아래로 갈수록 배경색에 녹아든다.
+   isolation:isolate 덕분에 z-index:-1이 .hero 안에서만 먹는다(body 뒤로 안 빠짐). */
+.hero-bg {
+  position: absolute; z-index: -1;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 100vw; height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 50%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 50%, transparent 100%);
+}
+/* 움직임을 불편해하는 사용자에게는 영상을 걷어낸다. body의 기존 그라디언트가 남는다. */
+@media (prefers-reduced-motion: reduce) { .hero-bg { display: none; } }
 .avatar {
   display: inline-block; border-radius: 50%;
   filter: drop-shadow(0 8px 26px rgba(124, 58, 237, 0.25));

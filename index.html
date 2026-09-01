@@ -50,6 +50,18 @@
 
     <!-- ===== Hero — "왜 당신이어야 하는가"를 3초 안에 ===== -->
     <header class="hero">
+      <!--
+        배경 루프. 장식이라 aria-hidden으로 스크린리더에서 숨긴다.
+        muted+playsinline이 없으면 모바일에서 자동재생 자체가 막힌다.
+        영상을 못 틀면 poster가 그대로 남아 정지 그라디언트로 보인다.
+        원본은 remotion/src/HeroLoop.tsx — `npm run render:hero`로 다시 뽑는다.
+      -->
+      <video class="hero-bg" autoplay muted loop playsinline
+             preload="metadata" poster="hero-poster.jpg"
+             aria-hidden="true" tabindex="-1">
+        <source src="hero-loop.webm" type="video/webm" />
+        <source src="hero-loop.mp4" type="video/mp4" />
+      </video>
       <div class="avatar">
         <img id="avatarImg" src="profile.jpg" alt="루카 프로필"
              onerror="this.remove();document.getElementById('avatarSvg').style.display='block';" />
