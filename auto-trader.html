@@ -419,6 +419,7 @@ input.inp,select.inp{width:100%;background:var(--panel);border:1px solid var(--p
         <button data-v="paper">PAPER · Alpaca</button>
         <button data-v="kis">KIS · 한투 모의</button>
         <button data-v="upbit">UPBIT · 실매매</button>
+        <button data-v="bithumb">BITHUMB · 실매매</button>
       </div>
     </div>
 
@@ -432,6 +433,18 @@ input.inp,select.inp{width:100%;background:var(--panel);border:1px solid var(--p
         <div class="fld"><label>1건 매수 금액 (원) · 최소 5,000 / 서버상한</label><input class="inp" id="upAmount" type="number" min="5000" step="1000" value="6000"></div>
       </div>
       <div class="warn" style="margin:0">⚠️ 업비트는 <b>모의투자가 없습니다 — 진짜 원화로 체결</b>됩니다. 데이터 소스도 <b>UPBIT</b>로 맞추는 걸 권장. API 키에 <b>자산조회+주문</b> 권한 필요, <b>IP 제한은 끄세요</b>(Netlify는 고정 IP 아님).</div>
+    </div>
+
+    <div id="bithumbCfg" style="display:none">
+      <div class="row2">
+        <div class="fld"><label>빗썸 마켓</label>
+          <select class="inp" id="bhMarket">
+            <option>KRW-BTC</option><option>KRW-ETH</option><option>KRW-XRP</option><option>KRW-SOL</option><option>KRW-DOGE</option>
+          </select>
+        </div>
+        <div class="fld"><label>1건 매수 금액 (원) · 최소 1,000 / 서버상한</label><input class="inp" id="bhAmount" type="number" min="1000" step="1000" value="6000"></div>
+      </div>
+      <div class="warn" style="margin:0">⚠️ 빗썸도 <b>진짜 원화로 체결</b>됩니다(모의 없음). API 2.0 <b>Access/Secret Key</b> 필요, 권한은 <b>자산조회+주문</b>. 업비트와 달리 <b>IP 등록 없이 서버리스에서 작동</b>합니다.</div>
     </div>
 
     <div id="kisCfg" style="display:none">
@@ -528,7 +541,7 @@ function hexA(hex,a){hex=(hex||'#888').replace('#','');if(hex.length===3)hex=hex
 /* ---------- CONFIG (persisted) ---------- */
 const DEF={data:'sim',symUpbit:'KRW-BTC',symBinance:'BTCUSDT',
   trade:'sim',alpacaSym:'BTC/USD',notional:10,kisCode:'005930',kisQty:1,
-  upMarket:'KRW-BTC',upAmount:6000,armed:false,
+  upMarket:'KRW-BTC',upAmount:6000,bhMarket:'KRW-BTC',bhAmount:6000,armed:false,
   strat:{entryPct:0.12,exitPct:0.25,stopPct:0.30,lookback:6,cooldown:12,holdMax:90}};
 let CFG=load();
 function load(){try{const s=JSON.parse(localStorage.getItem('nexa-cfg'));return Object.assign({},DEF,s,{strat:Object.assign({},DEF.strat,s&&s.strat)});}catch(e){return JSON.parse(JSON.stringify(DEF));}}
@@ -707,8 +720,9 @@ function simTrade(){
 
 /* ================= PAPER TRADE ENGINE (Alpaca via /api/broker) ================= */
 const P={pos:null,startEq:null,eq:null,trades:0,wins:0,tot:0,cooldownUntil:0,busy:false,connected:false};
-function isRealTrade(){return CFG.trade==='paper'||CFG.trade==='kis'||CFG.trade==='upbit';}
-function tradeEndpoint(engine){const e=engine||CFG.trade;return e==='kis'?'/api/kis':e==='upbit'?'/api/upbit':'/api/broker';}
+function isRealTrade(){return CFG.trade==='paper'||CFG.trade==='kis'||CFG.trade==='upbit'||CFG.trade==='bithumb';}
+function isKrwLive(){return CFG.trade==='upbit'||CFG.trade==='bithumb';}
+function tradeEndpoint(engine){const e=engine||CFG.trade;return e==='kis'?'/api/kis':e==='upbit'?'/api/upbit':e==='bithumb'?'/api/bithumb':'/api/broker';}
 async function callBroker(ep,action,body){
   const res=await fetch(ep,{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify(Object.assign({action},body))});
@@ -732,6 +746,7 @@ async function kisPricePoll(){
   try{
     if(CFG.trade==='kis'){const d=await callBroker('/api/kis','price',{code:CFG.kisCode});const p=Number(d.price);if(isFinite(p)&&p>0){S.price=p;rollCandle(p);}}
     else if(CFG.trade==='upbit'){const d=await callBroker('/api/upbit','price',{market:CFG.upMarket});const p=Number(d.price);if(isFinite(p)&&p>0){S.price=p;rollCandle(p);}}
+    else if(CFG.trade==='bithumb'){const d=await callBroker('/api/bithumb','price',{market:CFG.bhMarket});const p=Number(d.price);if(isFinite(p)&&p>0){S.price=p;rollCandle(p);}}
   }catch(e){}
 }
 function momentum(){
@@ -756,15 +771,18 @@ async function paperStrategy(){
 }
 async function paperEnter(m,armed){
   P.busy=true;
-  const kis=CFG.trade==='kis',up=CFG.trade==='upbit';const entryPx=S.price;
-  const notional=kis?entryPx*(Number(CFG.kisQty)||1):up?(Number(CFG.upAmount)||6000):(Number(CFG.notional)||10);
-  const sizeLbl=kis?`${CFG.kisQty}주 ${CFG.kisCode}`:up?`${CFG.upMarket} ₩${(Number(CFG.upAmount)||6000).toLocaleString()}`:`${CFG.alpacaSym} ${usd(Number(CFG.notional)||10)}`;
+  const kis=CFG.trade==='kis',up=CFG.trade==='upbit',bh=CFG.trade==='bithumb';const entryPx=S.price;
+  const krwAmt=up?Number(CFG.upAmount):bh?Number(CFG.bhAmount):0;
+  const notional=kis?entryPx*(Number(CFG.kisQty)||1):(up||bh)?(krwAmt||6000):(Number(CFG.notional)||10);
+  const sizeLbl=kis?`${CFG.kisQty}주 ${CFG.kisCode}`:up?`${CFG.upMarket} ₩${(krwAmt||6000).toLocaleString()}`:bh?`${CFG.bhMarket} ₩${(krwAmt||6000).toLocaleString()}`:`${CFG.alpacaSym} ${usd(Number(CFG.notional)||10)}`;
   try{
     if(armed){
       const d=kis
         ? await callBroker('/api/kis','order',{side:'buy',code:CFG.kisCode,qty:Number(CFG.kisQty)})
         : up
         ? await callBroker('/api/upbit','order',{side:'buy',market:CFG.upMarket,amount:Number(CFG.upAmount)})
+        : bh
+        ? await callBroker('/api/bithumb','order',{side:'buy',market:CFG.bhMarket,amount:Number(CFG.bhAmount)})
         : await callBroker('/api/broker','order',{symbol:CFG.alpacaSym,notional,side:'buy',type:'market'});
       const fp=Number(d.order&&d.order.filled_avg_price);
       P.pos={entryPx:isFinite(fp)&&fp>0?fp:entryPx,notional,ts:now()};
@@ -778,7 +796,7 @@ async function paperEnter(m,armed){
 }
 async function paperExit(chg,armed){
   P.busy=true;
-  const kis=CFG.trade==='kis',up=CFG.trade==='upbit';const pos=P.pos;const exitPx=S.price;
+  const kis=CFG.trade==='kis',up=CFG.trade==='upbit',bh=CFG.trade==='bithumb';const pos=P.pos;const exitPx=S.price;
   const pnl=(exitPx-pos.entryPx)/pos.entryPx*pos.notional; // 대략적 손익
   const win=pnl>=0;
   try{
@@ -787,6 +805,8 @@ async function paperExit(chg,armed){
         ? await callBroker('/api/kis','order',{side:'sell',code:CFG.kisCode,qty:Number(CFG.kisQty)})
         : up
         ? await callBroker('/api/upbit','close',{market:CFG.upMarket})
+        : bh
+        ? await callBroker('/api/bithumb','close',{market:CFG.bhMarket})
         : await callBroker('/api/broker','close',{symbol:CFG.alpacaSym});
       const stat=(d.order&&d.order.status)||(d.closed&&d.closed.status)||'sent';
       pushLog({t:nowT(),win,id:'#'+(1000+P.trades+1),dir:win?'UP':'DOWN',px:fnum(exitPx),cat:'CLOSE · '+stat,pnl});
@@ -906,13 +926,14 @@ function applyLabels(){
   if(CFG.data==='sim'){
     if(CFG.trade==='kis'){SYMBOL=CFG.kisCode;CURR='₩';}
     else if(CFG.trade==='upbit'){SYMBOL=CFG.upMarket.replace('KRW-','');CURR='₩';}
+    else if(CFG.trade==='bithumb'){SYMBOL=CFG.bhMarket.replace('KRW-','');CURR='₩';}
     else{SYMBOL='NEXA';CURR='';}
   }
   $('brandSym').textContent=SYMBOL;$('chSym').textContent=SYMBOL;$('obSym').textContent=SYMBOL;
   $('logo').textContent=SYMBOL[0]||'N';$('lblSym').textContent=SYMBOL;
-  const dsrcSim=CFG.trade==='kis'?'KIS 시세 · '+CFG.kisCode:CFG.trade==='upbit'?'UPBIT 시세 · '+CFG.upMarket:'SIM · SYNTHETIC FEED';
+  const dsrcSim=CFG.trade==='kis'?'KIS 시세 · '+CFG.kisCode:CFG.trade==='upbit'?'UPBIT 시세 · '+CFG.upMarket:CFG.trade==='bithumb'?'BITHUMB 시세 · '+CFG.bhMarket:'SIM · SYNTHETIC FEED';
   const dsrc={sim:dsrcSim,upbit:'UPBIT · '+CFG.symUpbit,binance:'BINANCE · '+CFG.symBinance}[CFG.data];
-  const tsrc={sim:' · SIM FILLS',paper:' · PAPER '+(CFG.armed?'ARMED':'DRY-RUN'),kis:' · KIS '+(CFG.armed?'ARMED':'DRY-RUN'),upbit:' · UPBIT '+(CFG.armed?'ARMED':'DRY-RUN')}[CFG.trade];
+  const tsrc={sim:' · SIM FILLS',paper:' · PAPER '+(CFG.armed?'ARMED':'DRY-RUN'),kis:' · KIS '+(CFG.armed?'ARMED':'DRY-RUN'),upbit:' · UPBIT '+(CFG.armed?'ARMED':'DRY-RUN'),bithumb:' · BITHUMB '+(CFG.armed?'ARMED':'DRY-RUN')}[CFG.trade];
   $('subtitle').textContent=dsrc+tsrc;
 }
 function setDataPill(){
@@ -923,17 +944,17 @@ function setDataPill(){
 }
 function setTradePill(){
   const p=$('tradePill'),dot=p.querySelector('.dot');p.classList.remove('armed','dry');
-  const real=isRealTrade();const up=CFG.trade==='upbit';
-  const nm=CFG.trade==='kis'?'KIS':up?'UPBIT':'PAPER';
+  const real=isRealTrade();const krw=isKrwLive();
+  const nm=CFG.trade==='kis'?'KIS':CFG.trade==='upbit'?'UPBIT':CFG.trade==='bithumb'?'BITHUMB':'PAPER';
   if(!real){$('tradeMode').textContent='SIM';dot.className='dot off';}
   else if(CFG.armed){$('tradeMode').textContent=P.connected?nm+'●ARMED':nm+'…';p.classList.add('armed');dot.className='dot '+(P.connected?'':'warn');}
   else{$('tradeMode').textContent=nm+'·DRY';p.classList.add('dry');dot.className='dot warn';}
   $('wLive').textContent=real?(CFG.armed?'ARMED':'DRY'):'SIM';
-  $('simtag').textContent=real?(CFG.armed?(up?'◈ UPBIT · 실매매 · 진짜 원화 ⚠️':`◈ ${nm} · LIVE ORDERS (모의자금)`):`◈ ${nm} · DRY-RUN`):'◈ SIM · NO REAL ORDERS';
-  $('pnlLbl').textContent=real?(up?'ACCOUNT · 업비트(실)':`ACCOUNT PNL (${nm})`):'SESSION PNL';
-  $('wName').textContent=CFG.trade==='kis'?'KIS 모의투자':up?'업비트 실매매':(CFG.trade==='paper'?'Alpaca Paper':'Momentum Bot');
-  $('wAddr').textContent=CFG.trade==='kis'?'koreainvestment · vts':up?'upbit · v1 (실매매)':(CFG.trade==='paper'?'alpaca · paper-api':'local · synthetic');
-  TCUR=(CFG.trade==='kis'||up)?'₩':'$';
+  $('simtag').textContent=real?(CFG.armed?(krw?`◈ ${nm} · 실매매 · 진짜 원화 ⚠️`:`◈ ${nm} · LIVE ORDERS (모의자금)`):`◈ ${nm} · DRY-RUN`):'◈ SIM · NO REAL ORDERS';
+  $('pnlLbl').textContent=real?(krw?`ACCOUNT · ${nm}(실)`:`ACCOUNT PNL (${nm})`):'SESSION PNL';
+  $('wName').textContent=CFG.trade==='kis'?'KIS 모의투자':CFG.trade==='upbit'?'업비트 실매매':CFG.trade==='bithumb'?'빗썸 실매매':(CFG.trade==='paper'?'Alpaca Paper':'Momentum Bot');
+  $('wAddr').textContent=CFG.trade==='kis'?'koreainvestment · vts':CFG.trade==='upbit'?'upbit · v1 (실매매)':CFG.trade==='bithumb'?'bithumb · v2 (실매매)':(CFG.trade==='paper'?'alpaca · paper-api':'local · synthetic');
+  TCUR=(CFG.trade==='kis'||krw)?'₩':'$';
 }
 
 /* ================= MASTER LOOP ================= */
@@ -978,6 +999,7 @@ function openModal(){
   $('alpacaSym').value=CFG.alpacaSym;$('notional').value=CFG.notional;
   $('kisCode').value=CFG.kisCode;$('kisQty').value=CFG.kisQty;
   $('upMarket').value=CFG.upMarket;$('upAmount').value=CFG.upAmount;
+  $('bhMarket').value=CFG.bhMarket;$('bhAmount').value=CFG.bhAmount;
   $('entryPct').value=CFG.strat.entryPct;$('exitPct').value=CFG.strat.exitPct;$('stopPct').value=CFG.strat.stopPct;
   setArm(CFG.armed);syncModalVis();$('testOut').textContent='';$('testOut').className='test';
   modal.classList.add('on');
@@ -994,8 +1016,11 @@ function syncModalVis(){
   $('paperCfg').style.display=tr==='paper'?'':'none';
   $('kisCfg').style.display=tr==='kis'?'':'none';
   $('upbitCfg').style.display=tr==='upbit'?'':'none';
-  $('realCfg').style.display=(tr==='paper'||tr==='kis'||tr==='upbit')?'':'none';
-  $('armWarn').innerHTML=tr==='upbit'
+  $('bithumbCfg').style.display=tr==='bithumb'?'':'none';
+  $('realCfg').style.display=(tr==='paper'||tr==='kis'||tr==='upbit'||tr==='bithumb')?'':'none';
+  $('armWarn').innerHTML=tr==='bithumb'
+    ? '🚨 스위치를 켜면 <b>빗썸 계좌에서 진짜 원화로 주문이 체결</b>됩니다. 모의투자가 아니에요! 서버에 <b>BITHUMB_ACCESS_KEY / BITHUMB_SECRET_KEY</b> 환경변수가 있어야 하고, 반드시 <b>소액</b>으로 시작하세요.'
+    : tr==='upbit'
     ? '🚨 스위치를 켜면 <b>업비트 계좌에서 진짜 원화로 주문이 체결</b>됩니다. 모의투자가 아니에요! 서버에 <b>UPBIT_ACCESS_KEY / UPBIT_SECRET_KEY</b> 환경변수가 있어야 하고, 반드시 <b>소액</b>으로 시작하세요.'
     : tr==='kis'
     ? '스위치를 켜면 <b>한국투자증권 모의투자 계좌로 실제 주문이 전송</b>됩니다. 서버에 <b>KIS_APP_KEY / KIS_APP_SECRET / KIS_ACCOUNT</b> 환경변수가 설정돼 있어야 하고, 국내 장중에만 체결됩니다.'
@@ -1008,8 +1033,8 @@ function setArm(v){armState=!!v;$('armSw').classList.toggle('on',armState);
 $('armSw').onclick=()=>setArm(!armState);
 $('testBtn').onclick=async()=>{
   const out=$('testOut');out.className='test';out.textContent='조회 중…';
-  const eng=segGet('segTrade');const ep=tradeEndpoint(eng);const cur=(eng==='kis'||eng==='upbit')?'₩':'$';
-  const envHint=eng==='kis'?'KIS_APP_KEY/SECRET/ACCOUNT':eng==='upbit'?'UPBIT_ACCESS_KEY/SECRET':'ALPACA_KEY_ID/SECRET';
+  const eng=segGet('segTrade');const ep=tradeEndpoint(eng);const cur=(eng==='kis'||eng==='upbit'||eng==='bithumb')?'₩':'$';
+  const envHint=eng==='kis'?'KIS_APP_KEY/SECRET/ACCOUNT':eng==='upbit'?'UPBIT_ACCESS_KEY/SECRET':eng==='bithumb'?'BITHUMB_ACCESS_KEY/SECRET':'ALPACA_KEY_ID/SECRET';
   try{const d=await callBroker(ep,'account');
     if(d.account&&d.account.equity!=null){out.className='test ok';
       out.textContent=`✅ 연결 성공 [${d.mode}]  equity=${cur}${(+d.account.equity).toLocaleString()}  cash=${cur}${(+d.account.cash).toLocaleString()}  status=${d.account.status}`;}
@@ -1025,6 +1050,8 @@ $('saveBtn').onclick=()=>{
   CFG.kisQty=clamp(Math.floor(Number($('kisQty').value)||1),1,100000);
   CFG.upMarket=$('upMarket').value;
   CFG.upAmount=clamp(Math.floor(Number($('upAmount').value)||6000),5000,100000000);
+  CFG.bhMarket=$('bhMarket').value;
+  CFG.bhAmount=clamp(Math.floor(Number($('bhAmount').value)||6000),1000,100000000);
   CFG.strat.entryPct=Number($('entryPct').value)||0.12;
   CFG.strat.exitPct=Number($('exitPct').value)||0.25;
   CFG.strat.stopPct=Number($('stopPct').value)||0.30;
@@ -1034,6 +1061,7 @@ $('saveBtn').onclick=()=>{
   if(CFG.trade==='paper'&&CFG.data==='sim'){pushLog({sys:'PAPER 모드는 실시간 데이터 소스(업비트/바이낸스)와 함께 쓰는 걸 권장합니다.',t:nowT()});}
   if(CFG.trade==='kis'&&CFG.data==='sim'){seedSynthetic();pushLog({sys:'KIS 모드 · 종목 '+CFG.kisCode+' 시세를 실시간 조회합니다.',t:nowT()});}
   if(CFG.trade==='upbit'){seedSynthetic();pushLog({sys:'🚨 UPBIT 실매매 · '+CFG.upMarket+' · 진짜 원화가 나갑니다. 반드시 소액으로!',t:nowT()});}
+  if(CFG.trade==='bithumb'){seedSynthetic();pushLog({sys:'🚨 BITHUMB 실매매 · '+CFG.bhMarket+' · 진짜 원화가 나갑니다. 반드시 소액으로!',t:nowT()});}
   closeModal();
   applyLabels();setDataPill();setTradePill();
   if(CFG.data==='sim')stopFeed(),seedSynthetic(); else startFeed();
