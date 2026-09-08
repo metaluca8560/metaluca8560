@@ -2,7 +2,7 @@
   "name": "najombwa-miniapp",
   "private": true,
   "version": "1.0.0",
-  "description": "나좀봐 — 청각장애인 대화 도우미, 앱인토스 미니앱 패키지",
+  "description": "나좀봐 — 말과 소리를 서로 바꿔주는 대화 도우미, 앱인토스 미니앱 패키지",
   "type": "module",
   "scripts": {
     "web:dev": "vite --port 5178",
