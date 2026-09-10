@@ -33,6 +33,19 @@ if (html === beforeBridgeInject) {
   throw new Error('sync.mjs: SDK 브릿지 스크립트 주입이 적용되지 않았어요. 원본에 </head> 태그가 있는지 확인하세요.');
 }
 
+// 화면 안 '돌아가기' 버튼 제거 — 토스 내비게이션 바의 뒤로가기와 중복되면 비게임 검수
+// 반려 사유가 된다(2026-09-10 공지의 반복 위반 사례). 웹(/byeol)에는 내비게이션 바가
+// 없어 버튼이 필요하므로 원본은 그대로 두고 미니앱 빌드에서만 떼어낸다.
+// app.js는 이 버튼이 없어도 동작한다(있을 때만 리스너를 붙임).
+const beforeGuideBack = html;
+html = html.replace(/[ \t]*<button id="btn-guide-back">[\s\S]*?<\/button>\r?\n/, '');
+if (html === beforeGuideBack) {
+  throw new Error('sync.mjs: 돌아가기 버튼 제거가 적용되지 않았어요. 원본 index.html의 btn-guide-back 버튼이 사라졌거나 형태가 바뀌었는지 확인하세요. 이미 없다면 이 블록을 지우세요.');
+}
+if (html.includes('btn-guide-back')) {
+  throw new Error('sync.mjs: 미니앱 빌드에 btn-guide-back이 남아 있어요.');
+}
+
 // href/src 둘 다 검사 — <script src="http://...">, <img src="http://...">, <iframe src="http://...">까지 잡아야
 // 검수 반려를 막을 수 있어요. 위 치환·주입으로 만든 경로들은 프로토콜(http/https)이 없는 상대/루트경로라
 // 이 검사에 걸리지 않아요.

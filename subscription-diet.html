@@ -138,9 +138,6 @@
     <div class="panel" id="dietEmptyBox" hidden style="text-align:center">
       <div style="font-size:18px;font-weight:700;color:var(--good)">정리할 게 없네요 👏</div>
     </div>
-    <div class="bar">
-      <button class="ghost" id="backToResult">뒤로</button>
-    </div>
     <p class="note">해지는 각 서비스에서 해야 해요</p>
   </section>
 
@@ -431,6 +428,9 @@
   // 뒤로가기를 누르면 앱이 바로 종료된다. 그다음 화면(결과/정리)부터는 history에
   // 쌓아서 뒤로가기를 누르면 이전 화면으로 돌아오게 한다. popstate로 불릴 때
   // (fromPop)는 다시 쌓지 않는다 — 안 그러면 뒤로가기 한 번에 다시 앞으로 쌓인다.
+  // 화면 안에 '뒤로' 버튼을 두지 않는다. 토스 내비게이션 바의 뒤로가기와 중복돼
+  // 비게임 검수 반려 사유가 된다(2026-09-10 공지의 반복 위반 사례). 정리 화면에서
+  // 결과로 돌아가는 길은 토스 뒤로가기 하나로 충분하다.
   function show(id, fromPop) {
     ['pick', 'result', 'diet'].forEach(function (s) {
       document.getElementById(s).hidden = s !== id;
@@ -526,7 +526,6 @@
   document.getElementById('toResult').onclick = function () { renderResult(); show('result'); };
   document.getElementById('backToPick').onclick = function () { renderChips(); show('pick'); };
   document.getElementById('toDiet').onclick = function () { renderDiet(); show('diet'); };
-  document.getElementById('backToResult').onclick = function () { renderResult(); show('result'); };
 
   // 공유는 이 앱의 유일한 유입 경로라, 문장만 보내면 본 사람이 앱으로 올 길이 없다.
   // SDK가 딥링크를 주면 붙이고, 없거나 실패하면 예전처럼 문장만 보낸다(절대 안 터진다).
