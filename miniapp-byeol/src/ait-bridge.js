@@ -3,7 +3,7 @@ import { share, getTossShareLink, TossAds, isMinVersionSupported } from '@apps-i
 
 // 광고 그룹 ID — 토스 광고 콘솔(앱인토스 개발자센터 > 광고 관리)에서 발급받으면 여기에 채워 넣어요.
 // 비어 있는 동안은 광고를 아예 붙이지 않고, 오늘과 똑같이 동작해요.
-const AD_GROUP_ID = '';
+const AD_GROUP_ID = 'ait.v2.live.89924e3b24994fd7';
 
 // 실기기 테스트용 안전장치 — 진짜 광고 그룹 ID가 아직 없어도 배너가 실제로 붙는지
 // 확인할 수 있게 해줘요. `npm run build:test-ads` 로 빌드할 때만 .env.ait-test-ads
