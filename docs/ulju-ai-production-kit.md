@@ -1,8 +1,8 @@
 # 울주 AI 영상 부문 제작 킷 — 「돌에서 나온 고래」
 
 > 대상 공모: 2026「울주에 숏며들다」숏폼 영상 공모전(가을·AI편) · AI 영상 부문
-> 툴 스택: **미정 — 4-1절의 라이선스 체크 통과한 조합** (Higgsfield 검토 중, Midjourney 구독 해지)
-> 업로드: **유튜브 쇼츠 + 인스타그램 릴스 동시 게시 → 지표 좋은 쪽으로 접수** (8절)
+> 툴 스택: **Higgsfield에서 Kling 3.0** — 기존 쇼츠 전편을 만든 검증된 파이프라인 그대로
+> 업로드: **인스타 릴스 @lucax8560 (주) + 유튜브 쇼츠 (병행)** — 8절
 > 계정: 게시 @lucax8560 (서브) · 확산 @metaluca2750 (본계정) — 8절
 > 요건 근거: 울주군 공고 제2026-2364호
 
@@ -93,11 +93,9 @@ Midjourney v7에서 9컷의 고래를 같은 개체로 보이게 하는 게 이 
 a colossal humpback whale, 40 meters long, its entire body surfaced in weathered grey granite carved with prehistoric petroglyph line-art of whales and hunting boats, deep chiselled grooves glowing with warm amber light from within, wet stone sheen, barnacle-like rock texture along the jaw, long pectoral fins
 ```
 
-**(b) 스타일 레퍼런스 체인** — 컷 1을 먼저 뽑아 마음에 드는 이미지를 확정한 뒤, 그 이미지 URL을 컷 2~9 프롬프트 맨 앞에 붙인다.
+**(b) 레퍼런스 체인** — 컷 1을 먼저 뽑아 마음에 드는 이미지를 확정한 뒤, **그 이미지를 컷 2~9 생성의 레퍼런스로 계속 물린다.** 힉스필드에 레퍼런스 이미지 입력란이 있으면 거기에 넣고, 없으면 (a)의 고정 블록을 토씨 하나 바꾸지 말고 그대로 쓴다.
 
-```
-[컷1 이미지 URL] [프롬프트 본문] --ar 9:16 --v 7 --style raw --sref [컷1 이미지 URL] --sw 120
-```
+직전 컷이 아니라 **항상 컷 1을 기준으로 물릴 것.** 직전 컷을 연쇄로 물리면 컷이 갈수록 원본에서 멀어진다.
 
 **전이 상태 조절** — 위 고정 블록에서 한 구절만 바꿔 단계를 만든다.
 
@@ -111,104 +109,94 @@ a colossal humpback whale, 40 meters long, its entire body surfaced in weathered
 
 ---
 
-## 4-1. 툴 선택 — 성능보다 라이선스가 먼저다
+## 4-1. 툴 — 바꾸지 않는다
+
+**Higgsfield에서 Kling 3.0.** 기존 쇼츠(반구대 고래, 대왕암 용머리, 해운대 파도, 골리앗 크레인)를 전부 이 조합으로 만들었다. 결과물 퀄리티가 이미 검증됐고 프롬프트 감각도 몸에 붙어 있다. **공모전 3주 전에 툴을 바꾸는 건 그 자체가 리스크다.**
+
+Midjourney는 이 문서 초안에서 내가 기본값으로 가정했던 것뿐이다. **재구독할 이유가 없다.** 그 예산은 힉스필드 크레딧으로 돌리는 게 맞다 — 9컷에 재생성까지 하면 크레딧이 꽤 나간다.
+
+### 다만 결제 전에 3개만 확인할 것
 
 공고에 AI 부문 특기사항이 명시돼 있다.
 
 > "생성형 AI 툴을 활용하여 제작된 영상의 경우, **AI 플랫폼의 상업적 이용 라이선스 규정을 준수**해야 하며 저작권 분쟁 소지가 없는 프롬프트 및 리소스를 사용해야 함."
 
-그래서 툴을 고를 때 순서가 이렇다.
-
-### 통과해야 할 4개 관문
-| # | 조건 | 왜 |
+| # | 확인할 것 | 상태 |
 |---|---|---|
-| 1 | **상업적 이용 가능 플랜** | 공고 명시 요건. 무료 플랜은 대부분 상업적 이용을 제외한다 |
-| 2 | **워터마크 없음** | 군청이 재활용할 수 없는 영상은 "공공 활용성 10점"에서 죽는다 |
-| 3 | **1080×1920 세로 출력** | 공고 규격. 업스케일로 맞추면 화질이 깎인다 |
-| 4 | **5초 이상 클립 + 컷 간 일관성** | 9컷을 같은 고래로 유지해야 한다 |
+| 1 | **유료 플랜의 상업적 이용 라이선스** | 유료 플랜에 포함되고 무료 플랜은 제외되는 구조로 보인다. 출품작은 반드시 유료 플랜에서 생성할 것 |
+| 2 | **워터마크 없음** | 정보가 엇갈린다 — 공식 헬프센터는 무료 계정에 워터마크가 붙는다고 안내하는 반면 마케팅 페이지 표현은 다르다. **최종 출품본은 눈으로 직접 확인** |
+| 3 | **다운로드 해상도 1080×1920** | ⚠️ 받은 파일이 404×720이었다. 힉스필드에서 받을 때 최고 해상도로 내려받고 있는지 확인할 것 |
 
-### Higgsfield — 이 기획에는 오히려 잘 맞는다
+> 위 1·2번은 2026년 9월 기준 3자 블로그와 공식 헬프센터를 훑은 결과이고 약관은 자주 바뀐다. **[공식 요금제 페이지](https://higgsfield.ai/pricing)에서 결제 전 직접 확인할 것.**
 
-**맞는 이유**: 이 영상의 핵심이 카메라 워크다. 컷 2 급속 풀백, 컷 3 트래킹, 컷 5 상승 틸트, 컷 9 슬로우 푸시인. Higgsfield는 카메라 모션 프리셋이 강점인 툴이라 이 부분에서 유리하다. 이미지와 영상을 한 플랫폼에서 처리하면 서식 1의 "사용 AI 프로그램" 기재도 단순해진다.
+### 3번이 제일 급하다
 
-**반드시 직접 확인할 것** (아래는 2026년 9월 기준 3자 블로그와 공식 헬프센터를 훑은 결과이고, 요금제·약관은 자주 바뀌므로 **[공식 요금제 페이지](https://higgsfield.ai/pricing)에서 결제 전에 직접 확인해야 한다**):
+제출물에 "숏폼 원본 영상 파일"이 포함되고, 심사 중 원본·제작 증빙을 추가로 요구할 수 있다(공고 명시). 404×720은 **규격 미달로 접수 자체가 흔들릴 수 있다.** 다음 영상 뽑을 때 힉스필드 다운로드 설정부터 점검할 것.
 
-- **유료 플랜에 상업적 이용이 포함되고, 무료 플랜은 제외되는 구조로 보인다.** → 공모전 출품작은 반드시 유료 플랜에서 생성.
-- **워터마크는 정보가 엇갈린다.** 공식 헬프센터는 "무료 계정 생성물에 워터마크가 붙고 유료 플랜은 붙지 않는다"고 안내하는 반면, 마케팅 페이지에는 무료도 워터마크 없이 내보낸다는 표현이 있다. → 무료로 테스트하더라도 **최종 출품본은 유료 플랜에서 다시 뽑아 워터마크가 없는지 눈으로 확인**할 것.
-- 캐릭터·스타일 일관성 기능이 Midjourney의 `--sref`만큼 강한지는 내가 확인하지 못했다. **컷 1과 컷 6을 먼저 뽑아 같은 고래로 보이는지 테스트한 뒤 본 작업에 들어갈 것.** 여기서 막히면 3절의 고정 묘사 블록을 더 길고 구체적으로 써서 보완한다.
+### 이번 작업의 최대 난관은 컷 간 일관성이다
 
-### 지금 가장 중요한 판단 기준
+기존 콘텐츠는 전부 단일 컷이라 일관성 문제가 없었다. 이번엔 **9컷을 같은 고래로 유지**해야 한다. 이게 이 작업에서 유일하게 새로운 기술 과제다.
 
-**기존 영상(반구대 고래, 대왕암 용머리, 해운대 파도)을 만든 그 파이프라인이 있다면 그걸 쓰는 게 최선이다.** 결과물 퀄리티가 이미 검증됐고, 프롬프트 감각도 몸에 붙어 있다. 공모전 3주 전에 툴을 바꾸는 건 그 자체가 리스크다. 툴 교체는 라이선스나 규격에서 걸릴 때만 한다.
-
-### 아래 프롬프트를 다른 툴에 쓸 때
-
-5절 프롬프트의 **본문(영어 묘사)은 대부분의 이미지 생성 모델에 그대로 통한다.** 뒤에 붙은 파라미터만 바꾸면 된다.
-
-| Midjourney 표기 | 다른 툴에서 |
-|---|---|
-| `--ar 9:16` | 화면비 설정에서 9:16 또는 1080×1920 선택 |
-| `--v 7 --style raw` | 지우고, 프롬프트 끝에 `photorealistic, cinematic, no illustration style` 추가 |
-| `--q 2` | 지운다 (품질 설정이 따로 있으면 최고로) |
-| `--sref [URL] --sw 120` | 해당 툴의 스타일/캐릭터 레퍼런스 기능. 없으면 3절 고정 블록을 그대로 복붙하는 것으로 대체 |
+→ **본 작업 전에 반드시 테스트**: 컷 1(암각화 상태)과 컷 6(생명체 상태)을 먼저 뽑아 같은 개체로 보이는지 확인한다. 안 되면 3절 고정 묘사 블록을 더 길고 구체적으로 쓰고, 힉스필드의 레퍼런스 이미지 기능을 붙인다.
 
 ## 4-2. 이미지 생성 프롬프트 (컷별 · 그대로 붙여넣기)
 
-모든 컷 공통 접미: `--ar 9:16 --v 7 --style raw --q 2`
-컷 2부터는 여기에 `--sref [컷1 확정 이미지 URL] --sw 120`을 덧붙인다.
+힉스필드 이미지 생성에 넣는다. **화면비는 UI에서 9:16(1080×1920)으로 설정**하고, 컷 2부터는 컷 1의 확정 이미지를 레퍼런스로 물린다.
+
+> 클링 3.0 text-to-video로 바로 가는 방식을 쓰고 있다면, 아래 프롬프트에 5절의 모션 문장을 이어 붙여 하나로 넣으면 된다. 다만 **9컷 일관성 때문에 이미지를 먼저 확정하고 image-to-video로 가는 쪽을 권한다.** 시작 프레임이 고정되면 고래 모양이 컷마다 흔들리지 않는다.
 
 ### 컷 1 — 암각화 절벽 클로즈업
 ```
-extreme close-up of an ancient riverside rock cliff face in Korea, weathered grey granite covered in prehistoric petroglyph carvings of whales, boats and hunters, deep chiselled grooves faintly glowing with warm amber light, morning mist, dew on stone, shallow depth of field, cinematic photorealistic, muted earth tones, soft directional dawn light --ar 9:16 --v 7 --style raw --q 2
+extreme close-up of an ancient riverside rock cliff face in Korea, weathered grey granite covered in prehistoric petroglyph carvings of whales, boats and hunters, deep chiselled grooves faintly glowing with warm amber light, morning mist, dew on stone, shallow depth of field, cinematic photorealistic, muted earth tones, soft directional dawn light, photorealistic, cinematic, vertical 9:16 composition
 ```
 
 ### 컷 2 — 고래가 바위를 뚫고 나옴
 ```
-a colossal humpback whale, 40 meters long, its entire body surfaced in weathered grey granite carved with prehistoric petroglyph line-art of whales and hunting boats, deep chiselled grooves glowing with warm amber light from within, wet stone sheen, barnacle-like rock texture along the jaw, long pectoral fins, bursting head-first out of a towering riverside cliff face, shattered rock fragments and dust cascading down, a narrow green river below, dense Korean forest, dramatic scale, aerial cinematic photography, photorealistic --ar 9:16 --v 7 --style raw --q 2
+a colossal humpback whale, 40 meters long, its entire body surfaced in weathered grey granite carved with prehistoric petroglyph line-art of whales and hunting boats, deep chiselled grooves glowing with warm amber light from within, wet stone sheen, barnacle-like rock texture along the jaw, long pectoral fins, bursting head-first out of a towering riverside cliff face, shattered rock fragments and dust cascading down, a narrow green river below, dense Korean forest, dramatic scale, aerial cinematic photography, photorealistic, photorealistic, cinematic, vertical 9:16 composition
 ```
 
 ### 컷 3 — 대곡천 물길, 전망대의 사람들
 ```
-a colossal humpback whale, 40 meters long, half granite half living whale skin, the stone dissolving into dark wet flesh from the tail forward, deep chiselled petroglyph grooves glowing with warm amber light from within, long pectoral fins, gliding low above a narrow emerald river between limestone cliffs, a small wooden observation deck below with a dozen tiny tourists in colourful jackets looking up in awe, autumn forest, aerial cinematic photography, photorealistic, sense of immense scale --ar 9:16 --v 7 --style raw --q 2
+a colossal humpback whale, 40 meters long, half granite half living whale skin, the stone dissolving into dark wet flesh from the tail forward, deep chiselled petroglyph grooves glowing with warm amber light from within, long pectoral fins, gliding low above a narrow emerald river between limestone cliffs, a small wooden observation deck below with a dozen tiny tourists in colourful jackets looking up in awe, autumn forest, aerial cinematic photography, photorealistic, sense of immense scale, photorealistic, cinematic, vertical 9:16 composition
 ```
 
 ### 컷 4 — 간월재 억새평원
 ```
-a colossal humpback whale, 40 meters long, half granite half living whale skin, the stone dissolving into dark wet flesh from the tail forward, petroglyph grooves glowing warm amber, long pectoral fins, skimming just above a vast silver pampas grass plateau on a Korean mountain ridge at golden hour, the grass turning luminous gold in a wave where the whale passes, layered blue mountain ridgelines behind, low sun flare, aerial cinematic photography, photorealistic --ar 9:16 --v 7 --style raw --q 2
+a colossal humpback whale, 40 meters long, half granite half living whale skin, the stone dissolving into dark wet flesh from the tail forward, petroglyph grooves glowing warm amber, long pectoral fins, skimming just above a vast silver pampas grass plateau on a Korean mountain ridge at golden hour, the grass turning luminous gold in a wave where the whale passes, layered blue mountain ridgelines behind, low sun flare, aerial cinematic photography, photorealistic, photorealistic, cinematic, vertical 9:16 composition
 ```
 
 ### 컷 5 — 신불산 운해 돌파
 ```
-a colossal humpback whale, 40 meters long, mostly living whale skin with only faint petroglyph scars remaining glowing amber, long pectoral fins, rising vertically through a dense sea of clouds above Korean mountain peaks at dawn, cloud vortices trailing from its fins, warm sunrise light breaking above the cloud layer, aerial cinematic photography, photorealistic, epic scale --ar 9:16 --v 7 --style raw --q 2
+a colossal humpback whale, 40 meters long, mostly living whale skin with only faint petroglyph scars remaining glowing amber, long pectoral fins, rising vertically through a dense sea of clouds above Korean mountain peaks at dawn, cloud vortices trailing from its fins, warm sunrise light breaking above the cloud layer, aerial cinematic photography, photorealistic, epic scale, photorealistic, cinematic, vertical 9:16 composition
 ```
 
 ### 컷 6 — 외고산 옹기마을
 ```
-a colossal humpback whale, 40 meters long, dark slate-blue living whale skin with faint luminous petroglyph scars still glowing along its flank, long pectoral fins, gliding above a traditional Korean pottery village at dusk, hundreds of large dark earthenware onggi jars arranged in rows across terraced yards, each jar lighting up one by one with warm amber glow as the whale passes, tiny golden lights rising from the jar mouths into the air, tiled roofs, blue hour sky, aerial cinematic photography, photorealistic --ar 9:16 --v 7 --style raw --q 2
+a colossal humpback whale, 40 meters long, dark slate-blue living whale skin with faint luminous petroglyph scars still glowing along its flank, long pectoral fins, gliding above a traditional Korean pottery village at dusk, hundreds of large dark earthenware onggi jars arranged in rows across terraced yards, each jar lighting up one by one with warm amber glow as the whale passes, tiny golden lights rising from the jar mouths into the air, tiled roofs, blue hour sky, aerial cinematic photography, photorealistic, photorealistic, cinematic, vertical 9:16 composition
 ```
 
 ### 컷 7 — 석남사 단풍길
 ```
-a colossal humpback whale, 40 meters long, dark slate-blue living whale skin with faint luminous petroglyph scars glowing along its flank, long pectoral fins, gliding low above a winding mountain road tunnelled by brilliant red and orange autumn maple trees, a traditional Korean temple gate visible below, swirling vortex of fallen leaves spiralling up in the whale's wake, soft afternoon backlight, aerial cinematic photography, photorealistic --ar 9:16 --v 7 --style raw --q 2
+a colossal humpback whale, 40 meters long, dark slate-blue living whale skin with faint luminous petroglyph scars glowing along its flank, long pectoral fins, gliding low above a winding mountain road tunnelled by brilliant red and orange autumn maple trees, a traditional Korean temple gate visible below, swirling vortex of fallen leaves spiralling up in the whale's wake, soft afternoon backlight, aerial cinematic photography, photorealistic, photorealistic, cinematic, vertical 9:16 composition
 ```
 
 ### 컷 8 — 간절곶 일출
 ```
-a colossal humpback whale, 40 meters long, dark slate-blue living whale skin with faint luminous petroglyph scars glowing along its flank, long pectoral fins, arcing around a tall white coastal lighthouse on a grassy headland and heading out toward a blazing sunrise on the open sea horizon, golden light path across the water, low clouds, silhouette rim light on the whale, aerial cinematic photography, photorealistic, hopeful epic mood --ar 9:16 --v 7 --style raw --q 2
+a colossal humpback whale, 40 meters long, dark slate-blue living whale skin with faint luminous petroglyph scars glowing along its flank, long pectoral fins, arcing around a tall white coastal lighthouse on a grassy headland and heading out toward a blazing sunrise on the open sea horizon, golden light path across the water, low clouds, silhouette rim light on the whale, aerial cinematic photography, photorealistic, hopeful epic mood, photorealistic, cinematic, vertical 9:16 composition
 ```
 
 ### 컷 9 — 빛으로 환원
 ```
-a colossal humpback whale dissolving into thousands of drifting amber light particles high above a wide Korean landscape of mountains, river and coastline at dawn, the particles drifting and beginning to gather into a luminous shape in the sky, deep blue pre-dawn atmosphere, warm particle glow, aerial cinematic photography, photorealistic, serene and grand --ar 9:16 --v 7 --style raw --q 2
+a colossal humpback whale dissolving into thousands of drifting amber light particles high above a wide Korean landscape of mountains, river and coastline at dawn, the particles drifting and beginning to gather into a luminous shape in the sky, deep blue pre-dawn atmosphere, warm particle glow, aerial cinematic photography, photorealistic, serene and grand, photorealistic, cinematic, vertical 9:16 composition
 ```
 
 > 컷 9의 `울주` 글자는 AI로 만들지 말 것. 한글은 이미지 생성 모델이 거의 확실히 뭉갠다. **입자만 생성하고 글자는 편집 단계에서 타이포로 얹는다.**
 
 ---
 
-## 5. Kling 모션 프롬프트 (컷별)
+## 5. Kling 3.0 모션 프롬프트 (컷별)
 
-각 컷의 Midjourney 결과 이미지를 Kling 이미지-투-비디오에 넣고 아래를 붙인다. 모든 컷 공통 네거티브:
+각 컷의 확정 이미지를 Kling 3.0 이미지-투-비디오에 넣고 아래를 붙인다. 모든 컷 공통 네거티브:
 
 ```
 negative: morphing, warping, distorted anatomy, extra fins, flickering, text, watermark, people's faces, jitter, sudden cuts
@@ -310,13 +298,34 @@ X · 틱톡 · 유튜브 쇼츠 · 인스타 릴스 4채널 동시 운영, 팔�
 | 해안 용머리 | 977 | 9 | — |
 | 반구대 고래 | 1,177 | 6 | — |
 
-### 정정 — 앞서 "유튜브 쇼츠 우선"이라 했는데, 데이터는 그렇게 말하지 않는다
+### 유튜브 서브계정은 현재 도달이 죽어 있다
 
-일반론으로는 저팔로워 계정에 유튜브 쇼츠가 유리하다고 봤지만, **실제 계정 수치는 채널 우열이 아니라 편차를 보여준다.** 최고 기록은 인스타(해운대 9천)고, 유튜브도 1.4천까지 갔다. 어느 쪽이 터질지는 채널이 아니라 그 영상이 정한다.
+@lucax8560 유튜브 채널: **구독자 2명.** 업로드 순서대로 조회수를 보면 회복이 아니라 붕괴다.
 
-→ **채널을 고르지 말고 둘 다 올린다.** 7절의 헷지가 정답이다: 10/1 양쪽 업로드 → 11월 초 지표 좋은 쪽 링크로 접수. 집계는 11/20 이후라 제출을 늦춰도 지표에 손해가 없다.
+| 시기 | 조회수 |
+|---|---|
+| 초기 | **1,400 · 1,300 · 709 · 273 · 261 · 208** |
+| 중간 | 26 · 18 · 15 |
+| 최근 | **9 · 6 · 5 · 2 · 1 · 0** |
+| 예약분 | 3 · 1 · 1 |
 
-**단, 유튜브 채널이 최근 식었다.** 최근 4편이 6·9·15·26회인데 초기 편들은 1,400·1,300·709회였다. 지금 상태로 10/1에 올리면 맨땅이다. → **9월 남은 2주 동안 유튜브 쇼츠에 꾸준히 올려 채널을 되살려 놓을 것.** 이건 본편 업로드 전에 반드시 해둬야 한다.
+초기에 1.4천까지 갔던 채널이 지금은 한 자릿수다. 예약 업로드까지 1회에 머문다. **알고리즘이 이 채널에 트래픽을 주지 않고 있다.**
+
+원인은 단정하기 어렵다. 구독자 2명이라 기반 신호가 없고, 초기 시청 지속률이 낮아 확산이 끊겼을 가능성, 같은 포맷을 매일 반복해 신호가 희석됐을 가능성이 있다. **다만 원인이 뭐든, 2주 예열로 1.4천 수준까지 돌아온다는 보장은 없다.**
+
+### 그래서 인스타 릴스가 현실적으로 유일한 접수 채널이다
+
+접수 가능한 두 채널의 현재 상태를 보면 선택의 여지가 없다.
+
+| 채널 | 접수 가능 | 최근 실적 | 판단 |
+|---|---|---|---|
+| **인스타 릴스 @lucax8560** | ✅ | 155 ~ 9,000 (최근 150~250) | **주 채널** |
+| 유튜브 쇼츠 @lucax8560 | ✅ | 최근 1~26 | 병행하되 기대 안 함 |
+| 틱톡 | ❌ | 969 ~ 3,461 (가장 안정적) | 접수 불가 |
+
+아이러니하게도 **가장 잘 나오는 틱톡이 접수 대상이 아니고, 가장 안 나오는 유튜브가 접수 대상이다.**
+
+**그래도 유튜브에 같이 올린다.** 업로드 비용이 사실상 0이고, 만에 하나 이 영상이 채널을 깨울 수도 있다. 다만 접수 링크는 **인스타를 기본으로 놓고**, 11월 초에 유튜브가 예상 밖으로 터졌을 때만 갈아탄다. 접수는 11/13까지니 판단할 시간이 있다(집계는 11/20 이후라 제출을 늦춰도 지표 손해가 없다).
 
 ### 본계정 vs 서브계정 — 서브계정이 맞다
 
@@ -384,9 +393,9 @@ X · 틱톡 · 유튜브 쇼츠 · 인스타 릴스 4채널 동시 운영, 팔�
 또 바이오의 "AI로 만든 상상 속 풍경. 실제 상황 아님." 고지는 그대로 유지할 것. AI 부문 출품작에서도 이 태도가 심사에 불리할 일이 없다.
 
 ### 확산 실무 (조작 금지선 안에서)
-- **9월 남은 기간: 유튜브 채널 예열.** 기존 영상을 다시 올리는 게 아니라 평소 페이스대로 신규 업로드를 이어간다.
+- **9월 남은 기간: 인스타를 우선으로 관리한다.** 유튜브 예열도 해보되, 위 수치를 보면 회복을 전제로 계획을 짜면 안 된다.
 - **9월 말 2~3일: 티저.** 컷 1 또는 컷 2만 5초로 잘라 평소처럼 올린다. 계정 페이스를 깨지 않으면서 소재를 예고한다.
-- **10/1: 유튜브 쇼츠 + 인스타 릴스 동시 업로드.** 양쪽 다 필수 해시태그 3종.
+- **10/1: 인스타 릴스(주) + 유튜브 쇼츠(병행) 동시 업로드.** 양쪽 다 필수 해시태그 3종.
 - 업로드 직후 3시간이 도달의 분수령이다. 댓글에 직접 답을 단다.
 - 울산·울주 지역 커뮤니티와 여행 커뮤니티에 공유한다. 세계유산 등재 1주년이라는 명분이 있는 소재다.
 - **틱톡·X에도 올린다.** 지표에는 안 들어가지만 계정 루틴을 깨지 않는 편이 낫고, 틱톡은 이 계정에서 가장 안정적인 채널이다.
@@ -441,12 +450,13 @@ X · 틱톡 · 유튜브 쇼츠 · 인스타 릴스 4채널 동시 운영, 팔�
 
 - [ ] **1080×1920** MP4 또는 MOV, **15~60초** (현재 파이프라인 404×720 → 마스터 확인 필수)
 - [ ] 2025. 1. 1. 이후 제작한 신규 창작물 (기존 게시물 재활용 아님)
-- [ ] 유튜브 쇼츠 · 인스타 릴스 양쪽 **전체공개** 업로드 (10/1) → 지표 우세한 쪽 링크로 접수
+- [ ] 인스타 릴스 @lucax8560 **전체공개** 업로드 (10/1) — 기본 접수 링크
+- [ ] 유튜브 쇼츠도 같이 업로드 (병행, 기대치 낮음)
 - [ ] 필수 해시태그 3종 전부: `#울주에숏며들다AI편` `#울주AI` `#울주군`
 - [ ] 워터마크·개인 로고 없음, 자막 안전영역 확보
-- [ ] **서식 1** 참가신청서 — 부문 `AI편` 체크 + **사용 AI 프로그램란에 실제 사용 툴 전부 명시**
+- [ ] **서식 1** 참가신청서 — 부문 `AI편` 체크 + **사용 AI 프로그램란에 `Higgsfield (Kling 3.0)` 명시**
 - [ ] **서식 2** 개인정보 동의서 + 저작물 이용 동의서 (2장 모두 서명)
-- [ ] **사용 툴의 유료 플랜 상업적 이용 라이선스 확인** (공고 명시 요건) — 4-1절
+- [ ] **힉스필드 유료 플랜 상업적 이용 라이선스 확인** (공고 명시 요건) — 4-1절
 - [ ] **최종 출력물에 워터마크 없는지 눈으로 확인**
 - [ ] 생성 원본·프롬프트 기록 보관 (심사 중 제작 증빙 추가 요구 가능)
 - [ ] 음원 라이선스 확인
