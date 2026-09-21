@@ -21,7 +21,9 @@ cpSync(join(src, 'images'), join(pub, 'images'), { recursive: true });
 
 // index.html은 절대경로 /byeol/... → /... (public 루트) 로 치환.
 let html = readFileSync(join(src, 'index.html'), 'utf8')
-  .replace(/(href|src)="\/byeol\//g, '$1="/');
+  .replace(/(href|src)="\/byeol\//g, '$1="/')
+  // 리뷰 요청 모듈 주입 (방문 3회차에 한 번만 요청)
+  .replace('</head>', '  <script type="module" src="/src/ait-review.js"></script>\n</head>');
 
 writeFileSync(join(here, 'index.html'), html);
 console.log('miniapp-byeol/index.html + public/ generated from huhsame-script/landing/byeol');

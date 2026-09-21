@@ -38,7 +38,9 @@ const html = htmlSrc
     '<span style="color:var(--text-muted,#8b95a1);font-size:13px">$1</span>',
   )
   .replace('src="card-generator.js"', 'src="/card-generator.js"')
-  .replace('src="core.js"', 'src="/core.js"');
+  .replace('src="core.js"', 'src="/core.js"')
+  // 리뷰 요청 모듈 주입 (방문 3회차에 한 번만 요청)
+  .replace('</head>', '  <script type="module" src="/src/ait-review.js"></script>\n</head>');
 if (html === htmlSrc) throw new Error('sync.mjs: index.html에 변환이 하나도 적용되지 않았어요. 원본 마크업이 바뀌었는지 확인하세요.');
 if (/href="https?:\/\//.test(html)) throw new Error('sync.mjs: 미니앱 빌드에 외부 링크가 남아 있어요. 검수 반려 위험 — 링크를 제거하세요.');
 

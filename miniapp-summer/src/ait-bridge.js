@@ -6,3 +6,6 @@ window.AppsInToss = {
   // 공유 링크: 토스 앱에서 이 미니앱을 바로 여는 딥링크
   getTossShareLink: () => getTossShareLink('intoss://vacation-molppang'),
 };
+
+// 리뷰 요청 로직 (방문 3회차에 한 번만)
+import './ait-review.js';
