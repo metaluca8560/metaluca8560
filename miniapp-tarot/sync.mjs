@@ -18,7 +18,9 @@ cpSync(join(src, 'images'), join(here, 'public', 'images'), { recursive: true })
 let html = readFileSync(join(src, 'index.html'), 'utf8')
   .replace('href="./styles.css"', 'href="/styles.css"')
   .replace('src="./cards-data.js"', 'src="/cards-data.js"')
-  .replace('src="./app.js"', 'src="/app.js"');
+  .replace('src="./app.js"', 'src="/app.js"')
+  // 리뷰 요청 모듈 주입 (방문 3회차에 한 번만 요청)
+  .replace('</head>', '  <script type="module" src="/src/ait-review.js"></script>\n</head>');
 
 writeFileSync(join(here, 'index.html'), html);
 console.log('miniapp-tarot/index.html + public/ generated from ../tarot');

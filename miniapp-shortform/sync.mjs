@@ -27,14 +27,20 @@ writeFileSync(join(here, 'public', 'core.js'), core);
 const htmlSrc = readFileSync(join(src, 'index.html'), 'utf8');
 const html = htmlSrc
   .replace(/\s*<link rel="icon"[^>]*\/>/, '')
-  .replace('href="/"', 'href="#"')
+  // 로고 링크: 눌러도 열리지 않는 링크는 검수 반려 사유 → 링크가 아닌 일반 요소로 변환
+  .replace('<a href="/" class="brand-link" title="디지털다락방 홈">', '<span class="brand-link">')
+  .replace('</a>\n      <div class="header-actions">', '</span>\n      <div class="header-actions">')
+  // mailto 링크: 토스 웹뷰에서 열리지 않아 반려 사유 → 텍스트로 변환
+  .replace(/<a href="mailto:[^"]*"[^>]*>([^<]*)<\/a>/, '<span>$1</span>')
   .replace('href="../logo.svg"', 'href="#"')
   .replace(
     /<a href="https:\/\/luca-darakbang\.netlify\.app\/"[^>]*>([^<]*)<\/a>/,
     '<span style="color:var(--text-muted,#8b95a1);font-size:13px">$1</span>',
   )
   .replace('src="card-generator.js"', 'src="/card-generator.js"')
-  .replace('src="core.js"', 'src="/core.js"');
+  .replace('src="core.js"', 'src="/core.js"')
+  // 리뷰 요청 모듈 주입 (방문 3회차에 한 번만 요청)
+  .replace('</head>', '  <script type="module" src="/src/ait-review.js"></script>\n</head>');
 if (html === htmlSrc) throw new Error('sync.mjs: index.html에 변환이 하나도 적용되지 않았어요. 원본 마크업이 바뀌었는지 확인하세요.');
 if (/href="https?:\/\//.test(html)) throw new Error('sync.mjs: 미니앱 빌드에 외부 링크가 남아 있어요. 검수 반려 위험 — 링크를 제거하세요.');
 
