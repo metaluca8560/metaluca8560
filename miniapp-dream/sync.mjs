@@ -23,6 +23,11 @@ let out = src
   // 프리미엄 배너 제거: dream-analyzer-pro.html은 번들에 없어서 누르면 토스 에러 화면이 뜨고,
   // 앱인토스는 미니앱 밖 링크와 외부 결제 유도를 금지해요. 웹 버전에는 그대로 남겨둬요.
   .replace(/html \+= `<a href="dream-analyzer-pro\.html"[\s\S]*?<\/a>`/, '')
+  // mailto 폴백: 토스 웹뷰에서는 메일 앱이 열리지 않아 검수 반려 사유 → 안내 문구로 대체
+  .replace(
+    "location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body",
+    "alert('메일 전송에 실패했어요. 아래 결과 복사 버튼으로 복사해서 사용해주세요.')",
+  )
   // 파비콘/헤더 로고는 번들에 없으므로 제거
   .replace(/\s*<link rel="icon"[^>]*\/>/, '')
   .replace(/\s*<img src="automation\/logo\.svg"[^>]*\/>/, '');

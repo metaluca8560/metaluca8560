@@ -27,7 +27,11 @@ writeFileSync(join(here, 'public', 'core.js'), core);
 const htmlSrc = readFileSync(join(src, 'index.html'), 'utf8');
 const html = htmlSrc
   .replace(/\s*<link rel="icon"[^>]*\/>/, '')
-  .replace('href="/"', 'href="#"')
+  // 로고 링크: 눌러도 열리지 않는 링크는 검수 반려 사유 → 링크가 아닌 일반 요소로 변환
+  .replace('<a href="/" class="brand-link" title="디지털다락방 홈">', '<span class="brand-link">')
+  .replace('</a>\n      <div class="header-actions">', '</span>\n      <div class="header-actions">')
+  // mailto 링크: 토스 웹뷰에서 열리지 않아 반려 사유 → 텍스트로 변환
+  .replace(/<a href="mailto:[^"]*"[^>]*>([^<]*)<\/a>/, '<span>$1</span>')
   .replace('href="../logo.svg"', 'href="#"')
   .replace(
     /<a href="https:\/\/luca-darakbang\.netlify\.app\/"[^>]*>([^<]*)<\/a>/,
