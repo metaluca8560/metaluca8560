@@ -12,6 +12,7 @@ const LINKS = {
   tiktok: "https://www.tiktok.com/@metaluca2750",
   blog: "https://naver.me/FLEwyESn",
   youtube: "https://youtube.com/@metaluca8563?si=C_WhYZQBKxnsDU8g",
+  brunch: "https://brunch.co.kr/@metaluca8560",
   spatial: "https://www.spatial.io/s/metarukas-Healing-space-627e1fa4bf651d0001da7543?share=5565475882378913124",
   marpple: "https://marpple.shop/kr/metaluca_2750/",
   github: "https://github.com/metaluca8560",
