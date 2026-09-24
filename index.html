@@ -46,6 +46,17 @@
 </head>
 <body>
 
+  <!--
+    페이지 배경 그라데이션. 화면에 고정돼 스크롤과 무관하게 천천히 움직인다.
+    장식이라 aria-hidden으로 스크린리더에서 숨긴다.
+    움직임은 styles.css의 @keyframes drift-* 에 있다.
+  -->
+  <div class="site-bg" aria-hidden="true">
+    <span class="bg-a"></span><span class="bg-b"></span>
+    <span class="bg-c"></span><span class="bg-d"></span>
+  </div>
+
+
   <main class="page">
 
     <!-- ===== Hero — "왜 당신이어야 하는가"를 3초 안에 ===== -->
@@ -326,7 +337,7 @@
         <div class="svc"><span class="svc-num">02</span><strong>컨설팅</strong><p>우리 조직에 맞는 AI 도입 로드맵 설계</p></div>
         <div class="svc"><span class="svc-num">03</span><strong>자동화 구축</strong><p>문의 응대·데이터 정리·알림 발송 자동화</p></div>
         <div class="svc"><span class="svc-num">04</span><strong>콘텐츠 제작</strong><p>숏폼 · 웹소설 · 브랜드 콘텐츠 기획/제작</p></div>
-        <div class="svc"><span class="svc-num">05</span><strong>전자책</strong><p>AI 활용 노하우를 담은 실전 가이드 (준비 중)</p></div>
+        <a class="svc svc-link" data-link="kmong" href="#"><span class="svc-num">05</span><strong>전자책 📖</strong><p>「비개발자의 역습 — 삽질의 후예」 크몽에서 판매 중 →</p></a>
         <div class="svc"><span class="svc-num">06</span><strong>커뮤니티</strong><p>디지털다락방 마을 — 함께 배우고 성장하는 공간</p></div>
       </div>
     </section>
@@ -400,6 +411,10 @@
           <span class="row-body"><strong>마계도 아닌 인간도 아닌 내가 산다 🌑</strong><small>네이버 웹소설 다크 판타지 연재 중</small></span>
           <span class="row-go">→</span>
         </a>
+        <a class="row" href="https://novel.naver.com/challenge/list?novelId=1245006" target="_blank" rel="noopener">
+          <span class="row-body"><strong>황제는 날 죽이려 했고, 집행관은 날 살렸다 🗡️</strong><small>네이버 웹소설 빙의 로맨스 판타지 연재 중</small></span>
+          <span class="row-go">→</span>
+        </a>
         <a class="row" href="canva-ai/">
           <span class="row-body"><strong>캔바 × AI 클래스</strong><small>AI 디자인 실습 강의</small></span>
           <span class="row-go">→</span>
@@ -410,6 +425,25 @@
         </a>
       </div>
     </section>
+
+    <!-- ===== 릴스 =====
+         ✏️ 걸어둘 릴스는 script.js 상단의 REELS 배열에서 관리합니다.
+         비워두면 이 섹션은 통째로 숨겨집니다. (가짜 콘텐츠를 채우지 않기 위함) -->
+    <section class="reels" id="reels" aria-label="릴스" hidden>
+      <p class="sec-label">Reels</p>
+      <h2 class="sec-title">짧게 보는 <em>AI 활용법</em></h2>
+      <div class="reel-grid" id="reelGrid"></div>
+      <a class="reel-more" data-link="instagram" href="#">인스타그램에서 더 보기 →</a>
+    </section>
+
+    <!-- 릴스 재생창. 카드를 누르기 전까지 인스타그램은 한 바이트도 안 부른다. -->
+    <div class="reel-modal" id="reelModal" hidden>
+      <div class="reel-backdrop" data-close></div>
+      <div class="reel-box" role="dialog" aria-modal="true" aria-label="릴스 재생">
+        <button class="reel-close" type="button" data-close aria-label="닫기">✕</button>
+        <div class="reel-frame" id="reelFrame"></div>
+      </div>
+    </div>
 
     <!-- ===== 후기 =====
          실제 수강생/고객 후기가 모이면 주석을 풀고 내용을 교체하세요.
@@ -466,6 +500,11 @@
           <span class="tile-name">블로그</span>
           <span class="tile-sub">Blog</span>
         </a>
+        <a class="tile" data-link="brunch" href="#">
+          <span class="tile-glyph">✍</span>
+          <span class="tile-name">브런치</span>
+          <span class="tile-sub">Brunch · 에세이</span>
+        </a>
         <a class="tile" data-link="spatial" href="#">
           <span class="tile-glyph">⬡</span>
           <span class="tile-name">힐링 스페이스</span>
@@ -481,7 +520,11 @@
           <span class="tile-name">깃허브</span>
           <span class="tile-sub">GitHub</span>
         </a>
-        <!-- 새 전자책 출간 시 여기에 E-book 타일 추가 (data-link="kmong") -->
+        <a class="tile" data-link="kmong" href="#">
+          <span class="tile-glyph">📖</span>
+          <span class="tile-name">비개발자의 역습</span>
+          <span class="tile-sub">E-book · 크몽</span>
+        </a>
       </div>
     </section>
 
