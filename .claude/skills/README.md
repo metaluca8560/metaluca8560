@@ -38,7 +38,7 @@ insta-shortform, local-news-article, weekly-report 같은 콘텐츠 생성 스�
 
 | 스킬 | 역할 | 출처 |
 |---|---|---|
-| `/frontend-slides` | HTML 한 파일짜리 발표 자료 제작, PPT → 웹 변환, PDF 내보내기, Vercel 배포 | [zarazhangrui/frontend-slides](https://github.com/zarazhangrui/frontend-slides) (MIT), 커밋 `9906a34` 복사. `KOREAN.md`(한국어 규칙)를 추가하고 SKILL.md에 그 파일을 읽으라는 줄 하나만 넣음 |
+| `/frontend-slides` | HTML 한 파일짜리 발표 자료 제작, PPT → 웹 변환, PDF 내보내기, Vercel 배포 | [zarazhangrui/frontend-slides](https://github.com/zarazhangrui/frontend-slides) (MIT), 커밋 `9906a34` 복사. `KOREAN.md`(한국어 규칙)와 `scripts/check-ko.mjs`(한국어 캡처 확인)를 추가하고, SKILL.md에는 KOREAN.md를 읽으라는 줄 하나만 넣음 |
 
 - Vercel 배포(`scripts/deploy.sh`)는 공개 URL을 만든다. 스킬이 배포 전에 물어보게 되어 있지만, 내부 자료는 배포 대신 PDF로 받는 게 안전하다.
 - PDF 내보내기와 PPT 변환은 각각 Node.js(playwright), Python(python-pptx)이 필요하다.
