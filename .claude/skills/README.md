@@ -29,7 +29,10 @@ insta-shortform, local-news-article, weekly-report 같은 콘텐츠 생성 스�
 ## 참고한 외부 스킬
 
 - red-pen 점수표: [hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop)(MIT)의 5항목 채점 방식을 한국어 글에 맞게 옮김. 영어 전용 규칙(부사·수동태·em dash 전면 금지)은 가져오지 않음.
-- 받아쓰기 모드: [charlie947/voiceprint](https://github.com/charlie947/voiceprint)의 "본인 문장을 85% 이상 남긴다"는 접근을 참고. 수치는 영어 AI 탐지기 기준 실험이라 한국어에서 같은 결과가 나온다는 보장은 없음.
+- 받아쓰기 모드: [charlie947/voiceprint](https://github.com/charlie947/voiceprint)(MIT)의 "본인 문장을 85% 이상 남긴다"는 접근을 참고.
+  - 원본 `bin/trace.py`는 영어 단어만 세서 한국어에서는 동작하지 않는다. 그래서 글자 2개 단위로 비교하는 `sound-like-me/scripts/trace_ko.py`를 새로 만들었다.
+  - `scripts/test_trace_ko.py`: 정답을 아는 25문장으로 점검. 내 말/새로 쓴 문장 구분 25/25. 단, 예제는 직접 만든 것이라 실제 녹음으로 추가 확인이 필요하다.
+  - 85% 기준은 원작자가 영어 글 1편, 탐지기 1개(Pangram)로 잰 값이다. 한국어 AI 탐지 결과와의 관계는 확인되지 않았다.
 
 ## 외부 설치 스킬
 
