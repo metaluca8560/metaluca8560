@@ -7,8 +7,8 @@
 | 스킬 | 역할 | 이럴 때 |
 |---|---|---|
 | `/humanizer` | AI 티 나는 글을 다듬어서 돌려줌 | 이미 쓴 글을 자연스럽게 만들고 싶을 때 |
-| `/red-pen` | 고치지 않고 약한 문장만 지적 | 내 손으로 고치고 싶을 때, 피드백만 필요할 때 |
-| `/sound-like-me` | 내 글 샘플로 문체 프로필 생성 → 그 목소리로 작성 | "내가 쓴 것처럼" 써야 할 때 |
+| `/red-pen` | 고치지 않고 약한 문장만 지적 + 5항목 50점 점수표 | 내 손으로 고치고 싶을 때, 피드백만 필요할 때 |
+| `/sound-like-me` | 내 글 샘플로 문체 프로필 생성 → 그 목소리로 작성. 녹음 받아쓰기를 주면 내 말을 잘라 글로 만드는 받아쓰기 모드 | "내가 쓴 것처럼" 써야 할 때, 말로 먼저 풀어놨을 때 |
 | `/writer` | 처음부터 사람 습관으로 쓰고 셀프 검수까지 | 새 글을 쓸 때 |
 
 원본 이미지의 `/ban-the-AI-words`, `/ban-the-AI-patterns`, `/auto-block-banned-words`, `/anti-AI style`, `/self-critique` 기능은 별도 스킬이 아니라 **humanizer의 패턴 사전 + writer의 셀프 검수 단계**로 흡수했다. `/fact-checker`와 `/editor`는 이 세트의 범위(AI 티 제거) 밖이라 제외.
@@ -24,7 +24,12 @@ red-pen과 writer도 이 파일을 참조한다. 패턴을 추가하고 싶으�
 
 ## 기존 스킬과의 관계
 
-insta-shortform, local-news-article, weekly-report 같은 콘텐츠 생성 스킬의 결과물을 발행 전에 `/humanizer`로 한 번 거르는 조합을 권장.
+insta-shortform, local-news-article, weekly-report 같은 콘텐츠 생성 스킬의 결과물을 발행 전에 `/humanizer`로 한 번 거르는 조합을 권장. 단, 받아쓰기 모드 결과물은 humanizer를 거치지 않는다(필요하면 red-pen으로 짚기만).
+
+## 참고한 외부 스킬
+
+- red-pen 점수표: [hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop)(MIT)의 5항목 채점 방식을 한국어 글에 맞게 옮김. 영어 전용 규칙(부사·수동태·em dash 전면 금지)은 가져오지 않음.
+- 받아쓰기 모드: [charlie947/voiceprint](https://github.com/charlie947/voiceprint)의 "본인 문장을 85% 이상 남긴다"는 접근을 참고. 수치는 영어 AI 탐지기 기준 실험이라 한국어에서 같은 결과가 나온다는 보장은 없음.
 
 ## 사용 예
 
@@ -32,5 +37,6 @@ insta-shortform, local-news-article, weekly-report 같은 콘텐츠 생성 스�
 /humanizer 아래 글 다듬어줘: (글 붙여넣기)
 /red-pen 이 블로그 초안 첨삭해줘
 /sound-like-me 내 인스타 캡션 3개 줄게, 문체 분석해줘
+/sound-like-me 음성 메모 받아쓴 거야, 이걸로 블로그 글 만들어줘
 /writer 냥이동 서비스 소개글 500자로 써줘
 ```
