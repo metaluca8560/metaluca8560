@@ -31,6 +31,16 @@ insta-shortform, local-news-article, weekly-report 같은 콘텐츠 생성 스�
 - red-pen 점수표: [hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop)(MIT)의 5항목 채점 방식을 한국어 글에 맞게 옮김. 영어 전용 규칙(부사·수동태·em dash 전면 금지)은 가져오지 않음.
 - 받아쓰기 모드: [charlie947/voiceprint](https://github.com/charlie947/voiceprint)의 "본인 문장을 85% 이상 남긴다"는 접근을 참고. 수치는 영어 AI 탐지기 기준 실험이라 한국어에서 같은 결과가 나온다는 보장은 없음.
 
+## 외부 설치 스킬
+
+| 스킬 | 역할 | 출처 |
+|---|---|---|
+| `/frontend-slides` | HTML 한 파일짜리 발표 자료 제작, PPT → 웹 변환, PDF 내보내기, Vercel 배포 | [zarazhangrui/frontend-slides](https://github.com/zarazhangrui/frontend-slides) (MIT), 커밋 `9906a34` 그대로 복사. 수정하지 않음 |
+
+- Vercel 배포(`scripts/deploy.sh`)는 공개 URL을 만든다. 스킬이 배포 전에 물어보게 되어 있지만, 내부 자료는 배포 대신 PDF로 받는 게 안전하다.
+- PDF 내보내기와 PPT 변환은 각각 Node.js(playwright), Python(python-pptx)이 필요하다.
+- 업데이트하려면 원본 저장소에서 같은 파일을 다시 복사한다.
+
 ## 사용 예
 
 ```
@@ -39,4 +49,5 @@ insta-shortform, local-news-article, weekly-report 같은 콘텐츠 생성 스�
 /sound-like-me 내 인스타 캡션 3개 줄게, 문체 분석해줘
 /sound-like-me 음성 메모 받아쓴 거야, 이걸로 블로그 글 만들어줘
 /writer 냥이동 서비스 소개글 500자로 써줘
+/frontend-slides 이번 주간보고로 발표 슬라이드 만들어줘
 ```
