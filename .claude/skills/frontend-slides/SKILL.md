@@ -15,6 +15,8 @@ Create zero-dependency, animation-rich HTML presentations that run entirely in t
 4. **Progressive Disclosure** — Read lightweight style indexes first. For bold templates, use small preview cards for style previews and load the full `design.md` only after the user picks that template.
 5. **Fixed 16:9 Stage (NON-NEGOTIABLE)** — Every deck uses a 1920×1080 slide canvas scaled as a whole to the viewport. Slides must stay 16:9 on every screen, including phones. Do not reflow slide content to fit the device.
 
+> **한국어 슬라이드:** 내용에 한국어가 있으면 Phase 2 전에 [KOREAN.md](KOREAN.md)를 읽고 따른다. 폰트·줄바꿈·글자 수 규칙이 아래 폰트 지침보다 우선한다. (이 저장소에서 추가한 줄. 원본에는 없음)
+
 ## Design Aesthetics
 
 You tend to converge toward generic, "on distribution" outputs. In frontend design, this creates what users call the "AI slop" aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight.
