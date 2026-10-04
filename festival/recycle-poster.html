@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>리사이클 분장대회</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Noto+Sans+KR:wght@500;700;900&display=block">
+<style>
+  :root{--lime:#c8f31d;--ink:#111;--orange:#ff5a1f;--pink:#ff3d8b;--blue:#1f8bff;--paper:#fffdf5}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{width:1080px;height:1528px;overflow:hidden;background:var(--lime);font-family:'Noto Sans KR',sans-serif;color:var(--ink);position:relative}
+  /* 배경 장식 */
+  .burst{position:absolute;top:-260px;right:-260px;width:820px;height:820px;border-radius:50%;
+    background:repeating-conic-gradient(rgba(0,0,0,.07) 0 6deg,transparent 6deg 12deg)}
+  .dot{position:absolute;border-radius:50%}
+  .d1{width:120px;height:120px;border:22px solid var(--orange);left:-30px;top:470px}
+  .d2{width:60px;height:60px;background:var(--pink);right:70px;top:660px}
+  .d3{width:34px;height:34px;background:var(--blue);left:120px;top:190px}
+  .squig{position:absolute;right:40px;top:150px;font:72px 'Black Han Sans';color:var(--orange);transform:rotate(18deg)}
+
+  .top{position:absolute;top:70px;left:0;right:0;text-align:center}
+  .pill{display:inline-block;background:var(--ink);color:var(--lime);font:700 34px 'Noto Sans KR';padding:12px 34px;border-radius:999px;letter-spacing:-.5px}
+
+  .title{position:absolute;top:170px;left:0;right:0;text-align:center;transform:rotate(-4deg)}
+  .t1{font:200px/1 'Black Han Sans';color:var(--paper);-webkit-text-stroke:10px var(--ink);paint-order:stroke fill;
+      text-shadow:12px 12px 0 var(--ink);letter-spacing:-6px}
+  .t1 .r{color:var(--orange)}
+  .t2{font:250px/1 'Black Han Sans';color:var(--ink);letter-spacing:-10px;margin-top:6px}
+  .t2 .hl{position:relative;display:inline-block}
+  .t2 .hl::after{content:'';position:absolute;left:-8px;right:-8px;bottom:22px;height:46px;background:var(--pink);z-index:-1;transform:skew(-12deg)}
+
+  .hook{position:absolute;top:735px;left:0;right:0;text-align:center;font:52px 'Do Hyeon';letter-spacing:-1px}
+  .hook b{background:var(--ink);color:var(--lime);padding:0 14px;font-weight:400}
+
+  /* 사선 띠 */
+  .band{position:absolute;top:830px;left:-60px;right:-60px;height:150px;background:var(--ink);transform:rotate(-4deg);
+        display:flex;align-items:center;justify-content:center;gap:34px;color:#fff;box-shadow:0 14px 0 var(--orange)}
+  .band .date{font:88px/1 'Black Han Sans';color:var(--lime);letter-spacing:-2px}
+  .band .date small{font-size:46px;color:#fff;margin-left:6px}
+  .band .sep{width:6px;height:84px;background:var(--orange)}
+  .band .place{font:46px/1.1 'Black Han Sans'}
+  .band .place span{display:block;font:500 24px 'Noto Sans KR';opacity:.75;margin-top:6px}
+
+  /* 상품 */
+  .prizes{position:absolute;top:1045px;left:60px;right:60px;display:flex;gap:22px;align-items:center;justify-content:center}
+  .medal{width:150px;height:150px;border-radius:50%;background:var(--paper);border:8px solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:8px 8px 0 var(--ink)}
+  .medal b{font:72px/1 'Black Han Sans'}
+  .medal i{font:style normal;font:26px 'Do Hyeon';font-style:normal}
+  .m1 b{color:var(--orange)} .m2 b{color:var(--pink)} .m3 b{color:var(--blue)}
+  .all{background:var(--orange);color:#fff;border:8px solid var(--ink);border-radius:24px;padding:16px 26px;box-shadow:8px 8px 0 var(--ink);transform:rotate(3deg);text-align:center}
+  .all b{display:block;font:56px/1 'Black Han Sans'}
+  .all span{font:30px 'Do Hyeon'}
+
+  /* 하단 신청 카드 */
+  .apply{position:absolute;left:60px;right:60px;top:1250px;height:200px;background:var(--paper);border:8px solid var(--ink);border-radius:28px;
+         display:flex;align-items:center;padding:0 28px;gap:30px;box-shadow:10px 10px 0 var(--ink)}
+  .apply img{width:168px;height:168px;image-rendering:pixelated;flex:none}
+  .apply .txt{flex:1}
+  .apply .go{font:62px/1 'Black Han Sans';letter-spacing:-1px}
+  .apply .go em{font-style:normal;color:var(--orange)}
+  .apply .who{font:700 30px 'Noto Sans KR';margin-top:12px}
+  .apply .note{font:500 21px 'Noto Sans KR';margin-top:8px;color:#555}
+  .arrow{font:90px/1 'Black Han Sans';color:var(--orange)}
+
+  .foot{position:absolute;bottom:22px;left:0;right:0;text-align:center;font:700 28px 'Noto Sans KR'}
+  .foot b{font:34px 'Black Han Sans';margin-left:10px}
+</style>
+</head>
+<body>
+  <div class="burst"></div>
+  <div class="dot d1"></div><div class="dot d2"></div><div class="dot d3"></div>
+  <div class="squig">♻</div>
+
+  <div class="top"><span class="pill">2026 함께하는 환경페스타</span></div>
+
+  <div class="title">
+    <div class="t1"><span class="r">리</span>사이클</div>
+    <div class="t2"><span class="hl">분장</span>대회</div>
+  </div>
+
+  <div class="hook">버려질 뻔한 재활용품, <b>입고 나와요!</b></div>
+
+  <div class="band">
+    <div class="date">10.30<small>(금)</small></div>
+    <div class="sep"></div>
+    <div class="place">15:00 – 19:30<br>한울공원<span>중부종합사회복지관 옆 · 천상리 649-2</span></div>
+  </div>
+
+  <div class="prizes">
+    <div class="medal m1"><b>1등</b><i>깜짝 상품</i></div>
+    <div class="medal m2"><b>2등</b><i>심쿵 상품</i></div>
+    <div class="medal m3"><b>3등</b><i>설렘 상품</i></div>
+    <div class="all"><b>전원</b><span>참가상품 증정</span></div>
+  </div>
+
+  <div class="apply">
+    <img src="recycle-qr.png" alt="신청 QR">
+    <div class="arrow">◀</div>
+    <div class="txt">
+      <div class="go">QR 신청 <em>~10.16</em></div>
+      <div class="who">울주군 주민 누구나!</div>
+      <div class="note">※ 당일 분장 참여 필수 · 울주·복지관 상징 작품 가산점</div>
+    </div>
+  </div>
+
+  <div class="foot">울주복지재단 중부종합사회복지관 <b>☎ 228-9168</b></div>
+</body>
+</html>
