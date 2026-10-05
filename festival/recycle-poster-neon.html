@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>리사이클 분장대회 · 네온</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Noto+Sans+KR:wght@500;700;900&display=block">
+<style>
+  :root{--bg:#0b0f2b;--pink:#ff3fa4;--cyan:#22e6ff;--lime:#b6ff3b;--yellow:#ffe23b;--white:#f6f7ff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{width:1080px;height:1528px;overflow:hidden;position:relative;font-family:'Noto Sans KR',sans-serif;color:var(--white);
+    background:radial-gradient(circle at 50% 36%,#2a1a6b 0,#141a4a 32%,var(--bg) 62%)}
+  /* 스포트라이트 */
+  .beam{position:absolute;top:-120px;width:300px;height:1000px;opacity:.18;filter:blur(6px)}
+  .beam.l{left:120px;background:linear-gradient(var(--cyan),transparent);transform:rotate(22deg);transform-origin:top}
+  .beam.r{right:120px;background:linear-gradient(var(--pink),transparent);transform:rotate(-22deg);transform-origin:top}
+  /* 별/점 */
+  .sp{position:absolute;color:var(--yellow);font:40px/1 'Black Han Sans';text-shadow:0 0 16px var(--yellow)}
+  .ring{position:absolute;border-radius:50%;border:8px solid}
+  .ring.a{width:150px;height:150px;left:-40px;top:520px;border-color:var(--lime);box-shadow:0 0 30px var(--lime)}
+  .ring.b{width:90px;height:90px;right:60px;top:180px;border-color:var(--pink);box-shadow:0 0 24px var(--pink)}
+
+  .top{position:absolute;top:80px;left:0;right:0;text-align:center;font:40px 'Do Hyeon';letter-spacing:6px;color:var(--cyan);text-shadow:0 0 14px var(--cyan)}
+
+  .title{position:absolute;top:170px;left:0;right:0;text-align:center}
+  .neon1{font:160px/1 'Black Han Sans';color:#fff;letter-spacing:-2px;
+    text-shadow:0 0 6px #fff,0 0 22px var(--pink),0 0 48px var(--pink),0 0 90px var(--pink)}
+  .neon2{font:230px/1 'Black Han Sans';color:var(--lime);letter-spacing:-6px;margin-top:14px;
+    text-shadow:0 0 8px #eaffc4,0 0 30px var(--lime),0 0 70px var(--lime)}
+  .sub{margin-top:26px;font:52px 'Do Hyeon';color:var(--white)}
+  .sub b{color:var(--yellow);font-weight:400;text-shadow:0 0 14px rgba(255,226,59,.7)}
+
+  /* 티켓 */
+  .ticket{position:absolute;top:770px;left:80px;right:80px;height:250px;display:flex;border-radius:26px;overflow:hidden;
+          border:4px solid var(--cyan);box-shadow:0 0 24px rgba(34,230,255,.55),inset 0 0 24px rgba(34,230,255,.25);background:rgba(11,15,43,.7)}
+  .ticket .d{width:340px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:4px dashed var(--cyan)}
+  .ticket .d b{font:110px/1 'Black Han Sans';color:var(--cyan);text-shadow:0 0 18px var(--cyan)}
+  .ticket .d span{font:40px 'Do Hyeon';margin-top:4px}
+  .ticket .i{flex:1;padding:0 40px;display:flex;flex-direction:column;justify-content:center;gap:12px}
+  .ticket .i .time{font:62px/1 'Black Han Sans'}
+  .ticket .i .place{font:54px/1 'Black Han Sans';color:var(--pink);text-shadow:0 0 14px rgba(255,63,164,.7)}
+  .ticket .i small{font:500 24px 'Noto Sans KR';opacity:.75}
+
+  /* 상품 */
+  .prizes{position:absolute;top:1075px;left:80px;right:80px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  .p{text-align:center;border-radius:20px;padding:18px 0;border:3px solid currentColor;box-shadow:0 0 16px currentColor}
+  .p b{display:block;font:56px/1 'Black Han Sans';text-shadow:0 0 12px currentColor}
+  .p span{display:block;font:26px 'Do Hyeon';color:var(--white);margin-top:8px}
+  .p1{color:var(--yellow)} .p2{color:var(--pink)} .p3{color:var(--cyan)} .p4{color:var(--lime)}
+
+  /* 하단 */
+  .bottom{position:absolute;left:80px;right:80px;bottom:90px;display:flex;align-items:center;gap:28px}
+  .bottom img{width:170px;height:170px;image-rendering:pixelated;border-radius:14px;border:6px solid #fff;box-shadow:0 0 26px var(--pink)}
+  .bottom .t b{display:block;font:60px/1 'Black Han Sans'}
+  .bottom .t b em{font-style:normal;color:var(--yellow);text-shadow:0 0 14px rgba(255,226,59,.8)}
+  .bottom .t .who{font:700 30px 'Noto Sans KR';margin-top:12px}
+  .bottom .t .note{font:500 21px 'Noto Sans KR';opacity:.7;margin-top:6px}
+
+  .foot{position:absolute;left:0;right:0;bottom:28px;text-align:center;font:700 26px 'Noto Sans KR';opacity:.9}
+  .foot b{font:32px 'Black Han Sans';color:var(--cyan);margin-left:8px}
+</style>
+</head>
+<body>
+  <div class="beam l"></div><div class="beam r"></div>
+  <div class="ring a"></div><div class="ring b"></div>
+  <div class="sp" style="left:110px;top:150px">✦</div>
+  <div class="sp" style="right:110px;top:720px;font-size:30px">✦</div>
+  <div class="sp" style="left:150px;top:705px;font-size:26px;color:var(--cyan);text-shadow:0 0 14px var(--cyan)">✦</div>
+
+  <div class="top">2026 함께하는 환경페스타</div>
+
+  <div class="title">
+    <div class="neon1">리사이클</div>
+    <div class="neon2">분장대회</div>
+    <div class="sub">재활용품으로 꾸미고 <b>무대의 주인공</b>으로!</div>
+  </div>
+
+  <div class="ticket">
+    <div class="d"><b>10.30</b><span>금요일</span></div>
+    <div class="i">
+      <div class="time">15:00 – 19:30</div>
+      <div class="place">한울공원</div>
+      <small>중부종합사회복지관 옆 · 천상리 649-2</small>
+    </div>
+  </div>
+
+  <div class="prizes">
+    <div class="p p1"><b>1등</b><span>깜짝 상품</span></div>
+    <div class="p p2"><b>2등</b><span>심쿵 상품</span></div>
+    <div class="p p3"><b>3등</b><span>설렘 상품</span></div>
+    <div class="p p4"><b>전원</b><span>참가상품</span></div>
+  </div>
+
+  <div class="bottom">
+    <img src="recycle-qr.png" alt="신청 QR">
+    <div class="t">
+      <b>QR 신청 <em>~10.16</em></b>
+      <div class="who">울주군 주민 누구나!</div>
+      <div class="note">※ 당일 분장 참여 필수 · 울주·복지관 상징 작품 가산점</div>
+    </div>
+  </div>
+
+  <div class="foot">울주복지재단 중부종합사회복지관 <b>☎ 228-9168</b></div>
+</body>
+</html>
