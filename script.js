@@ -13,7 +13,7 @@ const LINKS = {
   blog: "https://naver.me/FLEwyESn",
   youtube: "https://youtube.com/@metaluca8563?si=C_WhYZQBKxnsDU8g",
   brunch: "https://brunch.co.kr/@metaluca8560",
-  spatial: "https://www.spatial.io/s/metarukas-Healing-space-627e1fa4bf651d0001da7543?share=5565475882378913124",
+  foresto: "https://foresto.co.kr/@metaluca", // 3D 갤러리 「다락방 그림창고」 (Spatial 힐링 스페이스 대체)
   marpple: "https://marpple.shop/kr/metaluca_2750/",
   github: "https://github.com/metaluca8560",
   kmong: "https://kmong.com/self-marketing/803533/YNgTd87HX2", // 「비개발자의 역습 — 삽질의 후예」 셀프마케팅 링크(수익금 90%)
