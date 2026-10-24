@@ -18,6 +18,7 @@ const LINKS = {
   github: "https://github.com/metaluca8560",
   kmong: "https://kmong.com/self-marketing/803533/YNgTd87HX2", // 「비개발자의 역습 — 삽질의 후예」 셀프마케팅 링크(수익금 90%)
   rurik: "https://play.google.com/store/apps/details?id=com.metaluca.rulik", // 첫 플레이 스토어 앱 「오늘도 참았다 - 루릭」
+  littoon: "https://appapi.littoon.com/s/qHshVmD", // 릿툰 작가룸 「푸름이」 (숏툰 「구름 위의 푸름이」 연재)
 };
 
 // 성과 수치 — 예: lectures: "120회+", students: "3,000+", projects: "50+", contents: "500+"
