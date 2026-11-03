@@ -34,6 +34,11 @@ header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between
 h1{font-family:var(--display);font-weight:400;font-size:clamp(26px,4.6vw,38px);line-height:1.1;margin:0;letter-spacing:.01em;text-wrap:balance}
 h1 small{display:block;font-family:var(--body);font-size:14px;color:var(--muted);margin-top:6px;letter-spacing:0}
 .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--muted);white-space:nowrap}
+.btn.share{padding:5px 14px;font-size:13px}
+#musicBtn[aria-pressed="true"]{border-color:var(--amber);color:var(--amber)}
+.sharebox{flex-basis:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.sharebox p{margin:0}
+.sharebox input{flex:1 1 220px;min-width:0;font:inherit;font-size:13px;background:var(--ink);color:var(--cream);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
 .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 3px rgba(88,191,178,.18)}
 
 /* the room */
@@ -127,7 +132,16 @@ button.cat:focus-visible{outline:2px dashed var(--amber);outline-offset:4px;bord
 <div class="wrap">
   <header>
     <h1>냥이봇 사랑방<small>집사 작업실에서 루릭·푸름이·팡이와 같이 멍때리는 방</small></h1>
-    <span class="chip" id="who"><span class="dot"></span><span id="whoText">혼자만의 시간</span></span>
+    <div class="row">
+      <span class="chip" id="who"><span class="dot"></span><span id="whoText">혼자만의 시간</span></span>
+      <button class="btn share" id="musicBtn" type="button" aria-pressed="false">♪ 음악 켜기</button>
+      <button class="btn share" id="shareBtn" type="button" aria-describedby="shareTip">친구에게 공유</button>
+    </div>
+    <div class="sharebox" id="shareBox" hidden>
+      <p>아래 링크를 친구에게 보내 주세요.</p>
+      <div class="row"><input id="shareUrl" readonly value="https://claude.ai/artifact/9YjJ7xCUvoufwSoB4sJeDg" aria-label="사랑방 링크"><button class="btn primary" id="copyBtn" type="button">복사</button></div>
+      <p class="hint" id="shareTip">링크를 받은 친구가 들어오려면 claude.ai 화면 위쪽 <b>공유(Share)</b> 버튼에서 그 친구를 초대하거나 링크 공개를 켜 두어야 해요. 같이 츄르를 쌓으려면 보기보다 높은 권한이 필요해요.</p>
+    </div>
   </header>
 
   <div class="scene" id="scene">
@@ -559,6 +573,89 @@ for (const e of EMOJI){
   emoRow.appendChild(b);
 }
 
+
+/* ---------- music: a soft lo-fi loop made in the browser (no audio files) ---------- */
+const Music = (() => {
+  let ctx = null, master, lp, delay, fb, timer = null, nextBar = 0, bar = 0, crackleSrc = null;
+  const CHORDS = [[53,57,60,64],[52,55,59,62],[50,53,57,60],[48,52,55,59]]; // Fmaj7 Em7 Dm7 Cmaj7
+  const SCALE = [72,74,76,79,81,84];
+  const BAR = 3.2;
+  const hz = m => 440 * Math.pow(2, (m - 69) / 12);
+  function tone(m, t, dur, type, gain, dest){
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.value = hz(m); o.detune.value = rand(-6, 6);
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(gain, t + Math.min(.6, dur * .2));
+    g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(g); g.connect(dest || lp); o.start(t); o.stop(t + dur + .05);
+  }
+  function schedule(){
+    while (nextBar < ctx.currentTime + 1.5){
+      const ch = CHORDS[bar % CHORDS.length], t = nextBar;
+      ch.forEach((m, i) => tone(m, t + i * .04, BAR * 1.1, "triangle", .05));
+      tone(ch[0] - 12, t, BAR, "sine", .09);
+      for (let k = 0; k < 8; k++){
+        if (Math.random() < .32){
+          const m = pick(SCALE), tt = t + k * BAR / 8 + rand(0, .05);
+          tone(m, tt, 1.4, "sine", .045, delay);
+          tone(m, tt, 1.4, "sine", .035);
+        }
+      }
+      nextBar += BAR; bar++;
+    }
+  }
+  function crackle(){
+    const len = ctx.sampleRate * 2, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() < .0007 ? rand(-.8, .8) : 0) + rand(-.012, .012);
+    const src = ctx.createBufferSource(), hp = ctx.createBiquadFilter(), g = ctx.createGain();
+    src.buffer = buf; src.loop = true; hp.type = "highpass"; hp.frequency.value = 1200; g.gain.value = .35;
+    src.connect(hp); hp.connect(g); g.connect(master); src.start();
+    return src;
+  }
+  function start(){
+    if (!ctx){
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      ctx = new AC();
+      master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
+      lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1700; lp.connect(master);
+      delay = ctx.createDelay(1); delay.delayTime.value = .42; fb = ctx.createGain(); fb.gain.value = .35;
+      delay.connect(fb); fb.connect(delay); delay.connect(lp);
+    }
+    ctx.resume();
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
+    master.gain.linearRampToValueAtTime(.55, ctx.currentTime + 2);
+    nextBar = ctx.currentTime + .1;
+    if (!crackleSrc) crackleSrc = crackle();
+    schedule(); timer = setInterval(schedule, 400);
+    return true;
+  }
+  function stop(){
+    if (!ctx) return;
+    clearInterval(timer); timer = null;
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
+    master.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.2);
+    setTimeout(() => { if (!timer) ctx.suspend(); }, 1400);
+  }
+  return { start, stop, get on(){ return !!timer; } };
+})();
+$("musicBtn").addEventListener("click", () => {
+  const b = $("musicBtn");
+  if (Music.on){ Music.stop(); b.textContent = "♪ 음악 켜기"; b.setAttribute("aria-pressed","false"); }
+  else if (Music.start()){
+    b.textContent = "♪ 음악 끄기"; b.setAttribute("aria-pressed","true");
+    say(A.star, "이 노래 좋다.", 3000);
+  } else { b.textContent = "이 브라우저는 음악을 못 틀어요"; b.disabled = true; }
+});
+$("shareBtn").addEventListener("click", () => { $("shareBox").hidden = !$("shareBox").hidden; });
+$("copyBtn").addEventListener("click", () => {
+  const inp = $("shareUrl");
+  const done = () => { $("copyBtn").textContent = "복사됨"; setTimeout(() => $("copyBtn").textContent = "복사", 2000); };
+  const fallback = () => { inp.focus(); inp.select(); $("copyBtn").textContent = "선택됨. 길게 눌러 복사"; };
+  try { navigator.clipboard.writeText(inp.value).then(done, fallback); } catch { fallback(); }
+});
 $("fast").addEventListener("change", e => { speed = e.target.checked ? 20 : 1; });
 
 /* ---------- petting ---------- */
