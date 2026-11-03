@@ -810,9 +810,14 @@ const Music = (() => {
   }
   return { start, stop, get on(){ return !!timer; } };
 })();
-/* 배경음악 「창가의 오후」(Abocado Popcorn 2.0 Pro 연주곡). 파일을 못 불러오면 위의 브라우저 연주로 대신해요 */
-const bgm = new Audio("bgm.mp3");
-bgm.loop = true; bgm.preload = "none"; bgm.volume = 0;
+/* 배경음악 목록(Abocado로 만든 곡). 한 곡이 끝나면 다음 곡이 이어져요. 파일을 못 불러오면 위의 브라우저 연주로 대신해요 */
+const TRACKS = [
+  { src:"bgm.mp3",                          title:"창가의 오후" },
+  { src:"nyanbot/music/dawn-piano.mp3",     title:"새벽 두 시의 피아노" }
+];
+let trackIdx = 0;
+const bgm = new Audio(TRACKS[0].src);
+bgm.loop = false; bgm.preload = "none"; bgm.volume = 0;
 /* 잔잔하게: 조금 느리게(음높이는 그대로), 작은 소리로 천천히 커지게 */
 bgm.playbackRate = .9; bgm.preservesPitch = true; bgm.mozPreservesPitch = true; bgm.webkitPreservesPitch = true;
 const BGM_VOL = .3;
@@ -829,7 +834,7 @@ function fadeTo(v, ms, then){
 let musicOn = false;
 function setMusicUI(on){
   const b = $("musicBtn");
-  b.textContent = on ? "♪ 음악 끄기" : "♪ 음악 켜기";
+  b.textContent = on ? (usingSynth ? "♪ 음악 끄기" : `♪ ${TRACKS[trackIdx].title} · 끄기`) : "♪ 음악 켜기";
   b.setAttribute("aria-pressed", String(on));
 }
 $("musicBtn").addEventListener("click", () => {
@@ -842,9 +847,17 @@ $("musicBtn").addEventListener("click", () => {
   say(A.star, "이 노래 좋다.", 3000);
   const p = bgm.play();
   const toSynth = () => { usingSynth = true; if (musicOn && !Music.on) Music.start(); };
-  if (p && p.then) p.then(() => { usingSynth = false; fadeTo(BGM_VOL, 4000); }, toSynth);
+  if (p && p.then) p.then(() => { usingSynth = false; setMusicUI(true); fadeTo(BGM_VOL, 4000); }, toSynth);
   else fadeTo(BGM_VOL, 4000);
 });
+function playTrack(i){
+  trackIdx = (i + TRACKS.length) % TRACKS.length;
+  bgm.src = TRACKS[trackIdx].src; bgm.playbackRate = .9; bgm.volume = 0;
+  const p = bgm.play();
+  if (p && p.catch) p.catch(() => {});
+  fadeTo(BGM_VOL, 3000); setMusicUI(true);
+}
+bgm.addEventListener("ended", () => { if (musicOn && !usingSynth) setTimeout(() => { if (musicOn) playTrack(trackIdx + 1); }, 1500); });
 bgm.addEventListener("error", () => { if (musicOn && !usingSynth){ usingSynth = true; Music.start(); } });
 $("shareBtn").addEventListener("click", () => { $("shareBox").hidden = !$("shareBox").hidden; });
 $("copyBtn").addEventListener("click", () => {
