@@ -85,6 +85,13 @@ button.cat:focus-visible{outline:2px dashed var(--amber);outline-offset:4px;bord
 .pimg{height:150px;display:flex;align-items:end;justify-content:center}
 .pimg img{height:100%;width:auto;max-width:none}
 .pname{font-size:14px}
+.drink{position:absolute;left:94%;bottom:3%;width:clamp(18px,3.4vw,36px);line-height:0;pointer-events:none;filter:drop-shadow(0 2px 2px rgba(20,14,28,.5))}
+.drink svg{width:100%;height:auto;display:block}
+.steam{animation:steam 2.6s ease-in-out infinite}
+@keyframes steam{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(-2px);opacity:.8}}
+.dicon{display:inline-block;width:16px;height:18px;vertical-align:-3px;margin-right:5px;line-height:0}
+.dicon svg{width:100%;height:100%}
+#drinkRow .btn[aria-pressed="true"]{border-color:var(--amber);background:#3a3045}
 .pile{position:absolute;transform:translate(-50%,-100%);display:flex;align-items:end;gap:1px;pointer-events:none}
 .pile i{display:block;width:clamp(3px,.55vw,6px);height:clamp(14px,2.4vw,24px);border-radius:2px;background:linear-gradient(#f6d27a 0 30%,#e9a64d 30%);transform:rotate(var(--r,0deg))}
 .pile b{font-family:var(--hand);font-weight:700;font-size:clamp(10px,1.5vw,14px);color:var(--cream);margin-left:4px;line-height:1;text-shadow:0 1px 2px #0008}
@@ -274,6 +281,10 @@ button.cat:focus-visible{outline:2px dashed var(--amber);outline-offset:4px;bord
       <div>
         <div class="lbl">말 대신 표정 하나</div>
         <div class="row" id="emoRow" style="margin-top:6px"></div>
+      </div>
+      <div>
+        <div class="lbl">마실 것 하나 옆에 두기</div>
+        <div class="row" id="drinkRow" style="margin-top:6px"></div>
       </div>
       <div>
         <div class="lbl">나갈 때 츄르 하나 두고 가기</div>
@@ -521,10 +532,11 @@ let myAvatar = avatarById(store.get("avatar", ""));
 function dressActor(el, av, fallbackW, fallbackHtml){
   if (el.dataset.av === (av ? av.id : "")) return;
   el.dataset.av = av ? av.id : "";
-  const bubble = el.querySelector(".bubble");
+  const bubble = el.querySelector(".bubble"), drink = el.querySelector(".drink");
   if (av){ el.style.width = av.w + "%"; el.innerHTML = `<img class="char" src="${av.sit}" alt="">`; }
   else { el.style.width = fallbackW; el.innerHTML = fallbackHtml; }
   if (bubble) el.appendChild(bubble);
+  if (drink) el.appendChild(drink);
   if (el._cushion) el._cushion.hidden = !!av && !el.hidden;
 }
 dressActor(meEl, myAvatar, "10%", person("#e9c46a", true));
@@ -588,6 +600,7 @@ let myEmoji = null, myEmojiAt = 0;
 function setSeated(v){
   seated = v;
   meEl.hidden = !v; seatCta.hidden = v;
+  if (!v){ myDrink = ""; setDrink(meEl, ""); for (const x of drinkRow.children) x.setAttribute("aria-pressed","false"); }
   myCushion.hidden = v && !!myAvatar;
   $("seatBtn").textContent = v ? "일어나기" : "방석에 앉기";
   $("seatBtn").classList.toggle("primary", !v);
@@ -626,7 +639,7 @@ function openPicker(thenSit){
 $("pickClose").addEventListener("click", () => { $("picker").hidden = true; });
 $("pickBtn").addEventListener("click", () => openPicker(false));
 
-const EMOJI = ["🙂","😴","🥲","💛","☕"];
+const EMOJI = ["🙂","😴","🥲","💛","🐾"];
 const emoRow = $("emoRow");
 for (const e of EMOJI){
   const b = document.createElement("button");
@@ -640,6 +653,36 @@ for (const e of EMOJI){
     pushPresence();
   });
   emoRow.appendChild(b);
+}
+
+/* ---------- drinks: a cup that sits beside you (others see theirs too) ---------- */
+const DRINKS = {
+  coffee: { name:"커피", svg:`<svg viewBox="0 0 40 44"><g class="steam" fill="none" stroke="#f3ead8" stroke-width="1.6" stroke-linecap="round" opacity=".7"><path d="M14 12 q-3 -4 0 -7 q3 -3 0 -6"/><path d="M22 12 q-3 -4 0 -7 q3 -3 0 -6"/></g><path d="M33 22 q7 0 7 6 q0 6 -7 6" fill="none" stroke="#f3ead8" stroke-width="3"/><path d="M6 16 h27 v18 q0 8 -8 8 h-11 q-8 0 -8 -8 z" fill="#f3ead8"/><ellipse cx="19.5" cy="16.5" rx="13.5" ry="3" fill="#6b4228"/><path d="M6 26 h27" stroke="#e98a8f" stroke-width="3"/></svg>` },
+  juice:  { name:"주스", svg:`<svg viewBox="0 0 40 44"><path d="M24 2 l-3 16" stroke="#58bfb2" stroke-width="2.4" stroke-linecap="round"/><path d="M9 12 h22 l-3 30 h-16 z" fill="#ffffff" opacity=".35"/><path d="M10.6 18 h18.8 l-2.4 23 h-14 z" fill="#f6a03c"/><path d="M10.6 18 h18.8" stroke="#ffd27a" stroke-width="2"/><circle cx="30" cy="13" r="6" fill="#ffd27a"/><circle cx="30" cy="13" r="4" fill="#f6a03c" opacity=".55"/></svg>` },
+  tea:    { name:"녹차", svg:`<svg viewBox="0 0 40 44"><g class="steam" fill="none" stroke="#f3ead8" stroke-width="1.6" stroke-linecap="round" opacity=".7"><path d="M16 16 q-3 -4 0 -7 q3 -3 0 -6"/><path d="M24 16 q-3 -4 0 -7 q3 -3 0 -6"/></g><path d="M8 20 h24 l-2.5 16 q-1 6 -7 6 h-5 q-6 0 -7 -6 z" fill="#7aa06a"/><ellipse cx="20" cy="20.5" rx="12" ry="2.8" fill="#b9d98a"/><path d="M9.5 28 h21" stroke="#5e8a5a" stroke-width="1.5"/><ellipse cx="20" cy="42.5" rx="9" ry="1.6" fill="#2b2335" opacity=".35"/></svg>` }
+};
+let myDrink = "";
+function setDrink(el, id){
+  let d = el.querySelector(".drink");
+  if (!DRINKS[id]){ if (d) d.remove(); return; }
+  if (d && d.dataset.id === id) return;
+  if (!d){ d = document.createElement("span"); d.className = "drink"; el.appendChild(d); }
+  d.dataset.id = id; d.innerHTML = DRINKS[id].svg;
+}
+const drinkRow = $("drinkRow");
+for (const [id, dk] of Object.entries(DRINKS).concat([["", { name:"치우기" }]])){
+  const b = document.createElement("button");
+  b.className = "btn"; b.type = "button"; b.setAttribute("aria-pressed", "false");
+  b.innerHTML = id ? `<span class="dicon">${dk.svg}</span>${dk.name}` : dk.name;
+  b.addEventListener("click", () => {
+    if (id && !seated){ if (!myAvatar){ openPicker(true); return; } setSeated(true); }
+    myDrink = id;
+    for (const x of drinkRow.children) x.setAttribute("aria-pressed", String(x === b && !!id));
+    setDrink(meEl, id);
+    if (id) say(A.star, id === "coffee" ? "커피 향 좋다." : id === "juice" ? "상큼하겠다." : "따뜻하겠다.", 2500);
+    pushPresence();
+  });
+  drinkRow.appendChild(b);
 }
 
 
@@ -853,7 +896,7 @@ renderPiles();
 let room = null;
 function pushPresence(){
   if (!room) return;
-  room.presence({ seated, emoji: myEmoji, emojiAt: myEmojiAt, avatar: myAvatar ? myAvatar.id : "" }).catch(() => {});
+  room.presence({ seated, emoji: myEmoji, emojiAt: myEmojiAt, avatar: myAvatar ? myAvatar.id : "", drink: seated ? myDrink : "" }).catch(() => {});
 }
 function c_sync(el){ if (el._cushion) el._cushion.hidden = !el.hidden && el.dataset.av !== ""; }
 function renderPeers(peers){
@@ -864,6 +907,7 @@ function renderPeers(peers){
     c_sync(el);
     if (p) dressActor(el, avatarById(String(p.presence.avatar || "")), "8.5%", person(el.dataset.fallback, false));
     c_sync(el);
+    setDrink(el, p ? String(p.presence.drink || "") : "");
     if (p && p.presence.emoji && Date.now() - (+p.presence.emojiAt || 0) < 30000) say(el, String(p.presence.emoji).slice(0, 4), 8000);
   });
   const total = peers.length || 1;
