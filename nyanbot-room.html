@@ -233,7 +233,7 @@ button.cat:focus-visible{outline:2px dashed var(--amber);outline-offset:4px;bord
       <h2 id="hMe">내 자리</h2>
       <div class="row">
         <button class="btn primary" id="seatBtn" type="button">방석에 앉기</button>
-        <span class="hint" id="seatHint">가만히 있을수록 냥이봇들이 다가와요.</span>
+        <span class="hint" id="seatHint">가만히 있을수록 형님들이 다가와요.</span>
       </div>
       <div>
         <div class="lbl">말 대신 표정 하나</div>
@@ -273,10 +273,10 @@ const CATS = {
 };
 const BOTS = ["ruric","pureum"];
 const STAGES = [
-  { at:0,   name:"멀리서 힐끔" },
-  { at:60,  name:"슬금슬금 냄새 맡는 중" },
-  { at:300, name:"옆에 철퍼덕" },
-  { at:900, name:"무릎 위에서 골골송" }
+  { at:0,   name:"멀리서 째려보는 중" },
+  { at:60,  name:"관심 없는 척 다가오는 중" },
+  { at:300, name:"옆에 툭 앉음 (우연이라고 함)" },
+  { at:900, name:"몰래 골골거리는 중" }
 ];
 const SPOT = {
   desk:   { ruric:{x:735,y:404}, pureum:{x:880,y:472} },
@@ -398,11 +398,34 @@ function log(text){
   while (logEl.children.length > 6) logEl.lastChild.remove();
 }
 const WORK_LINES = {
-  ruric: ["숏츠 콘티 3컷 그리는 중", "썸네일 문구 고민 중… '오늘도 참았다'?", "릴스 훅 아이디어 5개 물어옴", "캡션 다듬다가 하품함", "다음 화 스토리보드 정리 중"],
-  pureum: ["슬랙 알림 12개 정리 완료", "자동화 워크플로 점검 중", "배포 버튼 누름… 두근", "버그 하나 잡음", "서버 로그 보다가 꾸벅 졸음"]
+  ruric: ["숏츠 콘티 3컷 뽑는 중. 내가 하면 다 뜬다", "썸네일 문구… '오늘도 참았다'. 이거면 됐다", "릴스 훅 5개 물어옴. 칭찬은 됐다", "캡션 다듬는 중. 말 걸지 마라", "다음 화 스토리보드. 기대는 해도 된다"],
+  pureum: ["…슬랙 알림 12개 정리", "…자동화 점검. 문제없다", "…배포. 떨린 거 아니다", "…버그 하나 잡음. 별거 아니다", "…로그 보는 중. 조는 거 아니다"]
 };
-const START_WORK = { ruric:"루릭: 기획 회의 들어감. 이따 봐", pureum:"푸름이: 알림 왔다, 잠깐 일하고 올게" };
-const END_WORK   = { ruric:"루릭: 일 끝! 놀러 간다", pureum:"푸름이: 커밋 완료. 이제 쉰다" };
+const START_WORK = { ruric:"루릭: 일 있어서 간다. 기다리든가 말든가", pureum:"푸름이: …알림. 잠깐 간다" };
+const END_WORK   = { ruric:"루릭: 일 끝. 딱히 보고 싶어서 오는 건 아니다", pureum:"푸름이: 커밋 끝. …심심해서 내려가는 거다" };
+/* 츤데레 건달 말투: 루릭은 말 많은 형님, 푸름이는 과묵한 형님 */
+const TSUN = {
+  ruric: {
+    pet:   [["어이, 손 조심해라", "뭘 봐. 처음 보냐", "…누구냐 넌"], ["킁. 냄새는 나쁘지 않네", "딱히 궁금해서 온 거 아니다"], ["…옆자리가 따뜻해서 그런 거다", "착각하지 마라. 그냥 여기 눕고 싶었다"], ["…오늘만이다. 골골.", "아무한테도 말하지 마라. 골골골", "너 좀 괜찮은 놈이네"]],
+    up:    ["…뭐", "킁. 뭐냐 이 냄새", "자리 좀 빌린다", "…골골. 들었으면 잊어라"],
+    work:  "지금 바쁘다. 이따 와라",
+    sulk:  "됐다. 간다.",
+    sulking: "…말 걸지 마라",
+    stand: "앉아라. 그럼 생각은 해 보지",
+    churu: ["…뭐, 받아는 줄게", "다음엔 두 개 가져와라", "츄르로 날 사겠다고? …일단 먹는다"],
+    purr:  "골골"
+  },
+  pureum: {
+    pet:   [["…", "건들지 마라", "…뭐야"], ["…흠", "킁. …괜찮네"], ["…자리 좀 쓴다", "…따뜻하네. 우연이다"], ["…골골. 못 들은 걸로 해", "…가지 마라. 아니, 됐다", "…오늘은 봐준다"]],
+    up:    ["…", "킁", "…앉는다", "…골골"],
+    work:  "…코딩 중. 나중에",
+    sulk:  "…그만. 간다.",
+    sulking: "…",
+    stand: "…앉으면 간다",
+    churu: ["…잘 먹을게. 착각은 하지 마", "…두고 가. 나중에 먹는다", "…고맙다. 한 번만 말한다"],
+    purr:  "…골골"
+  }
+};
 
 /* ---------- state ---------- */
 let speed = 1, simTime = 0, seated = false;
@@ -500,7 +523,7 @@ function setSeated(v){
   meEl.hidden = !v; seatCta.hidden = v;
   $("seatBtn").textContent = v ? "일어나기" : "방석에 앉기";
   $("seatBtn").classList.toggle("primary", !v);
-  $("seatHint").textContent = v ? "그대로 쉬세요. 쓰다듬기는 살살, 너무 자주 하면 도망가요." : "가만히 있을수록 냥이봇들이 다가와요.";
+  $("seatHint").textContent = v ? "그대로 쉬세요. 형님들은 살살 대해야 해요. 자꾸 만지면 삐져요." : "가만히 있을수록 형님들이 다가와요.";
   if (v){
     say(A.star, visits > 1 ? "또 왔구나." : "어서 와.", 4000);
     floatUp(A.star, "♥");
@@ -540,19 +563,20 @@ function pet(id){
     return;
   }
   const b = bots[id], now = Date.now();
-  if (b.mode === "work"){ say(actor, "지금 일하는 중이야!"); return; }
-  if (now < b.sulkUntil){ say(actor, "…흥"); return; }
+  const T = TSUN[id];
+  if (b.mode === "work"){ say(actor, T.work); return; }
+  if (now < b.sulkUntil){ say(actor, T.sulking); return; }
   b.petTimes = b.petTimes.filter(t => now - t < 8000); b.petTimes.push(now);
   if (b.petTimes.length >= 3){
     b.sulkUntil = now + 20000; b.petTimes = [];
     intimacy[id] = Math.max(0, intimacy[id] - 120);
-    say(actor, "너무 만져! 흥!");
-    log(`${CATS[id].name}이(가) 삐져서 구석으로 갔어요. 조금 기다려 주세요`);
+    say(actor, T.sulk);
+    log(`${CATS[id].name}: (삐져서 구석으로 감. 조금 기다려 주세요)`);
     return;
   }
-  if (!seated){ say(actor, "방석에 앉으면 갈게"); return; }
+  if (!seated){ say(actor, T.stand); return; }
   const st = stageOf(intimacy[id]);
-  say(actor, ["…누구?", "킁킁", "골골…", "골골골골♪"][st]);
+  say(actor, pick(T.pet[st]));
   if (st >= 1) floatUp(actor, "♥");
 }
 
@@ -585,7 +609,7 @@ function giveChuru(id){
   store.set("churu", myChuru);
   renderPiles();
   const actor = A[id];
-  say(actor, id === "star" ? "고마워." : "냠!"); floatUp(actor, "♥");
+  say(actor, id === "star" ? "고마워." : pick(TSUN[id].churu)); floatUp(actor, "♥");
   log(`${CATS[id].name} 앞에 츄르 하나 두고 갔어요`);
   saveChuru();
 }
@@ -696,13 +720,13 @@ function apply(id){
   if (seated && b.mode === "rest"){
     const st = stageOf(intimacy[id]);
     if (st !== lastStage[id] && lastStage[id] !== -1 && st > lastStage[id]){
-      say(el, ["힐끔", "킁킁…", "철퍼덕", "골골골♪"][st], 3500);
+      say(el, TSUN[id].up[st], 3500);
       log(`${CATS[id].name}: ${STAGES[st].name}`);
     }
     lastStage[id] = st;
   }
   if (t.key === "lap" && Math.random() < .03) floatUp(el, "♪", "note");
-  else if (t.content && CATS[id].img && Math.random() < .012) floatUp(el, "골골", "note");
+  else if (t.content && CATS[id].img && Math.random() < .012) floatUp(el, TSUN[id].purr, "note");
 }
 
 /* ---------- cards ---------- */
@@ -766,7 +790,7 @@ function tick(){
   }
   renderCards();
 }
-log("작업실 불이 켜졌어요. 푸름이는 일하는 중, 루릭은 뒹구는 중");
+log("작업실 불이 켜졌어요. 푸름이 형님은 일하는 중, 루릭 형님은 어슬렁거리는 중");
 tick();
 setInterval(tick, 250);
 })();
