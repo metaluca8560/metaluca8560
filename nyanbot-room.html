@@ -109,6 +109,7 @@ button.cat:focus-visible{outline:2px dashed var(--amber);outline-offset:4px;bord
 #drinkRow .btn[aria-pressed="true"]{border-color:var(--amber);background:#3a3045}
 .btn.comp{display:inline-flex;align-items:center;gap:6px;padding:4px 12px 4px 6px}
 .btn.comp img{height:28px;width:auto}
+.prop{position:absolute;height:auto;max-width:none;pointer-events:none;filter:drop-shadow(0 6px 6px rgba(20,14,28,.45))}
 .pile{position:absolute;transform:translate(-50%,-100%);display:flex;align-items:end;gap:1px;pointer-events:none}
 .pile i{display:block;width:clamp(3px,.55vw,6px);height:clamp(14px,2.4vw,24px);border-radius:2px;background:linear-gradient(#f6d27a 0 30%,#e9a64d 30%);transform:rotate(var(--r,0deg))}
 .pile b{font-family:var(--hand);font-weight:700;font-size:clamp(10px,1.5vw,14px);color:var(--cream);margin-left:4px;line-height:1;text-shadow:0 1px 2px #0008}
@@ -229,18 +230,6 @@ button.cat:focus-visible{outline:2px dashed var(--amber);outline-offset:4px;bord
         <line id="mHand" x1="0" y1="0" x2="0" y2="-27" stroke="#2b2335" stroke-width="2.5" stroke-linecap="round"/>
         <circle r="3" fill="#e98a8f"/>
       </g>
-      <!-- shelf with books -->
-      <rect x="610" y="232" width="190" height="8" rx="2" fill="#8a6a55"/>
-      <g>
-        <rect x="622" y="186" width="16" height="46" fill="#58bfb2"/>
-        <rect x="640" y="194" width="13" height="38" fill="#e98a8f"/>
-        <rect x="655" y="182" width="18" height="50" fill="#f2b65e"/>
-        <rect x="676" y="198" width="12" height="34" fill="#8b9bd0"/>
-        <rect x="694" y="190" width="40" height="42" rx="20" fill="#5e8a5a"/>
-        <rect x="704" y="206" width="20" height="26" fill="#9c6b4f"/>
-        <rect x="748" y="200" width="30" height="32" rx="4" fill="#f3ead8" opacity=".85"/>
-        <text x="763" y="222" font-family="Jua, sans-serif" font-size="13" text-anchor="middle" fill="#2b2335">냥</text>
-      </g>
       <!-- floor -->
       <rect y="430" width="1000" height="190" fill="#5a3f35"/>
       <g stroke="#664a3e" stroke-width="2">
@@ -264,27 +253,17 @@ button.cat:focus-visible{outline:2px dashed var(--amber);outline-offset:4px;bord
       <rect x="690" y="404" width="290" height="16" rx="3" fill="#7a5844"/>
       <rect x="704" y="420" width="12" height="96" fill="#5f4334"/>
       <rect x="952" y="420" width="12" height="96" fill="#5f4334"/>
-      <rect x="800" y="306" width="140" height="88" rx="7" fill="#22202e"/>
-      <rect x="808" y="314" width="124" height="70" rx="3" fill="#1d3a42"/>
-      <g id="screenLines" stroke-linecap="round" stroke-width="4">
-        <line x1="818" y1="328" x2="868" y2="328" stroke="#58bfb2"/>
-        <line x1="826" y1="342" x2="900" y2="342" stroke="#f2b65e" class="screenline"/>
-        <line x1="826" y1="356" x2="884" y2="356" stroke="#e98a8f"/>
-        <line x1="818" y1="370" x2="852" y2="370" stroke="#58bfb2" class="screenline"/>
-      </g>
-      <rect x="862" y="394" width="16" height="10" fill="#22202e"/>
-      <rect x="806" y="398" width="66" height="7" rx="2" fill="#3a3348"/>
       <!-- mug -->
       <rect x="748" y="382" width="20" height="22" rx="4" fill="#f3ead8"/>
       <path d="M768 388 q8 0 8 7 q0 6 -8 6" fill="none" stroke="#f3ead8" stroke-width="3"/>
       <!-- chair -->
       <rect x="868" y="430" width="16" height="70" fill="#4a3a5c"/>
       <rect x="838" y="470" width="80" height="12" rx="5" fill="#5a4870"/>
-      <!-- plant -->
-      <path d="M40 470 l14 -40 l14 40 z" fill="#4c7a5a"/><path d="M26 470 c4 -30 24 -54 28 -54 c0 18 -8 40 -28 54z" fill="#5e8a5a"/>
-      <rect x="28" y="466" width="40" height="34" rx="5" fill="#9c6b4f"/>
     </svg>
     <figure class="frame" title="미남이·팡이·푸름이"><img id="groupImg" alt="미남이, 팡이, 푸름이가 어깨동무한 사진"></figure>
+    <img class="prop" src="nyanbot/props/shelf.webp" alt="" style="left:59%;top:23.4%;width:23%;z-index:2">
+    <img class="prop" src="nyanbot/props/monitor.webp" alt="" style="left:78.5%;top:43.4%;width:15%;z-index:400">
+    <img class="prop" src="nyanbot/props/plant.webp" alt="" style="left:0.5%;top:58.9%;width:11%;z-index:505">
     <div id="actors"></div>
   </div>
 
