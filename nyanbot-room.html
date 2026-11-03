@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+<title>냥이봇 사랑방</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&family=Gaegu:wght@400;700&display=swap">
+<style>
+/* Layout: one lamp-lit room as the stage, everything you can do sits on a quiet panel beneath it */
+:root{
+  --ink:#1c1826;        /* page ground, the dark around the room */
+  --panel:#262131;      /* control surfaces */
+  --line:#3a3348;       /* hairlines */
+  --cream:#f3ead8;      /* main text */
+  --muted:#b3a9bd;      /* secondary text */
+  --amber:#f2b65e;      /* lamp light, the one accent */
+  --teal:#58bfb2;       /* progress, 루릭's eye colour */
+  --rose:#e98a8f;       /* hearts, sulking */
+  --display:"Jua","Gowun Dodum",system-ui,sans-serif;
+  --body:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --hand:"Gaegu","Gowun Dodum",system-ui,sans-serif;
+  color-scheme:dark;
+}
+html,body{background:var(--ink);color:var(--cream)}
+body{font-family:var(--body);font-size:15px;line-height:1.6;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:8px 16px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(26px,4.6vw,38px);line-height:1.1;margin:0;letter-spacing:.01em;text-wrap:balance}
+h1 small{display:block;font-family:var(--body);font-size:14px;color:var(--muted);margin-top:6px;letter-spacing:0}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--muted);white-space:nowrap}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 3px rgba(88,191,178,.18)}
+
+/* the room */
+.scene{position:relative;width:100%;aspect-ratio:1000/620;max-width:100%;border-radius:14px;overflow:hidden;background:#3b3552;box-shadow:0 18px 50px -20px rgba(0,0,0,.7);user-select:none;-webkit-user-select:none}
+.scene>svg.bg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.actor{position:absolute;transform:translate(-50%,-100%);transition:left 3.2s ease-in-out,top 3.2s ease-in-out,width .6s ease;line-height:0}
+.actor svg{width:100%;height:auto;display:block;overflow:visible}
+.actor.walking .bodywrap{animation:bob .45s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-4%)}}
+button.cat{all:unset;cursor:pointer;display:block;width:100%;-webkit-tap-highlight-color:transparent}
+button.cat:focus-visible{outline:2px dashed var(--amber);outline-offset:4px;border-radius:8px}
+.tail{transform-origin:70px 100px;animation:swish 3.6s ease-in-out infinite}
+.loaf .tail{transform-origin:112px 72px;animation-duration:5s}
+@keyframes swish{0%,100%{transform:rotate(0)}50%{transform:rotate(-12deg)}}
+.eo{transform-box:fill-box;transform-origin:center;animation:blink 5.5s infinite}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+.ec{display:none}
+.content .ec,.slowblink .ec{display:inline}
+.content .eo,.slowblink .eo{display:none}
+.look{transition:transform 1.2s ease}
+.gaze .look{transform:translate(-3px,-2.5px)}
+.gaze .headg{transition:transform 1.2s ease}
+
+.bubble{position:absolute;left:50%;bottom:calc(100% + 4px);transform:translateX(-50%);background:var(--cream);color:#2b2335;font-family:var(--hand);font-weight:700;font-size:clamp(12px,1.9vw,18px);line-height:1.2;padding:4px 10px;border-radius:12px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .3s;z-index:2}
+.bubble.on{opacity:1}
+.bubble::after{content:"";position:absolute;left:50%;top:100%;border:6px solid transparent;border-top-color:var(--cream);transform:translateX(-50%)}
+.float{position:absolute;left:50%;bottom:80%;font-size:clamp(12px,2vw,20px);color:var(--rose);pointer-events:none;animation:up 1.8s ease-out forwards;line-height:1;font-family:var(--hand);font-weight:700}
+.float.note{color:var(--amber)}
+@keyframes up{from{transform:translate(-50%,0);opacity:1}to{transform:translate(calc(-50% + var(--dx,0px)),-60px);opacity:0}}
+.pile{position:absolute;transform:translate(-50%,-100%);display:flex;align-items:end;gap:1px;pointer-events:none}
+.pile i{display:block;width:clamp(3px,.55vw,6px);height:clamp(14px,2.4vw,24px);border-radius:2px;background:linear-gradient(#f6d27a 0 30%,#e9a64d 30%);transform:rotate(var(--r,0deg))}
+.pile b{font-family:var(--hand);font-weight:700;font-size:clamp(10px,1.5vw,14px);color:var(--cream);margin-left:4px;line-height:1;text-shadow:0 1px 2px #0008}
+.seatcta{position:absolute;left:50%;top:76%;transform:translate(-50%,-50%);z-index:900}
+.btn{font:inherit;font-family:var(--body);cursor:pointer;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--cream);padding:8px 16px;font-size:14px;line-height:1.2;transition:background .2s,border-color .2s}
+.btn:hover{border-color:var(--amber)}
+.btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.btn.primary{background:var(--amber);color:#2b2335;border-color:var(--amber);font-weight:700}
+.btn.primary:hover{background:#f6c57c}
+.seatcta .btn{font-size:clamp(13px,2vw,16px);padding:10px 20px;box-shadow:0 8px 24px -8px #000a}
+.mylabel{position:absolute;transform:translate(-50%,0);font-size:clamp(10px,1.4vw,13px);color:var(--muted);white-space:nowrap;pointer-events:none}
+
+/* panel */
+.panel{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:720px){.panel{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.card h2{font-family:var(--display);font-weight:400;font-size:18px;margin:0;letter-spacing:.01em}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lbl{font-size:12px;color:var(--muted);letter-spacing:.06em}
+.cats{display:flex;flex-direction:column;gap:12px}
+.cat-line{display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:center}
+.cat-line .face{width:40px;height:40px}
+.cat-line .meta{min-width:0}
+.cat-line .top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.cat-line .nm{font-weight:700}
+.cat-line .role{font-size:12px;color:var(--muted)}
+.state{font-size:11px;padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.state.work{color:#9fd4ff;border-color:#35506a}
+.state.rest{color:#bfe8c9;border-color:#3d5a46}
+.state.sulk{color:var(--rose);border-color:#6a3940}
+.state.home{color:var(--amber);border-color:#6a5432}
+.stage{font-size:13px;color:var(--cream)}
+.bar{height:6px;background:#1c1826;border-radius:99px;overflow:hidden;margin-top:4px}
+.bar span{display:block;height:100%;background:var(--teal);border-radius:99px;transition:width .5s}
+.bar.gold span{background:var(--amber)}
+.hint{font-size:12px;color:var(--muted)}
+.log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-family:var(--hand);font-size:17px;line-height:1.3}
+.log li{display:grid;grid-template-columns:44px 1fr;gap:8px;min-width:0}
+.log time{font-family:var(--body);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:2px}
+.emo{font-size:18px;padding:6px 10px;line-height:1}
+.emo[aria-pressed="true"]{border-color:var(--amber);background:#3a3045}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer}
+.toggle input{accent-color:var(--amber);width:16px;height:16px}
+.note{font-size:12px;color:var(--muted)}
+.wide{grid-column:1/-1}
+@media (prefers-reduced-motion:reduce){
+  .actor{transition:none}
+  .tail,.eo,.actor.walking .bodywrap,.twinkle{animation:none}
+  .float{animation-duration:.01s}
+}
+.twinkle{animation:tw 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes tw{0%,100%{opacity:.55;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+.screenline{animation:type 1.6s steps(6) infinite}
+@keyframes type{0%{opacity:.3}50%{opacity:1}100%{opacity:.3}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>냥이봇 사랑방<small>집사 작업실에서 루릭·푸름이·창가 냥이와 같이 멍때리는 방</small></h1>
+    <span class="chip" id="who"><span class="dot"></span><span id="whoText">혼자만의 시간</span></span>
+  </header>
+
+  <div class="scene" id="scene">
+    <svg class="bg" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop id="sky1" offset="0" stop-color="#1b2347"/>
+          <stop id="sky2" offset="1" stop-color="#3a3768"/>
+        </linearGradient>
+        <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stop-color="#f2b65e" stop-opacity=".42"/>
+          <stop offset="1" stop-color="#f2b65e" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="screenGlow" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stop-color="#58bfb2" stop-opacity=".22"/>
+          <stop offset="1" stop-color="#58bfb2" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <!-- wall -->
+      <rect width="1000" height="430" fill="#3b3552"/>
+      <rect y="372" width="1000" height="58" fill="#332d47"/>
+      <rect y="370" width="1000" height="4" fill="#4a4262"/>
+      <!-- lamp glow on wall -->
+      <circle cx="390" cy="210" r="230" fill="url(#glow)"/>
+      <!-- window -->
+      <rect x="66" y="74" width="238" height="252" rx="10" fill="#2a2540"/>
+      <rect x="80" y="88" width="210" height="224" rx="4" fill="url(#sky)"/>
+      <g id="stars"></g>
+      <path id="bigStar" class="twinkle" d="M244 128 l3 7 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#ffe9a8"/>
+      <rect x="183" y="88" width="5" height="224" fill="#2a2540"/>
+      <rect x="80" y="196" width="210" height="5" fill="#2a2540"/>
+      <path d="M70 80 C 92 160, 86 250, 98 318 L 70 318 Z" fill="#7a5b6e" opacity=".9"/>
+      <path d="M300 80 C 278 160, 284 250, 272 318 L 300 318 Z" fill="#7a5b6e" opacity=".9"/>
+      <rect x="50" y="316" width="270" height="16" rx="3" fill="#8a6a55"/>
+      <rect x="56" y="332" width="258" height="6" fill="#6d5242"/>
+      <!-- clock -->
+      <g transform="translate(540 140)">
+        <circle r="40" fill="#f3ead8"/>
+        <circle r="40" fill="none" stroke="#6d5242" stroke-width="6"/>
+        <g fill="#6d5242"><rect x="-1.5" y="-33" width="3" height="7"/><rect x="-1.5" y="26" width="3" height="7"/><rect x="26" y="-1.5" width="7" height="3"/><rect x="-33" y="-1.5" width="7" height="3"/></g>
+        <line id="hHand" x1="0" y1="0" x2="0" y2="-18" stroke="#2b2335" stroke-width="4" stroke-linecap="round"/>
+        <line id="mHand" x1="0" y1="0" x2="0" y2="-27" stroke="#2b2335" stroke-width="2.5" stroke-linecap="round"/>
+        <circle r="3" fill="#e98a8f"/>
+      </g>
+      <!-- shelf with books -->
+      <rect x="610" y="232" width="190" height="8" rx="2" fill="#8a6a55"/>
+      <g>
+        <rect x="622" y="186" width="16" height="46" fill="#58bfb2"/>
+        <rect x="640" y="194" width="13" height="38" fill="#e98a8f"/>
+        <rect x="655" y="182" width="18" height="50" fill="#f2b65e"/>
+        <rect x="676" y="198" width="12" height="34" fill="#8b9bd0"/>
+        <rect x="694" y="190" width="40" height="42" rx="20" fill="#5e8a5a"/>
+        <rect x="704" y="206" width="20" height="26" fill="#9c6b4f"/>
+        <rect x="748" y="200" width="30" height="32" rx="4" fill="#f3ead8" opacity=".85"/>
+        <text x="763" y="222" font-family="Jua, sans-serif" font-size="13" text-anchor="middle" fill="#2b2335">냥</text>
+      </g>
+      <!-- floor -->
+      <rect y="430" width="1000" height="190" fill="#5a3f35"/>
+      <g stroke="#664a3e" stroke-width="2">
+        <line x1="0" y1="466" x2="1000" y2="466"/><line x1="0" y1="508" x2="1000" y2="508"/><line x1="0" y1="556" x2="1000" y2="556"/><line x1="0" y1="610" x2="1000" y2="610"/>
+        <line x1="180" y1="430" x2="180" y2="466"/><line x1="520" y1="430" x2="520" y2="466"/><line x1="860" y1="430" x2="860" y2="466"/>
+        <line x1="90" y1="466" x2="90" y2="508"/><line x1="410" y1="466" x2="410" y2="508"/><line x1="740" y1="466" x2="740" y2="508"/>
+        <line x1="260" y1="508" x2="260" y2="556"/><line x1="610" y1="508" x2="610" y2="556"/><line x1="950" y1="508" x2="950" y2="556"/>
+        <line x1="140" y1="556" x2="140" y2="610"/><line x1="480" y1="556" x2="480" y2="610"/><line x1="820" y1="556" x2="820" y2="610"/>
+      </g>
+      <!-- floor lamp -->
+      <ellipse cx="390" cy="452" rx="34" ry="7" fill="#2b2335" opacity=".5"/>
+      <rect x="386" y="190" width="7" height="262" fill="#2b2335"/>
+      <ellipse cx="390" cy="450" rx="26" ry="6" fill="#2b2335"/>
+      <path d="M350 196 L 430 196 L 414 140 L 366 140 Z" fill="#f2c98a"/>
+      <path d="M350 196 L 430 196" stroke="#d9a15a" stroke-width="3"/>
+      <!-- rug -->
+      <ellipse cx="500" cy="560" rx="320" ry="60" fill="#7d4f5f"/>
+      <ellipse cx="500" cy="560" rx="290" ry="48" fill="none" stroke="#a46d7d" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+      <!-- desk -->
+      <circle cx="865" cy="340" r="120" fill="url(#screenGlow)"/>
+      <rect x="690" y="404" width="290" height="16" rx="3" fill="#7a5844"/>
+      <rect x="704" y="420" width="12" height="96" fill="#5f4334"/>
+      <rect x="952" y="420" width="12" height="96" fill="#5f4334"/>
+      <rect x="800" y="306" width="140" height="88" rx="7" fill="#22202e"/>
+      <rect x="808" y="314" width="124" height="70" rx="3" fill="#1d3a42"/>
+      <g id="screenLines" stroke-linecap="round" stroke-width="4">
+        <line x1="818" y1="328" x2="868" y2="328" stroke="#58bfb2"/>
+        <line x1="826" y1="342" x2="900" y2="342" stroke="#f2b65e" class="screenline"/>
+        <line x1="826" y1="356" x2="884" y2="356" stroke="#e98a8f"/>
+        <line x1="818" y1="370" x2="852" y2="370" stroke="#58bfb2" class="screenline"/>
+      </g>
+      <rect x="862" y="394" width="16" height="10" fill="#22202e"/>
+      <rect x="806" y="398" width="66" height="7" rx="2" fill="#3a3348"/>
+      <!-- mug -->
+      <rect x="748" y="382" width="20" height="22" rx="4" fill="#f3ead8"/>
+      <path d="M768 388 q8 0 8 7 q0 6 -8 6" fill="none" stroke="#f3ead8" stroke-width="3"/>
+      <!-- chair -->
+      <rect x="868" y="430" width="16" height="70" fill="#4a3a5c"/>
+      <rect x="838" y="470" width="80" height="12" rx="5" fill="#5a4870"/>
+      <!-- plant -->
+      <path d="M40 470 l14 -40 l14 40 z" fill="#4c7a5a"/><path d="M26 470 c4 -30 24 -54 28 -54 c0 18 -8 40 -28 54z" fill="#5e8a5a"/>
+      <rect x="28" y="466" width="40" height="34" rx="5" fill="#9c6b4f"/>
+    </svg>
+    <div id="actors"></div>
+  </div>
+
+  <div class="panel">
+    <section class="card" aria-labelledby="hMe">
+      <h2 id="hMe">내 자리</h2>
+      <div class="row">
+        <button class="btn primary" id="seatBtn" type="button">방석에 앉기</button>
+        <span class="hint" id="seatHint">가만히 있을수록 냥이봇들이 다가와요.</span>
+      </div>
+      <div>
+        <div class="lbl">말 대신 표정 하나</div>
+        <div class="row" id="emoRow" style="margin-top:6px"></div>
+      </div>
+      <div>
+        <div class="lbl">나갈 때 츄르 하나 두고 가기</div>
+        <div class="row" id="churuRow" style="margin-top:6px"></div>
+        <p class="note" id="churuNote" style="margin:6px 0 0"></p>
+      </div>
+      <label class="toggle"><input type="checkbox" id="fast"> 미리보기: 시간 20배 빠르게</label>
+    </section>
+
+    <section class="card" aria-labelledby="hCats">
+      <h2 id="hCats">친한 정도</h2>
+      <div class="cats" id="catCards"></div>
+    </section>
+
+    <section class="card wide" aria-labelledby="hLog">
+      <h2 id="hLog">작업실 로그</h2>
+      <ul class="log" id="log"></ul>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+"use strict";
+/* ---------- the cats ----------
+   창가 냥이: 친구분 고양이 자리. 이름·털색·눈색을 알려주시면 여기만 바꾸면 돼요. */
+const CATS = {
+  ruric:  { name:"루릭",   role:"콘텐츠 기획", type:"sphynx", coat:"#f0d3c2", ear:"#efa0a4", eye:"#2bb3a6", nose:"#d9787a", top:"#4c3d63", line:"#c9a594" },
+  pureum: { name:"푸름이", role:"수석 개발",   type:"blue",   coat:"#8b9cae", ear:"#6c7f92", eye:"#7cc84f", nose:"#5f6b76", top:"#f4f1ea", line:"#6c7f92", muzzle:"#a9b8c6" },
+  star:   { name:"창가 냥이", role:"창가 담당", type:"window", coat:"#f3ece2", ear:"#e9b9b0", eye:"#c99a3e", nose:"#e39a9a", line:"#cfc2b2", muzzle:"#fffaf3" }
+};
+const BOTS = ["ruric","pureum"];
+const STAGES = [
+  { at:0,   name:"멀리서 힐끔" },
+  { at:60,  name:"슬금슬금 냄새 맡는 중" },
+  { at:300, name:"옆에 철퍼덕" },
+  { at:900, name:"무릎 위에서 골골송" }
+];
+const SPOT = {
+  desk:   { ruric:{x:735,y:404}, pureum:{x:880,y:472} },
+  sulk:   { ruric:{x:120,y:600}, pureum:{x:940,y:600} },
+  s0:     { ruric:{x:285,y:520}, pureum:{x:715,y:520} },
+  s1:     { ruric:{x:418,y:566}, pureum:{x:582,y:566} },
+  s2:     { ruric:{x:400,y:598}, pureum:{x:600,y:598} },
+  lap:    { x:500, y:606 },
+  roam:   [{x:250,y:500},{x:330,y:540},{x:470,y:520},{x:620,y:540},{x:700,y:500},{x:560,y:590},{x:160,y:560}],
+  sill:   { x:150, y:318 },
+  me:     { x:500, y:600 },
+  others: [{x:270,y:590},{x:730,y:590},{x:150,y:598},{x:850,y:598}],
+  piles:  { star:{x:262,y:318}, ruric:{x:650,y:612}, pureum:{x:700,y:612} }
+};
+
+/* ---------- drawing ---------- */
+const S = 'stroke="#2b2335" stroke-opacity=".3" stroke-width="1"';
+function head(c){
+  const big = c.type === "sphynx";
+  const ears = big
+    ? `<path d="M-16 -6 L-24 -38 L-2 -17 Z" fill="${c.coat}" ${S}/><path d="M-14.5 -9 L-20 -31 L-5 -17 Z" fill="${c.ear}"/>
+       <path d="M16 -6 L24 -38 L2 -17 Z" fill="${c.coat}" ${S}/><path d="M14.5 -9 L20 -31 L5 -17 Z" fill="${c.ear}"/>`
+    : `<path d="M-18 -7 L-17 -31 L-3 -18 Z" fill="${c.coat}" ${S}/><path d="M-15.5 -11 L-15 -25 L-7 -18 Z" fill="${c.ear}"/>
+       <path d="M18 -7 L17 -31 L3 -18 Z" fill="${c.coat}" ${S}/><path d="M15.5 -11 L15 -25 L7 -18 Z" fill="${c.ear}"/>`;
+  const muzzle = c.muzzle ? `<ellipse cx="0" cy="8" rx="9.5" ry="6.5" fill="${c.muzzle}"/>` : "";
+  const wrinkles = big ? `<path d="M-6 -13 q6 -3 12 0 M-4 -9 q4 -2 8 0" stroke="${c.line}" stroke-width="1.2" fill="none" stroke-linecap="round"/>` : "";
+  return `${ears}<ellipse rx="21" ry="19" fill="${c.coat}" ${S}/>${muzzle}${wrinkles}
+    <g class="look">
+      <g class="eo"><ellipse cx="-8" cy="1" rx="3.6" ry="4.1" fill="${c.eye}"/><ellipse cx="-8" cy="1.3" rx="1.2" ry="3" fill="#1f2430"/><circle cx="-7" cy="-.6" r="1" fill="#fff"/>
+        <ellipse cx="8" cy="1" rx="3.6" ry="4.1" fill="${c.eye}"/><ellipse cx="8" cy="1.3" rx="1.2" ry="3" fill="#1f2430"/><circle cx="9" cy="-.6" r="1" fill="#fff"/></g>
+      <path class="ec" d="M-11.5 1.5 q3.5 3.2 7 0 M4.5 1.5 q3.5 3.2 7 0" stroke="#4a3b3f" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    </g>
+    <path d="M-2.5 6 h5 l-2.5 2.8 Z" fill="${c.nose}"/>
+    <path d="M0 8.8 v1.4 M0 10.2 q-2.4 2 -4.6 .4 M0 10.2 q2.4 2 4.6 .4" stroke="#6b5552" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+    <path d="M-12 5 l-11 -1.5 M-12 8 l-11 2 M12 5 l11 -1.5 M12 8 l11 2" stroke="#fff" stroke-opacity=".55" stroke-width=".9" stroke-linecap="round"/>
+    <circle cx="-13.5" cy="8" r="2.6" fill="#f4a3ad" opacity=".55"/><circle cx="13.5" cy="8" r="2.6" fill="#f4a3ad" opacity=".55"/>`;
+}
+function starPath(cx, cy, r){
+  let d = "";
+  for (let i = 0; i < 10; i++){
+    const a = -Math.PI/2 + i*Math.PI/5, rr = i % 2 ? r*.45 : r;
+    d += (i ? "L" : "M") + (cx + Math.cos(a)*rr).toFixed(2) + " " + (cy + Math.sin(a)*rr).toFixed(2) + " ";
+  }
+  return d + "Z";
+}
+function collar(c, x, y){
+  if (c.type === "window")
+    return `<path d="M${x-14} ${y-5} Q${x} ${y+3} ${x+14} ${y-5}" stroke="#f2c14e" stroke-width="3" fill="none" stroke-linecap="round"/><path d="${starPath(x, y+1.5, 4.2)}" fill="#ffe08a" stroke="#c99a3e" stroke-width=".7"/>`;
+  return `<path d="M${x-14} ${y-5} Q${x} ${y+3} ${x+14} ${y-5}" stroke="#6b4228" stroke-width="3.2" fill="none" stroke-linecap="round"/><circle cx="${x}" cy="${y+1.2}" r="3.3" fill="#f0b429" stroke="#b7841c" stroke-width=".8"/>`;
+}
+function catSit(c){
+  const tw = c.type === "sphynx" ? 5 : 7;
+  const top = c.top ? `<path d="M34 93 C 34 79, 39 72, 50 71 C 61 72, 66 79, 66 93 C 61 99, 39 99, 34 93 Z" fill="${c.top}" opacity=".95"/>` : "";
+  return `<svg viewBox="0 0 100 112"><g class="bodywrap">
+    <path class="tail" d="M70 100 C 92 98, 97 76, 86 62" stroke="${c.coat}" stroke-width="${tw}" fill="none" stroke-linecap="round"/>
+    <path d="M30 105 C 23 85, 30 62, 50 60 C 70 62, 77 85, 70 105 Z" fill="${c.coat}" ${S}/>${top}
+    <ellipse cx="42" cy="105" rx="7" ry="4.5" fill="${c.coat}" ${S}/><ellipse cx="58" cy="105" rx="7" ry="4.5" fill="${c.coat}" ${S}/>
+    ${collar(c, 50, 62)}
+    <g class="headg" transform="translate(50 41)">${head(c)}</g></g></svg>`;
+}
+function catLoaf(c){
+  return `<svg viewBox="0 0 130 82"><g class="bodywrap">
+    <path d="M34 76 C 28 56, 52 42, 84 44 C 112 46, 122 62, 118 76 Z" fill="${c.coat}" ${S}/>
+    <path class="tail" d="M116 74 C 104 82, 74 82, 56 78" stroke="${c.coat}" stroke-width="6" fill="none" stroke-linecap="round" ${S}/>
+    <ellipse cx="44" cy="77" rx="9" ry="4.5" fill="${c.coat}" ${S}/>
+    ${collar(c, 36, 60)}
+    <g class="headg" transform="translate(36 44) scale(.95)">${head(c)}</g></g></svg>`;
+}
+const PEOPLE = ["#c98b6b","#7aa0c9","#9fbf86","#c79ac4","#d9b26a"];
+function person(col, me){
+  const face = me
+    ? `<circle cx="50" cy="36" r="20" fill="#f1d4b8"/><path d="M30 34 C 30 14, 70 14, 70 34 C 64 26, 40 24, 30 34 Z" fill="#3a2c2a"/>
+       <path d="M41 39 q3 3 6 0 M53 39 q3 3 6 0" stroke="#3a2c2a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+       <path d="M46 46 q4 3 8 0" stroke="#b5636a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+       <circle cx="37" cy="44" r="3" fill="#f4a3ad" opacity=".6"/><circle cx="63" cy="44" r="3" fill="#f4a3ad" opacity=".6"/>`
+    : `<circle cx="50" cy="36" r="20" fill="${col}" opacity=".8"/>`;
+  return `<svg viewBox="0 0 100 120">
+    <path d="M18 116 C 16 84, 30 62, 50 60 C 70 62, 84 84, 82 116 Z" fill="${col}" opacity="${me ? 1 : .7}"/>${face}</svg>`;
+}
+function cushion(col){
+  return `<svg viewBox="0 0 140 40"><ellipse cx="70" cy="22" rx="66" ry="16" fill="${col}"/><ellipse cx="70" cy="18" rx="58" ry="11" fill="#fff" opacity=".12"/></svg>`;
+}
+
+/* ---------- small helpers ---------- */
+const $ = id => document.getElementById(id);
+const scene = $("scene"), actorsEl = $("actors");
+const rand = (a, b) => a + Math.random()*(b - a);
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const store = {
+  get(k, d){ try { const v = localStorage.getItem("nyanbot:" + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v){ try { localStorage.setItem("nyanbot:" + k, JSON.stringify(v)); } catch {} }
+};
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function place(el, p){ el.style.left = (p.x/10) + "%"; el.style.top = (p.y/6.2) + "%"; el.style.zIndex = Math.round(p.y); }
+function hhmm(d = new Date()){ return String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0"); }
+
+function makeActor(cls){ const el = document.createElement("div"); el.className = "actor " + cls; actorsEl.appendChild(el); return el; }
+function say(actor, text, ms = 3200){
+  let b = actor.querySelector(".bubble");
+  if (!b){ b = document.createElement("span"); b.className = "bubble"; actor.appendChild(b); }
+  b.textContent = text; b.classList.add("on");
+  clearTimeout(b._t); b._t = setTimeout(() => b.classList.remove("on"), ms);
+}
+function floatUp(actor, ch, cls = ""){
+  const f = document.createElement("span");
+  f.className = "float " + cls; f.textContent = ch;
+  f.style.setProperty("--dx", rand(-18, 18).toFixed(0) + "px");
+  actor.appendChild(f); setTimeout(() => f.remove(), 1900);
+}
+
+/* ---------- log ---------- */
+const logEl = $("log");
+function log(text){
+  const li = document.createElement("li");
+  li.innerHTML = `<time>${hhmm()}</time><span></span>`;
+  li.lastChild.textContent = text;
+  logEl.prepend(li);
+  while (logEl.children.length > 6) logEl.lastChild.remove();
+}
+const WORK_LINES = {
+  ruric: ["숏츠 콘티 3컷 그리는 중", "썸네일 문구 고민 중… '오늘도 참았다'?", "릴스 훅 아이디어 5개 물어옴", "캡션 다듬다가 하품함", "다음 화 스토리보드 정리 중"],
+  pureum: ["슬랙 알림 12개 정리 완료", "자동화 워크플로 점검 중", "배포 버튼 누름… 두근", "버그 하나 잡음", "서버 로그 보다가 꾸벅 졸음"]
+};
+const START_WORK = { ruric:"루릭: 기획 회의 들어감. 이따 봐", pureum:"푸름이: 알림 왔다, 잠깐 일하고 올게" };
+const END_WORK   = { ruric:"루릭: 일 끝! 놀러 간다", pureum:"푸름이: 커밋 완료. 이제 쉰다" };
+
+/* ---------- state ---------- */
+let speed = 1, simTime = 0, seated = false;
+const intimacy = { ruric:0, pureum:0 };
+const bots = {
+  ruric:  { mode:"rest", until: rand(200, 260), nextLog:0, petTimes:[], sulkUntil:0, roamUntil:0, roamSpot:SPOT.roam[1], pose:"", key:"" },
+  pureum: { mode:"work", until: 40, nextLog: 8, petTimes:[], sulkUntil:0, roamUntil:0, roamSpot:SPOT.roam[4], pose:"", key:"" }
+};
+const visits = store.get("visits", 0) + 1; store.set("visits", visits);
+
+/* ---------- build actors ---------- */
+const A = {};
+for (const id of ["ruric","pureum","star"]){
+  const el = makeActor("cat-actor " + id);
+  el.innerHTML = `<button class="cat" type="button" aria-label="${CATS[id].name} 쓰다듬기"></button>`;
+  el.querySelector("button").addEventListener("click", () => pet(id));
+  A[id] = el;
+}
+function setPose(id, pose){
+  const b = bots[id] || {};
+  if (A[id].dataset.pose === pose) return;
+  A[id].dataset.pose = pose;
+  A[id].classList.toggle("loaf", pose === "loaf");
+  A[id].style.width = pose === "loaf" ? "12.5%" : "9.2%";
+  A[id].querySelector("button").innerHTML = pose === "loaf" ? catLoaf(CATS[id]) : catSit(CATS[id]);
+}
+setPose("star", "sit"); A.star.style.width = "8.6%"; place(A.star, SPOT.sill);
+
+const myCushion = makeActor("cushion"); myCushion.innerHTML = cushion("#c86f7f"); myCushion.style.width = "15%"; place(myCushion, {x:SPOT.me.x, y:SPOT.me.y + 14});
+myCushion.style.zIndex = 1;
+const meEl = makeActor("me"); meEl.style.width = "10%"; meEl.innerHTML = person("#e9c46a", true); place(meEl, SPOT.me); meEl.hidden = true;
+const otherEls = SPOT.others.map((p, i) => {
+  const c = makeActor("cushion"); c.innerHTML = cushion("#6b5873"); c.style.width = "12%"; place(c, {x:p.x, y:p.y + 10}); c.style.zIndex = 1;
+  const el = makeActor("other"); el.style.width = "8.5%"; el.innerHTML = person(PEOPLE[i % PEOPLE.length], false); place(el, p); el.hidden = true;
+  return el;
+});
+const seatCta = document.createElement("div"); seatCta.className = "seatcta";
+seatCta.innerHTML = `<button class="btn primary" type="button">방석에 앉기</button>`;
+scene.appendChild(seatCta);
+seatCta.firstChild.addEventListener("click", () => setSeated(true));
+
+const piles = {};
+for (const id of ["star","ruric","pureum"]){
+  const el = document.createElement("div"); el.className = "pile"; place(el, SPOT.piles[id]);
+  el.style.zIndex = id === "star" ? 319 : 615; scene.appendChild(el); piles[id] = el;
+}
+
+/* ---------- sky, stars, clock ---------- */
+(function makeStars(){
+  const g = $("stars"); let s = "";
+  for (let i = 0; i < 22; i++) s += `<circle cx="${rand(86,284).toFixed(1)}" cy="${rand(94,300).toFixed(1)}" r="${rand(.6,1.6).toFixed(2)}" fill="#fff" opacity="${rand(.35,.9).toFixed(2)}"/>`;
+  g.innerHTML = s;
+})();
+function isNight(){ const h = new Date().getHours(); return h >= 19 || h < 6; }
+function updateSky(){
+  const h = new Date().getHours();
+  let a, b;
+  if (h >= 6 && h < 8)       { a = "#f4b98a"; b = "#f7dcb4"; }
+  else if (h >= 8 && h < 17) { a = "#7fb6e0"; b = "#cfe6f2"; }
+  else if (h >= 17 && h < 19){ a = "#c76f7e"; b = "#f2b178"; }
+  else                       { a = "#141a3a"; b = "#35336a"; }
+  $("sky1").setAttribute("stop-color", a); $("sky2").setAttribute("stop-color", b);
+  const night = isNight();
+  $("stars").style.opacity = night ? 1 : 0;
+  $("bigStar").style.opacity = night ? 1 : 0;
+}
+function updateClock(){
+  const d = new Date(), m = d.getMinutes(), h = d.getHours() % 12 + m/60;
+  $("mHand").setAttribute("transform", `rotate(${m*6})`);
+  $("hHand").setAttribute("transform", `rotate(${h*30})`);
+}
+updateSky(); updateClock();
+setInterval(() => { updateSky(); updateClock(); }, 20000);
+
+/* window cat: slow blinks, and at night she looks out at the star now and then */
+setInterval(() => {
+  if (Math.random() < .5){ A.star.classList.add("slowblink"); setTimeout(() => A.star.classList.remove("slowblink"), 1400); }
+}, 9000);
+setInterval(() => {
+  if (!isNight()) return;
+  A.star.classList.add("gaze"); setTimeout(() => A.star.classList.remove("gaze"), 5000);
+}, 30000);
+
+/* ---------- seating ---------- */
+let myEmoji = null, myEmojiAt = 0;
+function setSeated(v){
+  seated = v;
+  meEl.hidden = !v; seatCta.hidden = v;
+  $("seatBtn").textContent = v ? "일어나기" : "방석에 앉기";
+  $("seatBtn").classList.toggle("primary", !v);
+  $("seatHint").textContent = v ? "그대로 쉬세요. 쓰다듬기는 살살, 너무 자주 하면 도망가요." : "가만히 있을수록 냥이봇들이 다가와요.";
+  if (v){
+    say(A.star, visits > 1 ? "또 왔구나." : "어서 와.", 4000);
+    floatUp(A.star, "♥");
+    log("손님이 방석에 앉았어요. 창가 냥이가 제일 먼저 반겨줘요");
+  } else {
+    log("손님이 잠깐 일어났어요");
+  }
+  pushPresence();
+}
+$("seatBtn").addEventListener("click", () => setSeated(!seated));
+
+const EMOJI = ["🙂","😴","🥲","💛","☕"];
+const emoRow = $("emoRow");
+for (const e of EMOJI){
+  const b = document.createElement("button");
+  b.className = "btn emo"; b.type = "button"; b.textContent = e; b.setAttribute("aria-pressed","false");
+  b.setAttribute("aria-label", "표정 " + e);
+  b.addEventListener("click", () => {
+    if (!seated) setSeated(true);
+    myEmoji = e; myEmojiAt = Date.now();
+    for (const x of emoRow.children) x.setAttribute("aria-pressed", String(x === b));
+    say(meEl, e, 30000);
+    pushPresence();
+  });
+  emoRow.appendChild(b);
+}
+
+$("fast").addEventListener("change", e => { speed = e.target.checked ? 20 : 1; });
+
+/* ---------- petting ---------- */
+const STAR_LINES = ["천천히 있다 가.", "여기 햇살 좋아.", "왔구나.", "괜찮아, 쉬어도 돼.", "나 여기 있어."];
+function pet(id){
+  const actor = A[id];
+  if (id === "star"){
+    say(actor, pick(STAR_LINES)); floatUp(actor, "♥");
+    actor.classList.add("slowblink"); setTimeout(() => actor.classList.remove("slowblink"), 1400);
+    return;
+  }
+  const b = bots[id], now = Date.now();
+  if (b.mode === "work"){ say(actor, "지금 일하는 중이야!"); return; }
+  if (now < b.sulkUntil){ say(actor, "…흥"); return; }
+  b.petTimes = b.petTimes.filter(t => now - t < 8000); b.petTimes.push(now);
+  if (b.petTimes.length >= 3){
+    b.sulkUntil = now + 20000; b.petTimes = [];
+    intimacy[id] = Math.max(0, intimacy[id] - 120);
+    say(actor, "너무 만져! 흥!");
+    log(`${CATS[id].name}이(가) 삐져서 구석으로 갔어요. 조금 기다려 주세요`);
+    return;
+  }
+  if (!seated){ say(actor, "방석에 앉으면 갈게"); return; }
+  const st = stageOf(intimacy[id]);
+  say(actor, ["…누구?", "킁킁", "골골…", "골골골골♪"][st]);
+  if (st >= 1) floatUp(actor, "♥");
+}
+
+/* ---------- churu (shared when the page can keep data) ---------- */
+let myChuru = store.get("churu", { ruric:0, pureum:0, star:0 });
+let others = { ruric:0, pureum:0, star:0 };
+let shared = false, myDoc = null, writing = false, writeAgain = false, lastGive = 0;
+const churuRow = $("churuRow");
+for (const id of ["star","ruric","pureum"]){
+  const b = document.createElement("button");
+  b.className = "btn"; b.type = "button"; b.textContent = CATS[id].name + "에게";
+  b.addEventListener("click", () => giveChuru(id));
+  churuRow.appendChild(b);
+}
+function totals(){ return { ruric: others.ruric + myChuru.ruric, pureum: others.pureum + myChuru.pureum, star: others.star + myChuru.star }; }
+function renderPiles(){
+  const t = totals();
+  for (const id in piles){
+    const n = t[id], show = Math.min(n, 9);
+    let h = "";
+    for (let i = 0; i < show; i++) h += `<i style="--r:${((i*37)%14)-7}deg"></i>`;
+    piles[id].innerHTML = n ? h + `<b>×${n}</b>` : "";
+  }
+}
+function giveChuru(id){
+  const now = Date.now();
+  if (now - lastGive < 1200) return;
+  lastGive = now;
+  myChuru[id]++;
+  store.set("churu", myChuru);
+  renderPiles();
+  const actor = A[id];
+  say(actor, id === "star" ? "고마워." : "냠!"); floatUp(actor, "♥");
+  log(`${CATS[id].name} 앞에 츄르 하나 두고 갔어요`);
+  saveChuru();
+}
+async function saveChuru(){
+  if (!shared || !myDoc) return;
+  if (writing){ writeAgain = true; return; }
+  writing = true;
+  try { await myDoc.set({ ruric:myChuru.ruric, pureum:myChuru.pureum, star:myChuru.star, at:Date.now() }); }
+  catch (e){ $("churuNote").textContent = "츄르를 함께 쌓지 못했어요. 이 기기에는 남아 있어요."; }
+  writing = false;
+  if (writeAgain){ writeAgain = false; saveChuru(); }
+}
+$("churuNote").textContent = "츄르는 지금 이 기기에만 쌓여요.";
+renderPiles();
+
+/* ---------- presence (who else is sitting here right now) ---------- */
+let room = null;
+function pushPresence(){
+  if (!room) return;
+  room.presence({ seated, emoji: myEmoji, emojiAt: myEmojiAt }).catch(() => {});
+}
+function renderPeers(peers){
+  const list = peers.filter(p => !p.isMe && p.presence && p.presence.seated);
+  otherEls.forEach((el, i) => {
+    const p = list[i];
+    el.hidden = !p;
+    if (p && p.presence.emoji && Date.now() - (+p.presence.emojiAt || 0) < 30000) say(el, String(p.presence.emoji).slice(0, 4), 8000);
+  });
+  const total = peers.length || 1;
+  $("whoText").textContent = total > 1 ? `지금 ${total}명이 같이 있어요` + (list.length > otherEls.length ? ` (방석 +${list.length - otherEls.length})` : "") : "지금은 혼자만의 시간";
+}
+
+(async () => {
+  if (!window.claude || !window.claude.use) return;
+  claude.use("room").then(r => {
+    if (!r) return;
+    room = r;
+    room.onPeers(ch => renderPeers(ch.peers));
+    renderPeers(room.peers());
+    pushPresence();
+  }).catch(() => {});
+  try {
+    const [db, user] = await Promise.all([claude.use("db"), claude.use("user")]);
+    if (!db || !user) return;
+    const uid = await user.id();
+    if (!uid) return;
+    myDoc = db.doc("churu/" + uid);
+    const timer = setTimeout(() => { if (!shared) $("churuNote").textContent = "함께 쌓인 츄르를 불러오지 못했어요. 이 기기에만 쌓여요."; }, 10000);
+    db.collection("churu").onSnapshot(snap => {
+      clearTimeout(timer);
+      const o = { ruric:0, pureum:0, star:0 };
+      let mine = null;
+      for (const d of snap.docs){
+        const v = d.data() || {};
+        if (d.id === uid){ mine = v; continue; }
+        for (const k in o) o[k] += Math.max(0, Math.floor(+v[k] || 0));
+      }
+      others = o;
+      if (!shared){
+        shared = true;
+        if (mine){
+          for (const k in myChuru) myChuru[k] = Math.max(myChuru[k], Math.floor(+mine[k] || 0));
+          if (["ruric","pureum","star"].some(k => myChuru[k] !== (Math.floor(+mine[k] || 0)))) saveChuru();
+        } else if (myChuru.ruric + myChuru.pureum + myChuru.star > 0) saveChuru();
+        $("churuNote").textContent = "츄르는 이 방에 온 모두와 함께 쌓여요.";
+      }
+      renderPiles();
+    }, () => { clearTimeout(timer); $("churuNote").textContent = "함께 쌓인 츄르를 불러오지 못했어요. 이 기기에만 쌓여요."; });
+  } catch {}
+})();
+
+/* ---------- cat brains ---------- */
+function stageOf(t){ let s = 0; for (let i = 0; i < STAGES.length; i++) if (t >= STAGES[i].at) s = i; return s; }
+function lapOwner(){
+  const ok = id => bots[id].mode === "rest" && Date.now() >= bots[id].sulkUntil && stageOf(intimacy[id]) === 3;
+  if (!seated) return null;
+  if (ok("ruric")) return "ruric";
+  if (ok("pureum")) return "pureum";
+  return null;
+}
+function target(id){
+  const b = bots[id], now = Date.now();
+  if (b.mode === "work") return { key:"desk", p:SPOT.desk[id], pose:"sit" };
+  if (now < b.sulkUntil) return { key:"sulk", p:SPOT.sulk[id], pose:"loaf" };
+  if (!seated){
+    if (simTime >= b.roamUntil){ b.roamSpot = pick(SPOT.roam); b.roamPose = Math.random() < .5 ? "sit" : "loaf"; b.roamUntil = simTime + rand(25, 45); }
+    return { key:"roam" + SPOT.roam.indexOf(b.roamSpot) + b.roamPose, p:b.roamSpot, pose:b.roamPose };
+  }
+  const st = stageOf(intimacy[id]);
+  if (st === 3){
+    if (lapOwner() === id) return { key:"lap", p:SPOT.lap, pose:"loaf", content:true };
+    return { key:"s2", p:SPOT.s2[id], pose:"loaf", content:true };
+  }
+  if (st === 2) return { key:"s2", p:SPOT.s2[id], pose:"loaf", content:true };
+  if (st === 1) return { key:"s1", p:SPOT.s1[id], pose:"sit" };
+  return { key:"s0", p:SPOT.s0[id], pose:"sit" };
+}
+let lastStage = { ruric:-1, pureum:-1 };
+function apply(id){
+  const t = target(id), b = bots[id], el = A[id];
+  if (b.key !== t.key){
+    b.key = t.key;
+    setPose(id, t.pose);
+    place(el, t.p);
+    if (!reduced){ el.classList.add("walking"); clearTimeout(el._w); el._w = setTimeout(() => el.classList.remove("walking"), 3200); }
+  }
+  el.classList.toggle("content", !!t.content);
+  if (seated && b.mode === "rest"){
+    const st = stageOf(intimacy[id]);
+    if (st !== lastStage[id] && lastStage[id] !== -1 && st > lastStage[id]){
+      say(el, ["힐끔", "킁킁…", "철퍼덕", "골골골♪"][st], 3500);
+      log(`${CATS[id].name}: ${STAGES[st].name}`);
+    }
+    lastStage[id] = st;
+  }
+  if (t.key === "lap" && Math.random() < .03) floatUp(el, "♪", "note");
+}
+
+/* ---------- cards ---------- */
+const cardsEl = $("catCards");
+const card = {};
+for (const id of ["star","ruric","pureum"]){
+  const c = CATS[id];
+  const row = document.createElement("div"); row.className = "cat-line";
+  row.innerHTML = `<div class="face">${catSit(c).replace('<svg viewBox="0 0 100 112">','<svg viewBox="22 8 56 60">')}</div>
+    <div class="meta"><div class="top"><span class="nm"></span><span class="role"></span><span class="state"></span></div>
+    <div class="stage"></div><div class="bar"><span></span></div><div class="hint"></div></div>`;
+  row.querySelector(".nm").textContent = c.name;
+  row.querySelector(".role").textContent = c.role;
+  cardsEl.appendChild(row);
+  card[id] = row;
+}
+function fmt(sec){ sec = Math.max(0, Math.ceil(sec)); const m = Math.floor(sec/60), s = sec % 60; return m ? `${m}분 ${s}초` : `${s}초`; }
+function renderCards(){
+  const s = card.star;
+  s.querySelector(".state").className = "state home"; s.querySelector(".state").textContent = "늘 창가에";
+  s.querySelector(".stage").textContent = "처음부터 반겨줘요";
+  s.querySelector(".bar").className = "bar gold"; s.querySelector(".bar span").style.width = "100%";
+  s.querySelector(".hint").textContent = isNight() ? "밤에는 가끔 창밖 별을 바라봐요" : "햇살 드는 창가가 이 아이 자리예요";
+  for (const id of BOTS){
+    const r = card[id], b = bots[id], st = stageOf(intimacy[id]);
+    const sulk = Date.now() < b.sulkUntil;
+    const stEl = r.querySelector(".state");
+    stEl.className = "state " + (sulk ? "sulk" : b.mode);
+    stEl.textContent = sulk ? "삐짐" : b.mode === "work" ? "일하는 중" : "쉬는 중";
+    r.querySelector(".stage").textContent = seated || intimacy[id] > 0 ? STAGES[st].name : "방석에 앉으면 시작돼요";
+    const next = STAGES[st + 1];
+    const pct = next ? (intimacy[id] - STAGES[st].at) / (next.at - STAGES[st].at) * 100 : 100;
+    r.querySelector(".bar span").style.width = pct.toFixed(1) + "%";
+    let hint;
+    if (!next) hint = "가장 친한 단계예요";
+    else if (!seated) hint = "앉아 있는 동안만 친해져요";
+    else hint = `다음 단계까지 ${fmt((next.at - intimacy[id]) / speed)}`;
+    if (seated && b.mode === "work" && next) hint += " · 일 끝나면 와요";
+    r.querySelector(".hint").textContent = hint;
+  }
+}
+
+/* ---------- main loop ---------- */
+let last = performance.now();
+function tick(){
+  const now = performance.now();
+  let dt = Math.min((now - last) / 1000, 1); last = now;
+  if (document.hidden) dt = 0;
+  const sdt = dt * speed;
+  simTime += sdt;
+  if (seated) for (const id of BOTS) intimacy[id] += sdt;
+  for (const id of BOTS){
+    const b = bots[id];
+    if (simTime >= b.until){
+      if (b.mode === "rest"){ b.mode = "work"; b.until = simTime + rand(50, 80); b.nextLog = simTime + rand(10, 20); log(START_WORK[id]); }
+      else { b.mode = "rest"; b.until = simTime + rand(240, 360); log(END_WORK[id]); }
+    }
+    if (b.mode === "work" && simTime >= b.nextLog){ log(`${CATS[id].name}: ${pick(WORK_LINES[id])}`); b.nextLog = simTime + rand(25, 40); }
+    apply(id);
+  }
+  renderCards();
+}
+log("작업실 불이 켜졌어요. 푸름이는 일하는 중, 루릭은 뒹구는 중");
+tick();
+setInterval(tick, 250);
+})();
+</script>
+
+</body>
+</html>
