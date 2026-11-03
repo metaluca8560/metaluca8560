@@ -281,6 +281,10 @@ const STAGES = [
   { at:300, name:"옆에 툭 앉음 (우연이라고 함)" },
   { at:900, name:"몰래 골골거리는 중" }
 ];
+const STAGE_NAMES = {
+  ruric:  STAGES.map(x => x.name),
+  pureum: ["멀리서 조용히 지켜보는 중", "슬금슬금 다가오는 중", "옆에 살며시 앉음", "기대서 골골거리는 중"]
+};
 const SPOT = {
   desk:   { ruric:{x:735,y:404}, pureum:{x:880,y:472} },
   sulk:   { ruric:{x:120,y:600}, pureum:{x:940,y:600} },
@@ -403,11 +407,11 @@ function log(text){
 }
 const WORK_LINES = {
   ruric: ["숏츠 콘티 3컷 뽑는 중. 내가 하면 다 뜬다", "썸네일 문구… '오늘도 참았다'. 이거면 됐다", "릴스 훅 5개 물어옴. 칭찬은 됐다", "캡션 다듬는 중. 말 걸지 마라", "다음 화 스토리보드. 기대는 해도 된다"],
-  pureum: ["…슬랙 알림 12개 정리", "…자동화 점검. 문제없다", "…배포. 떨린 거 아니다", "…버그 하나 잡음. 별거 아니다", "…로그 보는 중. 조는 거 아니다"]
+  pureum: ["…슬랙 알림 12개 정리. 다들 고생했네", "…자동화 점검 중. 잘 돌아간다", "…배포. 조금 떨렸어", "…버그 하나 잡음. 루릭 형한테는 비밀", "…로그 보다가 살짝 졸았어"]
 };
-const START_WORK = { ruric:"루릭: 일 있어서 간다. 기다리든가 말든가", pureum:"푸름이: …알림. 잠깐 간다" };
-const END_WORK   = { ruric:"루릭: 일 끝. 딱히 보고 싶어서 오는 건 아니다", pureum:"푸름이: 커밋 끝. …심심해서 내려가는 거다" };
-/* 츤데레 건달 말투: 루릭은 말 많은 형님, 푸름이는 과묵한 형님 */
+const START_WORK = { ruric:"루릭: 일 있어서 간다. 기다리든가 말든가", pureum:"푸름이: …알림 왔다. 금방 올게" };
+const END_WORK   = { ruric:"루릭: 일 끝. 딱히 보고 싶어서 오는 건 아니다", pureum:"푸름이: …커밋 끝. 이제 옆에 갈게" };
+/* 말투: 루릭은 츤데레 건달 형님, 푸름이는 팡이와 루릭 사이(조용하고 수줍지만 다정), 팡이는 자상한 큰형 */
 const TSUN = {
   ruric: {
     pet:   [["어이, 손 조심해라", "뭘 봐. 처음 보냐", "…누구냐 넌"], ["킁. 냄새는 나쁘지 않네", "딱히 궁금해서 온 거 아니다"], ["…옆자리가 따뜻해서 그런 거다", "착각하지 마라. 그냥 여기 눕고 싶었다"], ["…오늘만이다. 골골.", "아무한테도 말하지 마라. 골골골", "너 좀 괜찮은 놈이네"]],
@@ -420,13 +424,13 @@ const TSUN = {
     purr:  "골골"
   },
   pureum: {
-    pet:   [["…", "건들지 마라", "…뭐야"], ["…흠", "킁. …괜찮네"], ["…자리 좀 쓴다", "…따뜻하네. 우연이다"], ["…골골. 못 들은 걸로 해", "…가지 마라. 아니, 됐다", "…오늘은 봐준다"]],
-    up:    ["…", "킁", "…앉는다", "…골골"],
-    work:  "…코딩 중. 나중에",
-    sulk:  "…그만. 간다.",
-    sulking: "…",
-    stand: "…앉으면 간다",
-    churu: ["…잘 먹을게. 착각은 하지 마", "…두고 가. 나중에 먹는다", "…고맙다. 한 번만 말한다"],
+    pet:   [["…안녕. 처음 보네", "…조금만 천천히", "…응?"], ["킁. …좋은 냄새 난다", "…궁금해서 온 건 맞아"], ["…옆에 있어도 돼?", "…여기 따뜻하다. 좋네"], ["…골골. 들려도 모른 척해 줘", "…가지 마. 조금만 더 있어", "…오늘 와 줘서 고마워"]],
+    up:    ["…", "킁. …안녕", "…옆에 앉을게", "…골골"],
+    work:  "…코딩 중. 끝나면 갈게",
+    sulk:  "…조금만 쉬었다 올게",
+    sulking: "…금방 갈게",
+    stand: "…앉으면 갈게",
+    churu: ["…고마워. 잘 먹을게", "…팡이 형이랑 나눠 먹을게", "…이런 거 안 줘도 되는데. 고마워"],
     purr:  "…골골"
   }
 };
@@ -725,7 +729,7 @@ function apply(id){
     const st = stageOf(intimacy[id]);
     if (st !== lastStage[id] && lastStage[id] !== -1 && st > lastStage[id]){
       say(el, TSUN[id].up[st], 3500);
-      log(`${CATS[id].name}: ${STAGES[st].name}`);
+      log(`${CATS[id].name}: ${STAGE_NAMES[id][st]}`);
     }
     lastStage[id] = st;
   }
@@ -761,7 +765,7 @@ function renderCards(){
     const stEl = r.querySelector(".state");
     stEl.className = "state " + (sulk ? "sulk" : b.mode);
     stEl.textContent = sulk ? "삐짐" : b.mode === "work" ? "일하는 중" : "쉬는 중";
-    r.querySelector(".stage").textContent = seated || intimacy[id] > 0 ? STAGES[st].name : "방석에 앉으면 시작돼요";
+    r.querySelector(".stage").textContent = seated || intimacy[id] > 0 ? STAGE_NAMES[id][st] : "방석에 앉으면 시작돼요";
     const next = STAGES[st + 1];
     const pct = next ? (intimacy[id] - STAGES[st].at) / (next.at - STAGES[st].at) * 100 : 100;
     r.querySelector(".bar span").style.width = pct.toFixed(1) + "%";
