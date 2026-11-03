@@ -813,6 +813,9 @@ const Music = (() => {
 /* 배경음악 「창가의 오후」(Abocado Popcorn 2.0 Pro 연주곡). 파일을 못 불러오면 위의 브라우저 연주로 대신해요 */
 const bgm = new Audio("bgm.mp3");
 bgm.loop = true; bgm.preload = "none"; bgm.volume = 0;
+/* 잔잔하게: 조금 느리게(음높이는 그대로), 작은 소리로 천천히 커지게 */
+bgm.playbackRate = .9; bgm.preservesPitch = true; bgm.mozPreservesPitch = true; bgm.webkitPreservesPitch = true;
+const BGM_VOL = .3;
 let bgmFade = null, usingSynth = false;
 function fadeTo(v, ms, then){
   clearInterval(bgmFade);
@@ -832,15 +835,15 @@ function setMusicUI(on){
 $("musicBtn").addEventListener("click", () => {
   if (musicOn){
     musicOn = false; setMusicUI(false);
-    if (usingSynth) Music.stop(); else fadeTo(0, 900, () => bgm.pause());
+    if (usingSynth) Music.stop(); else fadeTo(0, 2000, () => bgm.pause());
     return;
   }
   musicOn = true; setMusicUI(true);
   say(A.star, "이 노래 좋다.", 3000);
   const p = bgm.play();
   const toSynth = () => { usingSynth = true; if (musicOn && !Music.on) Music.start(); };
-  if (p && p.then) p.then(() => { usingSynth = false; fadeTo(.55, 1500); }, toSynth);
-  else fadeTo(.55, 1500);
+  if (p && p.then) p.then(() => { usingSynth = false; fadeTo(BGM_VOL, 4000); }, toSynth);
+  else fadeTo(BGM_VOL, 4000);
 });
 bgm.addEventListener("error", () => { if (musicOn && !usingSynth){ usingSynth = true; Music.start(); } });
 $("shareBtn").addEventListener("click", () => { $("shareBox").hidden = !$("shareBox").hidden; });
