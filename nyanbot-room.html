@@ -3,6 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="집사 작업실에서 푸름이·미남이·팡이와 같이 멍때리는 방. 방석에 앉아 가만히 있으면 냥이들이 하나둘 다가와요.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="루카의 디지털 다락방">
+<meta property="og:title" content="냥이봇 사랑방">
+<meta property="og:description" content="푸름이·미남이·팡이와 같이 멍때리는 방. 방석에 앉아 가만히 있으면 냥이들이 다가와요.">
+<meta property="og:url" content="https://luca-darakbang.netlify.app/nyanbot-room.html">
+<meta property="og:image" content="https://luca-darakbang.netlify.app/nyanbot-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="방석에 앉은 손님들 사이로 다가오는 미남이와 푸름이, 창가의 팡이">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="냥이봇 사랑방">
+<meta name="twitter:description" content="푸름이·미남이·팡이와 같이 멍때리는 방.">
+<meta name="twitter:image" content="https://luca-darakbang.netlify.app/nyanbot-og.png">
 <style>[hidden]{display:none!important}img{max-width:100%}</style>
 </head>
 <body>
@@ -92,6 +107,8 @@ button.cat:focus-visible{outline:2px dashed var(--amber);outline-offset:4px;bord
 .dicon{display:inline-block;width:16px;height:18px;vertical-align:-3px;margin-right:5px;line-height:0}
 .dicon svg{width:100%;height:100%}
 #drinkRow .btn[aria-pressed="true"]{border-color:var(--amber);background:#3a3045}
+.btn.comp{display:inline-flex;align-items:center;gap:6px;padding:4px 12px 4px 6px}
+.btn.comp img{height:28px;width:auto}
 .pile{position:absolute;transform:translate(-50%,-100%);display:flex;align-items:end;gap:1px;pointer-events:none}
 .pile i{display:block;width:clamp(3px,.55vw,6px);height:clamp(14px,2.4vw,24px);border-radius:2px;background:linear-gradient(#f6d27a 0 30%,#e9a64d 30%);transform:rotate(var(--r,0deg))}
 .pile b{font-family:var(--hand);font-weight:700;font-size:clamp(10px,1.5vw,14px);color:var(--cream);margin-left:4px;line-height:1;text-shadow:0 1px 2px #0008}
@@ -152,7 +169,7 @@ button.cat:focus-visible{outline:2px dashed var(--amber);outline-offset:4px;bord
   <div class="pickcard">
     <div class="row" style="justify-content:space-between"><h2 id="pickTitle">오늘은 누구로 앉을래요?</h2><button class="btn" id="pickClose" type="button">닫기</button></div>
     <div class="pickgrid" id="pickGrid"></div>
-    <p class="hint" style="margin:0">고른 캐릭터는 다음에 와도 기억해요. 다른 손님에게도 이 모습으로 보여요.</p>
+    <p class="hint" id="pickNote" style="margin:0">고른 캐릭터는 다음에 와도 기억해요. 다른 손님에게도 이 모습으로 보여요.</p>
   </div>
 </div>
 <div class="wrap">
@@ -290,6 +307,10 @@ button.cat:focus-visible{outline:2px dashed var(--amber);outline-offset:4px;bord
         <div class="lbl">나갈 때 츄르 하나 두고 가기</div>
         <div class="row" id="churuRow" style="margin-top:6px"></div>
         <p class="note" id="churuNote" style="margin:6px 0 0"></p>
+      </div>
+      <div>
+        <div class="lbl">같이 온 사람 (나까지 최대 4명)</div>
+        <div class="row" id="compRow" style="margin-top:6px"></div>
       </div>
       <div class="row"><button class="btn" id="pickBtn" type="button">내 캐릭터 바꾸기</button></div>
       <label class="toggle"><input type="checkbox" id="fast"> 미리보기: 시간 20배 빠르게</label>
@@ -608,23 +629,53 @@ function setSeated(v){
   if (v){
     say(A.star, visits > 1 ? "또 왔구나. 보고 싶었어." : "어서 와. 여기 앉아.", 4000);
     floatUp(A.star, "♥");
-    log("손님이 방석에 앉았어요. 팡이가 제일 먼저 반겨줘요");
+    log(companions.length ? `손님 ${1 + companions.length}명이 방석에 앉았어요. 팡이가 제일 먼저 반겨줘요` : "손님이 방석에 앉았어요. 팡이가 제일 먼저 반겨줘요");
   } else {
     log("손님이 잠깐 일어났어요");
   }
   pushPresence();
+  renderSeats();
 }
 $("seatBtn").addEventListener("click", () => seated ? setSeated(false) : requestSit());
 function requestSit(){ if (myAvatar) setSeated(true); else openPicker(true); }
-function openPicker(thenSit){
+let companions = (store.get("companions", []) || []).filter(id => avatarById(id)).slice(0, 3);
+function renderCompRow(){
+  const row = $("compRow"); row.innerHTML = "";
+  companions.forEach((id, i) => {
+    const av = avatarById(id), b = document.createElement("button");
+    b.type = "button"; b.className = "btn comp"; b.setAttribute("aria-label", av.name + " 빼기");
+    b.innerHTML = `<img src="${av.stand}" alt=""><span></span> ✕`;
+    b.querySelector("span").textContent = av.name;
+    b.addEventListener("click", () => { companions.splice(i, 1); store.set("companions", companions); renderCompRow(); renderSeats(); });
+    row.appendChild(b);
+  });
+  if (companions.length < 3){
+    const add = document.createElement("button");
+    add.type = "button"; add.className = "btn"; add.textContent = "+ 같이 온 사람";
+    add.addEventListener("click", () => openPicker(false, "comp"));
+    row.appendChild(add);
+  }
+}
+function openPicker(thenSit, mode){
   const box = $("picker"), grid = $("pickGrid");
+  const comp = mode === "comp";
+  $("pickTitle").textContent = comp ? "누구랑 같이 왔어요?" : "오늘은 누구로 앉을래요?";
+  $("pickNote").textContent = comp ? "같이 온 사람은 옆 방석에 앉아요. 최대 3명까지, 나까지 4명이 함께 쉴 수 있어요." : "고른 캐릭터는 다음에 와도 기억해요. 다른 손님에게도 이 모습으로 보여요.";
   grid.innerHTML = "";
   for (const av of AVATARS){
     const b = document.createElement("button");
-    b.type = "button"; b.className = "pick"; b.setAttribute("aria-pressed", String(!!myAvatar && myAvatar.id === av.id));
+    b.type = "button"; b.className = "pick"; b.setAttribute("aria-pressed", String(comp ? companions.includes(av.id) : !!myAvatar && myAvatar.id === av.id));
     b.innerHTML = `<span class="pimg"><img src="${av.stand}" alt=""></span><span class="pname"></span>`;
     b.querySelector(".pname").textContent = av.name;
     b.addEventListener("click", () => {
+      if (comp){
+        if (companions.length < 3){ companions.push(av.id); store.set("companions", companions); }
+        box.hidden = true; renderCompRow();
+        if (!seated){ if (!myAvatar){ openPicker(true); return; } setSeated(true); } else renderSeats();
+        const n = companions.length;
+        say(A.star, n > 1 ? "다 같이 왔구나. 반가워." : "같이 왔구나. 어서 와.", 3000);
+        return;
+      }
       myAvatar = av; store.set("avatar", av.id);
       dressActor(meEl, av, "10%", person("#e9c46a", true));
       myCushion.hidden = seated;
@@ -638,6 +689,7 @@ function openPicker(thenSit){
 }
 $("pickClose").addEventListener("click", () => { $("picker").hidden = true; });
 $("pickBtn").addEventListener("click", () => openPicker(false));
+renderCompRow();
 
 const EMOJI = ["🙂","😴","🥲","💛","🐾"];
 const emoRow = $("emoRow");
@@ -679,6 +731,7 @@ for (const [id, dk] of Object.entries(DRINKS).concat([["", { name:"치우기" }]
     myDrink = id;
     for (const x of drinkRow.children) x.setAttribute("aria-pressed", String(x === b && !!id));
     setDrink(meEl, id);
+    renderSeats();
     if (id) say(A.star, id === "coffee" ? "커피 향 좋다." : id === "juice" ? "상큼하겠다." : "따뜻하겠다.", 2500);
     pushPresence();
   });
@@ -899,19 +952,28 @@ function pushPresence(){
   room.presence({ seated, emoji: myEmoji, emojiAt: myEmojiAt, avatar: myAvatar ? myAvatar.id : "", drink: seated ? myDrink : "" }).catch(() => {});
 }
 function c_sync(el){ if (el._cushion) el._cushion.hidden = !el.hidden && el.dataset.av !== ""; }
-function renderPeers(peers){
+let lastPeers = [];
+function renderPeers(peers){ lastPeers = peers; renderSeats(); }
+function renderSeats(){
+  const peers = lastPeers;
   const list = peers.filter(p => !p.isMe && p.presence && p.presence.seated);
+  const comps = seated ? companions.map(id => avatarById(id)).filter(Boolean) : [];
+  const items = comps.map(av => ({ comp:av })).concat(list.map(p => ({ peer:p })));
   otherEls.forEach((el, i) => {
-    const p = list[i];
-    el.hidden = !p;
-    c_sync(el);
+    const it = items[i], p = it && it.peer;
+    el.hidden = !it;
+    if (it && it.comp) dressActor(el, it.comp, "8.5%", person(el.dataset.fallback, false));
     if (p) dressActor(el, avatarById(String(p.presence.avatar || "")), "8.5%", person(el.dataset.fallback, false));
     c_sync(el);
-    setDrink(el, p ? String(p.presence.drink || "") : "");
+    setDrink(el, p ? String(p.presence.drink || "") : it && it.comp ? myDrink : "");
     if (p && p.presence.emoji && Date.now() - (+p.presence.emojiAt || 0) < 30000) say(el, String(p.presence.emoji).slice(0, 4), 8000);
   });
   const total = peers.length || 1;
-  $("whoText").textContent = total > 1 ? `지금 ${total}명이 같이 있어요` + (list.length > otherEls.length ? ` (방석 +${list.length - otherEls.length})` : "") : "지금은 혼자만의 시간";
+  const party = seated ? 1 + comps.length : 0;
+  let t = total > 1 ? `지금 ${total}곳에서 같이 있어요` : (party > 1 ? `${party}명이 같이 왔어요` : "지금은 혼자만의 시간");
+  if (total > 1 && party > 1) t += ` · 우리 일행 ${party}명`;
+  if (items.length > otherEls.length) t += ` (방석 +${items.length - otherEls.length})`;
+  $("whoText").textContent = t;
 }
 
 (async () => {
