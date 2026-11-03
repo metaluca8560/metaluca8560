@@ -574,43 +574,66 @@ for (const e of EMOJI){
 }
 
 
-/* ---------- music: a soft lo-fi loop made in the browser (no audio files) ---------- */
+/* ---------- music: a soft, cozy little tune played by the browser (no audio files) ---------- */
 const Music = (() => {
-  let ctx = null, master, lp, delay, fb, timer = null, nextBar = 0, bar = 0, crackleSrc = null;
-  const CHORDS = [[53,57,60,64],[52,55,59,62],[50,53,57,60],[48,52,55,59]]; // Fmaj7 Em7 Dm7 Cmaj7
-  const SCALE = [72,74,76,79,81,84];
-  const BAR = 3.2;
+  let ctx = null, master, lp, verb, noiseBuf, timer = null, nextStep = 0, step = 0;
+  const BPM = 70, STEP = 60 / BPM / 2;                 // eighth notes
+  const CHORDS = [[48,55,64,67,74],[43,50,59,62,69],[45,52,60,64,71],[41,48,57,60,67]]; // Cadd9 G Am F (I–V–vi–IV)
+  const _ = 0;
+  const MELODY = [                                    // 8 bars, 8 eighths each, looped
+    [76,_,79,_,76,74,72,_], [74,_,71,_,74,_,79,_], [72,_,76,_,81,_,79,76], [77,_,76,_,74,_,72,_],
+    [76,_,79,_,84,_,83,81], [79,_,74,_,79,_,81,83], [84,_,83,81,76,_,81,_], [79,_,77,_,76,74,72,_]
+  ];
+  const ARP = [0,2,1,3,0,2,1,4];
   const hz = m => 440 * Math.pow(2, (m - 69) / 12);
-  function tone(m, t, dur, type, gain, dest){
-    const o = ctx.createOscillator(), g = ctx.createGain();
-    o.type = type; o.frequency.value = hz(m); o.detune.value = rand(-6, 6);
+  function note(m, t, dur, gain, bright){
+    const g = ctx.createGain();
     g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(gain, t + Math.min(.6, dur * .2));
+    g.gain.linearRampToValueAtTime(gain, t + .045);
     g.gain.exponentialRampToValueAtTime(.0001, t + dur);
-    o.connect(g); g.connect(dest || lp); o.start(t); o.stop(t + dur + .05);
-  }
-  function schedule(){
-    while (nextBar < ctx.currentTime + 1.5){
-      const ch = CHORDS[bar % CHORDS.length], t = nextBar;
-      ch.forEach((m, i) => tone(m, t + i * .04, BAR * 1.1, "triangle", .05));
-      tone(ch[0] - 12, t, BAR, "sine", .09);
-      for (let k = 0; k < 8; k++){
-        if (Math.random() < .32){
-          const m = pick(SCALE), tt = t + k * BAR / 8 + rand(0, .05);
-          tone(m, tt, 1.4, "sine", .045, delay);
-          tone(m, tt, 1.4, "sine", .035);
-        }
-      }
-      nextBar += BAR; bar++;
+    g.connect(lp); g.connect(verb);
+    const o1 = ctx.createOscillator(); o1.type = "sine"; o1.frequency.value = hz(m); o1.connect(g);
+    o1.start(t); o1.stop(t + dur + .05);
+    if (bright){
+      const g2 = ctx.createGain(); g2.gain.value = bright; g2.connect(g);
+      const o2 = ctx.createOscillator(); o2.type = "sine"; o2.frequency.value = hz(m) * 2; o2.connect(g2);
+      o2.start(t); o2.stop(t + dur + .05);
     }
   }
-  function crackle(){
-    const len = ctx.sampleRate * 2, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
-    for (let i = 0; i < len; i++) d[i] = (Math.random() < .0007 ? rand(-.8, .8) : 0) + rand(-.012, .012);
-    const src = ctx.createBufferSource(), hp = ctx.createBiquadFilter(), g = ctx.createGain();
-    src.buffer = buf; src.loop = true; hp.type = "highpass"; hp.frequency.value = 1200; g.gain.value = .35;
-    src.connect(hp); hp.connect(g); g.connect(master); src.start();
-    return src;
+  function pad(ch, t, dur){
+    ch.slice(1, 4).forEach(m => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "sine"; o.frequency.value = hz(m); o.detune.value = rand(-4, 4);
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(.028, t + dur * .35);
+      g.gain.linearRampToValueAtTime(0, t + dur * 1.05);
+      o.connect(g); g.connect(lp); g.connect(verb); o.start(t); o.stop(t + dur * 1.1);
+    });
+  }
+  function shaker(t, gain){
+    const src = ctx.createBufferSource(), bp = ctx.createBiquadFilter(), g = ctx.createGain();
+    src.buffer = noiseBuf; bp.type = "bandpass"; bp.frequency.value = 7000; bp.Q.value = .8;
+    g.gain.setValueAtTime(gain, t); g.gain.exponentialRampToValueAtTime(.0001, t + .06);
+    src.connect(bp); bp.connect(g); g.connect(master); src.start(t); src.stop(t + .08);
+  }
+  function kick(t){
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(48, t + .12);
+    g.gain.setValueAtTime(.22, t); g.gain.exponentialRampToValueAtTime(.0001, t + .25);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + .3);
+  }
+  function schedule(){
+    while (nextStep < ctx.currentTime + .6){
+      const t = nextStep, barIdx = Math.floor(step / 8), s = step % 8;
+      const ch = CHORDS[barIdx % 4];
+      if (s === 0) pad(ch, t, STEP * 8);                                       // warm pad under each bar
+      if (s === 0 || s === 4) note(ch[0] - 12, t, STEP * 5, .13, 0);          // round bass
+      if (s % 2 === 0) note(ch[ARP[s]] + 12, t, STEP * 3.5, .03, .06);        // slow, quiet arpeggio
+      if (s === 3 || s === 7) shaker(t, .012);                                 // barely-there brush
+      const m = MELODY[barIdx % MELODY.length][s];
+      if (m) note(m, t, STEP * 4.5, .07, .12);                                 // melody, soft and long
+      nextStep += STEP; step++;
+    }
   }
   function start(){
     if (!ctx){
@@ -618,17 +641,19 @@ const Music = (() => {
       if (!AC) return false;
       ctx = new AC();
       master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
-      lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 1700; lp.connect(master);
-      delay = ctx.createDelay(1); delay.delayTime.value = .42; fb = ctx.createGain(); fb.gain.value = .35;
-      delay.connect(fb); fb.connect(delay); delay.connect(lp);
+      lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 2400; lp.connect(master);
+      // tiny room: two short echoes, kept quiet
+      verb = ctx.createGain(); verb.gain.value = .3;
+      [.13, .23, .37].forEach((d, i) => { const dl = ctx.createDelay(.5); dl.delayTime.value = d; const g = ctx.createGain(); g.gain.value = [.5, .38, .26][i]; verb.connect(dl); dl.connect(g); g.connect(lp); });
+      noiseBuf = ctx.createBuffer(1, ctx.sampleRate * .1, ctx.sampleRate);
+      const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
     }
     ctx.resume();
     master.gain.cancelScheduledValues(ctx.currentTime);
     master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
-    master.gain.linearRampToValueAtTime(.55, ctx.currentTime + 2);
-    nextBar = ctx.currentTime + .1;
-    if (!crackleSrc) crackleSrc = crackle();
-    schedule(); timer = setInterval(schedule, 400);
+    master.gain.linearRampToValueAtTime(.6, ctx.currentTime + 1.5);
+    nextStep = ctx.currentTime + .1; step = 0;
+    schedule(); timer = setInterval(schedule, 150);
     return true;
   }
   function stop(){
@@ -636,19 +661,44 @@ const Music = (() => {
     clearInterval(timer); timer = null;
     master.gain.cancelScheduledValues(ctx.currentTime);
     master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
-    master.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.2);
-    setTimeout(() => { if (!timer) ctx.suspend(); }, 1400);
+    master.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
+    setTimeout(() => { if (!timer) ctx.suspend(); }, 1200);
   }
   return { start, stop, get on(){ return !!timer; } };
 })();
-$("musicBtn").addEventListener("click", () => {
+/* 배경음악 「창가의 오후」(Abocado Popcorn 2.0 Pro 연주곡). 파일을 못 불러오면 위의 브라우저 연주로 대신해요 */
+const bgm = new Audio("bgm.mp3");
+bgm.loop = true; bgm.preload = "none"; bgm.volume = 0;
+let bgmFade = null, usingSynth = false;
+function fadeTo(v, ms, then){
+  clearInterval(bgmFade);
+  const from = bgm.volume, t0 = performance.now();
+  bgmFade = setInterval(() => {
+    const k = Math.min(1, (performance.now() - t0) / ms);
+    bgm.volume = Math.max(0, Math.min(1, from + (v - from) * k));
+    if (k >= 1){ clearInterval(bgmFade); if (then) then(); }
+  }, 50);
+}
+let musicOn = false;
+function setMusicUI(on){
   const b = $("musicBtn");
-  if (Music.on){ Music.stop(); b.textContent = "♪ 음악 켜기"; b.setAttribute("aria-pressed","false"); }
-  else if (Music.start()){
-    b.textContent = "♪ 음악 끄기"; b.setAttribute("aria-pressed","true");
-    say(A.star, "이 노래 좋다.", 3000);
-  } else { b.textContent = "이 브라우저는 음악을 못 틀어요"; b.disabled = true; }
+  b.textContent = on ? "♪ 음악 끄기" : "♪ 음악 켜기";
+  b.setAttribute("aria-pressed", String(on));
+}
+$("musicBtn").addEventListener("click", () => {
+  if (musicOn){
+    musicOn = false; setMusicUI(false);
+    if (usingSynth) Music.stop(); else fadeTo(0, 900, () => bgm.pause());
+    return;
+  }
+  musicOn = true; setMusicUI(true);
+  say(A.star, "이 노래 좋다.", 3000);
+  const p = bgm.play();
+  const toSynth = () => { usingSynth = true; if (musicOn && !Music.on) Music.start(); };
+  if (p && p.then) p.then(() => { usingSynth = false; fadeTo(.55, 1500); }, toSynth);
+  else fadeTo(.55, 1500);
 });
+bgm.addEventListener("error", () => { if (musicOn && !usingSynth){ usingSynth = true; Music.start(); } });
 $("shareBtn").addEventListener("click", () => { $("shareBox").hidden = !$("shareBox").hidden; });
 $("copyBtn").addEventListener("click", () => {
   const inp = $("shareUrl");
