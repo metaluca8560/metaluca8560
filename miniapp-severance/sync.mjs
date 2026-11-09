@@ -8,6 +8,8 @@ const here = dirname(fileURLToPath(import.meta.url));
 const src = readFileSync(join(here, '..', 'severance-calc.html'), 'utf8');
 
 let out = src
+  // 카카오톡 공유는 웹 전용 — 미니앱은 토스 공유만 써요
+  .replace(/\s*<script src="kakao-share\.js" defer><\/script>/, '')
   // API 프록시는 미니앱(웹뷰) 안에서는 상대 경로가 없으므로 절대 주소로 교체
   .replace(
     "const PROXY_URL = '/api/proxy'",
