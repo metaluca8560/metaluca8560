@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>비개발자가 첫 앱 만들 때 복붙하는 첫 지시문 10개 | 디지털다락방 루카</title>
+  <meta name="description" content="코드 한 줄 안 쓰고 앱 29개를 만든 루카가 AI한테 실제로 건넨 말 10개. 문장 옆 [복사]를 누르면 바로 복사돼요." />
+  <meta property="og:title" content="비개발자가 첫 앱 만들 때 복붙하는 첫 지시문 10개" />
+  <meta property="og:description" content="코드 0줄로 앱 29개 만든 루카가 AI한테 실제로 건넨 말 — 복사해서 바로 쓰세요." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://luca-darakbang.netlify.app/prompts/" />
+  <meta property="og:image" content="https://luca-darakbang.netlify.app/og-image.jpg?v=2" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23100c1c'/%3E%3Cpath d='M32 12 L52 30 V50 a3 3 0 0 1-3 3 H15 a3 3 0 0 1-3-3 V30 Z' fill='none' stroke='%23b9a7ff' stroke-width='4' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='38' r='4' fill='%23b9a7ff'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fastly.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://fastly.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <script>
+    (function () {
+      var GA_ID = 'G-EKGYEJEZ1D'
+      var s = document.createElement('script'); s.async = true
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID
+      document.head.appendChild(s)
+      window.dataLayer = window.dataLayer || []
+      window.gtag = function () { dataLayer.push(arguments) }
+      gtag('js', new Date()); gtag('config', GA_ID)
+    })()
+  </script>
+  <style>
+    /* 본진(styles.css)과 같은 색 변수 — 이 페이지만 따로 읽히도록 복사해 둠 */
+    :root {
+      --bg: #faf9f6; --surface: #fff; --text: #221e33; --muted: #6f6a85; --line: #e8e4f5;
+      --purple: #7c3aed; --purple-soft: #a78bfa; --purple-tint: #f3eeff;
+      --yellow-tint: #fef6e0; --radius: 18px;
+      --shadow: 0 8px 28px rgba(60, 40, 120, 0.08);
+      --font: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font); color: var(--text); line-height: 1.65; word-break: keep-all;
+      background: radial-gradient(60% 30% at 50% 0%, rgba(167,139,250,.18), transparent 70%), var(--bg);
+    }
+    a { color: inherit; }
+    .page { max-width: 640px; margin: 0 auto; padding: 40px 18px 64px; }
+
+    .eyebrow { font-size: 13px; font-weight: 700; color: var(--purple); letter-spacing: .02em; }
+    h1 { font-size: clamp(24px, 6.4vw, 32px); line-height: 1.3; margin: 8px 0 12px; letter-spacing: -.02em; }
+    h1 em { font-style: normal; color: var(--purple); }
+    .lead { color: var(--muted); font-size: 15.5px; }
+    .howto {
+      margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: var(--yellow-tint);
+      font-size: 14px;
+    }
+
+    h2 { font-size: 15px; color: var(--muted); font-weight: 700; margin: 34px 0 10px; }
+    .card {
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 16px 16px 14px; margin-bottom: 12px;
+    }
+    .top { display: flex; gap: 10px; align-items: flex-start; }
+    .num {
+      flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--purple-tint);
+      color: var(--purple); font-weight: 800; font-size: 13px; display: grid; place-items: center; margin-top: 2px;
+    }
+    .say { flex: 1; font-size: 17px; font-weight: 700; line-height: 1.5; }
+    .copy {
+      flex: none; border: 0; cursor: pointer; font: inherit; font-size: 13px; font-weight: 700;
+      padding: 7px 12px; border-radius: 999px; background: var(--purple); color: #fff;
+      min-height: 34px;
+    }
+    .copy.done { background: #16a34a; }
+    .when { margin: 8px 0 0 36px; font-size: 14.5px; }
+    .when b { color: var(--purple); }
+    .story { margin: 6px 0 0 36px; font-size: 13.5px; color: var(--muted); }
+
+    .end {
+      margin-top: 36px; padding: 20px 18px; border-radius: var(--radius);
+      background: linear-gradient(115deg, #7c3aed, #a78bfa); color: #fff;
+    }
+    .end p { font-size: 15px; }
+    .end strong { font-size: 17px; display: block; margin-bottom: 6px; }
+    .end a {
+      display: inline-block; margin-top: 14px; background: #fff; color: var(--purple); font-weight: 800;
+      padding: 10px 16px; border-radius: 999px; text-decoration: none;
+    }
+    .foot { margin-top: 26px; text-align: center; font-size: 13px; color: var(--muted); }
+    .foot a { color: var(--purple); }
+
+    .toast {
+      position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+      transform: translateX(-50%) translateY(20px); opacity: 0; transition: .25s;
+      background: #221e33; color: #fff; padding: 10px 16px; border-radius: 999px; font-size: 14px;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">디지털다락방 · 루카</p>
+    <h1>비개발자가 첫 앱 만들 때<br /><em>복붙하는 첫 지시문 10개</em></h1>
+    <p class="lead">코드 한 줄 안 쓰고 앱 29개(2026년 8월 기준)를 만들면서, 제가 AI한테 실제로 자주 건넨 말들이에요. 대단한 기술은 없어요. 막힐 때마다 이렇게 말했을 뿐이에요.</p>
+    <p class="howto">💡 <b>○○</b> 자리에 내 상황을 넣어서 쓰세요. 문장 옆 <b>[복사]</b>를 누르면 바로 복사돼요.</p>
+
+    <h2>처음 시작할 때</h2>
+
+    <article class="card">
+      <div class="top"><span class="num">1</span><p class="say">○○도 만들 수 있어?</p><button class="copy" type="button">복사</button></div>
+      <p class="when"><b>이럴 때</b> · 내가 원하는 게 AI로 되는지조차 모를 때. 방법보다 "되는지"부터 물어보세요.</p>
+      <p class="story">제가 처음 건넨 말이 "게임도 만들 수 있어?"였어요. 그게 첫 앱(냥이봇 스와이프 게임)이 됐어요.</p>
+    </article>
+
+    <article class="card">
+      <div class="top"><span class="num">2</span><p class="say">이 화면이 뭔지 모르겠어. 지금 뭘 하면 돼?</p><button class="copy" type="button">복사</button></div>
+      <p class="when"><b>이럴 때</b> · 낯선 화면 앞에서 얼어붙었을 때. 화면을 캡처해서 같이 보내면 더 정확해요.</p>
+      <p class="story">저도 처음엔 시커먼 명령창 화면이 무서웠어요.</p>
+    </article>
+
+    <h2>막혔을 때</h2>
+
+    <article class="card">
+      <div class="top"><span class="num">3</span><p class="say">에러 떴어. [에러 문구 그대로 붙여넣기] 이거 무슨 뜻이야?</p><button class="copy" type="button">복사</button></div>
+      <p class="when"><b>이럴 때</b> · 빨간 오류 글자가 떴을 때. 내가 이해하려 애쓰지 말고, 통째로 복사해서 넘기세요.</p>
+    </article>
+
+    <article class="card">
+      <div class="top"><span class="num">4</span><p class="say">지금 이렇게 나왔는데, 내가 원한 건 ○○야.</p><button class="copy" type="button">복사</button></div>
+      <p class="when"><b>이럴 때</b> · 결과가 마음에 안 들 때. 처음부터 다시 시키지 말고, 원한 것과 다른 점만 짚어 주세요.</p>
+    </article>
+
+    <article class="card">
+      <div class="top"><span class="num">5</span><p class="say">(캡처 첨부) ○○ 하라고 했지? 안 보이는데…</p><button class="copy" type="button">복사</button></div>
+      <p class="when"><b>이럴 때</b> · AI는 "다 했어요"라는데 실제로는 안 돼 있을 때. 말보다 캡처 한 장이 빨라요.</p>
+    </article>
+
+    <h2>고르고 다듬을 때</h2>
+
+    <article class="card">
+      <div class="top"><span class="num">6</span><p class="say">폰으로 열었을 때 보기 좋게 해 줘.</p><button class="copy" type="button">복사</button></div>
+      <p class="when"><b>이럴 때</b> · 컴퓨터 화면에선 멀쩡한데 폰에서 깨질 때. 쓰는 사람 대부분은 폰으로 열어요.</p>
+    </article>
+
+    <article class="card">
+      <div class="top"><span class="num">7</span><p class="say">이건 어때? 어케 하면 좋을까?</p><button class="copy" type="button">복사</button></div>
+      <p class="when"><b>이럴 때</b> · 방향을 혼자 못 정하겠을 때. 시키기 전에 회의하듯 의견부터 들어 보세요. 답 하나 받고 끝내지 말고 "그럼 이건?" "왜 그렇게 생각해?"로 이어 물어요.</p>
+      <p class="story">혼자 회의하기 심심해서, 성격 다른 AI 셋이 서로 토론하는 단톡방까지 만들어 봤어요.</p>
+    </article>
+
+    <article class="card">
+      <div class="top"><span class="num">8</span><p class="say">○○ 비교표로 쉽게 설명해 줘.</p><button class="copy" type="button">복사</button></div>
+      <p class="when"><b>이럴 때</b> · 도구나 방법이 여러 개라 뭘 골라야 할지 모를 때. 표로 받으면 한눈에 보여요.</p>
+    </article>
+
+    <article class="card">
+      <div class="top"><span class="num">9</span><p class="say">(예시 첨부) 쉽게 설명해서 요래 만들어 줘~</p><button class="copy" type="button">복사</button></div>
+      <p class="when"><b>이럴 때</b> · 말로 설명하기 어려울 때. 마음에 드는 예시를 보여 주고 "이런 식으로"라고 하면 돼요.</p>
+    </article>
+
+    <h2>안전장치</h2>
+
+    <article class="card">
+      <div class="top"><span class="num">10</span><p class="say">○○는 하지 마. 내가 하라고 할 때만 해.</p><button class="copy" type="button">복사</button></div>
+      <p class="when"><b>이럴 때</b> · 돈이 나가거나 되돌리기 어려운 일을 AI가 알아서 못 하게 막을 때. 작업 지시 맨 위에 적어 두세요.</p>
+      <p class="story">AI 영상을 이틀 뽑았다가 요금이 4만 6천 원 나온 뒤로, 제 AI 비서한테 주는 작업지시서 맨 위에 이런 문장을 적어 둬요.</p>
+    </article>
+
+    <section class="end">
+      <strong>이 문장들로 실제로 어떻게 됐냐면요</strong>
+      <p>코딩 모르는 제가 AI랑 앱을 만들면서 막히고, 고치고, 삽질한 과정을 그대로 적은 책이 있어요.</p>
+      <a href="https://small-recipe-9345.atlia0318.workers.dev/go/ebook/page">「비개발자의 역습」 보러 가기 →</a>
+    </section>
+
+    <p class="foot">디지털다락방 · <a href="https://luca-darakbang.netlify.app/">루카 본진으로</a></p>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">복사했어요</div>
+
+  <script>
+    // [복사] 버튼: 같은 카드의 문장(.say)을 복사. 스레드·카톡 앱 안 브라우저처럼
+    // clipboard API가 막힌 곳을 위해 textarea 방식으로 한 번 더 시도한다.
+    var toast = document.getElementById('toast'), timer
+    function showToast(msg) {
+      toast.textContent = msg; toast.classList.add('show')
+      clearTimeout(timer); timer = setTimeout(function () { toast.classList.remove('show') }, 1600)
+    }
+    function fallbackCopy(text) {
+      var ta = document.createElement('textarea')
+      ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0'
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length)
+      var ok = false; try { ok = document.execCommand('copy') } catch (e) {}
+      document.body.removeChild(ta); return ok
+    }
+    document.querySelectorAll('.copy').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var text = btn.parentNode.querySelector('.say').textContent.trim()
+        var done = function () {
+          btn.textContent = '복사됨'; btn.classList.add('done'); showToast('복사했어요. AI 채팅창에 붙여넣으세요')
+          setTimeout(function () { btn.textContent = '복사'; btn.classList.remove('done') }, 1600)
+        }
+        var fail = function () { showToast('문장을 길게 눌러 복사해 주세요') }
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text) ? done() : fail() })
+        } else { fallbackCopy(text) ? done() : fail() }
+        if (window.gtag) gtag('event', 'copy_prompt', { prompt_no: btn.parentNode.querySelector('.num').textContent })
+      })
+    })
+  </script>
+</body>
+</html>
